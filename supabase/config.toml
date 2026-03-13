@@ -1,0 +1,7 @@
+project_id = "prrkzguanpieqixrrxrs"
+
+[functions.validate-ad-content]
+verify_jwt = false
+
+[functions.check-landing-page]
+verify_jwt = false
