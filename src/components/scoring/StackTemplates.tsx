@@ -81,19 +81,19 @@ const stackTemplates: StackTemplate[] = [
         alternatives: ["Netlify", "Railway"]
       },
       {
-        name: "Supabase",
+        name: "Convex",
         category: "Backend",
-        role: "Database, auth, and storage",
+        role: "Database, realtime, and serverless functions",
         trustScore: 8.7,
         integrationScore: 8.5,
-        price: "$25/mo",
-        whyChosen: "Open-source Firebase alternative with PostgreSQL",
-        alternatives: ["Firebase", "PlanetScale"]
+        price: "Free tier / usage-based",
+        whyChosen: "Realtime backend with type-safe API and React hooks",
+        alternatives: ["Supabase", "Firebase"]
       }
     ],
     synergies: [
       "Notion → Linear: Link docs to issues seamlessly",
-      "Vercel → Supabase: Environment variables auto-sync",
+      "Vercel → Convex: Type-safe backend with realtime sync",
       "All tools have Slack integrations for notifications"
     ],
     useCases: ["SaaS MVPs", "Side projects", "Indie hacking", "Consulting"]

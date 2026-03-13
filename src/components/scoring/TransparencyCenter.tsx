@@ -102,7 +102,7 @@ const affiliateDisclosures: AffiliateDisclosure[] = [
   { product: "Linear", hasAffiliate: true, affiliateProgram: "Linear Affiliates", commissionType: "15% first year", disclosedSince: "2024-06-01" },
   { product: "Herman Miller", hasAffiliate: true, affiliateProgram: "Direct Partnership", commissionType: "5%", disclosedSince: "2024-01-01" },
   { product: "Aqara", hasAffiliate: true, affiliateProgram: "Amazon Associates", commissionType: "3-4%", disclosedSince: "2024-01-01" },
-  { product: "Supabase", hasAffiliate: false, disclosedSince: "2024-01-01" },
+  { product: "Convex", hasAffiliate: false, disclosedSince: "2024-01-01" },
 ];
 
 const whatIfScenarios: WhatIfScenario[] = [
