@@ -12,7 +12,7 @@ const crons = cronJobs();
 
 crons.weekly(
   "refreshAllMlPredictions",
-  { dayOfWeek: 0, hourUTC: 2, minuteUTC: 0 },
+  { dayOfWeek: "sunday", hourUTC: 2, minuteUTC: 0 },
   internal.cronHandlers.refreshAllMlPredictions
 );
 
