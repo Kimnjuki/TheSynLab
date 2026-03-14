@@ -3,9 +3,13 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies (retry + longer timeouts for flaky Coolify/remote builder networks)
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm config set network-timeout 300000 && \
+    (npm ci || (echo "Retry 1..." && sleep 15 && npm ci) || (echo "Retry 2..." && sleep 30 && npm ci) || (echo "Retry 3..." && sleep 60 && npm ci))
 
 # Copy source and build (VITE_* env vars can be set in Coolify build env)
 COPY . .
