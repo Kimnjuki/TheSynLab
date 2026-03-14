@@ -148,10 +148,19 @@ export default defineSchema({
     createdBy: v.optional(v.string()),
     updatedBy: v.optional(v.string()),
     dataHash: v.optional(v.string()),
+    // Audit SCHEMA-MOD-001: SEO and display
+    seoTitle: v.optional(v.string()),
+    metaDescription: v.optional(v.string()),
+    schemaMarkup: v.optional(v.any()),
+    canonicalUrl: v.optional(v.string()),
+    overallScore: v.optional(v.number()),
+    verdictSummary: v.optional(v.string()),
   }).index("by_slug", ["productSlug"])
     .index("by_hub", ["hub"])
     .index("by_category", ["category"])
-    .index("by_status", ["status"]),
+    .index("by_status", ["status"])
+    .index("by_hub_status", ["hub", "status"])
+    .index("by_category_status", ["category", "status"]),
 
   novaTrustScores: defineTable({
     productId: v.id("novaProducts"),
@@ -247,7 +256,8 @@ export default defineSchema({
   }).index("by_slug", ["postSlug"])
     .index("by_author", ["authorId"])
     .index("by_status", ["postStatus"])
-    .index("by_hub", ["hub"]),
+    .index("by_hub", ["hub"])
+    .index("by_published_date", ["postStatus", "publishedAt"]),
 
   novaPostMeta: defineTable({
     postId: v.id("novaPosts"),
@@ -397,8 +407,14 @@ export default defineSchema({
     countryCode: v.optional(v.string()),
     isBot: v.boolean(),
     clickTimestamp: v.number(),
+    converted: v.optional(v.boolean()),
+    conversionValue: v.optional(v.number()),
+    utmSource: v.optional(v.string()),
+    utmMedium: v.optional(v.string()),
+    utmCampaign: v.optional(v.string()),
   }).index("by_link", ["linkId"])
-    .index("by_user", ["userId"]),
+    .index("by_user", ["userId"])
+    .index("by_timestamp", ["clickTimestamp"]),
 
   novaAffiliatePerformance: defineTable({
     programId: v.id("novaAffiliatePrograms"),
@@ -505,8 +521,12 @@ export default defineSchema({
     cons: v.optional(v.array(v.string())),
     verifiedPurchase: v.boolean(),
     helpfulCount: v.number(),
+    isApproved: v.optional(v.boolean()),
+    isFeatured: v.optional(v.boolean()),
+    flagCount: v.optional(v.number()),
   }).index("by_product", ["productId"])
-    .index("by_user", ["userId"]),
+    .index("by_user", ["userId"])
+    .index("by_product_approved", ["productId", "isApproved"]),
 
   reviewHelpfulVotes: defineTable({
     reviewId: v.id("productReviews"),
@@ -666,6 +686,10 @@ export default defineSchema({
     lastReplyAt: v.optional(v.number()),
     lastReplyBy: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
+    relatedProductIds: v.optional(v.array(v.id("novaProducts"))),
+    metaDescription: v.optional(v.string()),
+    isIndexable: v.optional(v.boolean()),
+    acceptedAnswerReplyId: v.optional(v.id("forumReplies")),
   }).index("by_category", ["categoryId"])
     .index("by_slug", ["slug"])
     .index("by_author", ["authorId"])
@@ -691,4 +715,60 @@ export default defineSchema({
     userId: v.string(),
   }).index("by_thread", ["threadId"])
     .index("by_user", ["userId"]),
+
+  // ============ AUDIT NEW TABLES (SCHEMA-NEW-001 to 005) ============
+  novaNewsletterSubscribers: defineTable({
+    email: v.string(),
+    subscribedAt: v.number(),
+    source: v.string(),
+    isVerified: v.boolean(),
+    isActive: v.boolean(),
+    unsubscribedAt: v.optional(v.number()),
+    preferences: v.optional(v.any()),
+    userId: v.optional(v.id("novaUsers")),
+  }).index("by_email", ["email"])
+    .index("by_active", ["isActive"]),
+
+  novaProductComparisons: defineTable({
+    productAId: v.id("novaProducts"),
+    productBId: v.id("novaProducts"),
+    comparisonSlug: v.string(),
+    viewCount: v.number(),
+    lastViewedAt: v.number(),
+    isGenerated: v.boolean(),
+    generatedAt: v.optional(v.number()),
+  }).index("by_slug", ["comparisonSlug"])
+    .index("by_product_a", ["productAId"])
+    .index("by_product_b", ["productBId"]),
+
+  novaSearchQueries: defineTable({
+    query: v.string(),
+    userId: v.optional(v.string()),
+    resultsCount: v.number(),
+    clickedResultId: v.optional(v.string()),
+    clickedResultType: v.optional(v.string()),
+    searchedAt: v.number(),
+    sessionId: v.optional(v.string()),
+  }).index("by_query", ["query"])
+    .index("by_date", ["searchedAt"]),
+
+  novaContentSections: defineTable({
+    postId: v.id("novaPosts"),
+    sectionType: v.string(),
+    sectionTitle: v.optional(v.string()),
+    sectionContent: v.any(),
+    sortOrder: v.number(),
+    isPublished: v.boolean(),
+  }).index("by_post", ["postId"])
+    .index("by_type", ["sectionType"]),
+
+  novaRedirectRules: defineTable({
+    fromPath: v.string(),
+    toPath: v.string(),
+    redirectType: v.number(),
+    isActive: v.boolean(),
+    hitCount: v.number(),
+    createdBy: v.optional(v.string()),
+  }).index("by_from", ["fromPath"])
+    .index("by_active", ["isActive"]),
 });

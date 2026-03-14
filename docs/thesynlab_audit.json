@@ -1,0 +1,24 @@
+{
+  "project": "TheSynLab",
+  "version": "1.0.0",
+  "generated": "2026-03-14",
+  "description": "Comprehensive audit and improvement plan for TheSynLab. Implement via checklist in CHECKLIST.md.",
+  "stack": {
+    "current": {
+      "frontend": "Vite + React + TypeScript",
+      "ui": "shadcn/ui + Tailwind CSS",
+      "backend": "Convex",
+      "auth": "Clerk",
+      "deployment": "Docker + Coolify + Nginx",
+      "bundler": "Vite (SPA)",
+      "package_manager": "Bun"
+    },
+    "critical_gap": "Vite SPA = zero SSR/SSG. Search engines see a blank HTML shell."
+  },
+  "implementation_roadmap": {
+    "sprint_1": ["ARCH-004: Rotate secrets, .env in .gitignore", "ARCH-003: Lockfile cleanup", "SEO-001: react-helmet-async per-page meta", "SEO-004: OG and Twitter Card tags", "FEAT-002: sitemap.xml and robots.txt", "PERF-002: Cloudflare in front", "PERF-005: nginx gzip, brotli, cache headers"],
+    "sprint_2": ["SEO-002: JSON-LD", "SEO-005: Canonical URLs", "FEAT-007: RSS feed", "Schema additions"],
+    "sprint_3": ["FEAT-003: Product comparison", "FEAT-004: Hub landing pages", "FEAT-006: Newsletter", "FEAT-005: Author profiles"],
+    "cursor_priority": "Start with sprint_1. Do not skip ARCH-004."
+  }
+}

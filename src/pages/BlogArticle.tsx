@@ -1,6 +1,8 @@
 import { useParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { blogArticles, seoKeywords, competitorFeatures } from "@/data/blogArticles";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,6 +32,7 @@ const BlogArticle = () => {
   }
 
   const relatedArticles = blogArticles.filter(a => article.relatedArticles.includes(a.id));
+  const articleUrl = `/blog/${article.slug}`;
 
   // Parse content into structured sections
   const renderContent = (content: string) => {
@@ -165,6 +168,22 @@ const BlogArticle = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <MetaTags
+        title={article.title}
+        description={article.excerpt || article.title}
+        canonical={articleUrl}
+        ogImage={article.image}
+        ogType="article"
+      />
+      <JsonLd
+        type="Article"
+        article={{
+          title: article.title,
+          description: article.excerpt || article.title,
+          image: article.image,
+          url: articleUrl,
+        }}
+      />
       <Header />
       <main className="container py-8">
         {/* Back Button */}

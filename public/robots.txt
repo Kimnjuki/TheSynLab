@@ -1,16 +1,6 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
+# TheSynLab – https://www.thesynlab.com
 User-agent: *
 Allow: /
 
+# Sitemap (dynamic sitemap also available via Convex HTTP)
 Sitemap: https://www.thesynlab.com/sitemap.xml

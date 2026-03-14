@@ -2,6 +2,8 @@ import { useParams, Link } from "react-router-dom";
 import { useProductBySlug } from "@/hooks/convex/useProducts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -77,8 +79,32 @@ export default function ProductReview() {
   const integrationScore = product.integrationScore;
   const ecosystems = product.compatibility || [];
 
+  const productUrl = `/products/${product.productSlug}`;
+  const desc =
+    (product as { metaDescription?: string }).metaDescription ||
+    product.description ||
+    `${product.productName} – Trust & Integration scores, specs, and review.`;
+
   return (
     <div className="min-h-screen flex flex-col">
+      <MetaTags
+        title={product.productName}
+        description={desc}
+        canonical={productUrl}
+        ogImage={product.featuredImageUrl}
+        ogType="product"
+      />
+      <JsonLd
+        type="Product"
+        product={{
+          name: product.productName,
+          description: desc,
+          image: product.featuredImageUrl,
+          url: productUrl,
+          rating: (product as { avgRating?: number }).avgRating,
+          reviewCount: (product as { reviewCount?: number }).reviewCount,
+        }}
+      />
       <Header />
 
       <main className="flex-1">
