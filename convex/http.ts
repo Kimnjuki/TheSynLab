@@ -5,6 +5,7 @@
 
 import { httpRouter } from "convex/server";
 import { getSitemap, getRobots } from "./sitemap";
+import { getFeed } from "./rss";
 
 const http = httpRouter();
 
@@ -18,6 +19,12 @@ http.route({
   path: "/robots.txt",
   method: "GET",
   handler: getRobots,
+});
+
+http.route({
+  path: "/feed.xml",
+  method: "GET",
+  handler: getFeed,
 });
 
 export default http;

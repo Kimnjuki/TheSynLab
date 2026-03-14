@@ -38,6 +38,7 @@ import Forum from "./pages/Forum";
 import ForumCategory from "./pages/ForumCategory";
 import ForumThread from "./pages/ForumThread";
 import ForumNewThread from "./pages/ForumNewThread";
+import Hub from "./pages/Hub";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ const App = () => (
                   <Route path="/tools/automations" element={<Automations />} />
                   <Route path="/tasks" element={<Tasks />} />
                   <Route path="/products/:slug" element={<ProductReview />} />
+                  <Route path="/hub/:slug" element={<Hub />} />
                   <Route path="/community/setups" element={<CommunitySetups />} />
                   <Route path="/hubs/ai-workflow" element={<AIWorkflowHub />} />
                   <Route path="/hubs/intelligent-home" element={<IntelligentHomeHub />} />

@@ -43,8 +43,17 @@ export function useProducts(filters: ProductFilters = {}) {
     });
   }
 
+  // Normalize for Compare/UI: add id (and slug for URL support)
+  const normalized = filteredProducts.map((p: any) => ({
+    ...p,
+    id: p._id ?? p.id,
+    productSlug: p.productSlug ?? p.product_slug,
+    productName: p.productName ?? p.product_name,
+    featuredImageUrl: p.featuredImageUrl ?? p.featured_image_url,
+  }));
+
   return {
-    products: filteredProducts,
+    products: normalized,
     isLoading: products === undefined,
     error: null,
   };

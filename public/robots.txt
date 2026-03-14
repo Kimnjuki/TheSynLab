@@ -2,5 +2,5 @@
 User-agent: *
 Allow: /
 
-# Sitemap (dynamic sitemap also available via Convex HTTP)
+# Sitemap and RSS (Convex serves dynamic sitemap at .convex.site; static copy at /sitemap.xml)
 Sitemap: https://www.thesynlab.com/sitemap.xml

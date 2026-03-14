@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { blogArticles, blogCategories, blogHubs, seoKeywords } from "@/data/blogArticles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,9 +26,16 @@ const Blog = () => {
   });
 
   const featuredArticles = blogArticles.filter(a => a.isFeatured).slice(0, 3);
+  const breadcrumbs = [{ name: "Home", url: "/" }, { name: "Blog", url: "/blog" }];
 
   return (
     <div className="min-h-screen bg-background">
+      <MetaTags
+        title="Insights &amp; Reviews"
+        description="In-depth analysis powered by Trust &amp; Integration Scores. Data-driven reviews of productivity tools, smart home devices, and office hardware."
+        canonical="/blog"
+      />
+      <JsonLd type="BreadcrumbList" breadcrumbs={breadcrumbs} />
       <Header />
       <main className="container py-8">
         {/* Hero */}

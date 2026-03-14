@@ -13,14 +13,17 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, isSelected, onSelect, disabled }: ProductCardProps) {
+  const slug = product.productSlug ?? product.product_slug;
+  const name = product.productName ?? product.product_name;
+  const image = product.featuredImageUrl ?? product.featured_image_url;
   return (
     <Card className={`overflow-hidden transition-all hover:shadow-lg ${isSelected ? 'ring-2 ring-primary' : ''}`}>
-      <Link to={`/products/${product.product_slug}`}>
+      <Link to={`/products/${slug}`}>
         <div className="aspect-video bg-gradient-to-br from-primary/10 to-secondary/10 relative cursor-pointer hover:opacity-90 transition-opacity">
-          {product.featured_image_url ? (
+          {image ? (
             <img 
-              src={product.featured_image_url} 
-              alt={product.product_name}
+              src={image} 
+              alt={name}
               className="w-full h-full object-cover"
             />
           ) : (
@@ -38,9 +41,9 @@ export function ProductCard({ product, isSelected, onSelect, disabled }: Product
       
       <div className="p-4 space-y-3">
         <div>
-          <Link to={`/products/${product.product_slug}`}>
+          <Link to={`/products/${slug}`}>
             <h3 className="font-semibold text-lg line-clamp-1 hover:text-primary transition-colors cursor-pointer">
-              {product.product_name}
+              {name}
             </h3>
           </Link>
           <p className="text-sm text-muted-foreground">{product.manufacturer}</p>
@@ -79,7 +82,7 @@ export function ProductCard({ product, isSelected, onSelect, disabled }: Product
           >
             {isSelected ? "Selected" : disabled ? "Max 4 Products" : "Select to Compare"}
           </Button>
-          <Link to={`/products/${product.product_slug}`}>
+          <Link to={`/products/${slug}`}>
             <Button variant="ghost" className="w-full gap-2">
               <ExternalLink className="w-4 h-4" />
               View Details

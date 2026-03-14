@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { ComparisonFilters } from "@/components/compare/ComparisonFilters";
 import { ProductCard } from "@/components/compare/ProductCard";
 import { ComparisonView } from "@/components/compare/ComparisonView";
@@ -29,31 +31,45 @@ export default function Compare() {
     }
   }, [searchParams]);
 
-  const handleProductSelect = (productId: string) => {
+  const handleProductSelect = (product: any) => {
+    const slug = product.productSlug ?? (product.id ?? product._id)?.toString();
+    if (!slug) return;
     let newSelectedProducts: string[];
-    
-    if (selectedProducts.includes(productId)) {
-      newSelectedProducts = selectedProducts.filter(id => id !== productId);
+
+    if (selectedProducts.includes(slug)) {
+      newSelectedProducts = selectedProducts.filter((s) => s !== slug);
     } else if (selectedProducts.length < 4) {
-      newSelectedProducts = [...selectedProducts, productId];
+      newSelectedProducts = [...selectedProducts, slug];
     } else {
       return; // Max 4 products
     }
-    
+
     setSelectedProducts(newSelectedProducts);
-    
-    // Update URL with selected products
     if (newSelectedProducts.length > 0) {
-      setSearchParams({ products: newSelectedProducts.join(',') });
+      setSearchParams({ products: newSelectedProducts.join(",") });
     } else {
       setSearchParams({});
     }
   };
 
-  const selectedProductsData = products?.filter(p => selectedProducts.includes(p.id.toString()));
+  const selectedProductsData = products?.filter((p: any) =>
+    selectedProducts.includes(p.productSlug ?? "") || selectedProducts.includes((p.id ?? p._id)?.toString() ?? "")
+  );
+
+  const breadcrumbs = [
+    { name: "Home", url: "/" },
+    { name: "Tools", url: "/" },
+    { name: "Product Comparison", url: "/tools/compare" },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col">
+      <MetaTags
+        title="Product Comparison"
+        description="Compare products side-by-side: trust score, integration score, price, and ecosystem compatibility."
+        canonical="/tools/compare"
+      />
+      <JsonLd type="BreadcrumbList" breadcrumbs={breadcrumbs} />
       <Header />
       
       <main className="flex-1">
@@ -72,9 +88,13 @@ export default function Compare() {
 
         {/* Comparison View - Shows when products are selected */}
         {selectedProducts.length > 0 && selectedProductsData && (
-          <ComparisonView 
+          <ComparisonView
             products={selectedProductsData}
-            onRemove={(id) => setSelectedProducts(selectedProducts.filter(pid => pid !== id))}
+            onRemove={(idOrSlug) => {
+              const next = selectedProducts.filter((s) => s !== idOrSlug);
+              setSelectedProducts(next);
+              setSearchParams(next.length ? { products: next.join(",") } : {});
+            }}
           />
         )}
 
@@ -113,13 +133,13 @@ export default function Compare() {
                     <p className="text-muted-foreground">No products match your filters</p>
                   </div>
                 ) : (
-                  products?.map((product) => (
+                  products?.map((product: any) => (
                     <ProductCard
-                      key={product.id}
+                      key={product.id ?? product._id}
                       product={product}
-                      isSelected={selectedProducts.includes(product.id.toString())}
-                      onSelect={() => handleProductSelect(product.id.toString())}
-                      disabled={selectedProducts.length >= 4 && !selectedProducts.includes(product.id.toString())}
+                      isSelected={selectedProducts.includes(product.productSlug ?? (product.id ?? product._id)?.toString())}
+                      onSelect={() => handleProductSelect(product)}
+                      disabled={selectedProducts.length >= 4 && !selectedProducts.includes(product.productSlug ?? (product.id ?? product._id)?.toString())}
                     />
                   ))
                 )}

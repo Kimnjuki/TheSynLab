@@ -14,16 +14,16 @@ Source: [docs/thesynlab_audit.json](./docs/thesynlab_audit.json). Full audit JSO
 
 ## Sprint 2 – SEO Foundation
 
-- [ ] **SEO-002** – JSON-LD: Product, Review, Article, BreadcrumbList (see `src/components/seo/JsonLd.tsx`)
-- [ ] **SEO-005** – Canonical URL on all pages
-- [ ] **FEAT-007** – RSS feed (Convex HTTP or static)
-- [ ] **Schema** – New tables: newsletter, productComparisons, contentSections, etc. (see audit JSON)
+- [x] **SEO-002** – JSON-LD: Product, Review, Article, BreadcrumbList (see `src/components/seo/JsonLd.tsx`)
+- [x] **SEO-005** – Canonical URL on key pages (Blog, Compare, Hub, Product, Article)
+- [x] **FEAT-007** – RSS feed (Convex HTTP `/feed.xml`)
+- [x] **Schema** – New tables and mods (see Convex schema)
 
 ## Sprint 3 – Traffic & Features
 
-- [ ] **FEAT-003** – Product comparison engine (`/compare?products=a,b`)
-- [ ] **FEAT-004** – Hub landing pages (`/hub/[slug]`)
-- [ ] **FEAT-006** – Newsletter signup + Convex
+- [x] **FEAT-003** – Product comparison engine (`/tools/compare?products=slug-a,slug-b`)
+- [x] **FEAT-004** – Hub landing pages (`/hub/:slug`)
+- [x] **FEAT-006** – Newsletter signup + Convex `newsletter.subscribe`
 - [ ] **FEAT-005** – Author profile pages
 
 ## Schema (Convex)
@@ -38,11 +38,11 @@ Source: [docs/thesynlab_audit.json](./docs/thesynlab_audit.json). Full audit JSO
 |---------|--------------------|--------|
 | FEAT-001| SEO Meta Tag System| Done   |
 | FEAT-002| Sitemap + robots   | Done   |
-| FEAT-003| Product comparison  | Pending|
-| FEAT-004| Hub landing pages   | Pending|
+| FEAT-003| Product comparison  | Done   |
+| FEAT-004| Hub landing pages   | Done   |
 | FEAT-005| Author profiles     | Pending|
-| FEAT-006| Newsletter signup   | Pending|
-| FEAT-007| RSS feed            | Pending|
+| FEAT-006| Newsletter signup   | Done   |
+| FEAT-007| RSS feed            | Done   |
 | FEAT-008| Internal search     | Pending|
 
 ## Improvements to Existing Features

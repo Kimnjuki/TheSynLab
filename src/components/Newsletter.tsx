@@ -1,8 +1,38 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail } from "lucide-react";
+import { useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { toast } from "sonner";
 
 const Newsletter = () => {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
+  const subscribeMutation = useMutation(api.newsletter.subscribe);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setStatus("loading");
+    try {
+      const result = await subscribeMutation({
+        email: email.trim(),
+        source: "homepage",
+      });
+      setStatus("done");
+      setEmail("");
+      if (result.message === "already_subscribed") {
+        toast.info("You're already subscribed. Thanks!");
+      } else {
+        toast.success("Thanks for subscribing! Check your inbox for confirmation.");
+      }
+    } catch (err) {
+      setStatus("idle");
+      toast.error(err instanceof Error ? err.message : "Subscription failed. Try again.");
+    }
+  };
+
   return (
     <section className="py-20 bg-gradient-to-br from-primary via-secondary to-primary">
       <div className="container">
@@ -21,14 +51,17 @@ const Newsletter = () => {
             blueprints delivered every Tuesday morning.
           </p>
 
-          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto pt-4">
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto pt-4">
             <Input 
               type="email" 
               placeholder="Enter your email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={status === "loading"}
               className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus-visible:ring-white/40"
             />
-            <Button type="submit" size="lg" className="bg-white text-primary hover:bg-white/90 shrink-0">
-              Subscribe
+            <Button type="submit" size="lg" className="bg-white text-primary hover:bg-white/90 shrink-0" disabled={status === "loading"}>
+              {status === "loading" ? "Subscribing…" : "Subscribe"}
             </Button>
           </form>
 

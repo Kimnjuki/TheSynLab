@@ -8,15 +8,15 @@ import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, 
 
 interface ComparisonViewProps {
   products: any[];
-  onRemove: (id: string) => void;
+  onRemove: (idOrSlug: string) => void;
 }
 
 export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
   const [showCharts, setShowCharts] = useState(false);
 
   const handleShare = async () => {
-    const productIds = products.map(p => p.id).join(',');
-    const shareUrl = `${window.location.origin}/tools/compare?products=${productIds}`;
+    const ids = products.map((p: any) => p.productSlug ?? p.product_slug ?? (p.id ?? p._id)?.toString()).filter(Boolean);
+    const shareUrl = `${window.location.origin}/tools/compare?products=${ids.join(",")}`;
     
     try {
       await navigator.clipboard.writeText(shareUrl);
@@ -33,8 +33,8 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
   };
 
   // Prepare data for charts
-  const trustScoreData = products.map(p => ({
-    product: p.product_name.substring(0, 15),
+  const trustScoreData = products.map((p: any) => ({
+    product: (p.productName ?? p.product_name ?? "").substring(0, 15),
     'Data Privacy': p.nova_trust_scores?.[0]?.data_privacy_practices || 0,
     'Encryption': p.nova_trust_scores?.[0]?.encryption_standards || 0,
     'Terms': p.nova_trust_scores?.[0]?.terms_transparency || 0,
@@ -42,8 +42,8 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
     'Audits': p.nova_trust_scores?.[0]?.third_party_audits || 0,
   }));
 
-  const integrationScoreData = products.map(p => ({
-    product: p.product_name.substring(0, 15),
+  const integrationScoreData = products.map((p: any) => ({
+    product: (p.productName ?? p.product_name ?? "").substring(0, 15),
     'API Docs': p.nova_integration_scores?.[0]?.api_documentation || 0,
     'Cross-Platform': p.nova_integration_scores?.[0]?.cross_platform || 0,
     'Smart Home': p.nova_integration_scores?.[0]?.smart_home_ecosystems || 0,
@@ -51,8 +51,8 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
     'Community': p.nova_integration_scores?.[0]?.developer_community || 0,
   }));
 
-  const overallScoresData = products.map(p => ({
-    name: p.product_name.substring(0, 15),
+  const overallScoresData = products.map((p: any) => ({
+    name: (p.productName ?? p.product_name ?? "").substring(0, 15),
     Trust: p.nova_trust_scores?.[0]?.total_score || 0,
     Integration: p.nova_integration_scores?.[0]?.total_score || 0,
   }));
@@ -82,18 +82,18 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
             <thead>
               <tr className="border-b">
                 <th className="text-left py-4 px-2 font-medium">Attribute</th>
-                {products.map((product) => (
-                  <th key={product.id} className="py-4 px-4 min-w-[200px]">
+                {products.map((product: any) => (
+                  <th key={product.id ?? product._id} className="py-4 px-4 min-w-[200px]">
                     <Card className="p-4 space-y-2">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-sm line-clamp-2">{product.product_name}</h3>
+                          <h3 className="font-semibold text-sm line-clamp-2">{product.productName ?? product.product_name}</h3>
                           <p className="text-xs text-muted-foreground">{product.manufacturer}</p>
                         </div>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => onRemove(product.id.toString())}
+                          onClick={() => onRemove((product.id ?? product._id)?.toString() ?? product.productSlug ?? "")}
                           className="h-6 w-6 p-0"
                         >
                           <X className="w-4 h-4" />
@@ -116,7 +116,7 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
               <tr className="border-b">
                 <td className="py-4 px-2 font-medium">Price</td>
                 {products.map((product) => (
-                  <td key={product.id} className="py-4 px-4 text-center">
+                  <td key={product.id ?? product._id} className="py-4 px-4 text-center">
                     <span className="text-lg font-bold text-primary">
                       ${product.price || "N/A"}
                     </span>
@@ -128,7 +128,7 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
               <tr className="border-b">
                 <td className="py-4 px-2 font-medium">Trust Score</td>
                 {products.map((product) => (
-                  <td key={product.id} className="py-4 px-4">
+                  <td key={product.id ?? product._id} className="py-4 px-4">
                     <div className="flex justify-center">
                       <ScoreBadge 
                         score={product.nova_trust_scores?.[0]?.total_score || 0} 
@@ -145,7 +145,7 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
               <tr className="border-b">
                 <td className="py-4 px-2 font-medium">Integration Score</td>
                 {products.map((product) => (
-                  <td key={product.id} className="py-4 px-4">
+                  <td key={product.id ?? product._id} className="py-4 px-4">
                     <div className="flex justify-center">
                       <ScoreBadge 
                         score={product.nova_integration_scores?.[0]?.total_score || 0} 
@@ -162,7 +162,7 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
               <tr className="border-b">
                 <td className="py-4 px-2 font-medium">Category</td>
                 {products.map((product) => (
-                  <td key={product.id} className="py-4 px-4 text-center text-sm">
+                  <td key={product.id ?? product._id} className="py-4 px-4 text-center text-sm">
                     {product.category || "N/A"}
                   </td>
                 ))}
@@ -172,7 +172,7 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
               <tr className="border-b">
                 <td className="py-4 px-2 font-medium">Hub</td>
                 {products.map((product) => (
-                  <td key={product.id} className="py-4 px-4 text-center text-sm capitalize">
+                  <td key={product.id ?? product._id} className="py-4 px-4 text-center text-sm capitalize">
                     {product.hub?.replace('_', ' ') || "N/A"}
                   </td>
                 ))}
@@ -182,7 +182,7 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
               <tr className="border-b">
                 <td className="py-4 px-2 font-medium">Manufacturer</td>
                 {products.map((product) => (
-                  <td key={product.id} className="py-4 px-4 text-center text-sm">
+                  <td key={product.id ?? product._id} className="py-4 px-4 text-center text-sm">
                     {product.manufacturer || "N/A"}
                   </td>
                 ))}
