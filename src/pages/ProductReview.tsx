@@ -10,6 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import ScoreBadge from "@/components/ScoreBadge";
+import { PredictiveScoreBadge } from "@/components/scoring/PredictiveScoreBadge";
+import { ArProductPreview } from "@/components/products/ArProductPreview";
+import { TcoCalculator } from "@/components/scoring/TcoCalculator";
+import { RoiCalculator } from "@/components/scoring/RoiCalculator";
 import { ExternalLink, Heart, Share2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
@@ -114,7 +118,14 @@ export default function ProductReview() {
             <div className="grid lg:grid-cols-2 gap-8 items-start">
               {/* Product Image */}
               <div className="space-y-4">
-                {product.featuredImageUrl && (
+                {(product as { modelUrl3D?: string; arEnabled?: boolean }).arEnabled && (
+                  <ArProductPreview
+                    productName={product.productName}
+                    modelUrl={(product as { modelUrl3D?: string }).modelUrl3D}
+                    imageUrl={product.featuredImageUrl}
+                  />
+                )}
+                {!((product as { arEnabled?: boolean }).arEnabled) && product.featuredImageUrl && (
                   <img
                     src={product.featuredImageUrl}
                     alt={product.productName}
@@ -148,12 +159,19 @@ export default function ProductReview() {
                   <p className="text-lg text-muted-foreground">{product.manufacturer}</p>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 flex-wrap">
                   {trustScore && (
                     <ScoreBadge score={trustScore.totalScore} label="Trust Score" type="trust" />
                   )}
                   {integrationScore && (
                     <ScoreBadge score={integrationScore.totalScore} label="Integration" type="integration" />
+                  )}
+                  {integrationScore?.mlPredictedScore != null && (
+                    <PredictiveScoreBadge
+                      score={integrationScore.mlPredictedScore}
+                      confidence={integrationScore.mlConfidence}
+                      model={integrationScore.predictionModel}
+                    />
                   )}
                 </div>
 

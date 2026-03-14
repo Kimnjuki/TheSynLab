@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, ThumbsUp, CheckCircle } from "lucide-react";
+import { ReviewVerificationBadge } from "@/components/reviews/ReviewVerificationBadge";
+import type { VerificationLevel } from "@/components/reviews/ReviewVerificationBadge";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -43,6 +45,14 @@ function ReviewItem({ review, userId }: { review: any; userId?: string }) {
                     <CheckCircle className="w-3 h-3" />
                     Verified Purchase
                   </Badge>
+                )}
+                {(review.blockchainTxHash || review.verificationLevel) && (
+                  <ReviewVerificationBadge
+                    level={(review.verificationLevel as VerificationLevel) || (review.blockchainTxHash ? "chain_verified" : "verified_purchase")}
+                    txHash={review.blockchainTxHash}
+                    network={review.blockchainNetwork}
+                    synTokens={review.synTokensAwarded}
+                  />
                 )}
               </div>
               <div className="flex items-center gap-2">

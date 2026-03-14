@@ -39,6 +39,7 @@ import ForumCategory from "./pages/ForumCategory";
 import ForumThread from "./pages/ForumThread";
 import ForumNewThread from "./pages/ForumNewThread";
 import Hub from "./pages/Hub";
+import CommunityLeaderboard from "./pages/CommunityLeaderboard";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
                   <Route path="/products/:slug" element={<ProductReview />} />
                   <Route path="/hub/:slug" element={<Hub />} />
                   <Route path="/community/setups" element={<CommunitySetups />} />
+                  <Route path="/community/leaderboard" element={<CommunityLeaderboard />} />
                   <Route path="/hubs/ai-workflow" element={<AIWorkflowHub />} />
                   <Route path="/hubs/intelligent-home" element={<IntelligentHomeHub />} />
                   <Route path="/hubs/hybrid-office" element={<HybridOfficeHub />} />

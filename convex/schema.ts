@@ -155,6 +155,15 @@ export default defineSchema({
     canonicalUrl: v.optional(v.string()),
     overallScore: v.optional(v.number()),
     verdictSummary: v.optional(v.string()),
+    // S2: Lab benchmarks
+    benchmarkData: v.optional(v.any()),
+    labTestedAt: v.optional(v.number()),
+    labTestedBy: v.optional(v.string()),
+    benchmarkVersion: v.optional(v.string()),
+    // S7: AR/3D
+    modelUrl3D: v.optional(v.string()),
+    arEnabled: v.optional(v.boolean()),
+    dimensionsCm: v.optional(v.any()),
   }).index("by_slug", ["productSlug"])
     .index("by_hub", ["hub"])
     .index("by_category", ["category"])
@@ -207,6 +216,12 @@ export default defineSchema({
     isVerified: v.boolean(),
     verificationDate: v.optional(v.number()),
     createdBy: v.string(),
+    // S1: AI-Powered Predictive Scores
+    mlPredictedScore: v.optional(v.number()),
+    mlConfidence: v.optional(v.number()),
+    predictionModel: v.optional(v.string()),
+    predictionFeatures: v.optional(v.any()),
+    lastPredictedAt: v.optional(v.number()),
   }).index("by_product", ["productId"])
     .index("by_current", ["productId", "isCurrent"]),
 
@@ -389,6 +404,12 @@ export default defineSchema({
     lastCheckedAt: v.optional(v.number()),
     linkHealthStatus: v.string(), // healthy, broken, unchecked
     createdBy: v.optional(v.string()),
+    // S10: Dynamic pricing
+    currentPrice: v.optional(v.number()),
+    originalPrice: v.optional(v.number()),
+    priceHistory: v.optional(v.array(v.any())),
+    priceLastFetched: v.optional(v.number()),
+    roiScore: v.optional(v.number()),
   }).index("by_product", ["productId"])
     .index("by_program", ["programId"])
     .index("by_active", ["isActive"]),
@@ -524,6 +545,12 @@ export default defineSchema({
     isApproved: v.optional(v.boolean()),
     isFeatured: v.optional(v.boolean()),
     flagCount: v.optional(v.number()),
+    // S3: Blockchain verification
+    blockchainTxHash: v.optional(v.string()),
+    blockchainNetwork: v.optional(v.string()),
+    reviewContentHash: v.optional(v.string()),
+    verificationLevel: v.optional(v.string()),
+    synTokensAwarded: v.optional(v.number()),
   }).index("by_product", ["productId"])
     .index("by_user", ["userId"])
     .index("by_product_approved", ["productId", "isApproved"]),
@@ -690,6 +717,7 @@ export default defineSchema({
     metaDescription: v.optional(v.string()),
     isIndexable: v.optional(v.boolean()),
     acceptedAnswerReplyId: v.optional(v.id("forumReplies")),
+    relatedProposalId: v.optional(v.id("scoreWeightProposals")),
   }).index("by_category", ["categoryId"])
     .index("by_slug", ["slug"])
     .index("by_author", ["authorId"])
@@ -771,4 +799,157 @@ export default defineSchema({
     createdBy: v.optional(v.string()),
   }).index("by_from", ["fromPath"])
     .index("by_active", ["isActive"]),
+
+  // ============ COMPETITIVE BLUEPRINT (S1-S12) ============
+  mlPredictionJobs: defineTable({
+    productId: v.id("novaProducts"),
+    jobStatus: v.string(),
+    inputFeatures: v.optional(v.any()),
+    outputScore: v.optional(v.number()),
+    modelVersion: v.optional(v.string()),
+    startedAt: v.number(),
+    completedAt: v.optional(v.number()),
+    errorLog: v.optional(v.string()),
+  }).index("by_product", ["productId"])
+    .index("by_status", ["jobStatus"]),
+
+  labBenchmarkTemplates: defineTable({
+    category: v.string(),
+    subcategory: v.optional(v.string()),
+    templateName: v.string(),
+    metrics: v.array(v.any()),
+    methodology: v.optional(v.string()),
+    version: v.string(),
+    isActive: v.boolean(),
+  }).index("by_category", ["category"])
+    .index("by_active", ["isActive"]),
+
+  integrationSimulations: defineTable({
+    userId: v.optional(v.string()),
+    productAId: v.id("novaProducts"),
+    productBId: v.id("novaProducts"),
+    simulationConfig: v.optional(v.any()),
+    resultScore: v.optional(v.number()),
+    resultDetails: v.optional(v.any()),
+    status: v.string(),
+    runAt: v.number(),
+    completedAt: v.optional(v.number()),
+  }).index("by_user", ["userId"])
+    .index("by_products", ["productAId", "productBId"])
+    .index("by_status", ["status"]),
+
+  apiCompatibilityMatrix: defineTable({
+    ecosystemA: v.string(),
+    ecosystemB: v.string(),
+    compatibilityScore: v.number(),
+    integrationMethod: v.optional(v.string()),
+    setupComplexity: v.optional(v.number()),
+    notes: v.optional(v.string()),
+    lastUpdated: v.number(),
+    sources: v.optional(v.array(v.string())),
+  }).index("by_ecosystems", ["ecosystemA", "ecosystemB"]),
+
+  userPreferenceProfiles: defineTable({
+    userId: v.string(),
+    workStyle: v.optional(v.string()),
+    priorityFactors: v.optional(v.array(v.string())),
+    budgetRange: v.optional(v.string()),
+    ecosystemPreferences: v.optional(v.array(v.string())),
+    categoryWeights: v.optional(v.any()),
+    inferredFromBehavior: v.optional(v.boolean()),
+    lastUpdated: v.number(),
+  }).index("by_user", ["userId"]),
+
+  scoreWeightProposals: defineTable({
+    proposedBy: v.string(),
+    category: v.string(),
+    weightFactor: v.string(),
+    currentWeight: v.number(),
+    proposedWeight: v.number(),
+    rationale: v.string(),
+    status: v.string(),
+    voteCount: v.number(),
+    votes: v.optional(v.array(v.any())),
+    createdAt: v.number(),
+    resolvedAt: v.optional(v.number()),
+  }).index("by_category", ["category"])
+    .index("by_status", ["status"]),
+
+  synTokenLedger: defineTable({
+    userId: v.string(),
+    eventType: v.string(),
+    amount: v.number(),
+    referenceId: v.optional(v.string()),
+    referenceType: v.optional(v.string()),
+    txHash: v.optional(v.string()),
+    createdAt: v.number(),
+  }).index("by_user", ["userId"])
+    .index("by_event", ["eventType"]),
+
+  productTcoScores: defineTable({
+    productId: v.id("novaProducts"),
+    year1Cost: v.number(),
+    year2Cost: v.number(),
+    year3Cost: v.number(),
+    totalTco: v.number(),
+    currency: v.string(),
+    includesLicensing: v.optional(v.boolean()),
+    includesSupport: v.optional(v.boolean()),
+    includesTraining: v.optional(v.boolean()),
+    energyConsumptionKwh: v.optional(v.number()),
+    carbonFootprintKg: v.optional(v.number()),
+    ecoScore: v.optional(v.number()),
+    recyclabilityScore: v.optional(v.number()),
+    calculatedAt: v.number(),
+    methodology: v.optional(v.string()),
+    isCurrent: v.boolean(),
+  }).index("by_product", ["productId"])
+    .index("by_current", ["productId", "isCurrent"]),
+
+  reviewTranslations: defineTable({
+    reviewId: v.id("productReviews"),
+    locale: v.string(),
+    translatedTitle: v.optional(v.string()),
+    translatedContent: v.optional(v.string()),
+    translatedPros: v.optional(v.array(v.string())),
+    translatedCons: v.optional(v.array(v.string())),
+    translationModel: v.optional(v.string()),
+    translatedAt: v.number(),
+    culturalAdjustments: v.optional(v.any()),
+  }).index("by_review", ["reviewId"])
+    .index("by_locale", ["locale"]),
+
+  scoreLocaleAdjustments: defineTable({
+    productId: v.id("novaProducts"),
+    locale: v.string(),
+    adjustedTrustScore: v.optional(v.number()),
+    adjustedIntegrationScore: v.optional(v.number()),
+    relevantEcosystems: v.optional(v.array(v.string())),
+    localRegulations: v.optional(v.string()),
+    lastUpdated: v.number(),
+  }).index("by_product", ["productId"])
+    .index("by_locale", ["locale"]),
+
+  roiCalculations: defineTable({
+    userId: v.string(),
+    productId: v.id("novaProducts"),
+    teamSize: v.number(),
+    currentToolCost: v.number(),
+    estimatedTimeSavingHours: v.number(),
+    hourlyRate: v.number(),
+    calculatedRoi: v.number(),
+    paybackPeriodMonths: v.number(),
+    calculatedAt: v.number(),
+  }).index("by_user", ["userId"])
+    .index("by_product", ["productId"]),
+
+  vendorApiKeys: defineTable({
+    vendorId: v.string(),
+    apiKeyHash: v.string(),
+    productIds: v.optional(v.array(v.id("novaProducts"))),
+    allowedDomains: v.optional(v.array(v.string())),
+    planTier: v.optional(v.string()),
+    requestCount: v.number(),
+    lastUsedAt: v.optional(v.number()),
+  }).index("by_vendor", ["vendorId"]),
 });

@@ -1,6 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import ScoreBadge from "@/components/ScoreBadge";
+import { IntegrationSimulator } from "@/components/scoring/IntegrationSimulator";
+import type { Id } from "../../../convex/_generated/dataModel";
 import { X, Share2, Download, Link as LinkIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -190,6 +192,17 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
             </tbody>
           </table>
         </div>
+
+        {products.length === 2 && products[0]._id && products[1]._id && (
+          <div className="mt-6">
+            <IntegrationSimulator
+              productAId={products[0]._id as Id<"novaProducts">}
+              productBId={products[1]._id as Id<"novaProducts">}
+              productAName={products[0].productName ?? products[0].product_name}
+              productBName={products[1].productName ?? products[1].product_name}
+            />
+          </div>
+        )}
 
         {/* Visual Charts Section */}
         {showCharts && (
