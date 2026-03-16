@@ -130,6 +130,15 @@ export default defineSchema({
     productType: v.string(), // hardware, software, service
     hub: v.string(), // ai_workflow, intelligent_home, hybrid_office
     price: v.optional(v.number()),
+    // S2: Lab benchmarks
+    benchmarkData: v.optional(v.any()),
+    labTestedAt: v.optional(v.number()),
+    labTestedBy: v.optional(v.string()),
+    benchmarkVersion: v.optional(v.string()),
+    // S7: AR/VR
+    modelUrl3D: v.optional(v.string()),
+    arEnabled: v.optional(v.boolean()),
+    dimensionsCm: v.optional(v.any()),
     priceCurrency: v.string(),
     priceModel: v.string(), // one_time, subscription, freemium
     releaseDate: v.optional(v.number()),
@@ -155,15 +164,6 @@ export default defineSchema({
     canonicalUrl: v.optional(v.string()),
     overallScore: v.optional(v.number()),
     verdictSummary: v.optional(v.string()),
-    // S2: Lab benchmarks
-    benchmarkData: v.optional(v.any()),
-    labTestedAt: v.optional(v.number()),
-    labTestedBy: v.optional(v.string()),
-    benchmarkVersion: v.optional(v.string()),
-    // S7: AR/3D
-    modelUrl3D: v.optional(v.string()),
-    arEnabled: v.optional(v.boolean()),
-    dimensionsCm: v.optional(v.any()),
   }).index("by_slug", ["productSlug"])
     .index("by_hub", ["hub"])
     .index("by_category", ["category"])
@@ -216,7 +216,6 @@ export default defineSchema({
     isVerified: v.boolean(),
     verificationDate: v.optional(v.number()),
     createdBy: v.string(),
-    // S1: AI-Powered Predictive Scores
     mlPredictedScore: v.optional(v.number()),
     mlConfidence: v.optional(v.number()),
     predictionModel: v.optional(v.string()),
@@ -549,7 +548,7 @@ export default defineSchema({
     blockchainTxHash: v.optional(v.string()),
     blockchainNetwork: v.optional(v.string()),
     reviewContentHash: v.optional(v.string()),
-    verificationLevel: v.optional(v.string()),
+    verificationLevel: v.optional(v.string()), // none | email | purchase | blockchain
     synTokensAwarded: v.optional(v.number()),
   }).index("by_product", ["productId"])
     .index("by_user", ["userId"])
@@ -714,10 +713,10 @@ export default defineSchema({
     lastReplyBy: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
     relatedProductIds: v.optional(v.array(v.id("novaProducts"))),
+    relatedProposalId: v.optional(v.id("scoreWeightProposals")),
     metaDescription: v.optional(v.string()),
     isIndexable: v.optional(v.boolean()),
     acceptedAnswerReplyId: v.optional(v.id("forumReplies")),
-    relatedProposalId: v.optional(v.id("scoreWeightProposals")),
   }).index("by_category", ["categoryId"])
     .index("by_slug", ["slug"])
     .index("by_author", ["authorId"])
@@ -800,7 +799,7 @@ export default defineSchema({
   }).index("by_from", ["fromPath"])
     .index("by_active", ["isActive"]),
 
-  // ============ COMPETITIVE BLUEPRINT (S1-S12) ============
+  // ============ COMPETITIVE BLUEPRINT TABLES (S1–S10) ============
   mlPredictionJobs: defineTable({
     productId: v.id("novaProducts"),
     jobStatus: v.string(),
@@ -818,45 +817,44 @@ export default defineSchema({
     subcategory: v.optional(v.string()),
     templateName: v.string(),
     metrics: v.array(v.any()),
-    methodology: v.optional(v.string()),
+    methodology: v.string(),
     version: v.string(),
     isActive: v.boolean(),
-  }).index("by_category", ["category"])
-    .index("by_active", ["isActive"]),
+  }).index("by_category", ["category"]),
 
   integrationSimulations: defineTable({
     userId: v.optional(v.string()),
     productAId: v.id("novaProducts"),
     productBId: v.id("novaProducts"),
-    simulationConfig: v.optional(v.any()),
+    simulationConfig: v.any(),
     resultScore: v.optional(v.number()),
     resultDetails: v.optional(v.any()),
     status: v.string(),
     runAt: v.number(),
     completedAt: v.optional(v.number()),
   }).index("by_user", ["userId"])
-    .index("by_products", ["productAId", "productBId"])
-    .index("by_status", ["status"]),
+    .index("by_products", ["productAId", "productBId"]),
 
   apiCompatibilityMatrix: defineTable({
     ecosystemA: v.string(),
     ecosystemB: v.string(),
     compatibilityScore: v.number(),
-    integrationMethod: v.optional(v.string()),
-    setupComplexity: v.optional(v.number()),
+    integrationMethod: v.string(),
+    setupComplexity: v.number(),
     notes: v.optional(v.string()),
     lastUpdated: v.number(),
     sources: v.optional(v.array(v.string())),
-  }).index("by_ecosystems", ["ecosystemA", "ecosystemB"]),
+  }).index("by_ecosystem_a", ["ecosystemA"])
+    .index("by_ecosystems", ["ecosystemA", "ecosystemB"]),
 
   userPreferenceProfiles: defineTable({
     userId: v.string(),
     workStyle: v.optional(v.string()),
     priorityFactors: v.optional(v.array(v.string())),
-    budgetRange: v.optional(v.string()),
+    budgetRange: v.optional(v.any()),
     ecosystemPreferences: v.optional(v.array(v.string())),
     categoryWeights: v.optional(v.any()),
-    inferredFromBehavior: v.optional(v.boolean()),
+    inferredFromBehavior: v.boolean(),
     lastUpdated: v.number(),
   }).index("by_user", ["userId"]),
 
@@ -893,9 +891,9 @@ export default defineSchema({
     year3Cost: v.number(),
     totalTco: v.number(),
     currency: v.string(),
-    includesLicensing: v.optional(v.boolean()),
-    includesSupport: v.optional(v.boolean()),
-    includesTraining: v.optional(v.boolean()),
+    includesLicensing: v.boolean(),
+    includesSupport: v.boolean(),
+    includesTraining: v.boolean(),
     energyConsumptionKwh: v.optional(v.number()),
     carbonFootprintKg: v.optional(v.number()),
     ecoScore: v.optional(v.number()),
@@ -909,15 +907,14 @@ export default defineSchema({
   reviewTranslations: defineTable({
     reviewId: v.id("productReviews"),
     locale: v.string(),
-    translatedTitle: v.optional(v.string()),
-    translatedContent: v.optional(v.string()),
+    translatedTitle: v.string(),
+    translatedContent: v.string(),
     translatedPros: v.optional(v.array(v.string())),
     translatedCons: v.optional(v.array(v.string())),
-    translationModel: v.optional(v.string()),
+    translationModel: v.string(),
     translatedAt: v.number(),
     culturalAdjustments: v.optional(v.any()),
-  }).index("by_review", ["reviewId"])
-    .index("by_locale", ["locale"]),
+  }).index("by_review_locale", ["reviewId", "locale"]),
 
   scoreLocaleAdjustments: defineTable({
     productId: v.id("novaProducts"),
@@ -925,20 +922,19 @@ export default defineSchema({
     adjustedTrustScore: v.optional(v.number()),
     adjustedIntegrationScore: v.optional(v.number()),
     relevantEcosystems: v.optional(v.array(v.string())),
-    localRegulations: v.optional(v.string()),
+    localRegulations: v.optional(v.array(v.string())),
     lastUpdated: v.number(),
-  }).index("by_product", ["productId"])
-    .index("by_locale", ["locale"]),
+  }).index("by_product_locale", ["productId", "locale"]),
 
   roiCalculations: defineTable({
-    userId: v.string(),
+    userId: v.optional(v.string()),
     productId: v.id("novaProducts"),
-    teamSize: v.number(),
-    currentToolCost: v.number(),
-    estimatedTimeSavingHours: v.number(),
-    hourlyRate: v.number(),
+    teamSize: v.optional(v.number()),
+    currentToolCost: v.optional(v.number()),
+    estimatedTimeSavingHours: v.optional(v.number()),
+    hourlyRate: v.optional(v.number()),
     calculatedRoi: v.number(),
-    paybackPeriodMonths: v.number(),
+    paybackPeriodMonths: v.optional(v.number()),
     calculatedAt: v.number(),
   }).index("by_user", ["userId"])
     .index("by_product", ["productId"]),
@@ -946,9 +942,9 @@ export default defineSchema({
   vendorApiKeys: defineTable({
     vendorId: v.string(),
     apiKeyHash: v.string(),
-    productIds: v.optional(v.array(v.id("novaProducts"))),
-    allowedDomains: v.optional(v.array(v.string())),
-    planTier: v.optional(v.string()),
+    productIds: v.array(v.id("novaProducts")),
+    allowedDomains: v.array(v.string()),
+    planTier: v.string(),
     requestCount: v.number(),
     lastUsedAt: v.optional(v.number()),
   }).index("by_vendor", ["vendorId"]),

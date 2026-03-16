@@ -1,6 +1,14 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
+// Get a single review by ID (for blockchain, translation, etc.)
+export const get = query({
+  args: { id: v.id("productReviews") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.id);
+  },
+});
+
 // List reviews for a product
 export const listByProduct = query({
   args: { productId: v.id("novaProducts") },

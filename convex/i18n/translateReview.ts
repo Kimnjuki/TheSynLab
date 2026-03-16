@@ -3,7 +3,7 @@ import { v } from "convex/values";
 import { api } from "../_generated/api";
 
 /**
- * S9: Review translation – stub; would call external translation API.
+ * S9: Review translation – stub; would call external Claude/translation API.
  */
 export const translateReviewToLocales = action({
   args: {
@@ -11,18 +11,13 @@ export const translateReviewToLocales = action({
     targetLocales: v.array(v.string()),
   },
   handler: async (ctx, args) => {
-    const review = await ctx.runQuery(api.reviews.getUserReview, {
-      productId: "placeholder" as any,
-      userId: undefined,
-    });
-    // Stub: external Claude/FastAPI translation service not wired
+    const review = await ctx.runQuery(api.reviews.get, { id: args.reviewId });
+    if (!review) return { created: [], error: "Review not found" };
+
+    // Stub: external Claude/FastAPI translation service not wired.
+    // In production: call translation API, then ctx.runMutation to insert reviewTranslations.
     const created: string[] = [];
     for (const locale of args.targetLocales) {
-      await ctx.runMutation(api.reviews.update, {
-        id: args.reviewId,
-        reviewTitle: undefined,
-        reviewContent: undefined,
-      } as any);
       created.push(locale);
     }
     return { created };

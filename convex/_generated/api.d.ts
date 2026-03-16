@@ -13,6 +13,8 @@ import type * as automations from "../automations.js";
 import type * as blockchain_publishReview from "../blockchain/publishReview.js";
 import type * as comments from "../comments.js";
 import type * as community_leaderboard from "../community/leaderboard.js";
+import type * as cronHandlers from "../cronHandlers.js";
+import type * as crons from "../crons.js";
 import type * as forum from "../forum.js";
 import type * as http from "../http.js";
 import type * as i18n_translateReview from "../i18n/translateReview.js";
@@ -46,6 +48,8 @@ declare const fullApi: ApiFromModules<{
   "blockchain/publishReview": typeof blockchain_publishReview;
   comments: typeof comments;
   "community/leaderboard": typeof community_leaderboard;
+  cronHandlers: typeof cronHandlers;
+  crons: typeof crons;
   forum: typeof forum;
   http: typeof http;
   "i18n/translateReview": typeof i18n_translateReview;
