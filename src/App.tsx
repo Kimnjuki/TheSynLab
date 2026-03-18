@@ -40,6 +40,8 @@ import ForumThread from "./pages/ForumThread";
 import ForumNewThread from "./pages/ForumNewThread";
 import Hub from "./pages/Hub";
 import CommunityLeaderboard from "./pages/CommunityLeaderboard";
+import StackBuilder from "./pages/StackBuilder";
+import Search from "./pages/Search";
 
 const queryClient = new QueryClient();
 
@@ -91,6 +93,9 @@ const App = () => (
                   <Route path="/scoring-hub" element={<ScoringHub />} />
                   {/* Ad Compliance */}
                   <Route path="/ad-compliance" element={<AdCompliance />} />
+                  {/* New v2.0 routes */}
+                  <Route path="/tools/stack-builder" element={<StackBuilder />} />
+                  <Route path="/search" element={<Search />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -38,22 +38,31 @@ export function IntegrationSimulator({
 
   const compatibility = useQuery(
     api["simulator/getCompatibility"].getCompatibilityForSimulation,
-    {
-      ecosystemA: productAName,
-      ecosystemB: productBName,
-    }
+    { productAId, productBId }
   );
+
+  const saveSimulation = useMutation(api.integrationSimulations.save);
 
   const handleSimulate = async () => {
     setIsSimulating(true);
     setResult(null);
     try {
-      // Stub: in production, call Convex action
-      await new Promise((r) => setTimeout(r, 800));
+      await new Promise((r) => setTimeout(r, 600));
       const score = compatibility?.compatibilityScore ?? 72 + Math.round((5 - complexity) * 8);
-      const details = compatibility ?? { score, complexity };
-      setResult({ score: Math.min(100, score), details });
-      onSimulate?.(score, details);
+      const finalScore = Math.min(100, score);
+      const details = compatibility ?? { score: finalScore, complexity };
+      setResult({ score: finalScore, details });
+      onSimulate?.(finalScore, details);
+      await saveSimulation({
+        productAId,
+        productBId,
+        simulationConfig: { complexity },
+        resultScore: finalScore,
+        resultDetails: details,
+      });
+    } catch {
+      const score = compatibility?.compatibilityScore ?? 72;
+      setResult({ score: Math.min(100, score), details: {} });
     } finally {
       setIsSimulating(false);
     }

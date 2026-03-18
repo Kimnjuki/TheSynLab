@@ -13,7 +13,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Pencil, Trash2, Plus, Database, Loader2 } from "lucide-react";
+import { Pencil, Trash2, Plus, Database, Loader2, Link2, Bot, Shield } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AffiliatePriceDashboard } from "@/components/admin/AffiliatePriceDashboard";
+import { MLJobMonitor } from "@/components/admin/MLJobMonitor";
+import { SecurityAuditLog } from "@/components/admin/SecurityAuditLog";
+import { RedirectManager } from "@/components/admin/RedirectManager";
 import { toast } from "sonner";
 
 const Admin = () => {
@@ -82,134 +87,130 @@ const Admin = () => {
 
   return (
     <div className="container mx-auto py-8 space-y-8">
-      {/* Database Seeding Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Database className="w-5 h-5" />
-            Database Management
-          </CardTitle>
-          <CardDescription>
-            Seed the Convex database with initial products, automation templates, and policy rules.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button onClick={handleSeedDatabase} disabled={seeding}>
-            {seeding ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Seeding...
-              </>
+      <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+
+      <Tabs defaultValue="products">
+        <TabsList className="flex flex-wrap h-auto gap-1">
+          <TabsTrigger value="products">Products</TabsTrigger>
+          <TabsTrigger value="affiliate" className="gap-1">
+            <Link2 className="h-3 w-3" />Affiliate Prices
+          </TabsTrigger>
+          <TabsTrigger value="ml" className="gap-1">
+            <Bot className="h-3 w-3" />ML Jobs
+          </TabsTrigger>
+          <TabsTrigger value="security" className="gap-1">
+            <Shield className="h-3 w-3" />Security
+          </TabsTrigger>
+          <TabsTrigger value="redirects" className="gap-1">
+            <Link2 className="h-3 w-3" />Redirects
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Products Tab */}
+        <TabsContent value="products" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Database className="w-5 h-5" />
+                Database Management
+              </CardTitle>
+              <CardDescription>
+                Seed the Convex database with initial products, automation templates, and policy rules.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={handleSeedDatabase} disabled={seeding}>
+                {seeding ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Seeding...
+                  </>
+                ) : (
+                  <>
+                    <Database className="w-4 h-4 mr-2" />
+                    Seed Database
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold">Product Management</h2>
+            <Button onClick={() => navigate("/admin/products/new")}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Product
+            </Button>
+          </div>
+
+          <div className="bg-card rounded-lg border">
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+              </div>
             ) : (
-              <>
-                <Database className="w-4 h-4 mr-2" />
-                Seed Database
-              </>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Image</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {(products || []).map((product: any) => (
+                    <TableRow key={product._id}>
+                      <TableCell>
+                        {product.featuredImageUrl ? (
+                          <img
+                            src={product.featuredImageUrl}
+                            alt={product.productName}
+                            className="w-16 h-16 object-cover rounded"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 bg-muted rounded flex items-center justify-center">
+                            <span className="text-xs text-muted-foreground">No image</span>
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="font-medium">{product.productName}</TableCell>
+                      <TableCell>{product.category || "—"}</TableCell>
+                      <TableCell>
+                        {product.price
+                          ? `${product.priceCurrency || "$"}${product.price.toFixed(2)}`
+                          : "—"}
+                      </TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.status === "active" ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}>
+                          {product.status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex gap-2 justify-end">
+                          <Button variant="outline" size="sm" onClick={() => navigate(`/admin/products/${product._id}/edit`)}>
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button variant="destructive" size="sm" onClick={() => handleDelete(product._id)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             )}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Product Management */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-4xl font-bold">Product Management</h1>
-        <Button onClick={() => navigate("/admin/products/new")}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Product
-        </Button>
-      </div>
-
-      <div className="bg-card rounded-lg border">
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
           </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Image</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {(products || []).map((product: any) => (
-                <TableRow key={product._id}>
-                  <TableCell>
-                    {product.featuredImageUrl ? (
-                      <img
-                        src={product.featuredImageUrl}
-                        alt={product.productName}
-                        className="w-16 h-16 object-cover rounded"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 bg-muted rounded flex items-center justify-center">
-                        <span className="text-xs text-muted-foreground">No image</span>
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell className="font-medium">{product.productName}</TableCell>
-                  <TableCell>{product.category || "—"}</TableCell>
-                  <TableCell>
-                    {product.price
-                      ? `${product.priceCurrency || "$"}${product.price.toFixed(2)}`
-                      : "—"}
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        product.status === "active"
-                          ? "bg-success/10 text-success"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {product.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex gap-2 justify-end">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => navigate(`/admin/products/${product._id}/edit`)}
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDelete(product._id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+        </TabsContent>
 
-        {!loading && (products || []).length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No products found</p>
-            <div className="flex gap-4 justify-center mt-4">
-              <Button variant="outline" onClick={handleSeedDatabase} disabled={seeding}>
-                {seeding ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Database className="w-4 h-4 mr-2" />}
-                Seed Sample Data
-              </Button>
-              <Button onClick={() => navigate("/admin/products/new")}>
-                <Plus className="w-4 h-4 mr-2" />
-                Add Product
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
+        <TabsContent value="affiliate"><AffiliatePriceDashboard /></TabsContent>
+        <TabsContent value="ml"><MLJobMonitor /></TabsContent>
+        <TabsContent value="security"><SecurityAuditLog /></TabsContent>
+        <TabsContent value="redirects"><RedirectManager /></TabsContent>
+      </Tabs>
     </div>
   );
 };

@@ -948,4 +948,31 @@ export default defineSchema({
     requestCount: v.number(),
     lastUsedAt: v.optional(v.number()),
   }).index("by_vendor", ["vendorId"]),
+
+  // ============ SCHEMA ADDITIONS (v2.0) ============
+  productBookmarks: defineTable({
+    userId: v.string(),
+    productId: v.id("novaProducts"),
+    addedAt: v.number(),
+    listName: v.string(),
+  }).index("by_user", ["userId"])
+    .index("by_product", ["productId"]),
+
+  compareSessionLogs: defineTable({
+    productIds: v.array(v.id("novaProducts")),
+    userId: v.optional(v.string()),
+    sessionId: v.optional(v.string()),
+    viewedAt: v.number(),
+    duration: v.optional(v.number()),
+  }).index("by_user", ["userId"]),
+
+  productAlerts: defineTable({
+    userId: v.string(),
+    productId: v.id("novaProducts"),
+    alertType: v.string(),
+    threshold: v.optional(v.number()),
+    isActive: v.boolean(),
+    lastTriggeredAt: v.optional(v.number()),
+  }).index("by_user", ["userId"])
+    .index("by_product", ["productId"]),
 });

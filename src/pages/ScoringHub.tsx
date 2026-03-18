@@ -8,7 +8,8 @@ import IntegrationGraph from "@/components/scoring/IntegrationGraph";
 import StackTemplates from "@/components/scoring/StackTemplates";
 import TransparencyCenter from "@/components/scoring/TransparencyCenter";
 import ScoreHistoryChart from "@/components/scoring/ScoreHistoryChart";
-import { Award, Layers, ChefHat, Network, FileStack, Eye, History } from "lucide-react";
+import { ScoreProposalVote } from "@/components/community/ScoreProposalVote";
+import { Award, Layers, ChefHat, Network, FileStack, Eye, History, Vote } from "lucide-react";
 
 export default function ScoringHub() {
   return (
@@ -47,6 +48,9 @@ export default function ScoringHub() {
               </TabsTrigger>
               <TabsTrigger value="transparency" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 <Eye className="h-4 w-4" /> Transparency
+              </TabsTrigger>
+              <TabsTrigger value="proposals" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Vote className="h-4 w-4" /> Proposals
               </TabsTrigger>
             </TabsList>
 

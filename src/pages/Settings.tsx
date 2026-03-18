@@ -27,8 +27,12 @@ import {
   Save,
   Mail,
   Globe,
-  MapPin
+  MapPin,
+  Key,
+  Lock
 } from "lucide-react";
+import { GDPRPanel } from "@/components/settings/GDPRPanel";
+import { ApiKeyManager } from "@/components/settings/ApiKeyManager";
 
 interface ProfileData {
   id: string;
@@ -252,7 +256,7 @@ export default function Settings() {
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
+          <TabsList className="flex flex-wrap h-auto gap-1">
             <TabsTrigger value="profile" className="gap-2">
               <User className="h-4 w-4" />
               <span className="hidden sm:inline">Profile</span>
@@ -264,6 +268,14 @@ export default function Settings() {
             <TabsTrigger value="security" className="gap-2">
               <Shield className="h-4 w-4" />
               <span className="hidden sm:inline">Security</span>
+            </TabsTrigger>
+            <TabsTrigger value="gdpr" className="gap-2">
+              <Lock className="h-4 w-4" />
+              <span className="hidden sm:inline">Data Rights</span>
+            </TabsTrigger>
+            <TabsTrigger value="api-keys" className="gap-2">
+              <Key className="h-4 w-4" />
+              <span className="hidden sm:inline">API Keys</span>
             </TabsTrigger>
           </TabsList>
 
@@ -535,6 +547,26 @@ export default function Settings() {
                 </Button>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="gdpr" className="space-y-6">
+            <div className="max-w-2xl">
+              <h2 className="text-lg font-semibold mb-1">Data Rights (GDPR)</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Request access, correction, or deletion of your data under GDPR.
+              </p>
+              <GDPRPanel />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="api-keys" className="space-y-6">
+            <div className="max-w-2xl">
+              <h2 className="text-lg font-semibold mb-1">Developer API Keys</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Generate keys to access TheSynLab's product data API from your own apps.
+              </p>
+              <ApiKeyManager userId={undefined as any} />
+            </div>
           </TabsContent>
         </Tabs>
       </main>

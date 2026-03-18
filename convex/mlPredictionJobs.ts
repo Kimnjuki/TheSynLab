@@ -53,6 +53,21 @@ export const fail = mutation({
   },
 });
 
+export const listRecent = query({
+  args: {},
+  handler: async (ctx) => {
+    return ctx.db.query("mlPredictionJobs").order("desc").take(50);
+  },
+});
+
+export const retry = mutation({
+  args: { jobId: v.id("mlPredictionJobs") },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.jobId, { jobStatus: "pending", errorLog: undefined });
+    return args.jobId;
+  },
+});
+
 export const getByProduct = query({
   args: { productId: v.id("novaProducts") },
   handler: async (ctx, args) => {

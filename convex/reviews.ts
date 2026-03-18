@@ -90,6 +90,23 @@ export const create = mutation({
   },
 });
 
+// Patch blockchain verification fields (used by publishReviewToChain)
+export const patchBlockchain = mutation({
+  args: {
+    id: v.id("productReviews"),
+    blockchainTxHash: v.optional(v.string()),
+    blockchainNetwork: v.optional(v.string()),
+    reviewContentHash: v.optional(v.string()),
+    verificationLevel: v.optional(v.string()),
+    synTokensAwarded: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const { id, ...updates } = args;
+    await ctx.db.patch(id, updates);
+    return id;
+  },
+});
+
 // Update a review
 export const update = mutation({
   args: {
@@ -167,6 +184,17 @@ export const voteHelpful = mutation({
     }
 
     return { action: "added" };
+  },
+});
+
+// List approved reviews (for translation queue)
+export const listApproved = query({
+  args: { limit: v.optional(v.number()) },
+  handler: async (ctx, args) => {
+    const all = await ctx.db.query("productReviews").collect();
+    const approved = all.filter((r) => r.isApproved === true);
+    const limit = args.limit ?? 50;
+    return approved.slice(0, limit);
   },
 });
 

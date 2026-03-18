@@ -9,13 +9,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Clock, Users, DollarSign } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
+import { TrendingUp, Clock, Users, DollarSign, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface RoiCalculatorProps {
-  productId?: string;
+  productId?: Id<"novaProducts"> | string;
   productName?: string;
   currentToolCost?: number;
+  userId?: string;
   className?: string;
 }
 
@@ -23,18 +29,48 @@ export function RoiCalculator({
   productId,
   productName = "Product",
   currentToolCost = 0,
+  userId,
   className,
 }: RoiCalculatorProps) {
   const [teamSize, setTeamSize] = useState(5);
   const [hourlyRate, setHourlyRate] = useState(50);
   const [timeSavingHours, setTimeSavingHours] = useState(20);
   const [toolCost, setToolCost] = useState(currentToolCost || 999);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const saveRoi = useMutation(api.roiCalculations.save);
 
   const monthlySavings = teamSize * (timeSavingHours / 12) * hourlyRate;
   const paybackMonths = toolCost > 0 ? Math.ceil(toolCost / monthlySavings) : 0;
-  const annualRoi = toolCost > 0
-    ? ((monthlySavings * 12 - toolCost) / toolCost * 100).toFixed(0)
-    : "—";
+  const annualRoiNum = toolCost > 0
+    ? ((monthlySavings * 12 - toolCost) / toolCost) * 100
+    : 0;
+  const annualRoi = toolCost > 0 ? annualRoiNum.toFixed(0) : "—";
+
+  const handleSave = async () => {
+    if (!productId) {
+      toast.error("Product ID required to save");
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await saveRoi({
+        userId,
+        productId: productId as Id<"novaProducts">,
+        teamSize,
+        currentToolCost: toolCost,
+        estimatedTimeSavingHours: timeSavingHours,
+        hourlyRate,
+        calculatedRoi: annualRoiNum,
+        paybackPeriodMonths: paybackMonths > 0 ? paybackMonths : undefined,
+      });
+      toast.success("ROI calculation saved");
+    } catch {
+      toast.error("Failed to save");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <Card className={cn("overflow-hidden", className)}>
@@ -108,6 +144,18 @@ export function RoiCalculator({
             <span className="font-semibold text-green-600">{annualRoi}%</span>
           </div>
         </div>
+        {productId && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full gap-2"
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            <Save className="h-4 w-4" />
+            {isSaving ? "Saving…" : "Save calculation"}
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

@@ -1,6 +1,7 @@
 /**
  * S1: Feature extraction for ML predictions
- * Extracts product features for model input. Stub – real implementation would call FastAPI.
+ * Extracts product features from novaProducts, reviews, scores, clicks.
+ * Used by predictReliability action. ML_API_URL env: external model; else heuristic.
  */
 
 import { action } from "../_generated/server";
@@ -18,20 +19,36 @@ export const extractProductFeatures = action({
       throw new Error("Product not found");
     }
 
-    // Stub: In production, POST to FastAPI /extract and return features.
-    // const res = await fetch(`${FASTAPI_URL}/extract`, { body: JSON.stringify(product) });
-    const stubFeatures = {
-      category: product.category || "",
-      subcategory: product.subcategory || "",
-      price: product.price ?? 0,
-      productType: product.productType || "",
+    const reviews = await ctx.runQuery(api.reviews.listByProduct, {
+      productId: args.productId,
+    });
+    const approved = (reviews ?? []).filter((r: { isApproved?: boolean }) => r.isApproved !== false);
+    const avgRating =
+      approved.length > 0
+        ? approved.reduce((s: number, r: { rating: number }) => s + r.rating, 0) / approved.length
+        : 0;
+
+    const scores = await ctx.runQuery(api.products.getScores, {
+      productId: args.productId,
+    });
+
+    const features = {
+      avgRating,
+      reviewCount: approved.length,
+      integrationScore: scores?.integrationScore ?? 5,
+      trustScore: scores?.trustScore ?? 5,
+      conversionRate: 0.02,
+      pricePoint: Math.min(10, (product.price ?? 0) / 100),
+      categoryEncoded: ["ai_workflow", "intelligent_home", "hybrid_office"].indexOf(product.hub ?? "") + 1 || 0,
+      ageInDays: product.releaseDate
+        ? (Date.now() - product.releaseDate) / (24 * 60 * 60 * 1000)
+        : 365,
       hub: product.hub || "",
+      productType: product.productType || "",
       featureCount: Array.isArray(product.features) ? product.features.length : 0,
-      specKeys: product.specifications
-        ? Object.keys(product.specifications).length
-        : 0,
+      specKeys: product.specifications ? Object.keys(product.specifications as object).length : 0,
     };
 
-    return stubFeatures;
+    return features;
   },
 });

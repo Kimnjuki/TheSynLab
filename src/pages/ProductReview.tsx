@@ -20,6 +20,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import ReviewsList from "@/components/reviews/ReviewsList";
+import { ScoreTrendChart } from "@/components/compare/ScoreTrendChart";
+import { LocaleScoreBadge } from "@/components/scores/LocaleScoreBadge";
+import { CompetitorBenchmark } from "@/components/products/CompetitorBenchmark";
+import { LabBenchmarkResults } from "@/components/products/LabBenchmarkResults";
 
 export default function ProductReview() {
   const { slug } = useParams();
@@ -173,6 +177,11 @@ export default function ProductReview() {
                       model={integrationScore.predictionModel}
                     />
                   )}
+                  <LocaleScoreBadge
+                    productId={product._id}
+                    baseTrustScore={trustScore?.totalScore}
+                    baseIntegrationScore={integrationScore?.totalScore}
+                  />
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -217,11 +226,14 @@ export default function ProductReview() {
         {/* Detailed Content */}
         <section className="container mx-auto px-4 py-12">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="flex flex-wrap h-auto gap-1">
               <TabsTrigger value="overview">Overview & Reviews</TabsTrigger>
               <TabsTrigger value="trust">Trust Score</TabsTrigger>
               <TabsTrigger value="integration">Integration</TabsTrigger>
+              <TabsTrigger value="tco-roi">TCO & ROI</TabsTrigger>
               <TabsTrigger value="specs">Specs & Ecosystem</TabsTrigger>
+              <TabsTrigger value="benchmarks">Lab Benchmarks</TabsTrigger>
+              <TabsTrigger value="score-trends">Score History</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
@@ -339,6 +351,23 @@ export default function ProductReview() {
                   </CardContent>
                 </Card>
               )}
+            </TabsContent>
+
+            <TabsContent value="tco-roi" className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <TcoCalculator
+                  productId={product._id}
+                  productName={product.productName}
+                  basePrice={product.price ?? 0}
+                />
+                <RoiCalculator
+                  productId={product._id}
+                  productName={product.productName}
+                  currentToolCost={product.price ?? 0}
+                  userId={user?.id}
+                  className="h-fit"
+                />
+              </div>
             </TabsContent>
 
             <TabsContent value="integration" className="space-y-6">
@@ -463,6 +492,39 @@ export default function ProductReview() {
                       ))}
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="benchmarks" className="space-y-6">
+              <LabBenchmarkResults
+                benchmarkData={(product as any).benchmarkData}
+                benchmarkVersion={(product as any).benchmarkVersion}
+                labTestedAt={(product as any).labTestedAt}
+                labTestedBy={(product as any).labTestedBy}
+                category={product.category}
+              />
+              <CompetitorBenchmark
+                productId={product._id}
+                productSlug={product.productSlug}
+              />
+            </TabsContent>
+
+            <TabsContent value="score-trends" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Trust Score History</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ScoreTrendChart productId={product._id} type="trust" height={220} />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Integration Score History</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ScoreTrendChart productId={product._id} type="integration" height={220} />
                 </CardContent>
               </Card>
             </TabsContent>
