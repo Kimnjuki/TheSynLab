@@ -639,7 +639,7 @@ export const seedUsers = mutation({
   },
 });
 
-// Seed All Data
+// Seed All Data (does NOT include competitive products - use seedCompetitiveProducts for those)
 export const seedAll = mutation({
   args: {},
   handler: async (ctx) => {

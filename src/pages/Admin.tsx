@@ -25,7 +25,9 @@ const Admin = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [seeding, setSeeding] = useState(false);
+  const [seedingCompetitive, setSeedingCompetitive] = useState(false);
   const convex = useConvex();
+  const seedCompetitive = useMutation(api.seedCompetitiveProducts.seedCompetitiveProducts);
 
   // Convex queries
   const products = useQuery(api.products.list, { status: "active" });
@@ -40,6 +42,20 @@ const Admin = () => {
     } catch (error) {
       console.error("Error deleting product:", error);
       toast.error("Failed to delete product");
+    }
+  };
+
+  const handleSeedCompetitiveProducts = async () => {
+    setSeedingCompetitive(true);
+    try {
+      const result = await seedCompetitive({}) as any;
+      toast.success(
+        `Seeded ${result?.productsInserted ?? 0} products + ${result?.scoresInserted ?? 0} scores. Skipped: ${result?.skipped ?? 0} existing.`
+      );
+    } catch (error) {
+      toast.error("Failed to seed competitive products.");
+    } finally {
+      setSeedingCompetitive(false);
     }
   };
 
@@ -119,19 +135,38 @@ const Admin = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button onClick={handleSeedDatabase} disabled={seeding}>
-                {seeding ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Seeding...
-                  </>
-                ) : (
-                  <>
-                    <Database className="w-4 h-4 mr-2" />
-                    Seed Database
-                  </>
-                )}
-              </Button>
+          <div className="flex flex-wrap gap-3">
+            <Button onClick={handleSeedDatabase} disabled={seeding}>
+              {seeding ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Seeding...
+                </>
+              ) : (
+                <>
+                  <Database className="w-4 h-4 mr-2" />
+                  Seed Sample Data
+                </>
+              )}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleSeedCompetitiveProducts}
+              disabled={seedingCompetitive}
+            >
+              {seedingCompetitive ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Seeding 40 products…
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Seed 40 Competitive Products
+                </>
+              )}
+            </Button>
+          </div>
             </CardContent>
           </Card>
 
