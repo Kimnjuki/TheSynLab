@@ -19,16 +19,35 @@ ARG CONVEX_DEPLOY_KEY
 ARG CONVEX_DEPLOYMENT_KEYS
 
 ENV VITE_CONVEX_URL=$VITE_CONVEX_URL
-# Support both variable names: CONVEX_DEPLOY_KEY (standard) and CONVEX_DEPLOYMENT_KEYS (Coolify)
-ENV CONVEX_DEPLOY_KEY=${CONVEX_DEPLOY_KEY}
-ENV CONVEX_DEPLOYMENT_KEYS=${CONVEX_DEPLOYMENT_KEYS}
 
 # Deploy Convex schema + functions to the cloud backend, then build the Vite frontend.
 # Uses CONVEX_DEPLOY_KEY if set; otherwise falls back to CONVEX_DEPLOYMENT_KEYS (Coolify format).
+# Retries transient Convex concurrency conflict: "Schema was overwritten by another push."
 RUN EFFECTIVE_KEY="${CONVEX_DEPLOY_KEY:-$CONVEX_DEPLOYMENT_KEYS}"; \
     if [ -n "$EFFECTIVE_KEY" ]; then \
         echo "Deploying Convex backend (schema + functions)..." && \
-        CONVEX_DEPLOY_KEY="$EFFECTIVE_KEY" npx convex deploy --yes; \
+        attempt=1; \
+        max_attempts=5; \
+        while [ "$attempt" -le "$max_attempts" ]; do \
+          echo "Convex deploy attempt ${attempt}/${max_attempts}"; \
+          output="$(CONVEX_DEPLOY_KEY="$EFFECTIVE_KEY" npx convex deploy --yes 2>&1)" && { echo "$output"; break; }; \
+          echo "$output"; \
+          if echo "$output" | grep -q "Schema was overwritten by another push."; then \
+            if [ "$attempt" -lt "$max_attempts" ]; then \
+              sleep_time=$((attempt * 3)); \
+              echo "Convex schema conflict detected. Retrying in ${sleep_time}s..."; \
+              sleep "$sleep_time"; \
+              attempt=$((attempt + 1)); \
+              continue; \
+            fi; \
+          fi; \
+          echo "Convex deploy failed with non-retryable error."; \
+          exit 1; \
+        done; \
+        if [ "$attempt" -gt "$max_attempts" ]; then \
+          echo "Convex deploy failed after ${max_attempts} attempts."; \
+          exit 1; \
+        fi; \
     else \
         echo "No Convex deploy key found — skipping backend deploy (local/dev mode)"; \
     fi
