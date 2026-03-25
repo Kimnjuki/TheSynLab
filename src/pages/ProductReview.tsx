@@ -24,10 +24,9 @@ import { ScoreTrendChart } from "@/components/compare/ScoreTrendChart";
 import { LocaleScoreBadge } from "@/components/scores/LocaleScoreBadge";
 import { CompetitorBenchmark } from "@/components/products/CompetitorBenchmark";
 import { LabBenchmarkResults } from "@/components/products/LabBenchmarkResults";
-import { ScoreRichSnippet } from "@/components/scores/ScoreRichSnippet";
 import { ScoreBreakdownCard } from "@/components/scores/ScoreBreakdownCard";
 import { CommunityScoreWidget } from "@/components/community/CommunityScoreWidget";
-import { JSONLD_ProductSchema } from "@/components/meta/JSONLD_ProductSchema";
+import { ProductSchema } from "@/components/seo/ProductSchema";
 
 export default function ProductReview() {
   const { slug } = useParams();
@@ -117,22 +116,7 @@ export default function ProductReview() {
           reviewCount: (product as { reviewCount?: number }).reviewCount,
         }}
       />
-      <ScoreRichSnippet
-        name={product.productName}
-        description={desc}
-        url={productUrl}
-        image={product.featuredImageUrl}
-        trustScore={trustScore?.totalScore}
-        integrationScore={integrationScore?.totalScore}
-      />
-      <JSONLD_ProductSchema
-        productName={product.productName}
-        description={desc}
-        url={productUrl}
-        image={product.featuredImageUrl}
-        overallScore={(product as { overallScore?: number }).overallScore}
-        trustScore={trustScore?.totalScore}
-      />
+      <ProductSchema productId={product._id} />
       <Header />
 
       <main className="flex-1">

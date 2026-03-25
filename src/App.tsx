@@ -47,6 +47,7 @@ import IntegrationScoreIndex from "./pages/IntegrationScoreIndex";
 import ToolsHub from "./pages/ToolsHub";
 import RoiCalculatorTool from "./pages/RoiCalculatorTool";
 import CompareSlug from "./pages/CompareSlug";
+import HubPost from "./pages/HubPost";
 
 const queryClient = new QueryClient();
 
@@ -79,6 +80,7 @@ const App = () => (
                   <Route path="/tasks" element={<Tasks />} />
                   <Route path="/products/:slug" element={<ProductReview />} />
                   <Route path="/hub/:slug" element={<Hub />} />
+                  <Route path="/hubs/:hubSlug/:postSlug" element={<HubPost />} />
                   <Route path="/community/setups" element={<CommunitySetups />} />
                   <Route path="/community/leaderboard" element={<CommunityLeaderboard />} />
                   <Route path="/hubs/ai-workflow" element={<AIWorkflowHub />} />

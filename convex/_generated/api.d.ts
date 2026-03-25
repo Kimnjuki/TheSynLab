@@ -51,6 +51,7 @@ import type * as search from "../search.js";
 import type * as security from "../security.js";
 import type * as seed from "../seed.js";
 import type * as seedCompetitiveProducts from "../seedCompetitiveProducts.js";
+import type * as seoSchema from "../seoSchema.js";
 import type * as simulator_getCompatibility from "../simulator/getCompatibility.js";
 import type * as sitemap from "../sitemap.js";
 import type * as synTokenLedger from "../synTokenLedger.js";
@@ -111,6 +112,7 @@ declare const fullApi: ApiFromModules<{
   security: typeof security;
   seed: typeof seed;
   seedCompetitiveProducts: typeof seedCompetitiveProducts;
+  seoSchema: typeof seoSchema;
   "simulator/getCompatibility": typeof simulator_getCompatibility;
   sitemap: typeof sitemap;
   synTokenLedger: typeof synTokenLedger;
