@@ -27,6 +27,7 @@ import { LabBenchmarkResults } from "@/components/products/LabBenchmarkResults";
 import { ScoreRichSnippet } from "@/components/scores/ScoreRichSnippet";
 import { ScoreBreakdownCard } from "@/components/scores/ScoreBreakdownCard";
 import { CommunityScoreWidget } from "@/components/community/CommunityScoreWidget";
+import { JSONLD_ProductSchema } from "@/components/meta/JSONLD_ProductSchema";
 
 export default function ProductReview() {
   const { slug } = useParams();
@@ -123,6 +124,14 @@ export default function ProductReview() {
         image={product.featuredImageUrl}
         trustScore={trustScore?.totalScore}
         integrationScore={integrationScore?.totalScore}
+      />
+      <JSONLD_ProductSchema
+        productName={product.productName}
+        description={desc}
+        url={productUrl}
+        image={product.featuredImageUrl}
+        overallScore={(product as { overallScore?: number }).overallScore}
+        trustScore={trustScore?.totalScore}
       />
       <Header />
 

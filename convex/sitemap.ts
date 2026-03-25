@@ -38,10 +38,28 @@ export const getForumThreadSlugs = internalQuery({
   },
 });
 
+export const getContentHubSlugs = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const hubs = await ctx.db.query("contentHubs").collect();
+    return hubs.filter((h) => h.isActive).map((h) => h.slug);
+  },
+});
+
+export const getComparisonArticleSlugs = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const comparisons = await ctx.db.query("comparisonArticles").collect();
+    return comparisons.map((c) => c.slug);
+  },
+});
+
 export const getSitemap = httpAction(async (ctx) => {
   const posts = await ctx.runQuery(internal.sitemap.getPublishedPosts);
   const products = await ctx.runQuery(internal.sitemap.getActiveProductSlugs);
   const threads = await ctx.runQuery(internal.sitemap.getForumThreadSlugs).catch(() => []);
+  const hubs = await ctx.runQuery(internal.sitemap.getContentHubSlugs).catch(() => []);
+  const comparisons = await ctx.runQuery(internal.sitemap.getComparisonArticleSlugs).catch(() => []);
 
   const urls: string[] = [
     "<url><loc>" + SITE_URL + "/</loc><changefreq>weekly</changefreq><priority>1</priority></url>",
@@ -64,6 +82,16 @@ export const getSitemap = httpAction(async (ctx) => {
   for (const t of threads) {
     urls.push(
       "<url><loc>" + SITE_URL + "/forum/thread/" + t + "</loc><changefreq>daily</changefreq><priority>0.6</priority></url>"
+    );
+  }
+  for (const hub of hubs) {
+    urls.push(
+      "<url><loc>" + SITE_URL + "/hubs/" + hub + "</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>"
+    );
+  }
+  for (const c of comparisons) {
+    urls.push(
+      "<url><loc>" + SITE_URL + "/compare/" + c + "</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>"
     );
   }
 

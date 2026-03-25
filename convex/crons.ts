@@ -28,4 +28,10 @@ crons.hourly(
   internal.cronHandlers.processTranslationQueue
 );
 
+crons.daily(
+  "checkLivingGuideReviewDates",
+  { hourUTC: 6, minuteUTC: 0 },
+  internal.livingGuides.checkReviewDates
+);
+
 export default crons;

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Star, ThumbsUp, CheckCircle } from "lucide-react";
 import { ReviewVerificationBadge } from "@/components/reviews/ReviewVerificationBadge";
 import type { VerificationLevel } from "@/components/reviews/ReviewVerificationBadge";
+import { FellowBadge } from "@/components/authors/FellowBadge";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -40,6 +41,11 @@ function ReviewItem({ review, userId }: { review: any; userId?: string }) {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <div className="font-semibold text-foreground">{displayName}</div>
+                <FellowBadge
+                  isFellow={
+                    Boolean(review?.profile?.isFellow) || Boolean(review?.user?.isFellow)
+                  }
+                />
                 {review.verifiedPurchase && (
                   <Badge variant="secondary" className="gap-1">
                     <CheckCircle className="w-3 h-3" />

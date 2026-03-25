@@ -14,6 +14,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ScoreBadge from "@/components/ScoreBadge";
 import { ExternalLink } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { HubPillarHeader } from "@/components/seo/HubPillarHeader";
 
 const HUB_LABELS: Record<string, string> = {
   ai_workflow: "AI & Workflow",
@@ -32,6 +35,7 @@ export default function Hub() {
   const title = HUB_LABELS[hubSlug] ?? hubSlug.replace(/_/g, " ");
   const description = `Compare and discover the best products in ${title}. Trust scores, integration scores, and expert reviews.`;
   const canonical = `/hub/${hubSlug}`;
+  const hubMeta = useQuery(api.hubs.getHubBySlug, { slug: hubSlug });
 
   const breadcrumbs = [
     { name: "Home", url: "/" },
@@ -70,10 +74,12 @@ export default function Hub() {
       />
       <Header />
       <main className="flex-1 container py-12">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">{title}</h1>
-          <p className="text-lg text-muted-foreground">{description}</p>
-        </div>
+        <HubPillarHeader
+          title={title}
+          description={description}
+          pillarCount={hubMeta?.pillarCount}
+          spokeCount={hubMeta?.spokeCount}
+        />
 
         {isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

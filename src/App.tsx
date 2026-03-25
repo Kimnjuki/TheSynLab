@@ -46,6 +46,7 @@ import TrustScoreIndex from "./pages/TrustScoreIndex";
 import IntegrationScoreIndex from "./pages/IntegrationScoreIndex";
 import ToolsHub from "./pages/ToolsHub";
 import RoiCalculatorTool from "./pages/RoiCalculatorTool";
+import CompareSlug from "./pages/CompareSlug";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
                   <Route path="/admin/products/new" element={<AdminProductForm />} />
                   <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
                   <Route path="/tools/compare" element={<Compare />} />
+                  <Route path="/compare/:slug" element={<CompareSlug />} />
                   <Route path="/tools" element={<ToolsHub />} />
                   <Route path="/tools/budget-calculator" element={<BudgetCalculator />} />
                   <Route path="/tools/compatibility" element={<CompatibilityChecker />} />
