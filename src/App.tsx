@@ -42,6 +42,10 @@ import Hub from "./pages/Hub";
 import CommunityLeaderboard from "./pages/CommunityLeaderboard";
 import StackBuilder from "./pages/StackBuilder";
 import Search from "./pages/Search";
+import TrustScoreIndex from "./pages/TrustScoreIndex";
+import IntegrationScoreIndex from "./pages/IntegrationScoreIndex";
+import ToolsHub from "./pages/ToolsHub";
+import RoiCalculatorTool from "./pages/RoiCalculatorTool";
 
 const queryClient = new QueryClient();
 
@@ -64,8 +68,11 @@ const App = () => (
                   <Route path="/admin/products/new" element={<AdminProductForm />} />
                   <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
                   <Route path="/tools/compare" element={<Compare />} />
+                  <Route path="/tools" element={<ToolsHub />} />
                   <Route path="/tools/budget-calculator" element={<BudgetCalculator />} />
                   <Route path="/tools/compatibility" element={<CompatibilityChecker />} />
+                  <Route path="/tools/compatibility-checker" element={<CompatibilityChecker />} />
+                  <Route path="/tools/roi-calculator" element={<RoiCalculatorTool />} />
                   <Route path="/tools/automations" element={<Automations />} />
                   <Route path="/tasks" element={<Tasks />} />
                   <Route path="/products/:slug" element={<ProductReview />} />
@@ -96,6 +103,8 @@ const App = () => (
                   {/* New v2.0 routes */}
                   <Route path="/tools/stack-builder" element={<StackBuilder />} />
                   <Route path="/search" element={<Search />} />
+                  <Route path="/scores/trust-score-index" element={<TrustScoreIndex />} />
+                  <Route path="/scores/integration-score-index" element={<IntegrationScoreIndex />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -164,6 +164,8 @@ export default defineSchema({
     canonicalUrl: v.optional(v.string()),
     overallScore: v.optional(v.number()),
     verdictSummary: v.optional(v.string()),
+    primaryKeywordTarget: v.optional(v.string()),
+    seoScore: v.optional(v.number()),
   }).index("by_slug", ["productSlug"])
     .index("by_hub", ["hub"])
     .index("by_category", ["category"])
@@ -260,6 +262,12 @@ export default defineSchema({
     canonicalUrl: v.optional(v.string()),
     schemaMarkup: v.optional(v.any()),
     wordCount: v.optional(v.number()),
+    primaryKeyword: v.optional(v.string()),
+    secondaryKeywords: v.optional(v.array(v.string())),
+    isLivingGuide: v.optional(v.boolean()),
+    tldrSummary: v.optional(v.string()),
+    verdictText: v.optional(v.string()),
+    readingLevel: v.optional(v.string()),
     readingTimeMinutes: v.optional(v.number()),
     viewCount: v.number(),
     uniqueViewCount: v.number(),
@@ -321,6 +329,8 @@ export default defineSchema({
     lastLoginIp: v.optional(v.string()),
     loginCount: v.number(),
     twoFactorEnabled: v.boolean(),
+    isFellow: v.optional(v.boolean()),
+    fellowSlug: v.optional(v.string()),
   }).index("by_clerk", ["clerkId"])
     .index("by_username", ["username"])
     .index("by_email", ["email"]),
@@ -409,6 +419,8 @@ export default defineSchema({
     priceHistory: v.optional(v.array(v.any())),
     priceLastFetched: v.optional(v.number()),
     roiScore: v.optional(v.number()),
+    utmMedium: v.optional(v.string()),
+    utmSource: v.optional(v.string()),
   }).index("by_product", ["productId"])
     .index("by_program", ["programId"])
     .index("by_active", ["isActive"]),
@@ -975,4 +987,380 @@ export default defineSchema({
     lastTriggeredAt: v.optional(v.number()),
   }).index("by_user", ["userId"])
     .index("by_product", ["productId"]),
+
+  contentHubs: defineTable({
+    slug: v.string(),
+    name: v.string(),
+    description: v.optional(v.string()),
+    heroImageUrl: v.optional(v.string()),
+    pillarCount: v.float64(),
+    spokeCount: v.float64(),
+    totalWordCount: v.float64(),
+    lastUpdatedAt: v.float64(),
+    seoTitle: v.optional(v.string()),
+    metaDescription: v.optional(v.string()),
+    schemaMarkup: v.optional(v.any()),
+    avgTrustScore: v.optional(v.float64()),
+    avgIntegrationScore: v.optional(v.float64()),
+    topProductIds: v.optional(v.array(v.id("novaProducts"))),
+    isActive: v.boolean(),
+  }).index("by_slug", ["slug"])
+    .index("by_active", ["isActive"]),
+
+  hubKeywords: defineTable({
+    hubSlug: v.string(),
+    keyword: v.string(),
+    keywordType: v.string(),
+    monthlyVolume: v.optional(v.float64()),
+    difficulty: v.optional(v.float64()),
+    currentRank: v.optional(v.float64()),
+    assignedPostId: v.optional(v.id("novaPosts")),
+    contentStatus: v.string(),
+    priority: v.float64(),
+  }).index("by_hub", ["hubSlug"])
+    .index("by_status", ["contentStatus"])
+    .index("by_keyword", ["keyword"]),
+
+  internalLinks: defineTable({
+    sourcePostId: v.id("novaPosts"),
+    targetPostId: v.id("novaPosts"),
+    anchorText: v.string(),
+    linkType: v.string(),
+    hubSlug: v.optional(v.string()),
+    createdAt: v.float64(),
+  }).index("by_source", ["sourcePostId"])
+    .index("by_target", ["targetPostId"])
+    .index("by_hub", ["hubSlug"]),
+
+  scoreIndexPages: defineTable({
+    indexType: v.string(),
+    slug: v.string(),
+    title: v.string(),
+    metaDescription: v.optional(v.string()),
+    filters: v.optional(v.any()),
+    totalProducts: v.float64(),
+    lastGeneratedAt: v.float64(),
+    schemaMarkup: v.optional(v.any()),
+  }).index("by_slug", ["slug"])
+    .index("by_type", ["indexType"]),
+
+  bestOfPages: defineTable({
+    slug: v.string(),
+    title: v.string(),
+    category: v.string(),
+    useCase: v.string(),
+    year: v.float64(),
+    hubSlug: v.string(),
+    winnerProductId: v.id("novaProducts"),
+    rankedProductIds: v.array(v.id("novaProducts")),
+    rankingCriteria: v.optional(v.any()),
+    editorNote: v.optional(v.string()),
+    lastUpdatedAt: v.float64(),
+    publishedAt: v.float64(),
+    viewCount: v.float64(),
+    seoTitle: v.optional(v.string()),
+    metaDescription: v.optional(v.string()),
+    schemaMarkup: v.optional(v.any()),
+  }).index("by_slug", ["slug"])
+    .index("by_category", ["category"])
+    .index("by_hub", ["hubSlug"])
+    .index("by_year", ["year"]),
+
+  comparisonArticles: defineTable({
+    slug: v.string(),
+    productAId: v.id("novaProducts"),
+    productBId: v.id("novaProducts"),
+    verdictProductId: v.id("novaProducts"),
+    chooseAIf: v.string(),
+    chooseBIf: v.string(),
+    featureTableData: v.optional(v.any()),
+    trustDelta: v.optional(v.float64()),
+    integrationDelta: v.optional(v.float64()),
+    authorId: v.string(),
+    publishedAt: v.float64(),
+    lastUpdatedAt: v.float64(),
+    viewCount: v.float64(),
+    seoTitle: v.optional(v.string()),
+    metaDescription: v.optional(v.string()),
+  }).index("by_slug", ["slug"])
+    .index("by_product_a", ["productAId"])
+    .index("by_product_b", ["productBId"]),
+
+  researchReports: defineTable({
+    slug: v.string(),
+    title: v.string(),
+    reportType: v.string(),
+    hubSlug: v.string(),
+    year: v.float64(),
+    quarter: v.optional(v.float64()),
+    summary: v.optional(v.string()),
+    keyFindings: v.optional(v.array(v.string())),
+    methodology: v.optional(v.string()),
+    productsAnalyzed: v.float64(),
+    dataPoints: v.float64(),
+    chartData: v.optional(v.any()),
+    publishedAt: v.float64(),
+    lastUpdatedAt: v.float64(),
+    downloadCount: v.float64(),
+    backlinksEarned: v.optional(v.float64()),
+    featuredInMedia: v.optional(v.array(v.string())),
+    accessLevel: v.string(),
+    pdfUrl: v.optional(v.string()),
+  }).index("by_slug", ["slug"])
+    .index("by_hub", ["hubSlug"])
+    .index("by_year", ["year"])
+    .index("by_type", ["reportType"]),
+
+  reportOutreachLog: defineTable({
+    reportId: v.id("researchReports"),
+    targetPublication: v.string(),
+    contactEmail: v.optional(v.string()),
+    outreachDate: v.float64(),
+    status: v.string(),
+    responseNotes: v.optional(v.string()),
+    backlinkEarned: v.boolean(),
+    backlinkUrl: v.optional(v.string()),
+  }).index("by_report", ["reportId"])
+    .index("by_status", ["status"]),
+
+  toolUsageSessions: defineTable({
+    toolType: v.string(),
+    sessionId: v.string(),
+    userId: v.optional(v.string()),
+    inputData: v.optional(v.any()),
+    resultData: v.optional(v.any()),
+    emailCaptured: v.boolean(),
+    convertedToSignup: v.boolean(),
+    referrer: v.optional(v.string()),
+    utmSource: v.optional(v.string()),
+    utmMedium: v.optional(v.string()),
+    utmCampaign: v.optional(v.string()),
+    usedAt: v.float64(),
+  }).index("by_tool", ["toolType"])
+    .index("by_user", ["userId"])
+    .index("by_date", ["usedAt"]),
+
+  embeddableWidgets: defineTable({
+    widgetType: v.string(),
+    embedCode: v.string(),
+    partnerDomain: v.optional(v.string()),
+    isActive: v.boolean(),
+    impressionCount: v.float64(),
+    clickCount: v.float64(),
+    createdAt: v.float64(),
+  }).index("by_type", ["widgetType"])
+    .index("by_active", ["isActive"]),
+
+  seoAuditResults: defineTable({
+    postId: v.id("novaPosts"),
+    auditedAt: v.float64(),
+    titleScore: v.float64(),
+    metaScore: v.float64(),
+    headingScore: v.float64(),
+    internalLinkScore: v.float64(),
+    schemaScore: v.float64(),
+    readabilityScore: v.float64(),
+    overallScore: v.float64(),
+    issues: v.optional(v.array(v.any())),
+    recommendations: v.optional(v.array(v.string())),
+  }).index("by_post", ["postId"])
+    .index("by_score", ["overallScore"])
+    .index("by_date", ["auditedAt"]),
+
+  paaQuestions: defineTable({
+    keyword: v.string(),
+    question: v.string(),
+    hubSlug: v.optional(v.string()),
+    assignedPostId: v.optional(v.id("novaPosts")),
+    isCovered: v.boolean(),
+    addedAt: v.float64(),
+  }).index("by_keyword", ["keyword"])
+    .index("by_hub", ["hubSlug"])
+    .index("by_covered", ["isCovered"]),
+
+  trendingTopics: defineTable({
+    topic: v.string(),
+    hubSlug: v.optional(v.string()),
+    trendScore: v.float64(),
+    searchVolumeDelta: v.optional(v.float64()),
+    competitorCoverage: v.optional(v.float64()),
+    opportunityScore: v.float64(),
+    status: v.string(),
+    assignedPostId: v.optional(v.id("novaPosts")),
+    discoveredAt: v.float64(),
+    targetPublishDate: v.optional(v.float64()),
+  }).index("by_hub", ["hubSlug"])
+    .index("by_status", ["status"])
+    .index("by_opportunity", ["opportunityScore"]),
+
+  livingGuides: defineTable({
+    postId: v.id("novaPosts"),
+    updateFrequency: v.string(),
+    lastReviewedAt: v.float64(),
+    nextReviewDue: v.float64(),
+    changeLog: v.optional(v.array(v.any())),
+    isLivingGuide: v.boolean(),
+    editorAssigned: v.optional(v.string()),
+  }).index("by_post", ["postId"])
+    .index("by_next_review", ["nextReviewDue"]),
+
+  synlabFellows: defineTable({
+    userId: v.id("novaUsers"),
+    fellowSlug: v.string(),
+    specialization: v.array(v.string()),
+    bio: v.string(),
+    badgeLevel: v.string(),
+    contributionCount: v.float64(),
+    githubUrl: v.optional(v.string()),
+    linkedinUrl: v.optional(v.string()),
+    twitterUrl: v.optional(v.string()),
+    publishedGuideIds: v.optional(v.array(v.id("novaPosts"))),
+    featuredSetupId: v.optional(v.id("novaPosts")),
+    joinedAt: v.float64(),
+    isActive: v.boolean(),
+  }).index("by_user", ["userId"])
+    .index("by_slug", ["fellowSlug"])
+    .index("by_badge", ["badgeLevel"])
+    .index("by_active", ["isActive"]),
+
+  authorProfiles: defineTable({
+    userId: v.string(),
+    displayName: v.string(),
+    title: v.string(),
+    credentials: v.optional(v.array(v.string())),
+    expertise: v.optional(v.array(v.string())),
+    bio: v.string(),
+    longBio: v.optional(v.string()),
+    avatarUrl: v.optional(v.string()),
+    linkedinUrl: v.optional(v.string()),
+    twitterUrl: v.optional(v.string()),
+    githubUrl: v.optional(v.string()),
+    personalSiteUrl: v.optional(v.string()),
+    articleCount: v.float64(),
+    reviewCount: v.float64(),
+    totalViews: v.float64(),
+    isFellow: v.boolean(),
+  }).index("by_user", ["userId"])
+    .index("by_fellow", ["isFellow"]),
+
+  communityScoreRatings: defineTable({
+    productId: v.id("novaProducts"),
+    userId: v.string(),
+    trustDimension: v.string(),
+    integrationDimension: v.string(),
+    trustRating: v.float64(),
+    integrationRating: v.float64(),
+    evidence: v.optional(v.string()),
+    isVerifiedUser: v.boolean(),
+    ratedAt: v.float64(),
+  }).index("by_product", ["productId"])
+    .index("by_user", ["userId"])
+    .index("by_dimension", ["trustDimension", "integrationDimension"]),
+
+  newsletterCampaigns: defineTable({
+    campaignName: v.string(),
+    subject: v.string(),
+    previewText: v.optional(v.string()),
+    htmlContent: v.string(),
+    textContent: v.optional(v.string()),
+    segmentFilter: v.optional(v.any()),
+    scheduledFor: v.optional(v.float64()),
+    sentAt: v.optional(v.float64()),
+    recipientCount: v.float64(),
+    openCount: v.float64(),
+    clickCount: v.float64(),
+    unsubscribeCount: v.float64(),
+    status: v.string(),
+    campaignType: v.string(),
+  }).index("by_status", ["status"])
+    .index("by_type", ["campaignType"])
+    .index("by_scheduled", ["scheduledFor"]),
+
+  socialPosts: defineTable({
+    platform: v.string(),
+    content: v.string(),
+    mediaUrls: v.optional(v.array(v.string())),
+    linkedPostId: v.optional(v.id("novaPosts")),
+    linkedProductId: v.optional(v.id("novaProducts")),
+    scheduledFor: v.optional(v.float64()),
+    publishedAt: v.optional(v.float64()),
+    status: v.string(),
+    impressions: v.optional(v.float64()),
+    clicks: v.optional(v.float64()),
+    engagements: v.optional(v.float64()),
+    utmCampaign: v.optional(v.string()),
+  }).index("by_platform", ["platform"])
+    .index("by_status", ["status"])
+    .index("by_scheduled", ["scheduledFor"]),
+
+  referralProgram: defineTable({
+    userId: v.string(),
+    referralCode: v.string(),
+    referralCount: v.float64(),
+    rewardType: v.string(),
+    rewardStatus: v.string(),
+    earnedAt: v.optional(v.float64()),
+  }).index("by_user", ["userId"])
+    .index("by_code", ["referralCode"]),
+
+  seoHealthMetrics: defineTable({
+    recordedAt: v.float64(),
+    hubSlug: v.string(),
+    organicSessions: v.optional(v.float64()),
+    newReferringDomains: v.optional(v.float64()),
+    toolUsageSessions: v.optional(v.float64()),
+    newSignups: v.optional(v.float64()),
+    avgCoreWebVitalsLCP: v.optional(v.float64()),
+    avgCoreWebVitalsCLS: v.optional(v.float64()),
+    avgCoreWebVitalsFID: v.optional(v.float64()),
+    indexedPageCount: v.optional(v.float64()),
+    orphanedPostCount: v.optional(v.float64()),
+    postsWithNoSchema: v.optional(v.float64()),
+    staleScoreCount: v.optional(v.float64()),
+  }).index("by_hub", ["hubSlug"])
+    .index("by_date", ["recordedAt"]),
+
+  abTestExperiments: defineTable({
+    experimentName: v.string(),
+    pageType: v.string(),
+    variantA: v.any(),
+    variantB: v.any(),
+    metric: v.string(),
+    startedAt: v.float64(),
+    endedAt: v.optional(v.float64()),
+    variantAConversions: v.float64(),
+    variantBConversions: v.float64(),
+    variantAImpressions: v.float64(),
+    variantBImpressions: v.float64(),
+    winnerVariant: v.optional(v.string()),
+    status: v.string(),
+    confidenceLevel: v.optional(v.float64()),
+  }).index("by_page_type", ["pageType"])
+    .index("by_status", ["status"]),
+
+  sitemapEntries: defineTable({
+    url: v.string(),
+    sitemapType: v.string(),
+    priority: v.float64(),
+    changefreq: v.string(),
+    lastmod: v.float64(),
+    isIndexable: v.boolean(),
+    entityId: v.optional(v.string()),
+    entityType: v.optional(v.string()),
+  }).index("by_type", ["sitemapType"])
+    .index("by_indexable", ["isIndexable"])
+    .index("by_lastmod", ["lastmod"]),
+
+  crawlIssues: defineTable({
+    url: v.string(),
+    issueType: v.string(),
+    severity: v.string(),
+    description: v.string(),
+    detectedAt: v.float64(),
+    resolvedAt: v.optional(v.float64()),
+    isResolved: v.boolean(),
+    postId: v.optional(v.id("novaPosts")),
+  }).index("by_type", ["issueType"])
+    .index("by_severity", ["severity"])
+    .index("by_resolved", ["isResolved"]),
 });

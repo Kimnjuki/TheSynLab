@@ -24,6 +24,9 @@ import { ScoreTrendChart } from "@/components/compare/ScoreTrendChart";
 import { LocaleScoreBadge } from "@/components/scores/LocaleScoreBadge";
 import { CompetitorBenchmark } from "@/components/products/CompetitorBenchmark";
 import { LabBenchmarkResults } from "@/components/products/LabBenchmarkResults";
+import { ScoreRichSnippet } from "@/components/scores/ScoreRichSnippet";
+import { ScoreBreakdownCard } from "@/components/scores/ScoreBreakdownCard";
+import { CommunityScoreWidget } from "@/components/community/CommunityScoreWidget";
 
 export default function ProductReview() {
   const { slug } = useParams();
@@ -112,6 +115,14 @@ export default function ProductReview() {
           rating: (product as { avgRating?: number }).avgRating,
           reviewCount: (product as { reviewCount?: number }).reviewCount,
         }}
+      />
+      <ScoreRichSnippet
+        name={product.productName}
+        description={desc}
+        url={productUrl}
+        image={product.featuredImageUrl}
+        trustScore={trustScore?.totalScore}
+        integrationScore={integrationScore?.totalScore}
       />
       <Header />
 
@@ -282,74 +293,16 @@ export default function ProductReview() {
 
             <TabsContent value="trust" className="space-y-6">
               {trustScore && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Trust Score Breakdown</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="text-center">
-                      <div className="text-6xl font-bold text-primary mb-2">
-                        {trustScore.totalScore}/10
-                      </div>
-                      <p className="text-muted-foreground">Overall Trust Score</p>
-                    </div>
-
-                    <div className="space-y-4">
-                      {trustScore.dataPrivacyPractices && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="font-medium">Data Privacy Practices</span>
-                            <span className="font-bold">{trustScore.dataPrivacyPractices}/3</span>
-                          </div>
-                          <Progress value={(trustScore.dataPrivacyPractices / 3) * 100} />
-                        </div>
-                      )}
-                      {trustScore.encryptionStandards && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="font-medium">Encryption Standards</span>
-                            <span className="font-bold">{trustScore.encryptionStandards}/2</span>
-                          </div>
-                          <Progress value={(trustScore.encryptionStandards / 2) * 100} />
-                        </div>
-                      )}
-                      {trustScore.termsTransparency && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="font-medium">Terms Transparency</span>
-                            <span className="font-bold">{trustScore.termsTransparency}/2</span>
-                          </div>
-                          <Progress value={(trustScore.termsTransparency / 2) * 100} />
-                        </div>
-                      )}
-                      {trustScore.ethicalAiTransparency && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="font-medium">Ethical AI Transparency</span>
-                            <span className="font-bold">{trustScore.ethicalAiTransparency}/2</span>
-                          </div>
-                          <Progress value={(trustScore.ethicalAiTransparency / 2) * 100} />
-                        </div>
-                      )}
-                      {trustScore.thirdPartyAudits && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="font-medium">Third-Party Audits</span>
-                            <span className="font-bold">{trustScore.thirdPartyAudits}/1</span>
-                          </div>
-                          <Progress value={trustScore.thirdPartyAudits * 100} />
-                        </div>
-                      )}
-                    </div>
-
-                    {trustScore.testingNotes && (
-                      <div className="border-t pt-4">
-                        <h4 className="font-semibold mb-2">Testing Notes</h4>
-                        <p className="text-sm text-muted-foreground">{trustScore.testingNotes}</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                <ScoreBreakdownCard
+                  title="Trust Score Breakdown"
+                  dimensions={[
+                    { label: "Data Privacy Practices", value: trustScore.dataPrivacyPractices, max: 3 },
+                    { label: "Encryption Standards", value: trustScore.encryptionStandards, max: 2 },
+                    { label: "Terms Transparency", value: trustScore.termsTransparency, max: 2 },
+                    { label: "Ethical AI Transparency", value: trustScore.ethicalAiTransparency, max: 2 },
+                    { label: "Third-Party Audits", value: trustScore.thirdPartyAudits, max: 1 },
+                  ]}
+                />
               )}
             </TabsContent>
 
@@ -372,68 +325,18 @@ export default function ProductReview() {
 
             <TabsContent value="integration" className="space-y-6">
               {integrationScore && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Integration Score Breakdown</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="text-center">
-                      <div className="text-6xl font-bold text-primary mb-2">
-                        {integrationScore.totalScore}/10
-                      </div>
-                      <p className="text-muted-foreground">Overall Integration Score</p>
-                    </div>
-
-                    <div className="space-y-4">
-                      {integrationScore.apiDocumentation && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="font-medium">API & Documentation</span>
-                            <span className="font-bold">{integrationScore.apiDocumentation}/3</span>
-                          </div>
-                          <Progress value={(integrationScore.apiDocumentation / 3) * 100} />
-                        </div>
-                      )}
-                      {integrationScore.crossPlatform && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="font-medium">Cross-Platform Support</span>
-                            <span className="font-bold">{integrationScore.crossPlatform}/3</span>
-                          </div>
-                          <Progress value={(integrationScore.crossPlatform / 3) * 100} />
-                        </div>
-                      )}
-                      {integrationScore.smartHomeEcosystems && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="font-medium">Smart Home Ecosystems</span>
-                            <span className="font-bold">{integrationScore.smartHomeEcosystems}/2</span>
-                          </div>
-                          <Progress value={(integrationScore.smartHomeEcosystems / 2) * 100} />
-                        </div>
-                      )}
-                      {integrationScore.automationPlatforms && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="font-medium">Automation Platforms</span>
-                            <span className="font-bold">{integrationScore.automationPlatforms}/1</span>
-                          </div>
-                          <Progress value={integrationScore.automationPlatforms * 100} />
-                        </div>
-                      )}
-                      {integrationScore.developerCommunity && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="font-medium">Developer Community</span>
-                            <span className="font-bold">{integrationScore.developerCommunity}/1</span>
-                          </div>
-                          <Progress value={integrationScore.developerCommunity * 100} />
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                <ScoreBreakdownCard
+                  title="Integration Score Breakdown"
+                  dimensions={[
+                    { label: "API & Documentation", value: integrationScore.apiDocumentation, max: 3 },
+                    { label: "Cross-Platform Support", value: integrationScore.crossPlatform, max: 3 },
+                    { label: "Smart Home Ecosystems", value: integrationScore.smartHomeEcosystems, max: 2 },
+                    { label: "Automation Platforms", value: integrationScore.automationPlatforms, max: 1 },
+                    { label: "Developer Community", value: integrationScore.developerCommunity, max: 1 },
+                  ]}
+                />
               )}
+              <CommunityScoreWidget productId={product._id} />
             </TabsContent>
 
             <TabsContent value="specs" className="space-y-6">
