@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { Breadcrumbs } from "@/components/navigation/Breadcrumbs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FAQSection } from "@/components/seo/FAQSection";
 
 export default function HubPost() {
   const { hubSlug, postSlug } = useParams<{ hubSlug: string; postSlug: string }>();
@@ -53,6 +54,8 @@ export default function HubPost() {
             )}
           </CardContent>
         </Card>
+
+        <FAQSection keyword={(post as any)?.primaryKeyword} hubSlug={hubSlug} />
       </main>
       <Footer />
     </div>

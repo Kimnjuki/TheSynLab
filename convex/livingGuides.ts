@@ -77,3 +77,27 @@ export const checkReviewDates = internalAction({
     };
   },
 });
+
+export const bulkTouchReviewedAt = mutation({
+  args: {
+    postIds: v.array(v.id("novaPosts")),
+    reviewedAt: v.float64(),
+    nextReviewDue: v.optional(v.float64()),
+  },
+  handler: async (ctx, args) => {
+    const updated: string[] = [];
+    for (const postId of args.postIds) {
+      const guide = await ctx.db
+        .query("livingGuides")
+        .withIndex("by_post", (q) => q.eq("postId", postId))
+        .first();
+      if (!guide) continue;
+      await ctx.db.patch(guide._id, {
+        lastReviewedAt: args.reviewedAt,
+        ...(args.nextReviewDue != null ? { nextReviewDue: args.nextReviewDue } : {}),
+      });
+      updated.push(String(guide._id));
+    }
+    return { updatedCount: updated.length, updatedIds: updated };
+  },
+});

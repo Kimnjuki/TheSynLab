@@ -148,3 +148,30 @@ export const publish = mutation({
     });
   },
 });
+
+export const bulkUpdateYearModifiers = mutation({
+  args: {
+    fromYear: v.string(),
+    toYear: v.string(),
+    minViews: v.optional(v.number()),
+    postType: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const minViews = args.minViews ?? 1000;
+    const type = args.postType ?? "guide";
+    const posts = await ctx.db.query("novaPosts").collect();
+    const candidates = posts.filter(
+      (p) =>
+        p.postType === type &&
+        (p.viewCount ?? 0) >= minViews &&
+        (p.postTitle?.includes(args.fromYear) || p.seoTitle?.includes(args.fromYear))
+    );
+    for (const p of candidates) {
+      await ctx.db.patch(p._id, {
+        postTitle: p.postTitle?.replaceAll(args.fromYear, args.toYear) ?? p.postTitle,
+        seoTitle: p.seoTitle?.replaceAll(args.fromYear, args.toYear) ?? p.seoTitle,
+      });
+    }
+    return { updated: candidates.length };
+  },
+});

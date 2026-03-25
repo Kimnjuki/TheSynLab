@@ -48,6 +48,9 @@ import ToolsHub from "./pages/ToolsHub";
 import RoiCalculatorTool from "./pages/RoiCalculatorTool";
 import CompareSlug from "./pages/CompareSlug";
 import HubPost from "./pages/HubPost";
+import PillarGuide from "./pages/PillarGuide";
+import BestForEcosystem from "./pages/BestForEcosystem";
+import IntegrationRecipe from "./pages/IntegrationRecipe";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +84,9 @@ const App = () => (
                   <Route path="/products/:slug" element={<ProductReview />} />
                   <Route path="/hub/:slug" element={<Hub />} />
                   <Route path="/hubs/:hubSlug/:postSlug" element={<HubPost />} />
+                  <Route path="/hubs/:slug/pillar" element={<PillarGuide />} />
+                  <Route path="/best/for-:ecosystem" element={<BestForEcosystem />} />
+                  <Route path="/recipes/:slug" element={<IntegrationRecipe />} />
                   <Route path="/community/setups" element={<CommunitySetups />} />
                   <Route path="/community/leaderboard" element={<CommunityLeaderboard />} />
                   <Route path="/hubs/ai-workflow" element={<AIWorkflowHub />} />
