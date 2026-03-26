@@ -1,5 +1,6 @@
 import { mutation } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
+import { AUTHORITY_ARTICLES } from "./authorityArticlesPayload";
 
 type ArticleSeed = {
   postTitle: string;
@@ -496,8 +497,12 @@ export const seedSmartHomeArticles = mutation({
   handler: async (ctx) => {
     const now = Date.now();
     const currentYear = new Date(now).getUTCFullYear();
-    const selectedArticles = ARTICLES.slice(0, TARGET_ARTICLE_COUNT);
-    const excludedArticles = ARTICLES.slice(TARGET_ARTICLE_COUNT);
+    const sourceArticles: ArticleSeed[] =
+      AUTHORITY_ARTICLES.length > 0
+        ? (AUTHORITY_ARTICLES as ArticleSeed[])
+        : ARTICLES;
+    const selectedArticles = sourceArticles.slice(0, TARGET_ARTICLE_COUNT);
+    const excludedArticles = sourceArticles.slice(TARGET_ARTICLE_COUNT);
     const allProducts = await ctx.db.query("novaProducts").collect();
     const activeProducts = allProducts.filter((p) => p.status === "active");
     const winnerProductId = (activeProducts[0]?._id ?? allProducts[0]?._id) as Id<"novaProducts"> | undefined;
@@ -764,7 +769,7 @@ export const seedSmartHomeArticles = mutation({
     return {
       seededAt: now,
       currentYear,
-      totalInput: ARTICLES.length,
+      totalInput: sourceArticles.length,
       targetCount: TARGET_ARTICLE_COUNT,
       seededCount: selectedArticles.length,
       created,
