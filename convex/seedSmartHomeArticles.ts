@@ -28,6 +28,7 @@ type ArticleSeed = {
 };
 
 const AUTHOR = "editor-synlab";
+const TARGET_ARTICLE_COUNT = 21;
 const DEFAULT_CONTENT =
   "This article is part of TheSynLab 2026 authority series, ranked with Trust and Integration methodology and updated for current market changes.";
 
@@ -495,6 +496,8 @@ export const seedSmartHomeArticles = mutation({
   handler: async (ctx) => {
     const now = Date.now();
     const currentYear = new Date(now).getUTCFullYear();
+    const selectedArticles = ARTICLES.slice(0, TARGET_ARTICLE_COUNT);
+    const excludedArticles = ARTICLES.slice(TARGET_ARTICLE_COUNT);
     const allProducts = await ctx.db.query("novaProducts").collect();
     const activeProducts = allProducts.filter((p) => p.status === "active");
     const winnerProductId = (activeProducts[0]?._id ?? allProducts[0]?._id) as Id<"novaProducts"> | undefined;
@@ -516,7 +519,7 @@ export const seedSmartHomeArticles = mutation({
 
     const hubCounts = new Map<string, { posts: number; words: number }>();
 
-    for (const article of ARTICLES) {
+    for (const article of selectedArticles) {
       const existing = await ctx.db
         .query("novaPosts")
         .withIndex("by_slug", (q) => q.eq("postSlug", article.postSlug))
@@ -719,10 +722,51 @@ export const seedSmartHomeArticles = mutation({
       }
     }
 
+    let archivedOverflowPosts = 0;
+    let removedOverflowBestOf = 0;
+    let removedOverflowSitemaps = 0;
+
+    for (const article of excludedArticles) {
+      const existingPost = await ctx.db
+        .query("novaPosts")
+        .withIndex("by_slug", (q) => q.eq("postSlug", article.postSlug))
+        .first();
+      if (existingPost && existingPost.postStatus === "published") {
+        await ctx.db.patch(existingPost._id, {
+          postStatus: "archived",
+          isLivingGuide: false,
+          lastModifiedBy: AUTHOR,
+        });
+        archivedOverflowPosts++;
+      }
+
+      const bestOf = await ctx.db
+        .query("bestOfPages")
+        .withIndex("by_slug", (q) => q.eq("slug", article.bestOfPageMapping.slug))
+        .first();
+      if (bestOf) {
+        await ctx.db.delete(bestOf._id);
+        removedOverflowBestOf++;
+      }
+
+      const sitemapRows = await ctx.db
+        .query("sitemapEntries")
+        .withIndex("by_type", (q) => q.eq("sitemapType", "post"))
+        .collect();
+      const overflowUrl = `/hubs/${article.hub}/${article.postSlug}`;
+      const toDelete = sitemapRows.filter((row) => row.url === overflowUrl);
+      for (const row of toDelete) {
+        await ctx.db.delete(row._id);
+        removedOverflowSitemaps++;
+      }
+    }
+
     return {
       seededAt: now,
       currentYear,
       totalInput: ARTICLES.length,
+      targetCount: TARGET_ARTICLE_COUNT,
+      seededCount: selectedArticles.length,
       created,
       updated,
       hubsCreated,
@@ -736,6 +780,9 @@ export const seedSmartHomeArticles = mutation({
       sitemapEntriesCreated,
       livingGuidesCreated,
       livingGuidesUpdated,
+      archivedOverflowPosts,
+      removedOverflowBestOf,
+      removedOverflowSitemaps,
       bestOfSkippedNoProducts: !winnerProductId || rankedProductIds.length === 0,
     };
   },
