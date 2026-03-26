@@ -39,7 +39,7 @@ export default function Compare() {
   const [embedDialogOpen, setEmbedDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
-  const { products, isLoading } = useProducts(filters);
+  const { products, isLoading, error } = useProducts(filters);
 
   const handleProductSelect = (product: any) => {
     const slug = product.productSlug ?? (product.id ?? product._id)?.toString();
@@ -311,6 +311,7 @@ export default function Compare() {
                 <p className="text-muted-foreground">
                   {isLoading ? "Loading…" : `${products?.length || 0} products found`}
                 </p>
+                {error && <p className="text-sm text-amber-700">{error}</p>}
               </div>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

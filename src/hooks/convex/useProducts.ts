@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 
@@ -14,6 +15,7 @@ interface ProductFilters {
 }
 
 export function useProducts(filters: ProductFilters = {}) {
+  const [timedOut, setTimedOut] = useState(false);
   const priceRange = filters.priceRange as number[] | undefined;
   const products = useQuery(api.products.list, {
     hub: filters.hub,
@@ -22,6 +24,13 @@ export function useProducts(filters: ProductFilters = {}) {
     priceMin: priceRange?.[0],
     priceMax: priceRange?.[1],
   });
+
+  useEffect(() => {
+    setTimedOut(false);
+    if (products !== undefined) return;
+    const timeout = window.setTimeout(() => setTimedOut(true), 8000);
+    return () => window.clearTimeout(timeout);
+  }, [products, filters.hub, filters.status, filters.category, filters.priceRange, filters.categories, filters.trustScore, filters.integrationScore]);
 
   // Apply client-side filtering for trust/integration scores
   let filteredProducts = (products || []) as any[];
@@ -55,7 +64,7 @@ export function useProducts(filters: ProductFilters = {}) {
   return {
     products: normalized,
     isLoading: products === undefined,
-    error: null,
+    error: timedOut ? "Product service timeout. Data source may be unavailable." : null,
   };
 }
 
