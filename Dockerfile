@@ -17,10 +17,11 @@ COPY . .
 ARG VITE_CONVEX_URL
 ARG CONVEX_DEPLOY_KEY
 ARG CONVEX_DEPLOYMENT_KEYS
+ARG RUN_ARTICLE_SEED=true
 
 ENV VITE_CONVEX_URL=$VITE_CONVEX_URL
 
-# Deploy Convex schema + functions to the cloud backend, then build the Vite frontend.
+# Deploy Convex schema + functions, then seed article content, then build the Vite frontend.
 # Uses CONVEX_DEPLOY_KEY if set; otherwise falls back to CONVEX_DEPLOYMENT_KEYS (Coolify format).
 # Retries transient Convex concurrency conflict: "Schema was overwritten by another push."
 RUN EFFECTIVE_KEY="${CONVEX_DEPLOY_KEY:-$CONVEX_DEPLOYMENT_KEYS}"; \
@@ -47,6 +48,27 @@ RUN EFFECTIVE_KEY="${CONVEX_DEPLOY_KEY:-$CONVEX_DEPLOYMENT_KEYS}"; \
         if [ "$attempt" -gt "$max_attempts" ]; then \
           echo "Convex deploy failed after ${max_attempts} attempts."; \
           exit 1; \
+        fi; \
+        if [ "$RUN_ARTICLE_SEED" = "true" ]; then \
+          echo "Running article seed mutation..." && \
+          seed_attempt=1; \
+          seed_max_attempts=3; \
+          while [ "$seed_attempt" -le "$seed_max_attempts" ]; do \
+            echo "Article seed attempt ${seed_attempt}/${seed_max_attempts}"; \
+            seed_output="$(CONVEX_DEPLOY_KEY="$EFFECTIVE_KEY" npx convex run seedSmartHomeArticles:seedSmartHomeArticles 2>&1)" && { echo "$seed_output"; break; }; \
+            echo "$seed_output"; \
+            if [ "$seed_attempt" -lt "$seed_max_attempts" ]; then \
+              sleep_time=$((seed_attempt * 3)); \
+              echo "Article seed failed. Retrying in ${sleep_time}s..."; \
+              sleep "$sleep_time"; \
+              seed_attempt=$((seed_attempt + 1)); \
+              continue; \
+            fi; \
+            echo "Article seed failed after ${seed_max_attempts} attempts."; \
+            exit 1; \
+          done; \
+        else \
+          echo "RUN_ARTICLE_SEED is false — skipping article seed mutation."; \
         fi; \
     else \
         echo "No Convex deploy key found — skipping backend deploy (local/dev mode)"; \
