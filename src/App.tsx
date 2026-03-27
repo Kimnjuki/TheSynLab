@@ -51,6 +51,9 @@ import HubPost from "./pages/HubPost";
 import PillarGuide from "./pages/PillarGuide";
 import BestForEcosystem from "./pages/BestForEcosystem";
 import IntegrationRecipe from "./pages/IntegrationRecipe";
+import HubBuilderPage from "./pages/HubBuilderPage";
+import CompatibilityLeaderboardPage from "./pages/CompatibilityLeaderboardPage";
+import AIProductFinder from "./pages/AIProductFinder";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +81,9 @@ const App = () => (
                   <Route path="/tools/budget-calculator" element={<BudgetCalculator />} />
                   <Route path="/tools/compatibility" element={<CompatibilityChecker />} />
                   <Route path="/tools/compatibility-checker" element={<CompatibilityChecker />} />
+                  <Route path="/tools/hub-builder" element={<HubBuilderPage />} />
+                  <Route path="/tools/compatibility-leaderboard" element={<CompatibilityLeaderboardPage />} />
+                  <Route path="/tools/find" element={<AIProductFinder />} />
                   <Route path="/tools/roi-calculator" element={<RoiCalculatorTool />} />
                   <Route path="/tools/automations" element={<Automations />} />
                   <Route path="/tasks" element={<Tasks />} />

@@ -31,13 +31,22 @@ export function ScoreTrendChart({
 
   const history = type === "trust" ? trustHistory : intHistory;
 
-  if (history.length < 2) return null;
+  if (history.length === 0) return null;
 
   const data = history.map((h) => ({
     date: format(new Date(h.testedDate), "MMM yyyy"),
     score: h.totalScore,
     version: h.methodologyVersion,
   }));
+
+  if (history.length === 1) {
+    return (
+      <p className="text-sm text-muted-foreground py-4">
+        Only one score version on file ({data[0].date}):{" "}
+        <strong>{data[0].score.toFixed(1)}</strong>. History will appear after the next methodology run.
+      </p>
+    );
+  }
 
   return (
     <ResponsiveContainer width="100%" height={height}>

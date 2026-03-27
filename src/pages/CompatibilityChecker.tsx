@@ -25,6 +25,11 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { AICompatibilityAssistant } from "@/components/compatibility/AICompatibilityAssistant";
+import { CompatibilitySimulationPanel } from "@/components/compatibility/CompatibilitySimulationPanel";
+import { ApiCompatibilitySnippet } from "@/components/compatibility/ApiCompatibilitySnippet";
 
 const ALL_ECOSYSTEMS = [
   "Apple HomeKit",
@@ -172,6 +177,7 @@ function ProductSlot({
 }
 
 export default function CompatibilityChecker() {
+  const { user } = useAuth();
   const [products, setProducts] = useState<any[]>([null, null, null]);
   const [searches, setSearches] = useState(["", "", ""]);
 
@@ -244,6 +250,15 @@ export default function CompatibilityChecker() {
       ? Math.round((fullyCompatible / matrixData.length) * 100)
       : 0;
 
+  const aiContext = useMemo(() => {
+    const names = selectedProducts.map((p) => p.productName).join(", ");
+    const ecoSummary = matrixData
+      .slice(0, 12)
+      .map((r) => `${r.ecosystem}: ${r.levels.map((l) => l?.level ?? "—").join("/")}`)
+      .join("; ");
+    return `Products: ${names}. Matrix sample: ${ecoSummary}. Compatibility index: ${compatPct}%.`;
+  }, [selectedProducts, matrixData, compatPct]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <MetaTags
@@ -267,6 +282,18 @@ export default function CompatibilityChecker() {
         </section>
 
         <div className="container mx-auto px-4 py-12 space-y-10">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+            <Link to="/tools/hub-builder" className="text-primary hover:underline">
+              Multi-device hub builder
+            </Link>
+            <Link to="/tools/compatibility-leaderboard" className="text-primary hover:underline">
+              Compatibility leaderboard
+            </Link>
+            <Link to="/tools/find" className="text-primary hover:underline">
+              AI product finder
+            </Link>
+          </div>
+
           {/* Product Selection */}
           <div className="grid md:grid-cols-3 gap-6">
             {[0, 1, 2].map((i) => (
@@ -454,6 +481,16 @@ export default function CompatibilityChecker() {
               )}
             </>
           )}
+
+          <div className="grid lg:grid-cols-2 gap-6">
+            <AICompatibilityAssistant contextSummary={aiContext} />
+            <CompatibilitySimulationPanel
+              productA={products[0]}
+              productB={products[1]}
+              userId={user?.id}
+            />
+          </div>
+          <ApiCompatibilitySnippet />
         </div>
       </main>
 

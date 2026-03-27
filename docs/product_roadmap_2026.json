@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "platform": "thesynlab.com",
+    "analysisDate": "2026-03-27",
+    "analyst": "Senior Product & AI Specialist",
+    "version": "1.0.0",
+    "purpose": "Comprehensive gap analysis, competitive benchmarking, and feature improvement roadmap for Cursor AI implementation",
+    "convexSchemaVersion": "referenced",
+    "benchmarkedAgainst": ["rtings.com", "wirecutter.com", "g2.com", "pcmag.com", "smarthomeexplorer.com", "the-verge.com"],
+    "sourceChecklist": "CHECKLIST.md",
+    "implementationNote": "This file is the canonical roadmap spec. See CHECKLIST.md section 'Product roadmap 2026' for shipped vs pending items."
+  },
+  "platformOverview": {
+    "currentStrengths": [
+      "Trust score + Integration score dual-axis review model (unique differentiator)",
+      "Convex real-time backend with comprehensive schema coverage",
+      "Community governance via scoreWeightProposals (democratic scoring)",
+      "SYN token reward system incentivizing quality contributions",
+      "Lab-tested benchmarks with versioning (labBenchmarkTemplates)",
+      "Fellow program creating expert authority layer (synlabFellows)",
+      "Living guides with auto-review scheduling (livingGuides)",
+      "A/B testing infrastructure (abTestExperiments)",
+      "TCO calculator per product (productTcoScores)",
+      "ROI calculator per product (roiCalculations)",
+      "Ecosystem compatibility matrix (novaEcosystemCompatibility + apiCompatibilityMatrix)",
+      "Smart home config builder (userSmartHomeConfigs)",
+      "Workflow automation builder (userWorkflowConfigs)",
+      "ML prediction pipeline for scores (mlPredictionJobs)",
+      "GDPR-compliant PII architecture (novaUserPii)",
+      "Blockchain-verified reviews (productReviews.blockchainTxHash)",
+      "Locale-adjusted scores (scoreLocaleAdjustments)",
+      "Ergonomic assessment tool (userErgonomicAssessments)"
+    ],
+    "criticalGaps": [
+      "No real-time price tracking / price drop alerts beyond basic priceHistory",
+      "No deal aggregation or coupon discovery layer",
+      "No video review infrastructure (only videoUrl stored, not hosted)",
+      "No structured expert vs user opinion split in UI",
+      "No AI-powered natural language product finder / conversational discovery",
+      "No API public developer portal for widget embedding",
+      "No product changelog / version tracking over time",
+      "No brand/manufacturer response system on reviews",
+      "No social proof layer (import reviews from Amazon, Reddit, etc.)",
+      "No community 'setup showcase' voting beyond basic likes",
+      "No AR product visualization (arEnabled field exists but unused)",
+      "No heat map or usage analytics dashboard for users",
+      "No competitor-sourced data ingestion pipeline",
+      "No knowledge base / FAQ per product",
+      "Missing protocol-level compatibility checker (Matter, Zigbee, Z-Wave, Thread)"
+    ]
+  },
+  "implementedInThisRepo": {
+    "phase1": [
+      "Homepage: Live score feed (homepageInsights.liveScoreFeed), ecosystem health donut-style summary, trending topics from Convex, deal pulse from affiliate price deltas",
+      "Product page: Protocol compatibility badge matrix, lab freshness badge, score history (single-version message in ScoreTrendChart)",
+      "Compare: Weighted score customizer, ecosystem overlap panel (union/intersection)",
+      "Compatibility: AI assistant (Claude optional), heuristic simulation runner (integrationSimulations.runHeuristic), apiCompatibilityMatrix sample table, links to hub builder / leaderboard / finder",
+      "Hub builder (COMPAT-001 MVP): /tools/hub-builder — canvas + save to userSmartHomeConfigs",
+      "Leaderboard (COMPAT-005): /tools/compatibility-leaderboard",
+      "AI product finder (NEW-001 MVP): /tools/find — productFinder.searchProducts",
+      "Convex modules: homepageInsights, compatibilityLeaderboard, productFinder, apiCompatibility, hubBuilder"
+    ],
+    "stillOutstanding": [
+      "Full drag-drop graph canvas with pair-wise apiCompatibilityMatrix edges",
+      "Public REST API + developer portal (NEW-003)",
+      "Brand manufacturer portal (NEW-002)",
+      "Forum AI summarizer, methodology voting UI, dashboard SYN portfolio, etc.",
+      "Programmatic SEO protocol pages and pair pages",
+      "Technical debt crons from roadmap (stale scores, broken affiliate links)"
+    ]
+  },
+  "implementationPriority": {
+    "phase1_immediate": {
+      "timeframe": "0-4 weeks",
+      "items": [
+        "COMPAT-001: Multi-Device Hub Builder (flagship differentiator)",
+        "COMPAT-004: AI Compatibility Assistant",
+        "COMPAT-005: Compatibility Score Leaderboard",
+        "NEW-001: AI Product Finder at /tools/find",
+        "Add Score History Timeline to product pages",
+        "Add Protocol Compatibility Badge Matrix to product pages"
+      ]
+    },
+    "phase2_growth": {
+      "timeframe": "1-3 months",
+      "items": [
+        "COMPAT-002: Protocol Deep-Dive Cards",
+        "COMPAT-003: Compatibility Simulation Runner",
+        "COMPAT-006: Community Compatibility Reports",
+        "NEW-004: Video Review Integration",
+        "Weighted Score Customizer on comparison pages",
+        "Multi-product comparison (3-5 products)"
+      ]
+    },
+    "phase3_scale": {
+      "timeframe": "3-6 months",
+      "items": [
+        "NEW-002: Brand/Manufacturer Portal",
+        "NEW-003: Public API + Developer Portal",
+        "NEW-005: Smart Home Energy Monitor",
+        "NEW-006: Research Report Hub with interactive charts",
+        "NEW-007: Automation Template Library",
+        "AR Product Preview (arEnabled products)",
+        "Programmatic SEO: Protocol pages + compatibility pair pages"
+      ]
+    }
+  },
+  "cursorImplementationNotes": {
+    "convexPatterns": {
+      "realtimeSubscriptions": "Use useQuery() for all live data (scores, forum, compatibility). Use useMutation() for user actions (ratings, configs, votes)",
+      "indexUsage": "Always use defined indexes — e.g. query novaEcosystemCompatibility with .withIndex('by_product', q => q.eq('productId', id))",
+      "paginatedLists": "Use .paginate() for product grids, forum threads, review lists",
+      "scheduledActions": "Use Convex scheduler for: price checks (nightly), stale score alerts (weekly), newsletter sends (campaign.scheduledFor)"
+    },
+    "componentLibrary": {
+      "recommendation": "Shadcn/ui for base components, recharts for data viz, dnd-kit for drag-drop canvas in hub builder, @google/model-viewer for AR",
+      "iconSet": "Use ecosystem brand icons (Alexa, HomeKit, Google Home, Matter, Zigbee, Z-Wave SVGs) from official brand kits"
+    },
+    "aiIntegration": {
+      "model": "claude-sonnet-4-20250514",
+      "endpoint": "POST https://api.anthropic.com/v1/messages",
+      "maxTokens": 1000,
+      "useCases": [
+        "AI Compatibility Assistant: system prompt includes product schema + user's config",
+        "AI Product Finder: tool_use with search_products + get_scores tools",
+        "Forum Thread Summarizer: simple user message with thread content",
+        "AI Comparison Narrative: structured output with chooseAIf + chooseBIf fields"
+      ],
+      "caching": "Cache AI responses in novaPosts or a new aiResponseCache table keyed by input hash to avoid redundant API calls"
+    },
+    "performanceTargets": {
+      "LCP": "< 2.5s — optimize above-fold product images",
+      "FID": "< 100ms — defer non-critical Convex subscriptions",
+      "CLS": "< 0.1 — reserve space for dynamically loaded score widgets",
+      "compatibilityToolLoad": "< 1s — preload ecosystem data on route entry"
+    }
+  }
+}

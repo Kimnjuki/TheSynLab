@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import { HomepageInsights } from "@/components/landing/HomepageInsights";
 import AnimatedStats from "@/components/landing/AnimatedStats";
 import FeaturedReviews from "@/components/landing/FeaturedReviews";
 import TrendingTopics from "@/components/landing/TrendingTopics";
@@ -46,6 +47,7 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
+        <HomepageInsights />
         <AnimatedStats />
         <FeaturedReviews />
         <TrendingTopics />

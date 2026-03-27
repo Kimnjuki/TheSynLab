@@ -7,6 +7,9 @@ import { Link } from "react-router-dom";
 const tools = [
   { title: "Compare Engine", href: "/tools/compare", description: "Compare products side by side." },
   { title: "Compatibility Checker", href: "/tools/compatibility-checker", description: "Check ecosystem support." },
+  { title: "Hub builder", href: "/tools/hub-builder", description: "Build a multi-device canvas and save to your profile." },
+  { title: "Compatibility leaderboard", href: "/tools/compatibility-leaderboard", description: "Rankings by ecosystem breadth and verification." },
+  { title: "AI product finder", href: "/tools/find", description: "Natural language search over the catalog with scores." },
   { title: "Budget Calculator", href: "/tools/budget-calculator", description: "Estimate spend and trade-offs." },
   { title: "ROI Calculator", href: "/tools/roi-calculator", description: "Project ROI and payback period." },
 ];

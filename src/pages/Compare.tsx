@@ -12,6 +12,9 @@ import { AICompareAssistant } from "@/components/compare/AICompareAssistant";
 import { PriceHistoryChart } from "@/components/compare/PriceHistoryChart";
 import { useCompareUrl } from "@/hooks/useCompareUrl";
 import { useProducts } from "@/hooks/convex/useProducts";
+import { WeightedScoreCustomizer } from "@/components/compare/WeightedScoreCustomizer";
+import { EcosystemOverlapPanel } from "@/components/compare/EcosystemOverlapPanel";
+import type { Id } from "../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -200,6 +203,14 @@ export default function Compare() {
         {/* Comparison View + AI Assistant */}
         {slugs.length > 0 && selectedProductsData && selectedProductsData.length > 0 && (
           <div className="container mx-auto px-4 py-6">
+            <WeightedScoreCustomizer products={selectedProductsData} />
+            <EcosystemOverlapPanel
+              productIds={
+                selectedProductsData
+                  .map((p: { _id?: Id<"novaProducts"> }) => p._id)
+                  .filter(Boolean) as Id<"novaProducts">[]
+              }
+            />
             <div className={`grid gap-6 ${showAI ? "lg:grid-cols-3" : "grid-cols-1"}`}>
               <div className={showAI ? "lg:col-span-2" : ""}>
                 <Tabs defaultValue="overview">

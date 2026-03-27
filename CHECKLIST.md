@@ -55,3 +55,29 @@ Source: [docs/thesynlab_audit.json](./docs/thesynlab_audit.json). Full audit JSO
 ---
 
 **How to use:** Uncheck items when you start; check when done. Run Cursor with the audit JSON and this checklist for implementation prompts.
+
+---
+
+## Product roadmap 2026
+
+Source: [docs/product_roadmap_2026.json](./docs/product_roadmap_2026.json) — full competitive roadmap, meta, phases, and outstanding gaps.
+
+### Phase 1 — shipped (this repo)
+
+- [x] **Homepage live insights** — `homepageInsights` (live score feed, ecosystem health %, trending topics, deal pulse)
+- [x] **Product protocol matrix + freshness** — `ProtocolCompatibilityMatrix`, `LabFreshnessBadge`
+- [x] **Score history UX** — single-version explanatory copy in `ScoreTrendChart`
+- [x] **Compare weighted scores + ecosystem overlap** — `WeightedScoreCustomizer`, `EcosystemOverlapPanel`
+- [x] **COMPAT-001 MVP** — `/tools/hub-builder` + `hubBuilder.saveConfig` → `userSmartHomeConfigs`
+- [x] **COMPAT-004** — `AICompatibilityAssistant` on compatibility tool (Claude optional)
+- [x] **COMPAT-005** — `/tools/compatibility-leaderboard` + `compatibilityLeaderboard.topByCompatibilityBreadth`
+- [x] **COMPAT-003 heuristic** — `integrationSimulations.runHeuristic`
+- [x] **COMPAT-007 sample** — `apiCompatibility.listMatrix` + `ApiCompatibilitySnippet`
+- [x] **NEW-001 MVP** — `/tools/find` + `productFinder.searchProducts`
+
+### Still to build (see JSON)
+
+- [ ] Graph drag-drop hub builder with pair-wise compatibility edges
+- [ ] NEW-002 Brand portal, NEW-003 Public API + developer portal
+- [ ] Forum summarizer, methodology voting UI, SYN dashboard, energy monitor, research hub, etc.
+- [ ] Programmatic SEO pages and technical-debt crons from JSON

@@ -27,6 +27,8 @@ import { LabBenchmarkResults } from "@/components/products/LabBenchmarkResults";
 import { ScoreBreakdownCard } from "@/components/scores/ScoreBreakdownCard";
 import { CommunityScoreWidget } from "@/components/community/CommunityScoreWidget";
 import { ProductSchema } from "@/components/seo/ProductSchema";
+import { ProtocolCompatibilityMatrix } from "@/components/products/ProtocolCompatibilityMatrix";
+import { LabFreshnessBadge } from "@/components/products/LabFreshnessBadge";
 
 export default function ProductReview() {
   const { slug } = useParams();
@@ -185,6 +187,9 @@ export default function ProductReview() {
                     productId={product._id}
                     baseTrustScore={trustScore?.totalScore}
                     baseIntegrationScore={integrationScore?.totalScore}
+                  />
+                  <LabFreshnessBadge
+                    testedDate={trustScore?.testedDate ?? integrationScore?.testedDate}
                   />
                 </div>
 
@@ -355,7 +360,10 @@ export default function ProductReview() {
                 <CardHeader>
                   <CardTitle>Ecosystem Compatibility</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-8">
+                  {ecosystems.length > 0 && (
+                    <ProtocolCompatibilityMatrix ecosystems={ecosystems as any} />
+                  )}
                   {ecosystems.length === 0 ? (
                     <p className="text-muted-foreground">No ecosystem compatibility data available</p>
                   ) : (
