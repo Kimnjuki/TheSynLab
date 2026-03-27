@@ -81,3 +81,9 @@ Source: [docs/product_roadmap_2026.json](./docs/product_roadmap_2026.json) — f
 - [ ] NEW-002 Brand portal, NEW-003 Public API + developer portal
 - [ ] Forum summarizer, methodology voting UI, SYN dashboard, energy monitor, research hub, etc.
 - [ ] Programmatic SEO pages and technical-debt crons from JSON
+
+### Production / Coolify troubleshooting
+
+- [x] **HomepageInsights isolated** — Lazy-loaded + `ErrorBoundary` so Convex/widget failures do not white-screen the whole SPA (see `Index.tsx`).
+- **Coolify “healthy” but blank in Cursor’s browser**: If the console shows `chrome-error://chromewebdata/` and “Unsafe attempt to load URL …”, the **first** load failed (TLS/DNS/network or embedded-browser limits). Fix proxy/SSL/DNS in Coolify; test in a normal Chrome window. The second message is a **follow-on** browser warning, not the root cause.
+- **Convex**: Build must bake `VITE_CONVEX_URL` (Dockerfile `ARG`/`ENV` before `npm run build`). Runtime container env does not change the Vite bundle.

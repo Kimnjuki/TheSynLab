@@ -6,6 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { Activity, Leaf, Percent, TrendingUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
+function safeDistance(ts: number) {
+  if (!Number.isFinite(ts)) return "—";
+  try {
+    return formatDistanceToNow(ts, { addSuffix: true });
+  } catch {
+    return "—";
+  }
+}
+
 export function HomepageInsights() {
   const feed = useQuery(api.homepageInsights.liveScoreFeed, { hoursBack: 48 }) ?? [];
   const health = useQuery(api.homepageInsights.ecosystemHealthSummary);
@@ -48,7 +57,7 @@ export function HomepageInsights() {
                           {row.kind === "trust" ? "Trust" : "Integration"} {row.score.toFixed(1)}
                         </Badge>
                         <span className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(row.testedDate, { addSuffix: true })}
+                          {safeDistance(row.testedDate)}
                         </span>
                       </div>
                     </li>
@@ -64,7 +73,7 @@ export function HomepageInsights() {
               <CardTitle className="text-lg">Ecosystem health</CardTitle>
             </CardHeader>
             <CardContent>
-              {health ? (
+              {health?.pct ? (
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div className="rounded-lg bg-emerald-500/10 p-3">
                     <div className="text-2xl font-bold text-emerald-700">{health.pct.native}%</div>

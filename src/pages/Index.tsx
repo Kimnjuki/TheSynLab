@@ -1,7 +1,14 @@
 import Header from "@/components/Header";
+import { lazy, Suspense } from "react";
 import Hero from "@/components/Hero";
-import { HomepageInsights } from "@/components/landing/HomepageInsights";
 import AnimatedStats from "@/components/landing/AnimatedStats";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+
+const HomepageInsights = lazy(() =>
+  import("@/components/landing/HomepageInsights").then((m) => ({
+    default: m.HomepageInsights,
+  }))
+);
 import FeaturedReviews from "@/components/landing/FeaturedReviews";
 import TrendingTopics from "@/components/landing/TrendingTopics";
 import Hubs from "@/components/Hubs";
@@ -47,7 +54,11 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
-        <HomepageInsights />
+        <ErrorBoundary fallback={null}>
+          <Suspense fallback={null}>
+            <HomepageInsights />
+          </Suspense>
+        </ErrorBoundary>
         <AnimatedStats />
         <FeaturedReviews />
         <TrendingTopics />
