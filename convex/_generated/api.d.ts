@@ -9,19 +9,24 @@
  */
 
 import type * as adCompliance from "../adCompliance.js";
+import type * as adSlots from "../adSlots.js";
 import type * as affiliatePrices from "../affiliatePrices.js";
+import type * as aiRiskProfiles from "../aiRiskProfiles.js";
+import type * as aiStackSessions from "../aiStackSessions.js";
 import type * as apiCompatibility from "../apiCompatibility.js";
 import type * as apiKeys from "../apiKeys.js";
 import type * as authorityArticlesPayload from "../authorityArticlesPayload.js";
 import type * as automations from "../automations.js";
 import type * as bestFor from "../bestFor.js";
 import type * as blockchain_publishReview from "../blockchain/publishReview.js";
+import type * as cmpConsent from "../cmpConsent.js";
 import type * as comments from "../comments.js";
 import type * as community from "../community.js";
 import type * as communityScoreRatings from "../communityScoreRatings.js";
 import type * as community_leaderboard from "../community/leaderboard.js";
 import type * as comparisons from "../comparisons.js";
 import type * as compatibilityLeaderboard from "../compatibilityLeaderboard.js";
+import type * as contentQualityAudits from "../contentQualityAudits.js";
 import type * as cronHandlers from "../cronHandlers.js";
 import type * as crons from "../crons.js";
 import type * as forum from "../forum.js";
@@ -81,19 +86,24 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   adCompliance: typeof adCompliance;
+  adSlots: typeof adSlots;
   affiliatePrices: typeof affiliatePrices;
+  aiRiskProfiles: typeof aiRiskProfiles;
+  aiStackSessions: typeof aiStackSessions;
   apiCompatibility: typeof apiCompatibility;
   apiKeys: typeof apiKeys;
   authorityArticlesPayload: typeof authorityArticlesPayload;
   automations: typeof automations;
   bestFor: typeof bestFor;
   "blockchain/publishReview": typeof blockchain_publishReview;
+  cmpConsent: typeof cmpConsent;
   comments: typeof comments;
   community: typeof community;
   communityScoreRatings: typeof communityScoreRatings;
   "community/leaderboard": typeof community_leaderboard;
   comparisons: typeof comparisons;
   compatibilityLeaderboard: typeof compatibilityLeaderboard;
+  contentQualityAudits: typeof contentQualityAudits;
   cronHandlers: typeof cronHandlers;
   crons: typeof crons;
   forum: typeof forum;

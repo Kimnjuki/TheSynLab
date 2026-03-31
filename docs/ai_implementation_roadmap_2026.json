@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "project": "TheSynLab – AI-Powered Competitive Advantage & Ad Readiness Implementation Guide",
+    "version": "1.0.0",
+    "generated": "2026-03-31",
+    "author": "Expert Product & Brand Strategy Analysis",
+    "description": "Canonical implementation roadmap used by Cursor checklist execution.",
+    "implementation_phases": 3,
+    "estimated_total_duration_months": 18
+  },
+  "status": {
+    "implemented_in_this_commit": [
+      "Additive Convex schema rollout for AI, CMP, ad slots, membership, and quality audits",
+      "AI stack sessions backend: create/get/update + generate action with Anthropic and safe fallback",
+      "AI risk profile backend: compute/store current profile",
+      "CMP backend mutations/queries for consent records",
+      "Ad slot config/impression logging backend",
+      "Content quality audit backend with task auto-creation for low-scoring posts"
+    ],
+    "next_execution_order": [
+      "Phase 1 UI layer: cookie banner wiring, ad slot provider, admin quality dashboard",
+      "Phase 2 UI: stack builder intake/result/refinement, risk cards, what-if panel",
+      "Phase 3 monetization and premium gating surfaces"
+    ]
+  },
+  "notes": {
+    "anthropic_model": "claude-sonnet-4-20250514",
+    "backend_rule": "External AI calls are implemented as Convex actions.",
+    "rate_limit_rule": "Use novaRateLimits for AI feature usage caps before enabling production traffic."
+  }
+}

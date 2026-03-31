@@ -177,7 +177,6 @@ function ProductSlot({
 }
 
 export default function CompatibilityChecker() {
-  const { user } = useAuth();
   const [products, setProducts] = useState<any[]>([null, null, null]);
   const [searches, setSearches] = useState(["", "", ""]);
 
@@ -282,6 +281,7 @@ export default function CompatibilityChecker() {
         </section>
 
         <div className="container mx-auto px-4 py-12 space-y-10">
+          {/* Product Selection */}
           <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
             <Link to="/tools/hub-builder" className="text-primary hover:underline">
               Multi-device hub builder
@@ -294,7 +294,6 @@ export default function CompatibilityChecker() {
             </Link>
           </div>
 
-          {/* Product Selection */}
           <div className="grid md:grid-cols-3 gap-6">
             {[0, 1, 2].map((i) => (
               <ProductSlot
@@ -481,6 +480,7 @@ export default function CompatibilityChecker() {
               )}
             </>
           )}
+        </div>
 
           <div className="grid lg:grid-cols-2 gap-6">
             <AICompatibilityAssistant contextSummary={aiContext} />
@@ -491,7 +491,6 @@ export default function CompatibilityChecker() {
             />
           </div>
           <ApiCompatibilitySnippet />
-        </div>
       </main>
 
       <Footer />

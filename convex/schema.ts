@@ -166,6 +166,13 @@ export default defineSchema({
     verdictSummary: v.optional(v.string()),
     primaryKeywordTarget: v.optional(v.string()),
     seoScore: v.optional(v.number()),
+    aiRiskSummary: v.optional(v.string()),
+    aiRecommendedFor: v.optional(v.array(v.string())),
+    aiNotRecommendedFor: v.optional(v.array(v.string())),
+    compatibilityNodeId: v.optional(v.string()),
+    membershipGated: v.optional(v.boolean()),
+    labCertified: v.optional(v.boolean()),
+    labCertifiedAt: v.optional(v.float64()),
   }).index("by_slug", ["productSlug"])
     .index("by_hub", ["hub"])
     .index("by_category", ["category"])
@@ -275,6 +282,11 @@ export default defineSchema({
     publishedAt: v.optional(v.number()),
     scheduledFor: v.optional(v.number()),
     lastModifiedBy: v.optional(v.string()),
+    adReadinessScore: v.optional(v.float64()),
+    hasAffiliateDisclosure: v.optional(v.boolean()),
+    aiGeneratedDraft: v.optional(v.boolean()),
+    aiDraftReviewedBy: v.optional(v.string()),
+    copilotSessionCount: v.optional(v.float64()),
   }).index("by_slug", ["postSlug"])
     .index("by_author", ["authorId"])
     .index("by_status", ["postStatus"])
@@ -331,6 +343,10 @@ export default defineSchema({
     twoFactorEnabled: v.boolean(),
     isFellow: v.optional(v.boolean()),
     fellowSlug: v.optional(v.string()),
+    membershipTier: v.optional(v.string()),
+    aiStackSessionCount: v.optional(v.float64()),
+    copilotSessionCount: v.optional(v.float64()),
+    preferredSegment: v.optional(v.string()),
   }).index("by_clerk", ["clerkId"])
     .index("by_username", ["username"])
     .index("by_email", ["email"]),
@@ -912,6 +928,10 @@ export default defineSchema({
     recyclabilityScore: v.optional(v.number()),
     calculatedAt: v.number(),
     methodology: v.optional(v.string()),
+    switchingCostEstimate: v.optional(v.float64()),
+    migrationComplexityScore: v.optional(v.float64()),
+    dataExportSupported: v.optional(v.boolean()),
+    vendorLockInScore: v.optional(v.float64()),
     isCurrent: v.boolean(),
   }).index("by_product", ["productId"])
     .index("by_current", ["productId", "isCurrent"]),
@@ -1135,10 +1155,283 @@ export default defineSchema({
     utmSource: v.optional(v.string()),
     utmMedium: v.optional(v.string()),
     utmCampaign: v.optional(v.string()),
+    aiAssisted: v.optional(v.boolean()),
+    stackSessionId: v.optional(v.string()),
+    decisionStudioSessionId: v.optional(v.string()),
     usedAt: v.float64(),
   }).index("by_tool", ["toolType"])
     .index("by_user", ["userId"])
     .index("by_date", ["usedAt"]),
+
+  // ============ AI ADVANTAGE TABLES (2026-03-31) ============
+  aiStackSessions: defineTable({
+    sessionId: v.string(),
+    userId: v.optional(v.string()),
+    status: v.string(),
+    userSegment: v.optional(v.string()),
+    intakeAnswers: v.optional(v.any()),
+    generatedStack: v.optional(v.any()),
+    refinementHistory: v.optional(v.array(v.any())),
+    aiModelVersion: v.optional(v.string()),
+    conversionEvent: v.optional(v.string()),
+    startedAt: v.float64(),
+    completedAt: v.optional(v.float64()),
+  }).index("by_user", ["userId"])
+    .index("by_status", ["status"])
+    .index("by_segment", ["userSegment"]),
+
+  aiRiskProfiles: defineTable({
+    productId: v.id("novaProducts"),
+    isCurrent: v.boolean(),
+    privacyRiskScore: v.float64(),
+    vendorLockInRisk: v.float64(),
+    failureImpactScore: v.float64(),
+    dataPortabilityScore: v.float64(),
+    regulatoryComplianceScore: v.float64(),
+    aiExplanation: v.string(),
+    riskFactors: v.optional(v.array(v.any())),
+    mitigationSuggestions: v.optional(v.array(v.string())),
+    modelVersion: v.optional(v.string()),
+    computedAt: v.float64(),
+    basedOnTrustScoreVersion: v.optional(v.float64()),
+    basedOnIntegrationScoreVersion: v.optional(v.float64()),
+  }).index("by_product", ["productId"])
+    .index("by_current", ["productId", "isCurrent"]),
+
+  aiWhatIfSimulations: defineTable({
+    userId: v.optional(v.string()),
+    sessionId: v.optional(v.string()),
+    originalStackProductIds: v.array(v.id("novaProducts")),
+    swapAction: v.any(),
+    resultStack: v.optional(v.any()),
+    deltaRisk: v.optional(v.float64()),
+    deltaMonthlyCost: v.optional(v.float64()),
+    deltaIntegrationComplexity: v.optional(v.float64()),
+    aiTradeoffExplanation: v.optional(v.string()),
+    simulatedAt: v.float64(),
+  }).index("by_user", ["userId"])
+    .index("by_session", ["sessionId"]),
+
+  aiReviewCopilotSessions: defineTable({
+    productId: v.id("novaProducts"),
+    userId: v.optional(v.string()),
+    useCaseInput: v.string(),
+    generatedHighlights: v.optional(v.string()),
+    generatedChecklist: v.optional(v.array(v.string())),
+    generatedOnboardingPlan: v.optional(v.string()),
+    generatedSopDraft: v.optional(v.string()),
+    downloadedFormats: v.optional(v.array(v.string())),
+    emailCaptured: v.boolean(),
+    convertedToSignup: v.boolean(),
+    modelVersion: v.optional(v.string()),
+    createdAt: v.float64(),
+  }).index("by_product", ["productId"])
+    .index("by_user", ["userId"])
+    .index("by_date", ["createdAt"]),
+
+  aiCompatibilityNodes: defineTable({
+    productId: v.id("novaProducts"),
+    supportsWebhooks: v.boolean(),
+    supportsOAuth: v.boolean(),
+    supportsRestApi: v.boolean(),
+    supportsGraphQL: v.boolean(),
+    nativeIntegrations: v.optional(v.array(v.string())),
+    zapierSupport: v.optional(v.boolean()),
+    makeSupport: v.optional(v.boolean()),
+    n8nSupport: v.optional(v.boolean()),
+    apiDocsUrl: v.optional(v.string()),
+    rateLimitTier: v.optional(v.string()),
+    lastAgentVerifiedAt: v.optional(v.float64()),
+    agentVerificationStatus: v.string(),
+    agentConfidenceScore: v.optional(v.float64()),
+    rawApiCapabilities: v.optional(v.any()),
+    updatedAt: v.float64(),
+  }).index("by_product", ["productId"])
+    .index("by_verification", ["agentVerificationStatus"]),
+
+  aiCompatibilityEdges: defineTable({
+    productAId: v.id("novaProducts"),
+    productBId: v.id("novaProducts"),
+    isFeasible: v.boolean(),
+    connectionMethod: v.string(),
+    glueToolsRequired: v.optional(v.array(v.string())),
+    setupComplexityScore: v.float64(),
+    estimatedSetupHours: v.optional(v.float64()),
+    aiExplanation: v.optional(v.string()),
+    verifiedAt: v.float64(),
+    agentVerificationStatus: v.string(),
+    confidenceScore: v.optional(v.float64()),
+    exampleUseCases: v.optional(v.array(v.string())),
+  }).index("by_product_a", ["productAId"])
+    .index("by_product_b", ["productBId"])
+    .index("by_pair", ["productAId", "productBId"]),
+
+  aiCommunityInsights: defineTable({
+    insightType: v.string(),
+    hubSlug: v.optional(v.string()),
+    relatedProductIds: v.optional(v.array(v.id("novaProducts"))),
+    insightTitle: v.string(),
+    insightBody: v.string(),
+    evidenceCount: v.float64(),
+    confidenceScore: v.float64(),
+    isPublished: v.boolean(),
+    displayOnProductIds: v.optional(v.array(v.id("novaProducts"))),
+    displayOnHubSlugs: v.optional(v.array(v.string())),
+    generatedAt: v.float64(),
+    expiresAt: v.optional(v.float64()),
+    modelVersion: v.optional(v.string()),
+  }).index("by_hub", ["hubSlug"])
+    .index("by_type", ["insightType"])
+    .index("by_published", ["isPublished"]),
+
+  aiEditorialDrafts: defineTable({
+    productId: v.id("novaProducts"),
+    draftType: v.string(),
+    generatedContent: v.string(),
+    structuredProsCons: v.optional(v.any()),
+    biasFlags: v.optional(v.array(v.any())),
+    missingDisclosureFlags: v.optional(v.array(v.string())),
+    duplicateContentScore: v.optional(v.float64()),
+    readabilityScore: v.optional(v.float64()),
+    editorStatus: v.string(),
+    editorId: v.optional(v.string()),
+    editorNotes: v.optional(v.string()),
+    publishedPostId: v.optional(v.id("novaPosts")),
+    modelVersion: v.optional(v.string()),
+    generatedAt: v.float64(),
+    reviewedAt: v.optional(v.float64()),
+  }).index("by_product", ["productId"])
+    .index("by_status", ["editorStatus"])
+    .index("by_date", ["generatedAt"]),
+
+  aiPlaybooks: defineTable({
+    title: v.string(),
+    slug: v.string(),
+    stackProductIds: v.array(v.id("novaProducts")),
+    targetSegment: v.string(),
+    playbookType: v.string(),
+    sections: v.array(v.any()),
+    authorType: v.string(),
+    authorId: v.optional(v.string()),
+    accessLevel: v.string(),
+    downloadCount: v.float64(),
+    rating: v.optional(v.float64()),
+    isPublished: v.boolean(),
+    publishedAt: v.optional(v.float64()),
+    lastUpdatedAt: v.float64(),
+  }).index("by_slug", ["slug"])
+    .index("by_segment", ["targetSegment"])
+    .index("by_access", ["accessLevel"])
+    .index("by_published", ["isPublished"]),
+
+  aiConsultationRequests: defineTable({
+    userId: v.string(),
+    requestType: v.string(),
+    stackSessionId: v.optional(v.string()),
+    briefDescription: v.string(),
+    budgetRange: v.optional(v.string()),
+    teamSize: v.optional(v.float64()),
+    aiDraftStatus: v.string(),
+    aiDraftContent: v.optional(v.any()),
+    assignedExpertId: v.optional(v.string()),
+    expertNotes: v.optional(v.string()),
+    deliverableUrl: v.optional(v.string()),
+    paymentStatus: v.string(),
+    amountUsd: v.optional(v.float64()),
+    createdAt: v.float64(),
+    deliveredAt: v.optional(v.float64()),
+  }).index("by_user", ["userId"])
+    .index("by_status", ["aiDraftStatus"])
+    .index("by_payment", ["paymentStatus"]),
+
+  membershipTiers: defineTable({
+    tierName: v.string(),
+    monthlyPriceUsd: v.float64(),
+    annualPriceUsd: v.optional(v.float64()),
+    features: v.any(),
+    isActive: v.boolean(),
+    stripeProductId: v.optional(v.string()),
+    displayOrder: v.float64(),
+  }).index("by_tier", ["tierName"])
+    .index("by_active", ["isActive"]),
+
+  userMemberships: defineTable({
+    userId: v.id("novaUsers"),
+    tierId: v.id("membershipTiers"),
+    tierName: v.string(),
+    status: v.string(),
+    stripeSubscriptionId: v.optional(v.string()),
+    currentPeriodStart: v.float64(),
+    currentPeriodEnd: v.float64(),
+    cancelledAt: v.optional(v.float64()),
+    usageThisPeriod: v.optional(v.any()),
+  }).index("by_user", ["userId"])
+    .index("by_status", ["status"]),
+
+  cmpConsentRecords: defineTable({
+    userId: v.optional(v.id("novaUsers")),
+    sessionId: v.string(),
+    consentVersion: v.string(),
+    consentTimestamp: v.float64(),
+    ipCountry: v.optional(v.string()),
+    necessaryCookies: v.boolean(),
+    analyticsCookies: v.boolean(),
+    advertisingCookies: v.boolean(),
+    functionalCookies: v.boolean(),
+    consentMethod: v.string(),
+    userAgent: v.optional(v.string()),
+    updatedAt: v.optional(v.float64()),
+  }).index("by_user", ["userId"])
+    .index("by_session", ["sessionId"])
+    .index("by_timestamp", ["consentTimestamp"]),
+
+  adSlotConfigs: defineTable({
+    slotName: v.string(),
+    pageTemplate: v.string(),
+    iabFormat: v.string(),
+    position: v.string(),
+    isActive: v.boolean(),
+    adNetworkTag: v.optional(v.string()),
+    isAffiliateSlot: v.boolean(),
+    minContentLength: v.optional(v.float64()),
+    notes: v.optional(v.string()),
+  }).index("by_template", ["pageTemplate"])
+    .index("by_active", ["isActive"]),
+
+  contentQualityAudits: defineTable({
+    postId: v.id("novaPosts"),
+    auditedAt: v.float64(),
+    adSenseReadinessScore: v.float64(),
+    hasNamedAuthor: v.boolean(),
+    hasPublishDate: v.boolean(),
+    hasAffiliateDisclosure: v.boolean(),
+    hasAdDisclosure: v.boolean(),
+    wordCount: v.float64(),
+    uniquenessScore: v.optional(v.float64()),
+    biasScore: v.optional(v.float64()),
+    structureScore: v.float64(),
+    flags: v.optional(v.array(v.any())),
+    passesAdPolicyCheck: v.boolean(),
+    recommendations: v.optional(v.array(v.string())),
+  }).index("by_post", ["postId"])
+    .index("by_date", ["auditedAt"])
+    .index("by_pass", ["passesAdPolicyCheck"]),
+
+  decisionStudioSessions: defineTable({
+    userId: v.optional(v.string()),
+    sessionId: v.string(),
+    toolsUsed: v.array(v.string()),
+    productIds: v.array(v.id("novaProducts")),
+    switchingCostEstimate: v.optional(v.float64()),
+    totalTco: v.optional(v.float64()),
+    compatibilityResult: v.optional(v.any()),
+    emailCaptured: v.boolean(),
+    convertedToSignup: v.boolean(),
+    referrer: v.optional(v.string()),
+    usedAt: v.float64(),
+  }).index("by_user", ["userId"])
+    .index("by_date", ["usedAt"])
+    .index("by_session", ["sessionId"]),
 
   embeddableWidgets: defineTable({
     widgetType: v.string(),

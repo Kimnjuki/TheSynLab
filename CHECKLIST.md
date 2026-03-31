@@ -82,6 +82,28 @@ Source: [docs/product_roadmap_2026.json](./docs/product_roadmap_2026.json) — f
 - [ ] Forum summarizer, methodology voting UI, SYN dashboard, energy monitor, research hub, etc.
 - [ ] Programmatic SEO pages and technical-debt crons from JSON
 
+## AI competitive implementation (2026-03-31)
+
+Source: [docs/ai_implementation_roadmap_2026.json](./docs/ai_implementation_roadmap_2026.json)
+
+### Completed in this pass
+
+- [x] Additive schema upgrade for AI sessions, risk profiles, what-if simulations, copilot sessions, compatibility graph, community insights, editorial drafts, playbooks, consultations, memberships, CMP, ad slots, quality audits, decision studio sessions
+- [x] Existing-table additive upgrades for `novaProducts`, `novaPosts`, `novaUsers`, `toolUsageSessions`, `productTcoScores`
+- [x] Convex backend for AI stack sessions (`convex/aiStackSessions.ts`)
+- [x] Convex backend for AI risk profiles (`convex/aiRiskProfiles.ts`)
+- [x] Convex backend for CMP consent (`convex/cmpConsent.ts`)
+- [x] Convex backend for ad slot config and impression logs (`convex/adSlots.ts`)
+- [x] Convex backend for ad readiness audit + low-score task creation (`convex/contentQualityAudits.ts`)
+
+### Remaining (next passes)
+
+- [ ] Wire cookie banner + consent-aware ad script loading in UI
+- [ ] Build stack builder and refinement UX pages/components
+- [ ] Build product risk gauge UI components
+- [ ] Build integration planner and decision studio full UI flows
+- [ ] Build Stripe membership webhooks and feature-gating hooks
+
 ### Production / Coolify troubleshooting
 
 - [x] **HomepageInsights isolated** — Lazy-loaded + `ErrorBoundary` so Convex/widget failures do not white-screen the whole SPA (see `Index.tsx`).
