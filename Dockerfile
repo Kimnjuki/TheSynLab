@@ -18,44 +18,51 @@ ARG VITE_CONVEX_URL
 ARG CONVEX_DEPLOY_KEY
 ARG CONVEX_DEPLOYMENT_KEYS
 ARG RUN_ARTICLE_SEED=true
+ARG CONVEX_DEPLOY_STRICT=false
 
 ENV VITE_CONVEX_URL=$VITE_CONVEX_URL
 
 # Deploy Convex schema + functions, then seed article content, then build the Vite frontend.
 # Uses CONVEX_DEPLOY_KEY if set; otherwise falls back to CONVEX_DEPLOYMENT_KEYS (Coolify format).
-# Retries transient Convex concurrency conflict: "Schema was overwritten by another push."
+# Network failures are retried and non-fatal by default so Coolify can still ship the frontend image.
+# Set CONVEX_DEPLOY_STRICT=true to fail the image build when backend deploy/seed fails.
 RUN EFFECTIVE_KEY="${CONVEX_DEPLOY_KEY:-$CONVEX_DEPLOYMENT_KEYS}"; \
     if [ -n "$EFFECTIVE_KEY" ]; then \
         echo "Deploying Convex backend (schema + functions)..." && \
         attempt=1; \
-        max_attempts=5; \
+        max_attempts=6; \
+        deploy_ok=0; \
         while [ "$attempt" -le "$max_attempts" ]; do \
           echo "Convex deploy attempt ${attempt}/${max_attempts}"; \
-          output="$(CONVEX_DEPLOY_KEY="$EFFECTIVE_KEY" npx convex deploy --yes 2>&1)" && { echo "$output"; break; }; \
+          output="$(CONVEX_DEPLOY_KEY="$EFFECTIVE_KEY" npx convex deploy --yes 2>&1)" && { echo "$output"; deploy_ok=1; break; }; \
           echo "$output"; \
-          if echo "$output" | grep -q "Schema was overwritten by another push."; then \
+          if echo "$output" | grep -E -q "Schema was overwritten by another push\.|fetch failed|ETIMEDOUT|ECONNRESET|ENOTFOUND|EAI_AGAIN|network|upstream"; then \
             if [ "$attempt" -lt "$max_attempts" ]; then \
-              sleep_time=$((attempt * 3)); \
-              echo "Convex schema conflict detected. Retrying in ${sleep_time}s..."; \
+              sleep_time=$((attempt * 5)); \
+              echo "Convex deploy retryable error detected. Retrying in ${sleep_time}s..."; \
               sleep "$sleep_time"; \
               attempt=$((attempt + 1)); \
               continue; \
             fi; \
           fi; \
-          echo "Convex deploy failed with non-retryable error."; \
-          exit 1; \
+          break; \
         done; \
-        if [ "$attempt" -gt "$max_attempts" ]; then \
-          echo "Convex deploy failed after ${max_attempts} attempts."; \
-          exit 1; \
+        if [ "$deploy_ok" -ne 1 ]; then \
+          echo "Convex deploy did not complete successfully."; \
+          if [ "$CONVEX_DEPLOY_STRICT" = "true" ]; then \
+            echo "CONVEX_DEPLOY_STRICT=true so failing image build."; \
+            exit 1; \
+          fi; \
+          echo "Continuing build (CONVEX_DEPLOY_STRICT=false)."; \
         fi; \
-        if [ "$RUN_ARTICLE_SEED" = "true" ]; then \
+        if [ "$RUN_ARTICLE_SEED" = "true" ] && [ "$deploy_ok" -eq 1 ]; then \
           echo "Running article seed mutation..." && \
           seed_attempt=1; \
           seed_max_attempts=3; \
+          seed_ok=0; \
           while [ "$seed_attempt" -le "$seed_max_attempts" ]; do \
             echo "Article seed attempt ${seed_attempt}/${seed_max_attempts}"; \
-            seed_output="$(CONVEX_DEPLOY_KEY="$EFFECTIVE_KEY" npx convex run seedSmartHomeArticles:seedSmartHomeArticles 2>&1)" && { echo "$seed_output"; break; }; \
+            seed_output="$(CONVEX_DEPLOY_KEY="$EFFECTIVE_KEY" npx convex run seedSmartHomeArticles:seedSmartHomeArticles 2>&1)" && { echo "$seed_output"; seed_ok=1; break; }; \
             echo "$seed_output"; \
             if [ "$seed_attempt" -lt "$seed_max_attempts" ]; then \
               sleep_time=$((seed_attempt * 3)); \
@@ -64,11 +71,14 @@ RUN EFFECTIVE_KEY="${CONVEX_DEPLOY_KEY:-$CONVEX_DEPLOYMENT_KEYS}"; \
               seed_attempt=$((seed_attempt + 1)); \
               continue; \
             fi; \
-            echo "Article seed failed after ${seed_max_attempts} attempts."; \
-            exit 1; \
+            break; \
           done; \
+          if [ "$seed_ok" -ne 1 ] && [ "$CONVEX_DEPLOY_STRICT" = "true" ]; then \
+            echo "Article seed failed and CONVEX_DEPLOY_STRICT=true; failing image build."; \
+            exit 1; \
+          fi; \
         else \
-          echo "RUN_ARTICLE_SEED is false — skipping article seed mutation."; \
+          echo "Skipping article seed (RUN_ARTICLE_SEED=false or backend deploy unavailable)."; \
         fi; \
     else \
         echo "No Convex deploy key found — skipping backend deploy (local/dev mode)"; \
