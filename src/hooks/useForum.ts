@@ -64,7 +64,7 @@ export function useForumActions() {
   const { user } = useAuth();
   
   let createThread: any, createReply: any, toggleLike: any, markSolved: any,
-    markSolution: any, likeReply: any, incrementView: any, seedForum: any;
+    markSolution: any, likeReply: any, incrementView: any, seedForum: any, reportThread: any, reportReply: any;
 
   try {
     createThread = useMutation(api.forum.createThread);
@@ -75,6 +75,8 @@ export function useForumActions() {
     likeReply = useMutation(api.forum.likeReply);
     incrementView = useMutation(api.forum.incrementThreadView);
     seedForum = useMutation(api.forum.seedForum);
+    reportThread = useMutation(api.forumModeration.reportThread);
+    reportReply = useMutation(api.forumModeration.reportReply);
   } catch {
     const noop = async () => { throw new Error("Forum functions not deployed. Run `npx convex deploy`."); };
     createThread = noop;
@@ -85,6 +87,8 @@ export function useForumActions() {
     likeReply = noop;
     incrementView = noop;
     seedForum = noop;
+    reportThread = noop;
+    reportReply = noop;
   }
 
   return {
@@ -122,6 +126,10 @@ export function useForumActions() {
     likeReply: (replyId: any) =>
       likeReply({ replyId, userId: user?.id || "anonymous" }),
     incrementView: (threadId: any) => incrementView({ threadId }),
+    reportThread: (threadId: any, reason: string) =>
+      reportThread({ threadId, reason, reporterId: user?.id }),
+    reportReply: (replyId: any, reason: string) =>
+      reportReply({ replyId, reason, reporterId: user?.id }),
     seedForum,
   };
 }

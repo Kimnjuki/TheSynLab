@@ -7,7 +7,8 @@ import { HelmetProvider } from "react-helmet-async";
 import { ConvexClientProvider } from "./integrations/convex/ConvexClientProvider";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
-import CookieConsent from "./components/CookieConsent";
+import CookieBanner from "./components/CookieBanner";
+import { AdSlotProvider } from "./components/ads/AdSlotProvider";
 import Index from "./pages/Index";
 import Compare from "./pages/Compare";
 import CommunitySetups from "./pages/CommunitySetups";
@@ -54,6 +55,8 @@ import IntegrationRecipe from "./pages/IntegrationRecipe";
 import HubBuilderPage from "./pages/HubBuilderPage";
 import CompatibilityLeaderboardPage from "./pages/CompatibilityLeaderboardPage";
 import AIProductFinder from "./pages/AIProductFinder";
+import AdminContentQuality from "./pages/AdminContentQuality";
+import AdminModeration from "./pages/AdminModeration";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +70,7 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
+                <AdSlotProvider>
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
@@ -75,6 +79,8 @@ const App = () => (
                   <Route path="/admin" element={<Admin />} />
                   <Route path="/admin/products/new" element={<AdminProductForm />} />
                   <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
+                  <Route path="/admin/content-quality" element={<AdminContentQuality />} />
+                  <Route path="/admin/moderation" element={<AdminModeration />} />
                   <Route path="/tools/compare" element={<Compare />} />
                   <Route path="/compare/:slug" element={<CompareSlug />} />
                   <Route path="/tools" element={<ToolsHub />} />
@@ -124,7 +130,8 @@ const App = () => (
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-                <CookieConsent />
+                <CookieBanner />
+                </AdSlotProvider>
               </BrowserRouter>
             </TooltipProvider>
           </AuthProvider>

@@ -202,10 +202,19 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground">
               © {currentYear} TheSynLab. All rights reserved.
             </p>
-            <p className="text-xs text-muted-foreground max-w-lg text-center md:text-right">
-              We may earn a commission when you buy through links on our site.
-              Our recommendations are independent and based on thorough testing.
-            </p>
+            <div className="flex flex-col items-center md:items-end gap-2">
+              <button
+                type="button"
+                className="text-xs text-primary hover:underline"
+                onClick={() => window.dispatchEvent(new Event("open-cookie-settings"))}
+              >
+                Cookie Settings
+              </button>
+              <p className="text-xs text-muted-foreground max-w-lg text-center md:text-right">
+                We may earn a commission when you buy through links on our site.
+                Our recommendations are independent and based on thorough testing.
+              </p>
+            </div>
           </div>
         </div>
       </div>

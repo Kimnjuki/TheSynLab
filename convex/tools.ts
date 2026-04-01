@@ -36,7 +36,7 @@ export const captureEmailFromTool = mutation({
 export const generateEmbedCode = mutation({
   args: { widgetType: v.string(), productId: v.optional(v.id("novaProducts")) },
   handler: async (ctx, args) => {
-    const embedCode = `<iframe src="https://thesynlab.com/tools/embed/${args.widgetType}" width="360" height="260" loading="lazy"></iframe>`;
+    const embedCode = `<iframe src="https://www.thesynlab.com/tools/embed/${args.widgetType}" width="360" height="260" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
     const id = await ctx.db.insert("embeddableWidgets", {
       widgetType: args.widgetType,
       embedCode,

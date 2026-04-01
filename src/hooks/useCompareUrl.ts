@@ -47,8 +47,12 @@ export function useCompareUrl() {
   }, []);
 
   const generateEmbedCode = useCallback(() => {
-    const src = window.location.href + (window.location.search ? "&" : "?") + "embed=true";
-    return `<iframe src="${src}" width="800" height="600" frameborder="0" style="border:none;border-radius:12px;" loading="lazy"></iframe>`;
+    const envBase = import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined;
+    const origin = envBase?.replace(/\/$/, "") || window.location.origin;
+    const path = `${window.location.pathname}${window.location.search || ""}`;
+    const sep = path.includes("?") ? "&" : "?";
+    const src = `${origin}${path}${sep}embed=true`;
+    return `<iframe src="${src}" width="800" height="600" frameborder="0" style="border:none;border-radius:12px;" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
   }, []);
 
   return {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useConvex } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useAuth } from "@/contexts/AuthContext";
@@ -124,6 +124,23 @@ const Admin = () => {
 
         {/* Products Tab */}
         <TabsContent value="products" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Moderation and Quality</CardTitle>
+              <CardDescription>
+                Review user-reported forum content and ad-readiness audits.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-3">
+              <Button asChild variant="outline">
+                <Link to="/admin/moderation">Open Moderation Queue</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/admin/content-quality">Open Content Quality Audits</Link>
+              </Button>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

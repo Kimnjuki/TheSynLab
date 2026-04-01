@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { Bot, Share2, Twitter, Linkedin, Code2, Copy } from "lucide-react";
 import { toast } from "sonner";
+import { AdSlot } from "@/components/ads/AdSlot";
 
 export default function Compare() {
   const { slugs, setProducts, shareUrl, shareOnTwitter, shareOnLinkedIn, generateEmbedCode } =
@@ -199,6 +200,14 @@ export default function Compare() {
             )}
           </div>
         </section>
+        <div className="container mx-auto px-4">
+          <AdSlot
+            slotName="comparison_sidebar"
+            pageTemplate="comparison_page"
+            iabFormat="300x600"
+            position="sidebar_top"
+          />
+        </div>
 
         {/* Comparison View + AI Assistant */}
         {slugs.length > 0 && selectedProductsData && selectedProductsData.length > 0 && (

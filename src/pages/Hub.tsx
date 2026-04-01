@@ -17,6 +17,7 @@ import { ExternalLink } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { HubPillarHeader } from "@/components/seo/HubPillarHeader";
+import { AdSlot } from "@/components/ads/AdSlot";
 
 const HUB_LABELS: Record<string, string> = {
   ai_workflow: "AI & Workflow",
@@ -79,6 +80,12 @@ export default function Hub() {
           description={description}
           pillarCount={hubMeta?.pillarCount}
           spokeCount={hubMeta?.spokeCount}
+        />
+        <AdSlot
+          slotName="hub_hero_below"
+          pageTemplate="hub_page"
+          iabFormat="728x90"
+          position="hero_below"
         />
 
         {isLoading ? (

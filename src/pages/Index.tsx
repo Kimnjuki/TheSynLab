@@ -21,6 +21,7 @@ import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import { OnboardingTour, useOnboarding } from "@/components/dashboard/OnboardingTour";
 import { Helmet } from "react-helmet-async";
+import { StackArchitectChat } from "@/components/ai/StackArchitectChat";
 
 const Index = () => {
   const { showTour, closeTour } = useOnboarding();
@@ -54,12 +55,14 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
+        <section className="container py-8">
+          <StackArchitectChat />
+        </section>
         <ErrorBoundary fallback={null}>
           <Suspense fallback={null}>
             <HomepageInsights />
           </Suspense>
         </ErrorBoundary>
-        <AnimatedStats />
         <FeaturedReviews />
         <TrendingTopics />
         <Hubs />

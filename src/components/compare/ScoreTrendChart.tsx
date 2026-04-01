@@ -39,15 +39,6 @@ export function ScoreTrendChart({
     version: h.methodologyVersion,
   }));
 
-  if (history.length === 1) {
-    return (
-      <p className="text-sm text-muted-foreground py-4">
-        Only one score version on file ({data[0].date}):{" "}
-        <strong>{data[0].score.toFixed(1)}</strong>. History will appear after the next methodology run.
-      </p>
-    );
-  }
-
   return (
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={data}>

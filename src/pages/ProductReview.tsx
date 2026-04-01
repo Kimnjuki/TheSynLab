@@ -29,6 +29,9 @@ import { CommunityScoreWidget } from "@/components/community/CommunityScoreWidge
 import { ProductSchema } from "@/components/seo/ProductSchema";
 import { ProtocolCompatibilityMatrix } from "@/components/products/ProtocolCompatibilityMatrix";
 import { LabFreshnessBadge } from "@/components/products/LabFreshnessBadge";
+import { AdSlot } from "@/components/ads/AdSlot";
+import { ScoreExplainerPanel } from "@/components/ai/ScoreExplainerPanel";
+import { ReviewCopilotPanel } from "@/components/ai/ReviewCopilotPanel";
 
 export default function ProductReview() {
   const { slug } = useParams();
@@ -231,6 +234,14 @@ export default function ProductReview() {
             </div>
           </div>
         </section>
+        <div className="container mx-auto px-4">
+          <AdSlot
+            slotName="review_sidebar"
+            pageTemplate="review_page"
+            iabFormat="300x250"
+            position="sidebar_top"
+          />
+        </div>
 
         {/* Detailed Content */}
         <section className="container mx-auto px-4 py-12">
@@ -287,6 +298,7 @@ export default function ProductReview() {
               </Card>
 
               <ReviewForm productId={product._id} onSuccess={() => {}} />
+              <ReviewCopilotPanel productId={product._id as any} />
             </TabsContent>
 
             <TabsContent value="trust" className="space-y-6">
@@ -302,6 +314,7 @@ export default function ProductReview() {
                   ]}
                 />
               )}
+              <ScoreExplainerPanel productId={product._id as any} />
             </TabsContent>
 
             <TabsContent value="tco-roi" className="space-y-6">
