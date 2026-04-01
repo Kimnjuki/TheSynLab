@@ -106,10 +106,11 @@ export const trendingTopicsForHome = query({
   args: { limit: v.optional(v.number()) },
   handler: async (ctx, args) => {
     const lim = args.limit ?? 8;
-    const topics = await ctx.db
-      .query("trendingTopics")
-      .withIndex("by_status", (q) => q.eq("status", "active"))
-      .collect();
+    // Avoid hard dependency on by_status index so this query keeps working
+    // even while local/dev schema is in transition.
+    const topics = (await ctx.db.query("trendingTopics").collect()).filter(
+      (topic) => topic.status === "active"
+    );
     const sorted = topics
       .sort((a, b) => b.opportunityScore - a.opportunityScore)
       .slice(0, lim);
