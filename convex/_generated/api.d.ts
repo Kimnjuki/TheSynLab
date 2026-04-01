@@ -89,6 +89,7 @@ import type * as security from "../security.js";
 import type * as seed from "../seed.js";
 import type * as seedCompetitiveProducts from "../seedCompetitiveProducts.js";
 import type * as seedSmartHomeArticles from "../seedSmartHomeArticles.js";
+import type * as seoOpportunities from "../seoOpportunities.js";
 import type * as seoSchema from "../seoSchema.js";
 import type * as simulator_getCompatibility from "../simulator/getCompatibility.js";
 import type * as sitemap from "../sitemap.js";
@@ -188,6 +189,7 @@ declare const fullApi: ApiFromModules<{
   seed: typeof seed;
   seedCompetitiveProducts: typeof seedCompetitiveProducts;
   seedSmartHomeArticles: typeof seedSmartHomeArticles;
+  seoOpportunities: typeof seoOpportunities;
   seoSchema: typeof seoSchema;
   "simulator/getCompatibility": typeof simulator_getCompatibility;
   sitemap: typeof sitemap;

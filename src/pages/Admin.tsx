@@ -138,6 +138,9 @@ const Admin = () => {
               <Button asChild variant="outline">
                 <Link to="/admin/content-quality">Open Content Quality Audits</Link>
               </Button>
+              <Button asChild variant="outline">
+                <Link to="/admin/seo-opportunities">Open SEO Opportunities</Link>
+              </Button>
             </CardContent>
           </Card>
 

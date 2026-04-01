@@ -57,6 +57,7 @@ import CompatibilityLeaderboardPage from "./pages/CompatibilityLeaderboardPage";
 import AIProductFinder from "./pages/AIProductFinder";
 import AdminContentQuality from "./pages/AdminContentQuality";
 import AdminModeration from "./pages/AdminModeration";
+import AdminSeoOpportunities from "./pages/AdminSeoOpportunities";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,7 @@ const App = () => (
                   <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
                   <Route path="/admin/content-quality" element={<AdminContentQuality />} />
                   <Route path="/admin/moderation" element={<AdminModeration />} />
+                  <Route path="/admin/seo-opportunities" element={<AdminSeoOpportunities />} />
                   <Route path="/tools/compare" element={<Compare />} />
                   <Route path="/compare/:slug" element={<CompareSlug />} />
                   <Route path="/tools" element={<ToolsHub />} />
