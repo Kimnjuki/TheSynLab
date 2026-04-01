@@ -86,7 +86,7 @@ export const getSitemap = httpAction(async (ctx) => {
   }
   for (const hub of hubs) {
     urls.push(
-      "<url><loc>" + SITE_URL + "/hubs/" + hub + "</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>"
+      "<url><loc>" + SITE_URL + "/hub/" + hub + "</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>"
     );
   }
   for (const c of comparisons) {

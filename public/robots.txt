@@ -1,6 +1,28 @@
-# TheSynLab – https://www.thesynlab.com
+# robots.txt for thesynlab.com
+# Last updated: 2026-04-01
+
 User-agent: *
 Allow: /
 
-# Sitemap and RSS (Convex serves dynamic sitemap at .convex.site; static copy at /sitemap.xml)
-Sitemap: https://www.thesynlab.com/sitemap.xml
+# Block CMS admin and sensitive paths
+Disallow: /wp-admin/
+Disallow: /wp-login.php
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
+Disallow: /?s=
+Disallow: /search/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /my-account/
+
+# Googlebot specific
+User-agent: Googlebot
+Allow: /
+
+# Bingbot specific
+User-agent: Bingbot
+Allow: /
+
+# Sitemap
+Sitemap: https://thesynlab.com/sitemap.xml
