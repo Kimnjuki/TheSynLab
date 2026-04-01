@@ -28,6 +28,7 @@ import {
 import { Bot, Share2, Twitter, Linkedin, Code2, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { MAX_COMPARE_PRODUCTS } from "@/lib/compareConstants";
 
 export default function Compare() {
   const { slugs, setProducts, shareUrl, shareOnTwitter, shareOnLinkedIn, generateEmbedCode } =
@@ -74,7 +75,7 @@ export default function Compare() {
     <div className="min-h-screen flex flex-col">
       <MetaTags
         title="Product Comparison Engine"
-        description="Compare up to 4 products side-by-side: trust score, integration score, TCO, sustainability, and compatibility."
+        description={`Compare up to ${MAX_COMPARE_PRODUCTS} products side-by-side: trust score, integration score, TCO, sustainability, and compatibility.`}
         canonical="/tools/compare"
       />
       <JsonLd type="BreadcrumbList" breadcrumbs={breadcrumbs} />
@@ -90,7 +91,7 @@ export default function Compare() {
                   Product Comparison Engine
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-2xl">
-                  Compare up to 4 products across 30 dimensions — Trust, Integration, TCO,
+                  Compare up to {MAX_COMPARE_PRODUCTS} products across 30 dimensions — Trust, Integration, TCO,
                   Sustainability, and more.
                 </p>
               </div>
@@ -186,7 +187,7 @@ export default function Compare() {
             {slugs.length > 0 && (
               <div className="mt-4 flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">
-                  {slugs.length} product{slugs.length > 1 ? "s" : ""} selected (max 4)
+                  {slugs.length} product{slugs.length > 1 ? "s" : ""} selected (max {MAX_COMPARE_PRODUCTS})
                 </span>
                 <Button
                   variant="ghost"
@@ -349,7 +350,7 @@ export default function Compare() {
                         )}
                         onSelect={() => handleProductSelect(product)}
                         disabled={
-                          slugs.length >= 4 &&
+                          slugs.length >= MAX_COMPARE_PRODUCTS &&
                           !slugs.includes(
                             product.productSlug ??
                               (product.id ?? product._id)?.toString()

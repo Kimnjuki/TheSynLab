@@ -18,6 +18,7 @@ import Methodology from "@/components/Methodology";
 import FAQAccordion from "@/components/landing/FAQAccordion";
 import CTABanner from "@/components/landing/CTABanner";
 import Newsletter from "@/components/Newsletter";
+import { AdSlot } from "@/components/ads/AdSlot";
 import Footer from "@/components/Footer";
 import { OnboardingTour, useOnboarding } from "@/components/dashboard/OnboardingTour";
 import { Helmet } from "react-helmet-async";
@@ -63,6 +64,14 @@ const Index = () => {
             <HomepageInsights />
           </Suspense>
         </ErrorBoundary>
+        <div className="container px-4">
+          <AdSlot
+            slotName="home_leaderboard"
+            pageTemplate="home_page"
+            iabFormat="728x90"
+            position="below_insights"
+          />
+        </div>
         <FeaturedReviews />
         <TrendingTopics />
         <Hubs />

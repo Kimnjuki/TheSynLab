@@ -8,6 +8,7 @@
     "convexSchemaVersion": "referenced",
     "benchmarkedAgainst": ["rtings.com", "wirecutter.com", "g2.com", "pcmag.com", "smarthomeexplorer.com", "the-verge.com"],
     "sourceChecklist": "CHECKLIST.md",
+    "growthMonetizationPlan": "docs/growth_monetization_plan.json",
     "implementationNote": "This file is the canonical roadmap spec. See CHECKLIST.md section 'Product roadmap 2026' for shipped vs pending items."
   },
   "platformOverview": {

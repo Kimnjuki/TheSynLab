@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "platform": "thesynlab.com",
+    "version": "1.0.0",
+    "updated": "2026-04-01",
+    "note": "Canonical product roadmap remains docs/product_roadmap_2026.json. thesynlab_pitch_deck.pptx was not present in the repo; this plan merges that intent with roadmap phase2_growth + passive revenue channels."
+  },
+  "competitivePositioning": {
+    "pillars": [
+      "Dual Trust + Integration scores with methodology transparency (vs single-score review sites)",
+      "Protocol and ecosystem depth: matrix + deep-dive explainers + lab freshness",
+      "Tools moat: hub builder, compatibility leaderboard, AI finder, compare up to 5 products",
+      "Consent-first ads and disclosed affiliate links (publisher trust + program compliance)"
+    ]
+  },
+  "passiveIncomeChannels": [
+    {
+      "id": "affiliate",
+      "description": "Amazon Associates and SaaS/hardware partner links on high-intent pages.",
+      "implementation": [
+        "VITE_AMAZON_ASSOCIATES_TAG + applyAffiliateOutboundUrl() on product CTAs",
+        "Optional per-product affiliate URLs in admin when you expand beyond Amazon"
+      ]
+    },
+    {
+      "id": "display_ads",
+      "description": "Google AdSense in reserved slots after advertising cookie consent.",
+      "implementation": [
+        "VITE_ADSENSE_CLIENT + per-slot VITE_ADSENSE_SLOT_* in .env",
+        "Optional Convex adSlotConfigs for enable/disable; or VITE_ADSENSE_FALLBACK_WITHOUT_DB=1 for env-only"
+      ]
+    },
+    {
+      "id": "sponsored_placements",
+      "description": "Schema already supports isSponsored; use for labeled placements without affecting score integrity.",
+      "implementation": ["Admin product form + disclosure copy on page"]
+    },
+    {
+      "id": "newsletter_sponsorships",
+      "description": "Newsletter component on homepage; sell slots in ESP once list scales.",
+      "implementation": ["Operational: sponsor line in campaigns; no code blockers"]
+    },
+    {
+      "id": "api_and_premium_tools",
+      "description": "Future: public API and memberships (roadmap phase3).",
+      "implementation": ["NEW-003 developer portal when traffic justifies build"]
+    }
+  ],
+  "stepByStepExecution": [
+    {
+      "step": 1,
+      "title": "Revenue plumbing",
+      "tasks": [
+        "Set VITE_AMAZON_ASSOCIATES_TAG in production build",
+        "Create AdSense ad units; set VITE_ADSENSE_CLIENT and slot env vars; enable VITE_ADSENSE_FALLBACK_WITHOUT_DB=1 or seed adSlotConfigs active"
+      ]
+    },
+    {
+      "step": 2,
+      "title": "Growth surface area (phase2)",
+      "tasks": [
+        "Protocol deep-dive cards + matrix on product specs (shipped)",
+        "Compare up to five products (shipped)",
+        "Home + compare + review ad inventory (shipped)",
+        "Next: video embeds NEW-004, community compatibility reports COMPAT-006"
+      ]
+    },
+    {
+      "step": 3,
+      "title": "Scale and defensibility (phase3)",
+      "tasks": [
+        "Brand portal NEW-002, public API NEW-003",
+        "Programmatic SEO protocol and pair pages",
+        "Automated crons: stale scores, broken affiliate links"
+      ]
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import ScoreBadge from "@/components/ScoreBadge";
 import { Check, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
+import { MAX_COMPARE_PRODUCTS } from "@/lib/compareConstants";
 
 interface ProductCardProps {
   product: any;
@@ -80,7 +81,7 @@ export function ProductCard({ product, isSelected, onSelect, disabled }: Product
             variant={isSelected ? "default" : "outline"}
             className="w-full"
           >
-            {isSelected ? "Selected" : disabled ? "Max 4 Products" : "Select to Compare"}
+            {isSelected ? "Selected" : disabled ? `Max ${MAX_COMPARE_PRODUCTS} products` : "Select to Compare"}
           </Button>
           <Link to={`/products/${slug}`}>
             <Button variant="ghost" className="w-full gap-2">

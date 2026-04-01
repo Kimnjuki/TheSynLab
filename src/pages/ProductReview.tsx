@@ -30,6 +30,8 @@ import { ProductSchema } from "@/components/seo/ProductSchema";
 import { ProtocolCompatibilityMatrix } from "@/components/products/ProtocolCompatibilityMatrix";
 import { LabFreshnessBadge } from "@/components/products/LabFreshnessBadge";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { ProtocolDeepDiveCards } from "@/components/products/ProtocolDeepDiveCards";
+import { applyAffiliateOutboundUrl, isAmazonProductUrl } from "@/lib/affiliateLinks";
 import { ScoreExplainerPanel } from "@/components/ai/ScoreExplainerPanel";
 import { ReviewCopilotPanel } from "@/components/ai/ReviewCopilotPanel";
 
@@ -96,6 +98,10 @@ export default function ProductReview() {
   const ecosystems = product.compatibility || [];
 
   const productUrl = `/products/${product.productSlug}`;
+  const outboundHref = applyAffiliateOutboundUrl(product.officialWebsite);
+  const officialCtaLabel = isAmazonProductUrl(product.officialWebsite)
+    ? "Shop on Amazon"
+    : "Official website";
   const desc =
     (product as { metaDescription?: string }).metaDescription ||
     product.description ||
@@ -207,12 +213,12 @@ export default function ProductReview() {
 
                 <p className="text-foreground">{product.description}</p>
 
-                <div className="flex gap-3">
-                  {product.officialWebsite && (
+                <div className="flex gap-3 flex-wrap">
+                  {outboundHref && (
                     <Button size="lg" className="gap-2" asChild>
-                      <a href={product.officialWebsite} target="_blank" rel="noopener noreferrer">
+                      <a href={outboundHref} target="_blank" rel="noopener noreferrer sponsored">
                         <ExternalLink className="w-4 h-4" />
-                        Official Website
+                        {officialCtaLabel}
                       </a>
                     </Button>
                   )}
@@ -377,6 +383,7 @@ export default function ProductReview() {
                   {ecosystems.length > 0 && (
                     <ProtocolCompatibilityMatrix ecosystems={ecosystems as any} />
                   )}
+                  <ProtocolDeepDiveCards />
                   {ecosystems.length === 0 ? (
                     <p className="text-muted-foreground">No ecosystem compatibility data available</p>
                   ) : (
