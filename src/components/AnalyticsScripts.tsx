@@ -70,12 +70,12 @@ export default function AnalyticsScripts() {
     const run = (consent: ConsentFlags) => {
       if (!consent.analyticsCookies) return;
 
-      injectAhrefs();
-
       const gtmId = (import.meta.env.VITE_GTM_CONTAINER_ID as string | undefined)?.trim();
       if (gtmId) {
+        // GTM only: add Ahrefs (Custom HTML) and other tags in the container to avoid duplicate loads.
         injectGtm(gtmId);
       } else {
+        injectAhrefs();
         const gaId =
           (import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined)?.trim() ||
           GA4_DEFAULT;
