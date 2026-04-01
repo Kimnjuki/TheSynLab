@@ -8,6 +8,8 @@ export type ConsentFlags = {
 const SESSION_KEY = "synlab_session_id";
 const CONSENT_EVENT = "synlab-consent-updated";
 
+let lastConsent: ConsentFlags | null = null;
+
 export const CONSENT_VERSION = "2026-03-31";
 
 export const defaultConsent: ConsentFlags = {
@@ -26,7 +28,13 @@ export function getOrCreateSessionId() {
 }
 
 export function emitConsentUpdated(consent: ConsentFlags) {
+  lastConsent = consent;
   window.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: consent }));
+}
+
+/** Latest consent from CMP (for subscribers that mount after emit). */
+export function getLastConsent(): ConsentFlags | null {
+  return lastConsent;
 }
 
 export function onConsentUpdated(handler: (consent: ConsentFlags) => void) {

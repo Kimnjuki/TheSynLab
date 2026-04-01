@@ -8,6 +8,7 @@ import { ConvexClientProvider } from "./integrations/convex/ConvexClientProvider
 import { AuthProvider } from "./contexts/AuthContext";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import CookieBanner from "./components/CookieBanner";
+import AnalyticsScripts from "./components/AnalyticsScripts";
 import { AdSlotProvider } from "./components/ads/AdSlotProvider";
 import Index from "./pages/Index";
 import Compare from "./pages/Compare";
@@ -132,6 +133,7 @@ const App = () => (
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                <AnalyticsScripts />
                 <CookieBanner />
                 </AdSlotProvider>
               </BrowserRouter>
