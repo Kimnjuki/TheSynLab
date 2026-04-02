@@ -180,12 +180,28 @@ export default defineSchema({
     membershipGated: v.optional(v.boolean()),
     labCertified: v.optional(v.boolean()),
     labCertifiedAt: v.optional(v.float64()),
+    // Products hub decision metadata
+    riskBadge: v.optional(v.string()), // low|medium|high
+    exportQuality: v.optional(v.string()), // excellent|good|limited
+    dataResidency: v.optional(v.string()), // us-only|eu-friendly|global
+    selfHostAvailable: v.optional(v.boolean()),
+    pricingTier: v.optional(v.string()), // $|$$|$$$
+    pricingComplexityLabel: v.optional(v.string()),
+    teamSizeMin: v.optional(v.float64()),
+    teamSizeMax: v.optional(v.float64()),
+    overflowWarning: v.optional(v.string()),
+    followCount: v.optional(v.float64()),
+    trendingRank: v.optional(v.float64()),
+    isTrending: v.optional(v.boolean()),
+    isBestOfMonth: v.optional(v.boolean()),
   }).index("by_slug", ["productSlug"])
     .index("by_hub", ["hub"])
     .index("by_category", ["category"])
     .index("by_status", ["status"])
     .index("by_hub_status", ["hub", "status"])
-    .index("by_category_status", ["category", "status"]),
+    .index("by_category_status", ["category", "status"])
+    .index("by_trending", ["isTrending"])
+    .index("by_best_of_month", ["isBestOfMonth"]),
 
   novaTrustScores: defineTable({
     productId: v.id("novaProducts"),
@@ -588,6 +604,10 @@ export default defineSchema({
     reviewContentHash: v.optional(v.string()),
     verificationLevel: v.optional(v.string()), // none | email | purchase | blockchain
     synTokensAwarded: v.optional(v.number()),
+    integrationQualityRating: v.optional(v.float64()),
+    onboardingRating: v.optional(v.float64()),
+    supportRating: v.optional(v.float64()),
+    topReviewTheme: v.optional(v.string()),
   }).index("by_product", ["productId"])
     .index("by_user", ["userId"])
     .index("by_product_approved", ["productId", "isApproved"]),
@@ -1018,6 +1038,148 @@ export default defineSchema({
     threshold: v.optional(v.number()),
     isActive: v.boolean(),
     lastTriggeredAt: v.optional(v.number()),
+  }).index("by_user", ["userId"])
+    .index("by_product", ["productId"]),
+
+  // ============ PRODUCTS HUB (v2.0) ============
+  productHubFilters: defineTable({
+    userId: v.optional(v.string()),
+    filterName: v.string(),
+    categories: v.optional(v.array(v.string())),
+    useCaseTags: v.optional(v.array(v.string())),
+    technicalTraits: v.optional(v.array(v.string())),
+    teamSizeFit: v.optional(v.string()),
+    minTrustScore: v.optional(v.float64()),
+    minIntegrationScore: v.optional(v.float64()),
+    lockInRisk: v.optional(v.string()), // low|medium|high
+    pricingComplexity: v.optional(v.string()),
+    sortBy: v.string(), // trustScore|integrationDepth|lockInRisk|trending|newest
+    createdAt: v.float64(),
+  }).index("by_user", ["userId"]),
+
+  productTrendingScores: defineTable({
+    productId: v.id("novaProducts"),
+    periodLabel: v.string(),
+    periodYear: v.float64(),
+    periodMonth: v.float64(),
+    trustScoreDelta: v.float64(),
+    integrationScoreDelta: v.float64(),
+    bookmarkCountDelta: v.float64(),
+    reviewCountDelta: v.float64(),
+    trendingRank: v.float64(),
+    velocityScore: v.float64(),
+    computedAt: v.float64(),
+    isCurrent: v.boolean(),
+  }).index("by_period", ["periodYear", "periodMonth"])
+    .index("by_product", ["productId"])
+    .index("by_rank", ["periodYear", "periodMonth", "trendingRank"]),
+
+  productHubSections: defineTable({
+    sectionKey: v.string(),
+    sectionLabel: v.string(),
+    sectionDescription: v.optional(v.string()),
+    sectionIcon: v.optional(v.string()),
+    productIds: v.array(v.id("novaProducts")),
+    sortOrder: v.float64(),
+    isActive: v.boolean(),
+    hubSlug: v.optional(v.string()),
+  }).index("by_order", ["sortOrder"])
+    .index("by_hub", ["hubSlug"]),
+
+  productFollows: defineTable({
+    userId: v.string(),
+    productId: v.id("novaProducts"),
+    followedAt: v.float64(),
+    notifyOnTrustChange: v.boolean(),
+    notifyOnNewReview: v.boolean(),
+    notifyOnNewTemplate: v.boolean(),
+    notifyThreshold: v.optional(v.float64()),
+  }).index("by_user", ["userId"])
+    .index("by_product", ["productId"])
+    .index("by_user_product", ["userId", "productId"]),
+
+  productDecisionCards: defineTable({
+    productId: v.id("novaProducts"),
+    topPros: v.array(v.string()), // max 3
+    topWatchOuts: v.array(v.string()), // max 2
+    bestForTags: v.array(v.string()),
+    keyIntegrations: v.array(v.string()), // top 5 tool names
+    selfHostOption: v.boolean(),
+    soc2Ready: v.boolean(),
+    gdprReady: v.boolean(),
+    lockInRisk: v.string(), // low|medium|high
+    exportQuality: v.string(), // excellent|good|limited
+    dataResidency: v.string(), // us-only|eu-friendly|global
+    pricingComplexity: v.string(), // simple|tiered|enterprise-only
+    typicalCostTier: v.string(), // $|$$|$$$
+    teamSizeMin: v.optional(v.float64()),
+    teamSizeMax: v.optional(v.float64()),
+    overflowsAt: v.optional(v.string()),
+    stackFitRole: v.optional(v.string()),
+    alternativeCount: v.float64(),
+    workflowTemplateCount: v.float64(),
+    communityStackCount: v.float64(),
+    generatedAt: v.float64(),
+    isCurrent: v.boolean(),
+  }).index("by_product", ["productId"])
+    .index("by_current", ["productId", "isCurrent"]),
+
+  productIntegrationMiniGraph: defineTable({
+    productId: v.id("novaProducts"),
+    connectedProductIds: v.array(v.id("novaProducts")),
+    connectionStrengths: v.any(),
+    connectionMethods: v.any(),
+    generatedAt: v.float64(),
+  }).index("by_product", ["productId"]),
+
+  buyerJourneyPaths: defineTable({
+    pathSlug: v.string(),
+    pathTitle: v.string(),
+    pathDescription: v.string(),
+    pathType: v.string(), // new-stack|migration|role-based|team-size
+    targetSegment: v.string(), // solo|startup|smb|enterprise
+    migrateFromTool: v.optional(v.string()),
+    migrateToProductIds: v.optional(v.array(v.id("novaProducts"))),
+    productSequence: v.array(v.id("novaProducts")),
+    stepDescriptions: v.array(v.any()),
+    viewCount: v.float64(),
+    isActive: v.boolean(),
+    sortOrder: v.float64(),
+  }).index("by_slug", ["pathSlug"])
+    .index("by_segment", ["targetSegment"])
+    .index("by_type", ["pathType"]),
+
+  hubActivityFeed: defineTable({
+    activityType: v.string(), // trust_score_update|new_review|new_template|score_milestone|community_save
+    productId: v.id("novaProducts"),
+    activityTitle: v.string(),
+    activityBody: v.optional(v.string()),
+    activityMeta: v.optional(v.any()),
+    scoreDelta: v.optional(v.float64()),
+    createdAt: v.float64(),
+    isPublished: v.boolean(),
+    expiresAt: v.optional(v.float64()),
+  }).index("by_type", ["activityType"])
+    .index("by_date", ["createdAt"])
+    .index("by_product", ["productId"]),
+
+  userProductStack: defineTable({
+    userId: v.string(),
+    productIds: v.array(v.id("novaProducts")),
+    stackName: v.optional(v.string()),
+    isDefault: v.boolean(),
+    createdAt: v.float64(),
+    updatedAt: v.float64(),
+  }).index("by_user", ["userId"]),
+
+  productNotifications: defineTable({
+    userId: v.string(),
+    productId: v.id("novaProducts"),
+    notificationType: v.string(), // trust_delta|new_template|new_review|score_milestone
+    deliveryMethod: v.string(), // email|in_app|both
+    minDeltaThreshold: v.optional(v.float64()),
+    isActive: v.boolean(),
+    createdAt: v.float64(),
   }).index("by_user", ["userId"])
     .index("by_product", ["productId"]),
 
