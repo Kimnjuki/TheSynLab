@@ -151,4 +151,4 @@ Source: user blueprint in chat (Product page architecture + Convex schema upgrad
 - [x] Add top navbar route entry for PDP discovery (`Products` -> `/products`)
 - [x] Add `/products` hub page that links to PDP routes (`/products/:slug`)
 - [x] Verify live production currently points to old `main` SHA from Coolify logs
-- [ ] Push latest PDP/navbar commits to `main` and re-deploy on Coolify
+- [x] Push latest PDP/navbar commits to `main` and trigger Coolify deployment
