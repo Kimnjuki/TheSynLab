@@ -34,3 +34,38 @@ export const listByUser = query({
       .order("desc")
       .collect(),
 });
+
+export const listDetailedByUser = query({
+  args: { userId: v.string() },
+  handler: async (ctx, args) => {
+    const bookmarks = await ctx.db
+      .query("productBookmarks")
+      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .order("desc")
+      .collect();
+
+    const rows = await Promise.all(
+      bookmarks.map(async (bookmark) => {
+        const product = await ctx.db.get(bookmark.productId);
+        if (!product) return null;
+        const trustScore = await ctx.db
+          .query("novaTrustScores")
+          .withIndex("by_current", (q) => q.eq("productId", product._id).eq("isCurrent", true))
+          .first();
+        const integrationScore = await ctx.db
+          .query("novaIntegrationScores")
+          .withIndex("by_current", (q) => q.eq("productId", product._id).eq("isCurrent", true))
+          .first();
+
+        return {
+          bookmark,
+          product,
+          trustScore: trustScore?.totalScore ?? null,
+          integrationScore: integrationScore?.totalScore ?? null,
+        };
+      })
+    );
+
+    return rows.filter(Boolean);
+  },
+});

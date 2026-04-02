@@ -18,6 +18,7 @@ import CompatibilityChecker from "./pages/CompatibilityChecker";
 import ProductReview from "./pages/ProductReview";
 import ProductDetailPage from "./pages/products/ProductDetailPage";
 import ProductsHub from "./pages/ProductsHub";
+import ProductsWatchlist from "./pages/ProductsWatchlist";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
@@ -99,6 +100,7 @@ const App = () => (
                   <Route path="/tools/automations" element={<Automations />} />
                   <Route path="/tasks" element={<Tasks />} />
                   <Route path="/products" element={<ProductsHub />} />
+                  <Route path="/products/watchlist" element={<ProductsWatchlist />} />
                   <Route path="/products/:slug" element={<ProductDetailPage />} />
                   <Route path="/hub/:slug" element={<Hub />} />
                   <Route path="/hubs/:hubSlug/:postSlug" element={<HubPost />} />
