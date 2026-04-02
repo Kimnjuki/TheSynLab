@@ -78,6 +78,7 @@ import type * as productAlerts from "../productAlerts.js";
 import type * as productBookmarks from "../productBookmarks.js";
 import type * as productFinder from "../productFinder.js";
 import type * as products from "../products.js";
+import type * as productsHub from "../productsHub.js";
 import type * as profiles from "../profiles.js";
 import type * as recommendations_matchScore from "../recommendations/matchScore.js";
 import type * as redirectRules from "../redirectRules.js";
@@ -182,6 +183,7 @@ declare const fullApi: ApiFromModules<{
   productBookmarks: typeof productBookmarks;
   productFinder: typeof productFinder;
   products: typeof products;
+  productsHub: typeof productsHub;
   profiles: typeof profiles;
   "recommendations/matchScore": typeof recommendations_matchScore;
   redirectRules: typeof redirectRules;
