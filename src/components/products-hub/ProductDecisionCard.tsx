@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, AlertTriangle } from "lucide-react";
@@ -37,6 +38,7 @@ export function ProductDecisionCard({
   isFollowing = false,
   miniGraphNodes = [],
 }: Props) {
+  const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
   const integrationOverflow = Math.max(0, (miniGraphNodes.length || decision.keyIntegrations.length) - 5);
   const badges = useMemo(() => {
@@ -55,6 +57,15 @@ export function ProductDecisionCard({
       whileHover={{ y: -4, boxShadow: "0 20px 35px rgba(0,0,0,0.18)" }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       aria-label={`${product.productName} decision card`}
+      role="link"
+      tabIndex={0}
+      onClick={() => navigate(`/products/${product.productSlug}`)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          navigate(`/products/${product.productSlug}`);
+        }
+      }}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex gap-3">
@@ -64,7 +75,15 @@ export function ProductDecisionCard({
             <div className="flex h-12 w-12 items-center justify-center rounded-md bg-muted text-xs">{product.productName.slice(0, 2)}</div>
           )}
           <div>
-            <h3 className="font-semibold">{product.productName}</h3>
+            <h3 className="font-semibold">
+              <Link
+                to={`/products/${product.productSlug}`}
+                onClick={(e) => e.stopPropagation()}
+                className="hover:underline"
+              >
+                {product.productName}
+              </Link>
+            </h3>
             <p className="line-clamp-2 text-xs text-muted-foreground">{product.verdictSummary}</p>
             <div className="mt-2 flex gap-2">
               <SocialProofBadge variant="trust" score={trustScore} />
@@ -122,16 +141,42 @@ export function ProductDecisionCard({
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button size="sm" aria-label={`Open decision engine for ${product.productName}`}>Open Decision Engine</Button>
-        <Badge variant="secondary" aria-label={`Compare ${product.productName}`}>Compare</Badge>
-        <Badge variant="secondary" aria-label={`Compatibility for ${product.productName}`}>Compatibility</Badge>
-        <Badge variant="secondary" aria-label={`Budget signal for ${product.productName}`}>Budget</Badge>
+        <Button
+          size="sm"
+          aria-label={`Open decision engine for ${product.productName}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/products/${product.productSlug}`);
+          }}
+        >
+          Open Decision Engine
+        </Button>
+        <Link
+          to={`/tools/compare?product=${encodeURIComponent(product.productSlug)}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Badge variant="secondary" aria-label={`Compare ${product.productName}`}>Compare</Badge>
+        </Link>
+        <Link
+          to={`/tools/compatibility?product=${encodeURIComponent(product.productSlug)}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Badge variant="secondary" aria-label={`Compatibility for ${product.productName}`}>Compatibility</Badge>
+        </Link>
+        <Link
+          to={`/tools/budget-calculator?product=${encodeURIComponent(product.productSlug)}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Badge variant="secondary" aria-label={`Budget signal for ${product.productName}`}>Budget</Badge>
+        </Link>
         <PricingSignalBadge tier={decision.typicalCostTier} complexity={decision.pricingComplexity} />
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-2 text-xs text-muted-foreground">
         <span>{followCount} people tracking updates</span>
-        <FollowButton isFollowing={isFollowing} count={followCount} />
+        <div onClick={(e) => e.stopPropagation()}>
+          <FollowButton isFollowing={isFollowing} count={followCount} />
+        </div>
       </div>
 
       <AnimatePresence>
