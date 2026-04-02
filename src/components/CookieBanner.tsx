@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useConvex, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,21 +15,38 @@ import {
 } from "@/lib/consent";
 
 export default function CookieBanner() {
+  const convex = useConvex();
   const [open, setOpen] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
   const [consent, setConsent] = useState<ConsentFlags>(defaultConsent);
+  const [currentConsent, setCurrentConsent] = useState<any | undefined>(undefined);
 
   useEffect(() => {
     setSessionId(getOrCreateSessionId());
   }, []);
 
-  const currentConsent = useQuery(
-    api.cmpConsent.getCmpConsent,
-    sessionId ? { sessionId } : "skip"
-  );
   const createConsent = useMutation(api.cmpConsent.createCmpConsentRecord);
   const updateConsent = useMutation(api.cmpConsent.updateCmpConsentRecord);
+
+  useEffect(() => {
+    if (!sessionId) return;
+    let cancelled = false;
+    void convex
+      .query(api.cmpConsent.getCmpConsent, { sessionId })
+      .then((result) => {
+        if (cancelled) return;
+        setCurrentConsent(result ?? null);
+      })
+      .catch(() => {
+        // During partial deploys/back-end drift, avoid crashing UI: fall back to local default.
+        if (cancelled) return;
+        setCurrentConsent(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [convex, sessionId]);
 
   useEffect(() => {
     if (currentConsent === undefined) return;
