@@ -9,6 +9,7 @@
  */
 
 import type * as adCompliance from "../adCompliance.js";
+import type * as adSlots from "../adSlots.js";
 import type * as affiliatePrices from "../affiliatePrices.js";
 import type * as aiAudit from "../aiAudit.js";
 import type * as aiData from "../aiData.js";
@@ -42,6 +43,7 @@ import type * as authorityArticlesPayload from "../authorityArticlesPayload.js";
 import type * as automations from "../automations.js";
 import type * as bestFor from "../bestFor.js";
 import type * as blockchain_publishReview from "../blockchain/publishReview.js";
+import type * as cmpConsent from "../cmpConsent.js";
 import type * as comments from "../comments.js";
 import type * as community from "../community.js";
 import type * as communityScoreRatings from "../communityScoreRatings.js";
@@ -111,6 +113,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   adCompliance: typeof adCompliance;
+  adSlots: typeof adSlots;
   affiliatePrices: typeof affiliatePrices;
   aiAudit: typeof aiAudit;
   aiData: typeof aiData;
@@ -144,6 +147,7 @@ declare const fullApi: ApiFromModules<{
   automations: typeof automations;
   bestFor: typeof bestFor;
   "blockchain/publishReview": typeof blockchain_publishReview;
+  cmpConsent: typeof cmpConsent;
   comments: typeof comments;
   community: typeof community;
   communityScoreRatings: typeof communityScoreRatings;
