@@ -107,6 +107,91 @@ export const getBySlug = query({
   },
 });
 
+// PDP aggregate fetch by slug (product + meta + slides + scores + recipes + alternatives)
+export const getProductDetailsBySlug = query({
+  args: { slug: v.string() },
+  handler: async (ctx, args) => {
+    const product = await ctx.db
+      .query("novaProducts")
+      .withIndex("by_slug", (q) => q.eq("productSlug", args.slug))
+      .first();
+
+    if (!product) return null;
+
+    const [trustScore, integrationScore, meta, gallerySlides, compatibility, tco] =
+      await Promise.all([
+        ctx.db
+          .query("novaTrustScores")
+          .withIndex("by_current", (q) =>
+            q.eq("productId", product._id).eq("isCurrent", true)
+          )
+          .first(),
+        ctx.db
+          .query("novaIntegrationScores")
+          .withIndex("by_current", (q) =>
+            q.eq("productId", product._id).eq("isCurrent", true)
+          )
+          .first(),
+        ctx.db
+          .query("productPageMeta")
+          .withIndex("by_product", (q) => q.eq("productId", product._id))
+          .first(),
+        ctx.db
+          .query("productGallerySlides")
+          .withIndex("by_product_order", (q) => q.eq("productId", product._id))
+          .order("asc")
+          .collect(),
+        ctx.db
+          .query("novaEcosystemCompatibility")
+          .withIndex("by_product", (q) => q.eq("productId", product._id))
+          .collect(),
+        ctx.db
+          .query("productTcoScores")
+          .withIndex("by_product", (q) => q.eq("productId", product._id))
+          .first(),
+      ]);
+
+    const recipes = await ctx.db
+      .query("workflowRecipes")
+      .withIndex("by_product", (q) => q.eq("productId", product._id))
+      .collect();
+
+    const alternatives = meta?.alternativeProductIds?.length
+      ? await Promise.all(
+          meta.alternativeProductIds.map(async (id) => {
+            const alt = await ctx.db.get(id);
+            if (!alt) return null;
+            const altTrust = await ctx.db
+              .query("novaTrustScores")
+              .withIndex("by_current", (q) => q.eq("productId", alt._id).eq("isCurrent", true))
+              .first();
+            const altInt = await ctx.db
+              .query("novaIntegrationScores")
+              .withIndex("by_current", (q) => q.eq("productId", alt._id).eq("isCurrent", true))
+              .first();
+            return {
+              ...alt,
+              trustScore: altTrust?.totalScore ?? null,
+              integrationScore: altInt?.totalScore ?? null,
+            };
+          })
+        )
+      : [];
+
+    return {
+      ...product,
+      trustScore,
+      integrationScore,
+      meta,
+      gallerySlides: gallerySlides.filter((s) => s.isPublished),
+      compatibility,
+      recipes,
+      tco,
+      alternatives: alternatives.filter(Boolean),
+    };
+  },
+});
+
 // Get product by ID (alias: get, used by ML/blockchain/matchScore)
 export const get = query({
   args: { id: v.id("novaProducts") },

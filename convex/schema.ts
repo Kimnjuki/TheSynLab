@@ -132,6 +132,7 @@ export default defineSchema({
     category: v.optional(v.string()),
     subcategory: v.optional(v.string()),
     productType: v.string(), // hardware, software, service
+    productTypeExtended: v.optional(v.string()),
     hub: v.string(), // ai_workflow, intelligent_home, hybrid_office
     price: v.optional(v.number()),
     // S2: Lab benchmarks
@@ -155,9 +156,11 @@ export default defineSchema({
     featuredImageUrl: v.optional(v.string()),
     galleryImages: v.optional(v.array(v.string())),
     videoUrl: v.optional(v.string()),
+    heroGifUrl: v.optional(v.string()),
     officialWebsite: v.optional(v.string()),
     documentationUrl: v.optional(v.string()),
     supportUrl: v.optional(v.string()),
+    changelogUrl: v.optional(v.string()),
     createdBy: v.optional(v.string()),
     updatedBy: v.optional(v.string()),
     dataHash: v.optional(v.string()),
@@ -569,6 +572,9 @@ export default defineSchema({
     rating: v.number(), // 1-5
     reviewTitle: v.string(),
     reviewContent: v.string(),
+    workflowImproved: v.optional(v.string()),
+    useCase: v.optional(v.string()),
+    teamSize: v.optional(v.string()),
     pros: v.optional(v.array(v.string())),
     cons: v.optional(v.array(v.string())),
     verifiedPurchase: v.boolean(),
@@ -744,6 +750,7 @@ export default defineSchema({
     lastReplyAt: v.optional(v.number()),
     lastReplyBy: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
+    promptType: v.optional(v.string()), // workflow_question | setup_help | integration | general
     relatedProductIds: v.optional(v.array(v.id("novaProducts"))),
     relatedProposalId: v.optional(v.id("scoreWeightProposals")),
     metaDescription: v.optional(v.string()),
@@ -1013,6 +1020,68 @@ export default defineSchema({
     lastTriggeredAt: v.optional(v.number()),
   }).index("by_user", ["userId"])
     .index("by_product", ["productId"]),
+
+  // ============ PDP EXTENSIONS ============
+  productPageMeta: defineTable({
+    productId: v.id("novaProducts"),
+    timeToFirstValueMinutes: v.optional(v.float64()),
+    setupDifficulty: v.optional(v.float64()), // 1..3
+    learningCurve: v.optional(v.float64()), // 1..3
+    benchmarkedWorkflowCount: v.optional(v.float64()),
+    releaseCadence: v.optional(v.string()), // weekly | monthly | quarterly | rarely
+    maturityLevel: v.optional(v.string()), // early | growing | battle_tested
+    stackFitRole: v.optional(v.string()), // core_system | supportive_addon | niche_specialist
+    bestForTags: v.optional(v.array(v.string())),
+    whoShouldUse: v.optional(v.string()),
+    whoShouldAvoid: v.optional(v.string()),
+    replacesTools: v.optional(v.array(v.string())),
+    goodFirstTask: v.optional(v.string()),
+    useCases: v.optional(v.array(v.any())),
+    performanceRanges: v.optional(v.array(v.any())),
+    alternativeProductIds: v.optional(v.array(v.id("novaProducts"))),
+    differentiatorVsAlternatives: v.optional(v.array(v.any())),
+    typicalNextToolIds: v.optional(v.array(v.id("novaProducts"))),
+    featuredTutorialPostId: v.optional(v.id("novaPosts")),
+    timeVsPayoffScore: v.optional(v.float64()),
+    lastEditorialReviewAt: v.optional(v.float64()),
+    editorialReviewedBy: v.optional(v.string()),
+  }).index("by_product", ["productId"])
+    .index("by_maturity", ["maturityLevel"])
+    .index("by_stack_fit", ["stackFitRole"]),
+
+  productGallerySlides: defineTable({
+    productId: v.id("novaProducts"),
+    slideOrder: v.float64(),
+    slideType: v.string(), // overview | problem | feature | integration | results | recipe
+    imageUrl: v.string(),
+    caption: v.string(),
+    annotatedImageUrl: v.optional(v.string()),
+    scenarioTags: v.optional(v.array(v.string())),
+    isPublished: v.boolean(),
+    createdBy: v.optional(v.string()),
+  }).index("by_product", ["productId"])
+    .index("by_product_order", ["productId", "slideOrder"]),
+
+  workflowRecipes: defineTable({
+    productId: v.id("novaProducts"),
+    recipeTitle: v.string(),
+    recipeSlug: v.string(),
+    summary: v.optional(v.string()),
+    estimatedMinutes: v.optional(v.float64()),
+    toolStack: v.optional(v.array(v.string())),
+    toolProductIds: v.optional(v.array(v.id("novaProducts"))),
+    steps: v.optional(v.array(v.any())),
+    audienceTag: v.optional(v.string()),
+    difficulty: v.optional(v.string()), // beginner | intermediate | advanced
+    isFeatured: v.boolean(),
+    isVerifiedByEditorial: v.boolean(),
+    viewCount: v.float64(),
+    authorId: v.optional(v.string()),
+    publishedAt: v.optional(v.float64()),
+  }).index("by_product", ["productId"])
+    .index("by_featured", ["isFeatured"])
+    .index("by_audience", ["audienceTag"])
+    .index("by_slug", ["recipeSlug"]),
 
   contentHubs: defineTable({
     slug: v.string(),

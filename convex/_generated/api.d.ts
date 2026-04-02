@@ -72,6 +72,8 @@ import type * as novaTrustScores from "../novaTrustScores.js";
 import type * as paa from "../paa.js";
 import type * as pillarGuides from "../pillarGuides.js";
 import type * as posts from "../posts.js";
+import type * as productAlerts from "../productAlerts.js";
+import type * as productBookmarks from "../productBookmarks.js";
 import type * as productFinder from "../productFinder.js";
 import type * as products from "../products.js";
 import type * as profiles from "../profiles.js";
@@ -172,6 +174,8 @@ declare const fullApi: ApiFromModules<{
   paa: typeof paa;
   pillarGuides: typeof pillarGuides;
   posts: typeof posts;
+  productAlerts: typeof productAlerts;
+  productBookmarks: typeof productBookmarks;
   productFinder: typeof productFinder;
   products: typeof products;
   profiles: typeof profiles;

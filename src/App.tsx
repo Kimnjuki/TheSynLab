@@ -16,6 +16,8 @@ import CommunitySetups from "./pages/CommunitySetups";
 import BudgetCalculator from "./pages/BudgetCalculator";
 import CompatibilityChecker from "./pages/CompatibilityChecker";
 import ProductReview from "./pages/ProductReview";
+import ProductDetailPage from "./pages/products/ProductDetailPage";
+import ProductsHub from "./pages/ProductsHub";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
@@ -96,7 +98,8 @@ const App = () => (
                   <Route path="/tools/roi-calculator" element={<RoiCalculatorTool />} />
                   <Route path="/tools/automations" element={<Automations />} />
                   <Route path="/tasks" element={<Tasks />} />
-                  <Route path="/products/:slug" element={<ProductReview />} />
+                  <Route path="/products" element={<ProductsHub />} />
+                  <Route path="/products/:slug" element={<ProductDetailPage />} />
                   <Route path="/hub/:slug" element={<Hub />} />
                   <Route path="/hubs/:hubSlug/:postSlug" element={<HubPost />} />
                   <Route path="/hubs/:slug/pillar" element={<PillarGuide />} />

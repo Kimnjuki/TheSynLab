@@ -13,6 +13,7 @@ import { VerifiedBadge } from "@/components/auth/VerifiedBadge";
 import { useEmailVerification } from "@/hooks/useEmailVerification";
 
 const navLinks = [
+  { name: "Products", href: "/products" },
   { name: "Blog", href: "/blog" },
   { name: "Forum", href: "/forum" },
   { name: "Scoring Hub", href: "/scoring-hub" },
