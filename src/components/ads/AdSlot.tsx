@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useConvex, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useAdConsent } from "./AdSlotProvider";
 
@@ -32,12 +32,30 @@ export function AdSlot({
   position: string;
   minContentLength?: number;
 }) {
+  const convex = useConvex();
   const { canLoadAds } = useAdConsent();
   const logged = useRef(false);
   const insRef = useRef<HTMLModElement | null>(null);
   const adsensePushDone = useRef(false);
-  const config = useQuery(api.adSlots.listByTemplate, { pageTemplate }) ?? [];
+  const [config, setConfig] = useState<any[]>([]);
   const logImpression = useMutation(api.adSlots.logAdSlotImpression);
+
+  useEffect(() => {
+    let cancelled = false;
+    void convex
+      .query(api.adSlots.listByTemplate, { pageTemplate })
+      .then((rows: any) => {
+        if (cancelled) return;
+        setConfig(Array.isArray(rows) ? rows : []);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setConfig([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [convex, pageTemplate]);
 
   const slotConfig = useMemo(
     () => config.find((s) => s.slotName === slotName && s.position === position),
@@ -77,6 +95,8 @@ export function AdSlot({
       slotName,
       pageTemplate,
       metadata: { iabFormat, position, source: allowAdsense ? "adsense" : "placeholder" },
+    }).catch(() => {
+      // Non-blocking telemetry call; ignore runtime drift errors.
     });
   }, [hasEnoughContent, slotName, pageTemplate, iabFormat, position, logImpression, allowAdsense]);
 
