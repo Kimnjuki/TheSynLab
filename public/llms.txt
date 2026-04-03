@@ -1,0 +1,7 @@
+# llms.txt for thesynlab.com
+
+User-agent: *
+Allow: /
+
+Host: https://thesynlab.com
+Sitemap: https://thesynlab.com/sitemap.xml
