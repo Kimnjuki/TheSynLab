@@ -608,6 +608,13 @@ export default defineSchema({
     onboardingRating: v.optional(v.float64()),
     supportRating: v.optional(v.float64()),
     topReviewTheme: v.optional(v.string()),
+    // AF-04: Sentiment analysis fields
+    sentimentStatus: v.optional(v.union(v.literal("pending"), v.literal("complete"), v.literal("failed"))),
+    sentimentProcessedAt: v.optional(v.float64()),
+    sentimentModelVersion: v.optional(v.string()),
+    migrationMentioned: v.optional(v.boolean()),
+    complianceMentioned: v.optional(v.boolean()),
+    integrationsMentioned: v.optional(v.array(v.string())),
   }).index("by_product", ["productId"])
     .index("by_user", ["userId"])
     .index("by_product_approved", ["productId", "isApproved"]),
@@ -2053,4 +2060,155 @@ export default defineSchema({
   }).index("by_type", ["issueType"])
     .index("by_severity", ["severity"])
     .index("by_resolved", ["isResolved"]),
+
+  // ============ AI FEATURES 2.0 - NEW TABLES ============
+  // AF-04: AI Review Sentiment Analysis
+  aiReviewSentiment: defineTable({
+    reviewId: v.id("productReviews"),
+    productId: v.id("novaProducts"),
+    overallSentimentLabel: v.union(v.literal("positive"), v.literal("neutral"), v.literal("negative")),
+    overallSentimentScore: v.float64(),
+    aspects: v.any(),
+    summary: v.string(),
+    keyThemes: v.array(v.string()),
+    sentimentStatus: v.union(v.literal("pending"), v.literal("complete"), v.literal("failed")),
+    modelVersion: v.string(),
+    processingDurationMs: v.optional(v.float64()),
+    rawModelOutput: v.optional(v.any()),
+    processedAt: v.optional(v.float64()),
+  }).index("by_review", ["reviewId"])
+    .index("by_product", ["productId"])
+    .index("by_status", ["sentimentStatus"])
+    .index("by_product_date", ["productId", "processedAt"]),
+
+  // AF-04: Product Sentiment Aggregates
+  productSentimentAggregates: defineTable({
+    productId: v.id("novaProducts"),
+    overallSentimentScore: v.float64(),
+    positivePercent: v.float64(),
+    neutralPercent: v.float64(),
+    negativePercent: v.float64(),
+    aspectAverages: v.any(),
+    sentimentTrend30d: v.optional(v.float64()),
+    sentimentTrend90d: v.optional(v.float64()),
+    topPraised: v.optional(v.string()),
+    topComplained: v.optional(v.string()),
+    reviewCount: v.float64(),
+    lastComputedAt: v.float64(),
+    isCurrent: v.boolean(),
+  }).index("by_product", ["productId"])
+    .index("by_current", ["productId", "isCurrent"]),
+
+  // AF-09: Compliance Memos
+  complianceMemos: defineTable({
+    userId: v.optional(v.string()),
+    sessionId: v.optional(v.string()),
+    productIds: v.array(v.id("novaProducts")),
+    userRegion: v.string(),
+    userIndustry: v.optional(v.string()),
+    requestedFrameworks: v.array(v.string()),
+    memoContent: v.string(),
+    complianceMatrix: v.any(),
+    overallPosture: v.union(v.literal("compliant"), v.literal("partial"), v.literal("non_compliant")),
+    criticalGaps: v.array(v.any()),
+    recommendations: v.array(v.string()),
+    pdfUrl: v.optional(v.string()),
+    generatedAt: v.float64(),
+    modelVersion: v.optional(v.string()),
+  }).index("by_user", ["userId"])
+    .index("by_session", ["sessionId"])
+    .index("by_date", ["generatedAt"]),
+
+  // AF-01: AI Stack Comparisons
+  aiStackComparisons: defineTable({
+    userId: v.optional(v.string()),
+    sessionId: v.string(),
+    stackAProductIds: v.array(v.id("novaProducts")),
+    stackBProductIds: v.array(v.id("novaProducts")),
+    stackALabel: v.optional(v.string()),
+    stackBLabel: v.optional(v.string()),
+    comparisonDimensions: v.any(),
+    aiNarrative: v.string(),
+    recommendedStack: v.union(v.literal("A"), v.literal("B"), v.literal("hybrid")),
+    hybridRecommendation: v.optional(v.any()),
+    generatedAt: v.float64(),
+    viewCount: v.float64(),
+    isPublic: v.boolean(),
+  }).index("by_user", ["userId"])
+    .index("by_session", ["sessionId"])
+    .index("by_public", ["isPublic"]),
+
+  // AF-06: Protocol Adoption Data
+  aiProtocolAdoptionData: defineTable({
+    protocol: v.string(),
+    productId: v.id("novaProducts"),
+    supportLevel: v.union(v.literal("native"), v.literal("hub_required"), v.literal("partial"), v.literal("none")),
+    supportedSince: v.optional(v.float64()),
+    certificationStatus: v.optional(v.string()),
+    communityVerified: v.boolean(),
+    lastVerifiedAt: v.float64(),
+  }).index("by_protocol", ["protocol"])
+    .index("by_product", ["productId"])
+    .index("by_support", ["protocol", "supportLevel"]),
+
+  // AF-06: Ecosystem Health Snapshots
+  aiEcosystemHealthSnapshots: defineTable({
+    hubSlug: v.string(),
+    snapshotDate: v.float64(),
+    avgTrustScore: v.float64(),
+    avgIntegrationScore: v.float64(),
+    avgSentimentScore: v.float64(),
+    vendorRiskCount: v.float64(),
+    risingProductIds: v.array(v.id("novaProducts")),
+    decliningProductIds: v.array(v.id("novaProducts")),
+    breakingChangeAlerts: v.array(v.any()),
+    computedBy: v.string(),
+    isCurrent: v.boolean(),
+  }).index("by_hub", ["hubSlug"])
+    .index("by_date", ["snapshotDate"])
+    .index("by_current", ["hubSlug", "isCurrent"]),
+
+  // AF-04: Chat with Reviews Sessions
+  aiChatWithReviewsSessions: defineTable({
+    userId: v.optional(v.string()),
+    productId: v.id("novaProducts"),
+    conversationHistory: v.array(v.any()),
+    sessionContext: v.optional(v.any()),
+    totalMessages: v.float64(),
+    startedAt: v.float64(),
+    lastActivityAt: v.float64(),
+    convertedToSignup: v.boolean(),
+    emailCaptured: v.boolean(),
+  }).index("by_user", ["userId"])
+    .index("by_product", ["productId"])
+    .index("by_date", ["startedAt"]),
+
+  // AF-10: Extension Matches
+  extensionMatches: defineTable({
+    productId: v.id("novaProducts"),
+    domains: v.array(v.string()),
+    g2Url: v.optional(v.string()),
+    capterraUrl: v.optional(v.string()),
+    matchConfidence: v.float64(),
+    isVerified: v.boolean(),
+    lastVerifiedAt: v.float64(),
+  }).index("by_product", ["productId"]),
+
+  // AF-05: AI Migration Roadmaps
+  aiMigrationRoadmaps: defineTable({
+    simulationId: v.optional(v.id("aiScenarioResults")),
+    userId: v.optional(v.string()),
+    fromProductId: v.id("novaProducts"),
+    toProductId: v.id("novaProducts"),
+    phases: v.array(v.any()),
+    totalEstimatedDays: v.float64(),
+    totalEstimatedHours: v.float64(),
+    changeManagementNotes: v.optional(v.string()),
+    rollbackPlan: v.optional(v.string()),
+    trainingRecommendations: v.array(v.string()),
+    generatedAt: v.float64(),
+    modelVersion: v.optional(v.string()),
+  }).index("by_simulation", ["simulationId"])
+    .index("by_user", ["userId"])
+    .index("by_products", ["fromProductId", "toProductId"]),
 });

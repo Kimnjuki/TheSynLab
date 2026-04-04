@@ -92,3 +92,135 @@ export const createReviewCopilotOutput = mutation({
   },
   handler: async (ctx, args) => await ctx.db.insert("aiReviewCopilotOutputs", args),
 });
+
+// ============ SENTIMENT PIPELINE MUTATIONS ============
+
+export const updateReviewSentimentStatus = mutation({
+  args: {
+    reviewId: v.id("productReviews"),
+    status: v.union(v.literal("pending"), v.literal("complete"), v.literal("failed")),
+    processedAt: v.optional(v.float64()),
+    modelVersion: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.reviewId, {
+      sentimentStatus: args.status,
+      ...(args.processedAt && { sentimentProcessedAt: args.processedAt }),
+      ...(args.modelVersion && { sentimentModelVersion: args.modelVersion }),
+    });
+    return args.reviewId;
+  },
+});
+
+export const createReviewSentiment = mutation({
+  args: {
+    reviewId: v.id("productReviews"),
+    productId: v.id("novaProducts"),
+    overallSentimentLabel: v.union(v.literal("positive"), v.literal("neutral"), v.literal("negative")),
+    overallSentimentScore: v.float64(),
+    aspects: v.any(),
+    summary: v.string(),
+    keyThemes: v.array(v.string()),
+    modelVersion: v.string(),
+    processingDurationMs: v.optional(v.float64()),
+    processedAt: v.float64(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("aiReviewSentiment", {
+      ...args,
+      sentimentStatus: "complete",
+    });
+  },
+});
+
+export const createProductSentimentAggregate = mutation({
+  args: {
+    productId: v.id("novaProducts"),
+    overallSentimentScore: v.float64(),
+    positivePercent: v.float64(),
+    neutralPercent: v.float64(),
+    negativePercent: v.float64(),
+    aspectAverages: v.any(),
+    topPraised: v.optional(v.string()),
+    topComplained: v.optional(v.string()),
+    reviewCount: v.float64(),
+  },
+  handler: async (ctx, args) => {
+    // Mark old aggregates as not current
+    const oldAggregates = await ctx.db
+      .query("productSentimentAggregates")
+      .withIndex("by_product", (q) => q.eq("productId", args.productId))
+      .collect();
+
+    for (const agg of oldAggregates) {
+      await ctx.db.patch(agg._id, { isCurrent: false });
+    }
+
+    return await ctx.db.insert("productSentimentAggregates", {
+      ...args,
+      lastComputedAt: Date.now(),
+      isCurrent: true,
+    });
+  },
+});
+
+// ============ TRUST COPILOT MUTATIONS ============
+
+export const createRiskAnalysis = mutation({
+  args: {
+    productId: v.id("novaProducts"),
+    privacyRiskScore: v.float64(),
+    tosAmbiguityScore: v.float64(),
+    dataResidencyFlags: v.array(v.string()),
+    securityPostureScore: v.float64(),
+    riskSummary: v.string(),
+    detailedFindings: v.any(),
+    analyzedDocUrls: v.optional(v.array(v.string())),
+    generatedAt: v.float64(),
+    isCurrent: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("aiRiskAnalyses", args);
+  },
+});
+
+export const markRiskAnalysesAsOld = mutation({
+  args: {
+    productId: v.id("novaProducts"),
+    excludeId: v.optional(v.id("aiRiskAnalyses")),
+  },
+  handler: async (ctx, args) => {
+    const analyses = await ctx.db
+      .query("aiRiskAnalyses")
+      .withIndex("by_product", (q) => q.eq("productId", args.productId))
+      .collect();
+
+    for (const analysis of analyses) {
+      if (args.excludeId && analysis._id === args.excludeId) {
+        continue;
+      }
+      await ctx.db.patch(analysis._id, { isCurrent: false });
+    }
+  },
+});
+
+export const createComplianceMemo = mutation({
+  args: {
+    userId: v.optional(v.string()),
+    sessionId: v.optional(v.string()),
+    productIds: v.array(v.id("novaProducts")),
+    userRegion: v.string(),
+    userIndustry: v.optional(v.string()),
+    requestedFrameworks: v.array(v.string()),
+    memoContent: v.string(),
+    complianceMatrix: v.any(),
+    overallPosture: v.union(v.literal("compliant"), v.literal("partial"), v.literal("non_compliant")),
+    criticalGaps: v.array(v.any()),
+    recommendations: v.array(v.string()),
+    generatedAt: v.float64(),
+    modelVersion: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("complianceMemos", args);
+  },
+});
