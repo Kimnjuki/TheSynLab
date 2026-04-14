@@ -13,12 +13,16 @@ const footerLinks = {
     { name: "AI Workflow Hub", href: "/hubs/ai-workflow" },
     { name: "Intelligent Home Hub", href: "/hubs/intelligent-home" },
     { name: "Hybrid Office Hub", href: "/hubs/hybrid-office" },
+    { name: "AI & SaaS Tools Hub", href: "/hub/ai-tools" },
   ],
   tools: [
     { name: "Comparison Engine", href: "/tools/compare" },
     { name: "Compatibility Checker", href: "/tools/compatibility" },
     { name: "Budget Calculator", href: "/tools/budget-calculator" },
     { name: "Community Forum", href: "/forum" },
+    { name: "Best AI Writing Tools", href: "/best/ai-writing-tools" },
+    { name: "Best Screen Recorders", href: "/best/screen-recording-tools" },
+    { name: "Best Dev Tools", href: "/best/developer-tools" },
   ],
   company: [
     { name: "About Us", href: "/about" },

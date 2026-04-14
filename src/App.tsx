@@ -62,6 +62,11 @@ import AIProductFinder from "./pages/AIProductFinder";
 import AdminContentQuality from "./pages/AdminContentQuality";
 import AdminModeration from "./pages/AdminModeration";
 import AdminSeoOpportunities from "./pages/AdminSeoOpportunities";
+import AIToolsHub from "./pages/saas/AIToolsHub";
+import AIToolsCategoryPage from "./pages/saas/AIToolsCategoryPage";
+import SaasToolReviewPage from "./pages/saas/SaasToolReviewPage";
+import ToolAlternativesPage from "./pages/saas/ToolAlternativesPage";
+import BestToolsRoundup from "./pages/saas/BestToolsRoundup";
 
 const queryClient = new QueryClient();
 
@@ -135,6 +140,12 @@ const App = () => (
                   <Route path="/search" element={<Search />} />
                   <Route path="/scores/trust-score-index" element={<TrustScoreIndex />} />
                   <Route path="/scores/integration-score-index" element={<IntegrationScoreIndex />} />
+                  {/* ── AI & SaaS Tools Intelligence Layer ── */}
+                  <Route path="/hub/ai-tools" element={<AIToolsHub />} />
+                  <Route path="/hub/ai-tools/:category" element={<AIToolsCategoryPage />} />
+                  <Route path="/tool/:slug" element={<SaasToolReviewPage />} />
+                  <Route path="/tool/:slug/alternatives" element={<ToolAlternativesPage />} />
+                  <Route path="/best/:useCase" element={<BestToolsRoundup />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

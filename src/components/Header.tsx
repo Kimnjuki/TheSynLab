@@ -14,10 +14,10 @@ import { useEmailVerification } from "@/hooks/useEmailVerification";
 
 const navLinks = [
   { name: "Products", href: "/products" },
+  { name: "AI Tools", href: "/hub/ai-tools" },
   { name: "Blog", href: "/blog" },
   { name: "Forum", href: "/forum" },
   { name: "Scoring Hub", href: "/scoring-hub" },
-  { name: "Compatibility", href: "/tools/compatibility" },
   { name: "Compare", href: "/tools/compare" },
   { name: "Community", href: "/community/setups" },
 ];
