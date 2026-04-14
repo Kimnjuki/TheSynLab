@@ -1,5 +1,19 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import {
+  toolCompetitorsSchema,
+  toolFeaturesSchema,
+  toolPricingSchema,
+  toolComparisonsSchema,
+  toolAlternativesSchema,
+  toolUseCasesSchema,
+  toolSeoMetricsSchema,
+  contentTemplatesSchema,
+  generatedContentPagesSchema,
+  competitorActivityLogSchema,
+  competitorSeoTrackingSchema,
+  novaProductsCompetitiveEnhancements
+} from "./schemaCompetitiveTools";
 
 export default defineSchema({
   // ============ AD COMPLIANCE ============
