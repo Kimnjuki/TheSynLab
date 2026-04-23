@@ -3,7 +3,7 @@
  * Use with MetaTags and JsonLd components (FEAT-001).
  */
 
-const SITE_URL = "https://www.thesynlab.com";
+const SITE_URL = "https://thesynlab.com";
 const DEFAULT_IMAGE =
   "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f8f36f0c-e7ec-4d45-90a0-2036be5191f5/id-preview-b0cd2a6d--f300eb6b-f1a7-48c2-9b76-81c2c602b334.lovable.app-1770468126707.png";
 

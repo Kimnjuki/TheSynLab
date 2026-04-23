@@ -17,7 +17,7 @@ export function ProductSchema({
 
   if (!data) return null;
 
-  const url = `https://www.thesynlab.com/products/${data.product.productSlug}`;
+  const url = `https://thesynlab.com/products/${data.product.productSlug}`;
   const ratingValue =
     (data.product.overallScore ?? data.trustScore ?? 0) as number;
 

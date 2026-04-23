@@ -6,7 +6,7 @@
 import { httpAction, internalQuery } from "./_generated/server";
 import { internal } from "./_generated/api";
 
-const SITE_URL = "https://www.thesynlab.com";
+const SITE_URL = "https://thesynlab.com";
 
 // Internal queries for sitemap data (not exposed to client)
 export const getPublishedPosts = internalQuery({

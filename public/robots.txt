@@ -3,6 +3,12 @@
 
 User-agent: *
 Allow: /
+Allow: /blog/
+Allow: /tool/
+Allow: /hub/
+Allow: /products/
+Allow: /best/
+Allow: /compare/
 
 # Block CMS admin and sensitive paths
 Disallow: /wp-admin/

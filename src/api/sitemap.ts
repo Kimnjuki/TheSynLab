@@ -1,6 +1,6 @@
 import { saasTools, TOOL_CATEGORIES, BEST_OF_LISTS } from "@/data/saasTools";
 
-const SITE_URL = "https://www.thesynlab.com";
+const SITE_URL = "https://thesynlab.com";
 
 const toUrl = (
   path: string,

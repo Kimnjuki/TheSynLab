@@ -32,7 +32,7 @@ const BlogArticle = () => {
   }
 
   const relatedArticles = blogArticles.filter(a => article.relatedArticles.includes(a.id));
-  const articleUrl = `/blog/${article.slug}`;
+  const articleUrl = `https://thesynlab.com/blog/${article.slug}`;
 
   // Parse content into structured sections
   const renderContent = (content: string) => {

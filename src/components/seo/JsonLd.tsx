@@ -6,7 +6,7 @@
 import { Helmet } from "react-helmet-async";
 import type { SeoMetaInput } from "@/hooks/useSeoMeta";
 
-const SITE_URL = "https://www.thesynlab.com";
+const SITE_URL = "https://thesynlab.com";
 
 interface JsonLdProps {
   /** Page type for schema */
