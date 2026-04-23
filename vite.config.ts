@@ -93,6 +93,7 @@ type StaticPageMeta = {
   route: string;
   title: string;
   description: string;
+  jsonLd: Record<string, unknown>;
 };
 
 const buildStaticPagesMeta = (): StaticPageMeta[] => {
@@ -104,27 +105,64 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
       route,
       title: fromMap?.title ?? `${slugToTitle(route)} | TheSynLab`,
       description: fromMap?.description ?? HOME_DESCRIPTION,
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": route === "/" ? "WebSite" : "WebPage",
+        name: fromMap?.title ?? `${slugToTitle(route)} | TheSynLab`,
+        description: fromMap?.description ?? HOME_DESCRIPTION,
+        url: `${SITE_URL}${route === "/" ? "/" : route}`,
+      },
     });
   }
 
   for (const article of blogArticles) {
+    const route = `/blog/${article.slug}`;
     pages.push({
-      route: `/blog/${article.slug}`,
+      route,
       title: article.seoTitle || `${article.title} | TheSynLab`,
       description: article.metaDescription || article.excerpt || article.title,
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: article.title,
+        description: article.metaDescription || article.excerpt || article.title,
+        datePublished: article.publishedAt,
+        dateModified: article.updatedAt || article.publishedAt,
+        author: article.author ? { "@type": "Person", name: article.author } : undefined,
+        image: article.image,
+        mainEntityOfPage: `${SITE_URL}${route}`,
+        url: `${SITE_URL}${route}`,
+      },
     });
   }
 
   for (const tool of saasTools) {
+    const toolRoute = `/tool/${tool.slug}`;
     pages.push({
-      route: `/tool/${tool.slug}`,
+      route: toolRoute,
       title: `${tool.name} Review | TheSynLab`,
       description: tool.shortDescription || tool.tagline || HOME_DESCRIPTION,
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        name: tool.name,
+        description: tool.shortDescription || tool.tagline || HOME_DESCRIPTION,
+        applicationCategory: tool.category,
+        url: `${SITE_URL}${toolRoute}`,
+      },
     });
+    const altRoute = `/tool/${tool.slug}/alternatives`;
     pages.push({
-      route: `/tool/${tool.slug}/alternatives`,
+      route: altRoute,
       title: `${tool.name} Alternatives | TheSynLab`,
       description: `Best alternatives to ${tool.name} with side-by-side scoring and fit analysis.`,
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: `${tool.name} Alternatives`,
+        description: `Best alternatives to ${tool.name} with side-by-side scoring and fit analysis.`,
+        url: `${SITE_URL}${altRoute}`,
+      },
     });
   }
 
@@ -133,6 +171,13 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
       route: `/hub/ai-tools/${category}`,
       title: `${details.name} | TheSynLab`,
       description: details.description || HOME_DESCRIPTION,
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: `${details.name} | TheSynLab`,
+        description: details.description || HOME_DESCRIPTION,
+        url: `${SITE_URL}/hub/ai-tools/${category}`,
+      },
     });
   }
 
@@ -141,6 +186,13 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
       route: `/best/${useCase}`,
       title: `${details.title} | TheSynLab`,
       description: details.description || HOME_DESCRIPTION,
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: `${details.title} | TheSynLab`,
+        description: details.description || HOME_DESCRIPTION,
+        url: `${SITE_URL}/best/${useCase}`,
+      },
     });
   }
 
@@ -154,6 +206,7 @@ const generateStaticHtmlPages = async (distDir: string) => {
 
   for (const page of pages) {
     const canonical = `${SITE_URL}${page.route === "/" ? "/" : page.route}`;
+    const jsonLd = JSON.stringify(page.jsonLd).replaceAll("</script>", "<\\/script>");
     let html = indexHtml;
     html = upsertTag(html, /<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(page.title)}</title>`);
     html = upsertTag(
@@ -181,6 +234,24 @@ const generateStaticHtmlPages = async (distDir: string) => {
       /<meta\s+property=["']og:url["'][^>]*>/i,
       `<meta property="og:url" content="${escapeHtml(canonical)}">`
     );
+    html = upsertTag(
+      html,
+      /<meta\s+name=["']twitter:title["'][^>]*>/i,
+      `<meta name="twitter:title" content="${escapeHtml(page.title)}">`
+    );
+    html = upsertTag(
+      html,
+      /<meta\s+name=["']twitter:description["'][^>]*>/i,
+      `<meta name="twitter:description" content="${escapeHtml(page.description)}">`
+    );
+    if (/<script\s+type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/i.test(html)) {
+      html = html.replace(
+        /<script\s+type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/i,
+        `<script type="application/ld+json">${jsonLd}</script>`
+      );
+    } else {
+      html = html.replace("</head>", `    <script type="application/ld+json">${jsonLd}</script>\n  </head>`);
+    }
 
     const outputPath =
       page.route === "/" ? indexPath : path.resolve(distDir, page.route.replace(/^\/+/, ""), "index.html");
