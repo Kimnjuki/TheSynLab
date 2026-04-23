@@ -8,30 +8,44 @@ import { saasTools, BEST_OF_LISTS, TOOL_CATEGORIES } from "./src/data/saasTools"
 
 const SITE_URL = "https://thesynlab.com";
 
+const staticRoutes = [
+  "/",
+  "/about",
+  "/contact",
+  "/privacy",
+  "/terms",
+  "/disclosure",
+  "/blog",
+  "/products",
+  "/products/watchlist",
+  "/tools",
+  "/tools/compare",
+  "/tools/compatibility",
+  "/tools/compatibility-leaderboard",
+  "/tools/stack-builder",
+  "/tools/hub-builder",
+  "/tools/find",
+  "/tools/roi-calculator",
+  "/forum",
+  "/community/leaderboard",
+  "/search",
+  "/hub/ai-tools",
+  "/hubs/intelligent-home",
+  "/hubs/hybrid-office",
+  "/hubs/ai-workflow",
+];
+
+const dynamicRoutes = [
+  ...blogArticles.map((article) => `/blog/${article.slug}`),
+  ...saasTools.flatMap((tool) => [`/tool/${tool.slug}`, `/tool/${tool.slug}/alternatives`]),
+  ...Object.keys(BEST_OF_LISTS).map((useCase) => `/best/${useCase}`),
+  ...Object.keys(TOOL_CATEGORIES).map((category) => `/hub/ai-tools/${category}`),
+];
+
+const prerenderRoutes = Array.from(new Set([...staticRoutes, ...dynamicRoutes]));
+
 const buildSitemapXml = () => {
-  const staticRoutes = [
-    "/",
-    "/blog",
-    "/products",
-    "/tools",
-    "/forum",
-    "/search",
-    "/tools/compare",
-    "/tools/compatibility",
-    "/tools/compatibility-leaderboard",
-    "/tools/stack-builder",
-    "/tools/hub-builder",
-    "/tools/find",
-  ];
-
-  const dynamicRoutes = [
-    ...blogArticles.map((article) => `/blog/${article.slug}`),
-    ...saasTools.flatMap((tool) => [`/tool/${tool.slug}`, `/tool/${tool.slug}/alternatives`]),
-    ...Object.keys(BEST_OF_LISTS).map((useCase) => `/best/${useCase}`),
-    ...Object.keys(TOOL_CATEGORIES).map((category) => `/hub/ai-tools/${category}`),
-  ];
-
-  const allRoutes = Array.from(new Set([...staticRoutes, ...dynamicRoutes]));
+  const allRoutes = prerenderRoutes;
 
   const urls = allRoutes
     .map((route) => {
@@ -60,7 +74,11 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  plugins: [react(), sitemapPlugin(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [
+    react(),
+    sitemapPlugin(),
+    mode === "development" && componentTagger(),
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

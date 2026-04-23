@@ -21,8 +21,9 @@ import Newsletter from "@/components/Newsletter";
 import { AdSlot } from "@/components/ads/AdSlot";
 import Footer from "@/components/Footer";
 import { OnboardingTour, useOnboarding } from "@/components/dashboard/OnboardingTour";
-import { Helmet } from "react-helmet-async";
 import { StackArchitectChat } from "@/components/ai/StackArchitectChat";
+import { MetaTags } from "@/components/seo/MetaTags";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 const Index = () => {
   const { showTour, closeTour } = useOnboarding();
@@ -31,27 +32,24 @@ const Index = () => {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "TheSynLab",
-    "url": "https://www.thesynlab.com",
+    "url": "https://thesynlab.com",
     "description": "Next-gen tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware.",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://www.thesynlab.com/blog?q={search_term_string}",
+      "target": "https://thesynlab.com/blog?q={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };
 
   return (
     <div className="min-h-screen">
-      <Helmet>
-        <title>TheSynLab – Next-Gen Tech Reviews & Workflow Optimization</title>
-        <meta name="description" content="In-depth tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware to build your perfect workflow ecosystem." />
-        <link rel="canonical" href="https://www.thesynlab.com/" />
-        <meta property="og:title" content="TheSynLab – Next-Gen Tech Reviews & Workflow Optimization" />
-        <meta property="og:description" content="In-depth tech reviews with unique Trust & Integration Scores." />
-        <meta property="og:url" content="https://www.thesynlab.com/" />
-        <meta property="og:type" content="website" />
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-      </Helmet>
+      <MetaTags
+        title="TheSynLab – Next-Gen Tech Reviews & Workflow Optimization"
+        description="In-depth tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware to build your perfect workflow ecosystem."
+        canonical="https://thesynlab.com/"
+        ogType="website"
+      />
+      <JsonLd type="WebPage" custom={jsonLd} />
 
       <Header />
       <main>
