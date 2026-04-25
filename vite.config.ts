@@ -199,6 +199,168 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   return Array.from(new Map(pages.map((page) => [page.route, page])).values());
 };
 
+const stripMarkdown = (md: string, maxChars = 4000): string =>
+  md
+    .slice(0, maxChars)
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\*(.+?)\*/g, "$1")
+    .replace(/`(.+?)`/g, "$1")
+    .replace(/\[(.+?)\]\(.+?\)/g, "$1")
+    .replace(/^[-*+]\s+/gm, "")
+    .replace(/^\s*>\s*/gm, "")
+    .trim();
+
+const buildStaticBodyHtml = (route: string): string => {
+  const year = new Date().getFullYear();
+  const li = (items: string[]) => items.map((i) => `<li>${escapeHtml(i)}</li>`).join("");
+
+  // Tool review page
+  const toolMatch = route.match(/^\/tool\/([^/]+)$/);
+  if (toolMatch) {
+    const tool = saasTools.find((t) => t.slug === toolMatch[1]);
+    if (tool) {
+      const verdict =
+        tool.trustScore >= 4.3 ? "Highly Recommended" :
+        tool.trustScore >= 4.0 ? "Recommended" :
+        tool.trustScore >= 3.7 ? "Good with Caveats" : "Use with Caution";
+      return `<main style="font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem">
+<nav style="font-size:.85rem;margin-bottom:1rem"><a href="/">TheSynLab</a> › <a href="/hub/ai-tools">AI Tools</a> › ${escapeHtml(tool.name)}</nav>
+<h1>${escapeHtml(tool.name)} Review (${year})</h1>
+<p style="font-size:1.1rem">${escapeHtml(tool.tagline)}</p>
+<p>${escapeHtml(tool.shortDescription)}</p>
+<section><h2>TheSynLab Scores</h2><p><b>Trust Score:</b> ${tool.trustScore}/5 &nbsp;·&nbsp; <b>Integration Score:</b> ${tool.integrationScore}/5 &nbsp;·&nbsp; <b>Verdict:</b> ${verdict}</p></section>
+<section><h2>Pricing</h2><p>${tool.pricing.hasFree ? "Free plan available. " : ""}Starting at <b>${escapeHtml(tool.pricing.startingPrice)}</b>. ${escapeHtml(tool.pricing.pricingModel)}.</p></section>
+<section><h2>Pros</h2><ul>${li(tool.pros)}</ul></section>
+<section><h2>Cons</h2><ul>${li(tool.cons)}</ul></section>
+<section><h2>Key Features</h2><ul>${li(tool.keyFeatures)}</ul></section>
+<section><h2>Best For</h2><ul>${li(tool.bestFor)}</ul></section>
+<section><h2>Integrations</h2><p>${escapeHtml(tool.integrations.join(", "))}.</p></section>
+<p><a href="/tool/${tool.slug}/alternatives">See alternatives to ${escapeHtml(tool.name)} →</a></p>
+</main>`;
+    }
+  }
+
+  // Tool alternatives page
+  const altMatch = route.match(/^\/tool\/([^/]+)\/alternatives$/);
+  if (altMatch) {
+    const tool = saasTools.find((t) => t.slug === altMatch[1]);
+    if (tool) {
+      const alts = saasTools
+        .filter((t) => t.category === tool.category && t.slug !== tool.slug)
+        .slice(0, 8);
+      const altsHtml = alts
+        .map((a) => `<li><a href="/tool/${a.slug}"><b>${escapeHtml(a.name)}</b></a> — Trust Score ${a.trustScore}/5 · ${escapeHtml(a.shortDescription)}</li>`)
+        .join("");
+      return `<main style="font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem">
+<nav style="font-size:.85rem;margin-bottom:1rem"><a href="/">TheSynLab</a> › <a href="/hub/ai-tools">AI Tools</a> › <a href="/tool/${tool.slug}">${escapeHtml(tool.name)}</a> › Alternatives</nav>
+<h1>Best Alternatives to ${escapeHtml(tool.name)} (${year})</h1>
+<p>Independent comparison of the top ${escapeHtml(tool.name)} alternatives, ranked by Trust Score and Integration Score.</p>
+<ul>${altsHtml}</ul>
+<p><a href="/tool/${tool.slug}">← Back to ${escapeHtml(tool.name)} full review</a></p>
+</main>`;
+    }
+  }
+
+  // Blog article page
+  const blogMatch = route.match(/^\/blog\/([^/]+)$/);
+  if (blogMatch) {
+    const article = blogArticles.find((a) => a.slug === blogMatch[1]);
+    if (article) {
+      const plain = stripMarkdown(article.content, 4000);
+      const bodyHtml = plain
+        .split(/\n\n+/)
+        .filter(Boolean)
+        .slice(0, 12)
+        .map((p) => `<p>${escapeHtml(p.trim())}</p>`)
+        .join("");
+      return `<main style="font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem">
+<nav style="font-size:.85rem;margin-bottom:1rem"><a href="/">TheSynLab</a> › <a href="/blog">Blog</a></nav>
+<h1>${escapeHtml(article.title)}</h1>
+<p style="color:#666;font-size:.875rem">By ${escapeHtml(article.author)} · ${article.publishedAt} · ${article.readingTime} min read</p>
+<p><b>${escapeHtml(article.excerpt)}</b></p>
+${bodyHtml}
+</main>`;
+    }
+  }
+
+  // Category hub page
+  const categoryMatch = route.match(/^\/hub\/ai-tools\/([^/]+)$/);
+  if (categoryMatch) {
+    const cat = (TOOL_CATEGORIES as Record<string, { name: string; description?: string }>)[categoryMatch[1]];
+    if (cat) {
+      const tools = saasTools.filter((t) => t.category === categoryMatch[1]);
+      const toolsHtml = tools
+        .map((t) => `<li><a href="/tool/${t.slug}"><b>${escapeHtml(t.name)}</b></a> — Trust Score ${t.trustScore}/5 · ${escapeHtml(t.shortDescription)}</li>`)
+        .join("");
+      return `<main style="font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem">
+<nav style="font-size:.85rem;margin-bottom:1rem"><a href="/">TheSynLab</a> › <a href="/hub/ai-tools">AI Tools Hub</a></nav>
+<h1>Best ${escapeHtml(cat.name)} — Independent Reviews (${year})</h1>
+<p>${escapeHtml(cat.description || "")}</p>
+<ul>${toolsHtml}</ul>
+</main>`;
+    }
+  }
+
+  // Best-of list page
+  const bestMatch = route.match(/^\/best\/([^/]+)$/);
+  if (bestMatch) {
+    const best = (BEST_OF_LISTS as Record<string, { title: string; description?: string }>)[bestMatch[1]];
+    if (best) {
+      return `<main style="font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem">
+<nav style="font-size:.85rem;margin-bottom:1rem"><a href="/">TheSynLab</a> › <a href="/hub/ai-tools">AI Tools Hub</a></nav>
+<h1>${escapeHtml(best.title)}</h1>
+<p>${escapeHtml(best.description || "")}</p>
+</main>`;
+    }
+  }
+
+  // Legal & informational pages
+  if (route === "/privacy") return `<main style="font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem">
+<h1>Privacy Policy</h1><p>Last Updated: January 12, 2026</p>
+<p>TheSynLab is committed to protecting your privacy and being transparent about how we collect, use, and share your information.</p>
+<h2>Information We Collect</h2><p>We collect information you provide (email, profile info, reviews) and automatically collected usage data (IP address, browser type, pages visited).</p>
+<h2>Google AdSense &amp; Cookies</h2><p>We use Google AdSense for advertisements. Non-essential cookies (analytics, advertising, preferences) are only activated after you give explicit consent via our Cookie Consent Manager. You may opt out of personalised advertising via Google Ads Settings.</p>
+<h2>How We Use Your Information</h2><p>To provide our services, send newsletters (with consent), analyse usage patterns, and improve your experience. We do not sell your personal data to third parties.</p>
+<h2>Your Rights (GDPR &amp; CCPA)</h2><p>EEA/UK residents may request access, rectification, erasure, or portability of their data. California residents have rights under CCPA including the right to know what data is collected and the right to deletion. Contact: privacy@thesynlab.com</p>
+<h2>Contact</h2><p>Email: privacy@thesynlab.com</p>
+</main>`;
+
+  if (route === "/terms") return `<main style="font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem">
+<h1>Terms of Service</h1><p>Last Updated: January 12, 2026</p>
+<p>By accessing or using TheSynLab you agree to be bound by these Terms of Service. If you do not agree, please do not use our service. You must be at least 18 years of age to use our service.</p>
+<h2>User Responsibilities</h2><p>You are responsible for maintaining the confidentiality of your account credentials and ensuring your use complies with applicable laws. Do not use the service for illegal purposes or to impersonate others.</p>
+<h2>Intellectual Property</h2><p>Our reviews, Trust Scores, Integration Scores, and methodologies are owned by TheSynLab and protected by copyright law. Our scoring represents our independent editorial assessment.</p>
+<h2>Affiliate Links &amp; Advertising</h2><p>TheSynLab participates in affiliate programs and may earn commissions on purchases — at no additional cost to you. This does not affect our editorial independence. See our Affiliate Disclosure for full details.</p>
+<h2>Disclaimer</h2><p>Reviews are provided for informational purposes only. TheSynLab is not liable for purchase decisions made based on our content. Trust Scores reflect our independent assessment at the time of review.</p>
+<h2>Contact</h2><p>Email: legal@thesynlab.com</p>
+</main>`;
+
+  if (route === "/disclosure") return `<main style="font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem">
+<h1>Affiliate Disclosure</h1><p>Last Updated: January 12, 2026</p>
+<p>TheSynLab participates in affiliate marketing programs. When you click product links on our site and make a purchase, we may earn a commission — at no additional cost to you.</p>
+<h2>Our Editorial Independence</h2><p>Affiliate relationships do not influence our reviews, Trust Scores, or recommendations. All products are evaluated independently before we publish our assessments. Our editorial standards are non-negotiable.</p>
+<h2>FTC Compliance</h2><p>Per FTC 16 CFR Part 255, we disclose that we may receive compensation for links on this website. This disclosure applies to all content published on TheSynLab. Affiliate links are marked with rel="nofollow sponsored" attributes.</p>
+<h2>Programs We Participate In</h2><p>We participate in Amazon Associates, ShareASale, PartnerStack, and direct SaaS affiliate partnerships. Commission rates vary by program and product category.</p>
+<h2>Contact</h2><p>Questions about our affiliate relationships? Email: affiliates@thesynlab.com</p>
+</main>`;
+
+  if (route === "/about") return `<main style="font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem">
+<h1>About TheSynLab</h1>
+<p>TheSynLab is an independent technology review platform that evaluates SaaS tools, smart home devices, and productivity software using our proprietary Trust Score and Integration Score methodology.</p>
+<h2>Our Mission</h2><p>We help professionals and teams make confident technology decisions through honest, data-driven reviews that prioritise real-world performance over marketing claims.</p>
+<h2>Our Scoring System</h2><p>Every tool receives a <b>Trust Score</b> (measuring reliability, privacy, and transparency) and an <b>Integration Score</b> (measuring ecosystem compatibility and API quality). Both scores range from 1 to 5.</p>
+<h2>Editorial Independence</h2><p>Funded through affiliate commissions and advertising — but our scores and recommendations are never influenced by commercial relationships. See our <a href="/disclosure">Affiliate Disclosure</a>.</p>
+</main>`;
+
+  // Default fallback for all other static pages
+  return `<main style="font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem">
+<h1>TheSynLab — Independent Tech Reviews</h1>
+<p>${escapeHtml(HOME_DESCRIPTION)}</p>
+<ul><li><a href="/hub/ai-tools">AI &amp; SaaS Tools Hub</a></li><li><a href="/blog">Tech Blog &amp; Reviews</a></li><li><a href="/tools/compare">Compare Tools</a></li><li><a href="/about">About TheSynLab</a></li></ul>
+</main>`;
+};
+
 const generateStaticHtmlPages = async (distDir: string) => {
   const indexPath = path.resolve(distDir, "index.html");
   const indexHtml = await fs.readFile(indexPath, "utf8");
@@ -252,6 +414,10 @@ const generateStaticHtmlPages = async (distDir: string) => {
     } else {
       html = html.replace("</head>", `    <script type="application/ld+json">${jsonLd}</script>\n  </head>`);
     }
+
+    // Inject pre-rendered body so crawlers see real content (not empty <div id="root">)
+    const staticBody = buildStaticBodyHtml(page.route);
+    html = html.replace(/<div id="root">\s*<\/div>/, `<div id="root">\n${staticBody}\n</div>`);
 
     const outputPath =
       page.route === "/" ? indexPath : path.resolve(distDir, page.route.replace(/^\/+/, ""), "index.html");
