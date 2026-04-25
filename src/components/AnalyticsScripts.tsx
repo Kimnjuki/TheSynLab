@@ -9,7 +9,7 @@ import {
 const AHREFS_DATA_KEY = "slaxd03NBrOQOSrpgty7bw";
 
 /** Legacy direct GA4 when `VITE_GTM_CONTAINER_ID` is unset (matches previous index.html). */
-const GA4_DEFAULT = "G-QG415MPS46";
+const GA4_DEFAULT = "G-XMGRJBSN5Y";
 
 function injectAhrefs() {
   if (document.getElementById("ahrefs-analytics-script")) return;
