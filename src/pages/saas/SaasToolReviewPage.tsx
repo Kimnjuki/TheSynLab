@@ -178,7 +178,7 @@ export default function SaasToolReviewPage() {
               {tool.shortDescription}
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <a href={tool.officialUrl} target="_blank" rel="noopener noreferrer">
+              <a href={tool.officialUrl} target="_blank" rel="nofollow sponsored noopener">
                 <Button className="gap-2">
                   <ExternalLink className="h-4 w-4" />
                   Visit {tool.name}
@@ -370,7 +370,7 @@ export default function SaasToolReviewPage() {
                   <a
                     href={tool.officialUrl}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="nofollow sponsored noopener"
                     className="flex items-center gap-1 text-sm text-primary hover:underline"
                   >
                     View full pricing at {tool.name} <ExternalLink className="h-3.5 w-3.5" />
@@ -452,6 +452,43 @@ export default function SaasToolReviewPage() {
               </Card>
             ))}
           </div>
+        </section>
+
+        {/* ── AFFILIATE CTA ────────────────────────────── */}
+        <section className="mb-10">
+          <Card className="bg-primary/5 border-primary/20">
+            <CardContent className="pt-6">
+              <h3 className="text-xl font-bold mb-2">Try {tool.name}</h3>
+              <p className="text-muted-foreground mb-4">
+                {tool.pricing.hasFree
+                  ? "Start with a free tier — no credit card required."
+                  : "Check current pricing and features."}
+              </p>
+              <Button className="w-full" size="lg" asChild>
+                <a
+                  href={tool.officialUrl}
+                  target="_blank"
+                  rel="nofollow sponsored noopener"
+                  onClick={() => {
+                    if (typeof window !== "undefined" && (window as Window & { dataLayer?: object[] }).dataLayer) {
+                      (window as Window & { dataLayer?: object[] }).dataLayer!.push({
+                        event: "affiliate_click",
+                        tool_slug: tool.slug,
+                        placement: "verdict-cta",
+                      });
+                    }
+                  }}
+                >
+                  Visit {tool.name} →
+                </a>
+              </Button>
+              {tool.pricing.startingPrice && (
+                <p className="text-xs text-muted-foreground text-center mt-2">
+                  Starting at {tool.pricing.startingPrice}
+                </p>
+              )}
+            </CardContent>
+          </Card>
         </section>
 
         {/* ── TAGS ─────────────────────────────────────── */}
