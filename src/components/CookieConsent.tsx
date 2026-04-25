@@ -5,6 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Cookie, Settings, Shield, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { emitConsentUpdated } from "@/lib/consent";
 
 const COOKIE_CONSENT_KEY = "cookie_consent";
 const COOKIE_PREFERENCES_KEY = "cookie_preferences";
@@ -29,17 +30,22 @@ const CookieConsent = () => {
   const [preferences, setPreferences] = useState<CookiePreferences>(defaultPreferences);
 
   useEffect(() => {
-    // Check if user has already made a consent choice
     const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
     if (!consent) {
-      // Small delay to avoid layout shift on page load
       const timer = setTimeout(() => setShowBanner(true), 1000);
       return () => clearTimeout(timer);
     } else {
-      // Load saved preferences
       const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY);
       if (savedPreferences) {
-        setPreferences(JSON.parse(savedPreferences));
+        const parsed = JSON.parse(savedPreferences) as CookiePreferences;
+        setPreferences(parsed);
+        // Re-emit on page load so AnalyticsScripts and AdSlotProvider fire for returning visitors.
+        emitConsentUpdated({
+          necessaryCookies: true,
+          analyticsCookies: parsed.analytics,
+          advertisingCookies: parsed.advertising,
+          functionalCookies: parsed.preferences,
+        });
       }
     }
   }, []);
@@ -50,6 +56,12 @@ const CookieConsent = () => {
     setPreferences(newPreferences);
     setShowBanner(false);
     setShowSettings(false);
+    emitConsentUpdated({
+      necessaryCookies: true,
+      analyticsCookies: newPreferences.analytics,
+      advertisingCookies: newPreferences.advertising,
+      functionalCookies: newPreferences.preferences,
+    });
   };
 
   const acceptAll = () => {
