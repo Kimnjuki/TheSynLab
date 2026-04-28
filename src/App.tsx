@@ -10,6 +10,8 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import CookieBanner from "./components/CookieBanner";
 import AnalyticsScripts from "./components/AnalyticsScripts";
 import { AdSlotProvider } from "./components/ads/AdSlotProvider";
+import { ComparisonBarProvider } from "./contexts/ComparisonBarContext";
+import { ComparisonBar } from "./components/ComparisonBar";
 import Index from "./pages/Index";
 import Compare from "./pages/Compare";
 import CommunitySetups from "./pages/CommunitySetups";
@@ -67,6 +69,10 @@ import AIToolsCategoryPage from "./pages/saas/AIToolsCategoryPage";
 import SaasToolReviewPage from "./pages/saas/SaasToolReviewPage";
 import ToolAlternativesPage from "./pages/saas/ToolAlternativesPage";
 import BestToolsRoundup from "./pages/saas/BestToolsRoundup";
+import HubsIndex from "./pages/HubsIndex";
+import DecisionStudio from "./pages/DecisionStudio";
+import WorkflowsIndex from "./pages/WorkflowsIndex";
+import AlternativesIndex from "./pages/AlternativesIndex";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +86,7 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
+                <ComparisonBarProvider>
                 <AdSlotProvider>
                 <Routes>
                   <Route path="/" element={<Index />} />
@@ -146,12 +153,22 @@ const App = () => (
                   <Route path="/tool/:slug" element={<SaasToolReviewPage />} />
                   <Route path="/tool/:slug/alternatives" element={<ToolAlternativesPage />} />
                   <Route path="/best/:useCase" element={<BestToolsRoundup />} />
+                  {/* ── Spec v2.0 canonical routes ── */}
+                  <Route path="/hubs" element={<HubsIndex />} />
+                  {/* /compare and /stack-builder as canonical aliases */}
+                  <Route path="/compare" element={<Compare />} />
+                  <Route path="/stack-builder" element={<StackBuilder />} />
+                  <Route path="/decision-studio" element={<DecisionStudio />} />
+                  <Route path="/workflows" element={<WorkflowsIndex />} />
+                  <Route path="/alternatives" element={<AlternativesIndex />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <AnalyticsScripts />
                 <CookieBanner />
+                <ComparisonBar />
                 </AdSlotProvider>
+                </ComparisonBarProvider>
               </BrowserRouter>
             </TooltipProvider>
           </AuthProvider>

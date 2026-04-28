@@ -13,6 +13,7 @@ import { WorkflowRecipeCard } from "@/components/pdp/WorkflowRecipeCard";
 import { AlternativesStrip } from "@/components/pdp/AlternativesStrip";
 import { CoreMetaPanel } from "@/components/pdp/CoreMetaPanel";
 import { RoiEstimatorCard } from "@/components/pdp/RoiEstimatorCard";
+import { DecisionSummaryCard } from "@/components/pdp/DecisionSummaryCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -88,10 +89,28 @@ export default function ProductDetailPage() {
           bestForTags={details.meta?.bestForTags}
           trustScore={details.trustScore?.totalScore}
           integrationScore={details.integrationScore?.totalScore}
+          tcoTier={details.tcoScore?.costTier}
+          riskBadge={details.riskBadge}
+          labCertified={details.labCertified}
           isVerified={details.trustScore?.isVerified}
           onAddToStack={onAddToStack}
           onSubscribe={onSubscribe}
         />
+
+        <div className="mt-6">
+          <DecisionSummaryCard
+            bestForTags={details.meta?.bestForTags}
+            avoidIfTags={details.meta?.avoidIfTags}
+            stackFitRole={details.meta?.stackFitRole}
+            maturityLevel={details.meta?.maturityLevel}
+            learningCurve={details.meta?.learningCurve}
+            timeToFirstValueMinutes={details.meta?.timeToFirstValueMinutes}
+            costTier={details.tcoScore?.costTier ?? details.meta?.costTier}
+            lockInRisk={details.meta?.lockInRisk}
+            whoShouldUse={details.meta?.whoShouldUse}
+            whoShouldAvoid={details.meta?.whoShouldAvoid}
+          />
+        </div>
 
         <div className="mt-4"><QuickStatsBar
           timeToFirstValueMinutes={details.meta?.timeToFirstValueMinutes}

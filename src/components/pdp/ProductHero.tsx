@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Bell, Layers, ShieldCheck } from "lucide-react";
+import { Bell, Layers, ShieldCheck, FlaskConical, AlertTriangle } from "lucide-react";
 
 type HeroProps = {
   product: {
@@ -15,6 +15,9 @@ type HeroProps = {
   bestForTags?: string[];
   trustScore?: number;
   integrationScore?: number;
+  tcoTier?: string;
+  riskBadge?: string;
+  labCertified?: boolean;
   isVerified?: boolean;
   onAddToStack: () => void;
   onSubscribe: () => void;
@@ -32,6 +35,9 @@ export function ProductHero({
   bestForTags,
   trustScore,
   integrationScore,
+  tcoTier,
+  riskBadge,
+  labCertified,
   isVerified,
   onAddToStack,
   onSubscribe,
@@ -54,12 +60,33 @@ export function ProductHero({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {labCertified && (
+            <Badge className="gap-1 bg-primary text-primary-foreground">
+              <FlaskConical className="h-3.5 w-3.5" />
+              Lab Certified
+            </Badge>
+          )}
           <Badge variant="outline" className="gap-1">
             <ShieldCheck className="h-3.5 w-3.5" />
             {isVerified ? "SynLab Editorial Verified" : "Editorial Review"}
           </Badge>
-          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${scoreClass(trustScore)}`}>Trust {trustScore ?? "N/A"}</span>
-          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${scoreClass(integrationScore)}`}>Integration {integrationScore ?? "N/A"}</span>
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${scoreClass(trustScore)}`}>
+            Trust {trustScore ?? "N/A"}
+          </span>
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${scoreClass(integrationScore)}`}>
+            Integration {integrationScore ?? "N/A"}
+          </span>
+          {tcoTier && (
+            <Badge variant="outline" className="gap-1 border-blue-300 text-blue-700">
+              TCO: {tcoTier}
+            </Badge>
+          )}
+          {riskBadge && (
+            <Badge variant="outline" className="gap-1 border-orange-300 text-orange-700">
+              <AlertTriangle className="h-3 w-3" />
+              {riskBadge}
+            </Badge>
+          )}
           {product.priceModel && <Badge variant="secondary">{product.priceModel}</Badge>}
         </div>
 

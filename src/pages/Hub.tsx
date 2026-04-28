@@ -13,11 +13,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ScoreBadge from "@/components/ScoreBadge";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, GitCompare } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { HubPillarHeader } from "@/components/seo/HubPillarHeader";
 import { AdSlot } from "@/components/ads/AdSlot";
+import { HubFacetedFilters, useHubFilters, applyHubFilters } from "@/components/HubFacetedFilters";
+import { useAddToComparison } from "@/hooks/useAddToComparison";
 
 const HUB_LABELS: Record<string, string> = {
   ai_workflow: "AI & Workflow",
@@ -32,6 +34,10 @@ export default function Hub() {
     hub: hubSlug,
     status: "active",
   });
+  const { filters, setFilters } = useHubFilters();
+  const { toggle: toggleCompare, isSelected: isCompareSelected, canAdd: canAddCompare } = useAddToComparison();
+
+  const filteredProducts = applyHubFilters(products ?? [], filters);
 
   const title = HUB_LABELS[hubSlug] ?? hubSlug.replace(/_/g, " ");
   const description = `Compare and discover the best products in ${title}. Trust scores, integration scores, and expert reviews.`;
@@ -88,6 +94,12 @@ export default function Hub() {
           position="hero_below"
         />
 
+        <HubFacetedFilters
+          filters={filters}
+          onChange={setFilters}
+          productCount={filteredProducts.length}
+        />
+
         {isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -103,43 +115,58 @@ export default function Hub() {
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(products as any[]).map((p) => (
-              <Card key={p._id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <Link to={`/products/${p.productSlug}`}>
-                  <div className="aspect-video bg-muted">
-                    {p.featuredImageUrl ? (
-                      <img src={p.featuredImageUrl} alt={p.productName} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">No image</div>
-                    )}
-                  </div>
-                </Link>
-                <CardContent className="p-4 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary">{p.category ?? p.productType}</Badge>
-                  </div>
-                  <h2 className="font-semibold text-lg">
-                    <Link to={`/products/${p.productSlug}`} className="hover:underline">
-                      {p.productName}
-                    </Link>
-                  </h2>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{p.description}</p>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {p.nova_trust_scores?.[0] && (
-                      <ScoreBadge score={p.nova_trust_scores[0].total_score} label="Trust" type="trust" />
-                    )}
-                    {p.nova_integration_scores?.[0] && (
-                      <ScoreBadge score={p.nova_integration_scores[0].total_score} label="Integration" type="integration" />
-                    )}
-                  </div>
-                  <Button asChild size="sm" className="w-full">
-                    <Link to={`/products/${p.productSlug}`}>
-                      View review <ExternalLink className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+            {(filteredProducts as any[]).map((p) => {
+              const comparing = isCompareSelected(p._id);
+              return (
+                <Card key={p._id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <Link to={`/products/${p.productSlug}`}>
+                    <div className="aspect-video bg-muted">
+                      {p.featuredImageUrl ? (
+                        <img src={p.featuredImageUrl} alt={p.productName} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">No image</div>
+                      )}
+                    </div>
+                  </Link>
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary">{p.category ?? p.productType}</Badge>
+                    </div>
+                    <h2 className="font-semibold text-lg">
+                      <Link to={`/products/${p.productSlug}`} className="hover:underline">
+                        {p.productName}
+                      </Link>
+                    </h2>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{p.description}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {p.nova_trust_scores?.[0] && (
+                        <ScoreBadge score={p.nova_trust_scores[0].total_score} label="Trust" type="trust" />
+                      )}
+                      {p.nova_integration_scores?.[0] && (
+                        <ScoreBadge score={p.nova_integration_scores[0].total_score} label="Integration" type="integration" />
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button asChild size="sm" className="flex-1">
+                        <Link to={`/products/${p.productSlug}`}>
+                          View review <ExternalLink className="ml-2 h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={comparing ? "default" : "outline"}
+                        className="gap-1"
+                        disabled={!comparing && !canAddCompare}
+                        onClick={() => toggleCompare({ id: p._id, name: p.productName, slug: p.productSlug, category: p.category ?? p.productType })}
+                      >
+                        <GitCompare className="h-4 w-4" />
+                        {comparing ? "Added" : "+ Compare"}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </main>

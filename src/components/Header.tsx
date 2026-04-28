@@ -13,13 +13,13 @@ import { VerifiedBadge } from "@/components/auth/VerifiedBadge";
 import { useEmailVerification } from "@/hooks/useEmailVerification";
 
 const navLinks = [
-  { name: "Products", href: "/products" },
-  { name: "AI Tools", href: "/hub/ai-tools" },
-  { name: "Blog", href: "/blog" },
-  { name: "Forum", href: "/forum" },
+  { name: "Hubs", href: "/hubs" },
+  { name: "Compare", href: "/compare" },
+  { name: "Stack Builder", href: "/stack-builder" },
+  { name: "Decision Studio", href: "/decision-studio" },
+  { name: "Workflows", href: "/workflows" },
   { name: "Scoring Hub", href: "/scoring-hub" },
-  { name: "Compare", href: "/tools/compare" },
-  { name: "Community", href: "/community/setups" },
+  { name: "Blog", href: "/blog" },
 ];
 
 const Header = () => {
