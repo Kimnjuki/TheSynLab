@@ -23,6 +23,13 @@ export const getProductSchemaData = query({
             .first()
         : null;
 
+    const reviews = await ctx.db
+      .query("productReviews")
+      .withIndex("by_product_approved", (q) =>
+        q.eq("productId", args.productId).eq("isApproved", true)
+      )
+      .collect();
+
     return {
       product: {
         _id: product._id,
@@ -31,8 +38,15 @@ export const getProductSchemaData = query({
         description: product.description,
         featuredImageUrl: product.featuredImageUrl,
         overallScore: product.overallScore,
+        category: product.category,
+        price: product.price,
+        priceCurrency: product.priceCurrency,
+        officialWebsite: product.officialWebsite,
+        features: product.features,
+        galleryImages: product.galleryImages,
       },
       trustScore: trust?.totalScore ?? null,
+      reviewCount: reviews.length,
       authorDisplayName: authorProfile?.displayName ?? "TheSynLab Editorial",
     };
   },

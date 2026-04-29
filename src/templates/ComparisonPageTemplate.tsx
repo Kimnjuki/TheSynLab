@@ -64,13 +64,16 @@ const ComparisonPageTemplate: React.FC<ComparisonPageTemplateProps> = ({ toolA, 
   
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "ComparisonPage",
-    "name": `${toolA.name} vs ${toolB.name}: Full Comparison ${currentYear}`,
+    "@type": "Article",
+    "headline": `${toolA.name} vs ${toolB.name}: Full Comparison ${currentYear}`,
     "description": `Complete side-by-side comparison of ${toolA.name} vs ${toolB.name}. Features, pricing, trust scores, and integration capabilities compared.`,
-    "itemListElement": [
-      { "@type": "SoftwareApplication", "name": toolA.name },
-      { "@type": "SoftwareApplication", "name": toolB.name }
-    ]
+    "author": { "@type": "Organization", "name": "TheSynLab" },
+    "publisher": { "@type": "Organization", "name": "TheSynLab", "url": "https://thesynlab.com" },
+    "dateModified": lastUpdated,
+    "about": [
+      { "@type": "SoftwareApplication", "name": toolA.name, "url": `https://thesynlab.com/tool/${toolA.slug}` },
+      { "@type": "SoftwareApplication", "name": toolB.name, "url": `https://thesynlab.com/tool/${toolB.slug}` },
+    ],
   };
 
   return (

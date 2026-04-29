@@ -47,36 +47,42 @@ export default function ProductDetailPage() {
     toast.success("Subscribed to updates");
   };
 
-  const canonical = `https://www.thesynlab.com/products/${details.productSlug}`;
+  const canonical = `https://thesynlab.com/products/${details.productSlug}`;
   const seoTitle = `${details.productName} Review ${new Date().getFullYear()} — Trust Score, Integrations & Workflow Verdict | TheSynLab`;
   const seoDesc = `TheSynLab deep-dive on ${details.productName}: benchmarked trust score, integration depth, workflow recipes, and a clear verdict.`;
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
-      { "@type": "Question", name: `Is ${details.productName} worth it?`, acceptedAnswer: { "@type": "Answer", text: details.verdictSummary || "Depends on team needs and stack fit." } },
-      { "@type": "Question", name: `What is ${details.productName} best for?`, acceptedAnswer: { "@type": "Answer", text: details.meta?.whoShouldUse || "General productivity and workflow optimization." } },
-    ],
-  };
+  const featureList: string[] = Array.isArray(details.features)
+    ? details.features.map((f: any) => (typeof f === "string" ? f : f?.name ?? "")).filter(Boolean)
+    : [];
 
   return (
     <div className="min-h-screen bg-background">
       <MetaTags title={seoTitle} description={seoDesc} canonical={canonical} ogImage={details.featuredImageUrl} ogType="product" />
       <JsonLd
-        type="Product"
-        product={{
+        type="SoftwareApplication"
+        softwareApp={{
           name: details.productName,
-          description: seoDesc,
-          image: details.featuredImageUrl,
+          description: details.description || seoDesc,
           url: canonical,
+          image: details.featuredImageUrl,
+          applicationCategory: details.category ?? "SoftwareApplication",
+          price: details.price,
+          priceCurrency: details.priceCurrency,
           rating: details.trustScore?.totalScore,
-          reviewCount: 1,
+          reviewCount: details.trustScore ? 1 : undefined,
+          featureList,
+          screenshots: details.galleryImages,
         }}
       />
-      <JsonLd type="Review" custom={{ reviewBody: details.verdictSummary, reviewRating: { "@type": "Rating", ratingValue: details.trustScore?.totalScore ?? 0 } }} />
+      <JsonLd
+        type="FAQPage"
+        faq={[
+          { question: `Is ${details.productName} worth it?`, answer: details.verdictSummary || "Depends on team needs and stack fit." },
+          { question: `What is ${details.productName} best for?`, answer: details.meta?.whoShouldUse || "General productivity and workflow optimization." },
+          ...(details.meta?.avoidIfTags?.length ? [{ question: `Who should avoid ${details.productName}?`, answer: details.meta.whoShouldAvoid || details.meta.avoidIfTags.join(", ") }] : []),
+        ]}
+      />
       <JsonLd type="BreadcrumbList" breadcrumbs={[{ name: "Home", url: "/" }, { name: "Products", url: "/tools/compare" }, { name: details.productName, url: `/products/${details.productSlug}` }]} />
-      <JsonLd type="WebPage" custom={faqSchema} />
       <Header />
 
       <main className="container mx-auto px-4 py-8">

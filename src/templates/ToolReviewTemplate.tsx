@@ -100,7 +100,7 @@ const ToolReviewTemplate: React.FC<ToolReviewTemplateProps> = ({ tool, relatedCo
     <>
       <Helmet>
         <title>{tool.name} Review: Is It Worth Using in {currentYear}? | TheSynLab</title>
-        <meta name="description" content={`Comprehensive review of {tool.name}. Trust score: {tool.overallScore}/100. Full features, pricing, integrations, and honest alternatives.`} />
+        <meta name="description" content={`Comprehensive review of ${tool.name}. Trust score: ${tool.overallScore}/100. Full features, pricing, integrations, and honest alternatives.`} />
         <script type="application/ld+json">
           {JSON.stringify(jsonLd)}
         </script>

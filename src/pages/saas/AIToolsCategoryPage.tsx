@@ -68,7 +68,7 @@ export default function AIToolsCategoryPage() {
     <div className="min-h-screen bg-background">
       <MetaTags title={title} description={description} canonical={canonical} ogType="website" />
       <JsonLd type="BreadcrumbList" breadcrumbs={breadcrumbs} />
-      <JsonLd type="WebPage" custom={listSchema} />
+      <JsonLd type="ItemList" custom={listSchema} />
       <Header />
 
       {/* ── BREADCRUMB ───────────────────────────────────── */}

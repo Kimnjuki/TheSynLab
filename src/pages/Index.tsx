@@ -28,17 +28,31 @@ import { JsonLd } from "@/components/seo/JsonLd";
 const Index = () => {
   const { showTour, closeTour } = useOnboarding();
 
-  const jsonLd = {
+  const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "TheSynLab",
-    "url": "https://thesynlab.com",
-    "description": "Next-gen tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware.",
-    "potentialAction": {
+    name: "TheSynLab",
+    url: "https://thesynlab.com",
+    description: "Next-gen tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware.",
+    potentialAction: {
       "@type": "SearchAction",
       "target": "https://thesynlab.com/blog?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "TheSynLab",
+    url: "https://thesynlab.com",
+    logo: "https://thesynlab.com/logo.png",
+    description: "Next-gen tech review platform with Trust & Integration Scores for productivity tools, smart home, and office hardware.",
+    sameAs: [
+      "https://twitter.com/thesynlab",
+      "https://www.linkedin.com/company/thesynlab",
+      "https://www.producthunt.com/products/thesynlab",
+    ],
   };
 
   return (
@@ -49,7 +63,8 @@ const Index = () => {
         canonical="https://thesynlab.com/"
         ogType="website"
       />
-      <JsonLd type="WebPage" custom={jsonLd} />
+      <JsonLd type="WebPage" custom={websiteSchema} />
+      <JsonLd type="Organization" custom={orgSchema} />
 
       <Header />
       <main>

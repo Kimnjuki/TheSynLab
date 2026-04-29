@@ -1,5 +1,5 @@
 # robots.txt for thesynlab.com
-# Last updated: 2026-04-01
+# Last updated: 2026-04-29
 
 User-agent: *
 Allow: /
@@ -28,6 +28,39 @@ Allow: /
 
 # Bingbot specific
 User-agent: Bingbot
+Allow: /
+
+# Google AI crawler (AI Overviews training and citations)
+User-agent: Google-Extended
+Allow: /
+
+# OpenAI crawlers (ChatGPT citations and training)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic / Claude crawler
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity AI crawler
+User-agent: PerplexityBot
+Allow: /
+
+# ByteDance / TikTok AI
+User-agent: Bytespider
+Allow: /
+
+# Apple AI
+User-agent: Applebot-Extended
 Allow: /
 
 # Sitemap

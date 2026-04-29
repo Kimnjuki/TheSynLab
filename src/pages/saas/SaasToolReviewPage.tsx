@@ -141,8 +141,8 @@ export default function SaasToolReviewPage() {
     <div className="min-h-screen bg-background">
       <MetaTags title={title} description={description} canonical={canonical} ogType="article" />
       <JsonLd type="BreadcrumbList" breadcrumbs={breadcrumbs} />
-      <JsonLd type="WebPage" custom={productSchema} />
-      <JsonLd type="WebPage" custom={faqSchema} />
+      <JsonLd type="SoftwareApplication" custom={productSchema} />
+      <JsonLd type="FAQPage" custom={faqSchema} />
       <Header />
 
       {/* ── BREADCRUMB ─────────────────────────────────── */}
