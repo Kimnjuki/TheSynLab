@@ -206,37 +206,73 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
     });
   }
 
-  // Blog articles — Article schema + BreadcrumbList
+  // Blog articles — Article schema + BreadcrumbList + FAQPage + HowTo
   for (const article of blogArticles) {
     const route = `/blog/${article.slug}`;
+    const faqs = extractFaqFromMd(article.content, article.title);
+    const howToSteps = extractHowToSteps(article.content);
+    const articleSchemas: any[] = [
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: article.title,
+        description: article.metaDescription || article.excerpt || article.title,
+        datePublished: article.publishedAt,
+        dateModified: article.updatedAt || article.publishedAt,
+        author: article.author ? { "@type": "Person", name: article.author } : undefined,
+        image: article.image,
+        mainEntityOfPage: `${SITE_URL}${route}`,
+        url: `${SITE_URL}${route}`,
+        publisher: {
+          "@type": "Organization",
+          name: "TheSynLab",
+          url: SITE_URL,
+        },
+      },
+      breadcrumbSchema([
+        { name: "TheSynLab", item: `${SITE_URL}/` },
+        { name: "Blog", item: `${SITE_URL}/blog` },
+        { name: article.title },
+      ]),
+    ];
+
+    // Add FAQPage schema for AI Overview optimization (Google loves this)
+    if (faqs.length >= 1) {
+      articleSchemas.push({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.slice(0, 5).map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      });
+    }
+
+    // Add HowTo schema for step-by-step content
+    if (howToSteps.length >= 2) {
+      articleSchemas.push({
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        name: article.title,
+        description: article.excerpt || article.metaDescription,
+        step: howToSteps.slice(0, 6).map((step, i) => ({
+          "@type": "HowToStep",
+          position: i + 1,
+          name: step.name,
+          text: step.text,
+        })),
+      });
+    }
+
     pages.push({
       route,
       title: article.seoTitle || `${article.title} | TheSynLab`,
       description: article.metaDescription || article.excerpt || article.title,
-      jsonLd: [
-        {
-          "@context": "https://schema.org",
-          "@type": "Article",
-          headline: article.title,
-          description: article.metaDescription || article.excerpt || article.title,
-          datePublished: article.publishedAt,
-          dateModified: article.updatedAt || article.publishedAt,
-          author: article.author ? { "@type": "Person", name: article.author } : undefined,
-          image: article.image,
-          mainEntityOfPage: `${SITE_URL}${route}`,
-          url: `${SITE_URL}${route}`,
-          publisher: {
-            "@type": "Organization",
-            name: "TheSynLab",
-            url: SITE_URL,
-          },
-        },
-        breadcrumbSchema([
-          { name: "TheSynLab", item: `${SITE_URL}/` },
-          { name: "Blog", item: `${SITE_URL}/blog` },
-          { name: article.title },
-        ]),
-      ],
+      jsonLd: articleSchemas,
     });
   }
 
@@ -356,17 +392,99 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   return Array.from(new Map(pages.map((page) => [page.route, page])).values());
 };
 
-const stripMarkdown = (md: string, maxChars = 8000): string =>
-  md
-    .slice(0, maxChars)
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/\*\*(.+?)\*\*/g, "$1")
-    .replace(/\*(.+?)\*/g, "$1")
-    .replace(/`(.+?)`/g, "$1")
-    .replace(/\[(.+?)\]\(.+?\)/g, "$1")
-    .replace(/^[-*+]\s+/gm, "")
-    .replace(/^\s*>\s*/gm, "")
-    .trim();
+/** Extract FAQ items from markdown content (for Schema.org FAQPage) */
+const extractFaqFromMd = (md: string, title: string): { question: string; answer: string }[] => {
+  const faqs: { question: string; answer: string }[] = [];
+  const lines = md.split("\n");
+
+  // Strategy 1: Match heading-style questions ("## What is X?")
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    const headingQ = line.match(/^#{2,3}\s+(.+\?)\s*$/);
+    if (headingQ) {
+      const question = headingQ[1].replace(/\*\*/g, "").trim();
+      const answerParts: string[] = [];
+      for (let j = i + 1; j < Math.min(i + 10, lines.length); j++) {
+        const next = lines[j].trim();
+        if (!next || next.startsWith("#") || next.match(/^[-*+]\s/)) break;
+        answerParts.push(next.replace(/\*\*/g, "").replace(/`(.+?)`/g, "$1"));
+      }
+      if (answerParts.length >= 1) {
+        faqs.push({ question, answer: answerParts.slice(0, 3).join(" ") });
+      }
+    }
+  }
+
+  // Strategy 2: For comparison articles, create synthetic FAQ from title
+  if (title.match(/\b(vs|versus|or)\b/i) || title.match(/^which/i)) {
+    const vsParts = title.replace(/\?/g, "").split(/\b(vs|versus)\b/i);
+    if (vsParts.length >= 3) {
+      const a = vsParts[0].trim();
+      const b = vsParts.slice(2).join(" ").trim().replace(/:.*$/, "").trim();
+      if (a && b) {
+        faqs.push({
+          question: `Which is better: ${a} or ${b}?`,
+          answer: `Our in-depth comparison evaluates ${a} and ${b} using Trust Scores and real-world testing.`
+        });
+        faqs.push({
+          question: `What are the key differences between ${a} and ${b}?`,
+          answer: `We break down the differences in scoring, features, pricing, and performance.`
+        });
+      }
+    }
+  }
+
+  return faqs;
+};
+
+/** Extract headings for Table of Contents */
+const extractTocFromMd = (md: string): { level: number; text: string; id: string }[] => {
+  const toc: { level: number; text: string; id: string }[] = [];
+  for (const line of md.split("\n")) {
+    const h = line.trim().match(/^(##|###)\s+(.*)/);
+    if (h) {
+      const text = h[2].replace(/\*\*/g, "").trim();
+      const id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      toc.push({ level: h[1].length, text, id });
+    }
+  }
+  return toc;
+};
+
+/** Extract first meaningful paragraph as a quick-answer summary */
+const extractQuickAnswer = (md: string): string => {
+  for (const line of md.split("\n")) {
+    const trimmed = line.trim();
+    // Skip headings, empty lines, lists
+    if (!trimmed || trimmed.startsWith("#") || trimmed.startsWith("-") || trimmed.startsWith("*")) continue;
+    // First paragraph that looks like a real sentence
+    if (trimmed.length > 50 && trimmed.includes(" ")) {
+      return trimmed.replace(/\*\*/g, "").replace(/`(.+?)`/g, "$1").slice(0, 300);
+    }
+  }
+  return "";
+};
+
+/** Check for HowTo steps ("Step N:" pattern) */
+const extractHowToSteps = (md: string): { name: string; text: string }[] => {
+  const steps: { name: string; text: string }[] = [];
+  const lines = md.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const stepMatch = lines[i].trim().match(/^###?\s*Step\s+(\d+)[:\-]?\s+(.*)/i);
+    if (stepMatch) {
+      const name = `Step ${stepMatch[1]}: ${stepMatch[2].replace(/\*\*/g, "").trim()}`;
+      // Collect description from next few lines
+      const descParts: string[] = [];
+      for (let j = i + 1; j < Math.min(i + 8, lines.length); j++) {
+        const next = lines[j].trim();
+        if (!next || next.startsWith("#") || next.match(/^Step\s+\d+/i)) break;
+        descParts.push(next.replace(/\*\*/g, "").replace(/`(.+?)`/g, "$1"));
+      }
+      steps.push({ name, text: descParts.slice(0, 3).join(" ") });
+    }
+  }
+  return steps;
+};
 
 const mdToHtml = (md: string, maxChars = 8000): string => {
   const limited = md.slice(0, maxChars);
@@ -382,8 +500,10 @@ const mdToHtml = (md: string, maxChars = 8000): string => {
     const h = line.match(/^(#{1,6})\s+(.*)/);
     if (h) {
       if (inList) { lines.push("</ul>"); inList = false; }
-      const level = Math.min(h[1].length + 1, 4); // h2-h4
-      lines.push(`<h${level}>${escapeHtml(h[2])}</h${level}>`);
+      const level = Math.min(h[1].length + 1, 4);
+      const text = h[2];
+      const id = escapeHtml(text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""));
+      lines.push(`<h${level} id="${id}">${escapeHtml(text)}</h${level}>`);
       continue;
     }
     const li = line.match(/^[-*+]\s+(.*)/);
@@ -680,12 +800,49 @@ const buildStaticBodyHtml = (route: string): string => {
     const article = blogArticles.find((a) => a.slug === blogMatch[1]);
     if (article) {
       const bodyHtml = mdToHtml(article.content, 8000);
+      const toc = extractTocFromMd(article.content);
+      const faqs = extractFaqFromMd(article.content, article.title);
+      const quickAnswer = extractQuickAnswer(article.content);
+      const howToSteps = extractHowToSteps(article.content);
+
+      // Build Quick Answer box (AI Overview optimized)
+      const quickAnswerHtml = quickAnswer
+        ? `<div style="background:#f0f7ff;border-left:4px solid #2563eb;padding:1rem;margin-bottom:1.5rem;border-radius:4px">
+<p style="margin:0;font-size:.95rem"><b>⚡ Quick Answer:</b> ${escapeHtml(quickAnswer)}</p>
+</div>`
+        : "";
+
+      // Build Table of Contents (helps AI crawlers understand structure)
+      const tocHtml = toc.length > 3
+        ? `<nav style="background:#f9fafb;border:1px solid #e5e7eb;padding:1rem;margin-bottom:1.5rem;border-radius:4px">
+<p style="margin:0 0 .5rem 0;font-weight:bold">📋 Table of Contents</p>
+<ol style="margin:0;padding-left:1.25rem">${toc.filter(t => t.level <= 3).map(t =>
+          `<li style="margin-bottom:.25rem"><a href="#${t.id}">${escapeHtml(t.text)}</a></li>`
+        ).join("")}</ol>
+</nav>`
+        : "";
+
+      // Build FAQ section (prerendered for AI crawlers)
+      const faqHtml = faqs.length >= 1
+        ? `<div style="background:#faf5ff;border:1px solid #e9d5ff;padding:1rem;margin:1.5rem 0;border-radius:4px">
+<h2 style="margin:0 0 .75rem 0;font-size:1.1rem">❓ Frequently Asked Questions</h2>
+${faqs.slice(0, 5).map(faq =>
+          `<div style="margin-bottom:.75rem;padding-bottom:.75rem;border-bottom:1px solid #e9d5ff">
+<p style="margin:0 0 .25rem 0;font-weight:bold">${escapeHtml(faq.question)}</p>
+<p style="margin:0;color:#555">${escapeHtml(faq.answer)}</p>
+</div>`
+        ).join("")}</div>`
+        : "";
+
       return `<main style="${MAIN_STYLE}">
 <nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › <a href="/blog">Blog</a> › ${escapeHtml(article.title)}</nav>
 <h1>${escapeHtml(article.title)}</h1>
 <p style="color:#666;font-size:.875rem">By ${escapeHtml(article.author)} · ${article.publishedAt} · ${article.readingTime} min read</p>
 <p><b>${escapeHtml(article.excerpt)}</b></p>
+${quickAnswerHtml}
+${tocHtml}
 ${bodyHtml}
+${faqHtml}
 </main>`;
     }
   }
