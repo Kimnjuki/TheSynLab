@@ -22,7 +22,23 @@
     <meta name="twitter:title" content="TheSynLab – Next-Gen Tech Reviews & Workflow Optimization">
     <meta name="twitter:description" content="In-depth tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware.">
 
-    <!-- GA4 / GTM / Ahrefs load after analytics cookie consent via src/components/AnalyticsScripts.tsx -->
+    <!-- GA4 with Google Consent Mode v2 (default=denied until user accepts) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XMGRJBSN5Y"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied'
+      });
+      gtag('js', new Date());
+      gtag('config', 'G-XMGRJBSN5Y', {
+        cookie_flags: 'SameSite=None;Secure'
+      });
+    </script>
+    <!-- GA4 / GTM / Ahrefs also load after analytics cookie consent via src/components/AnalyticsScripts.tsx -->
   </head>
   <body>
     <div id="root"></div>

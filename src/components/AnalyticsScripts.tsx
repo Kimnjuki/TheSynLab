@@ -68,6 +68,16 @@ gtag('config', ${JSON.stringify(measurementId)});
 export default function AnalyticsScripts() {
   useEffect(() => {
     const run = (consent: ConsentFlags) => {
+      // Update Google Consent Mode based on user choice
+      if (typeof gtag !== 'undefined') {
+        gtag('consent', 'update', {
+          'analytics_storage': consent.analyticsCookies ? 'granted' : 'denied',
+          'ad_storage': consent.advertisingCookies ? 'granted' : 'denied',
+          'ad_user_data': consent.advertisingCookies ? 'granted' : 'denied',
+          'ad_personalization': consent.advertisingCookies ? 'granted' : 'denied',
+        });
+      }
+
       if (!consent.analyticsCookies) return;
 
       const gtmId = (import.meta.env.VITE_GTM_CONTAINER_ID as string | undefined)?.trim();
