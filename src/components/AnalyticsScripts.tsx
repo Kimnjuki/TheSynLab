@@ -8,9 +8,6 @@ import {
 /** Public site key from Ahrefs Web Analytics installation. */
 const AHREFS_DATA_KEY = "slaxd03NBrOQOSrpgty7bw";
 
-/** Legacy direct GA4 when `VITE_GTM_CONTAINER_ID` is unset (matches previous index.html). */
-const GA4_DEFAULT = "G-XMGRJBSN5Y";
-
 function injectAhrefs() {
   if (document.getElementById("ahrefs-analytics-script")) return;
   const s = document.createElement("script");
@@ -47,24 +44,6 @@ function injectGtm(containerId: string) {
   }
 }
 
-function injectGa4(measurementId: string) {
-  if (document.getElementById("ga4-gtag-script")) return;
-  const gtagScript = document.createElement("script");
-  gtagScript.id = "ga4-gtag-script";
-  gtagScript.async = true;
-  gtagScript.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
-  document.head.appendChild(gtagScript);
-  const inline = document.createElement("script");
-  inline.id = "ga4-gtag-inline";
-  inline.textContent = `
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', ${JSON.stringify(measurementId)});
-`;
-  document.head.appendChild(inline);
-}
-
 export default function AnalyticsScripts() {
   useEffect(() => {
     const run = (consent: ConsentFlags) => {
@@ -78,18 +57,15 @@ export default function AnalyticsScripts() {
         });
       }
 
+      // GA4 is loaded directly in index.html head (prevents prerender vs client duplicate).
+      // This component only: (1) updates consent mode, (2) loads Ahrefs, (3) optionally GTM.
       if (!consent.analyticsCookies) return;
 
       const gtmId = (import.meta.env.VITE_GTM_CONTAINER_ID as string | undefined)?.trim();
       if (gtmId) {
-        // GTM only: add Ahrefs (Custom HTML) and other tags in the container to avoid duplicate loads.
         injectGtm(gtmId);
       } else {
         injectAhrefs();
-        const gaId =
-          (import.meta.env.VITE_GA4_MEASUREMENT_ID as string | undefined)?.trim() ||
-          GA4_DEFAULT;
-        injectGa4(gaId);
       }
     };
 
