@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
-import { Bell, Layers } from "lucide-react";
+import { Bell, Layers, ExternalLink, DollarSign, Star, TrendingUp, Shield } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ProductDetailPage() {
@@ -102,6 +102,60 @@ export default function ProductDetailPage() {
           onAddToStack={onAddToStack}
           onSubscribe={onSubscribe}
         />
+
+        {/* Affiliate / Price CTA Strip — drives income by linking to product site */}
+        <div className="mt-6 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-primary/10 to-secondary/5 p-4 md:p-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="hidden md:flex w-10 h-10 rounded-full bg-primary/10 items-center justify-center">
+                <DollarSign className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  {details.meta?.pricingNote || `Starting at ${details.price || details.tcoScore?.costTier || 'Varies'}`}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {details.meta?.affiliateNote || 'Check current pricing and availability'}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 w-full md:w-auto">
+              <Button
+                className="gap-2 flex-1 md:flex-initial"
+                onClick={() => {
+                  if (typeof window !== 'undefined' && (window as any).gtag) {
+                    (window as any).gtag('event', 'affiliate_click', {
+                      product_name: details.productName,
+                      product_slug: details.productSlug
+                    });
+                  }
+                  window.open(details.officialUrl || details.websiteUrl || `https://www.google.com/search?q=${encodeURIComponent(details.productName + ' pricing')}`, '_blank', 'noopener');
+                }}
+              >
+                <ExternalLink className="w-4 h-4" />
+                Check Price
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2 flex-1 md:flex-initial"
+                onClick={() => {
+                  window.open(`https://www.google.com/search?q=${encodeURIComponent(details.productName + ' reviews ' + new Date().getFullYear())}`, '_blank', 'noopener');
+                }}
+              >
+                <Star className="w-4 h-4" />
+                See Deals
+              </Button>
+            </div>
+          </div>
+          {/* Trust badge */}
+          <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1"><Shield className="w-3 h-3 text-success" /> Independent review</span>
+            <span className="flex items-center gap-1"><TrendingUp className="w-3 h-3 text-primary" /> Prices updated regularly</span>
+            {details.meta?.affiliateDisclosure && (
+              <span className="text-[10px] text-muted-foreground/60">{details.meta.affiliateDisclosure}</span>
+            )}
+          </div>
+        </div>
 
         <div className="mt-6">
           <DecisionSummaryCard
