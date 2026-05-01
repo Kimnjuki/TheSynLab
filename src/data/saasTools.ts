@@ -30,6 +30,7 @@ export interface SaasTool {
   alternativeSlugs: string[];
   tags: string[];
   officialUrl: string;
+  affiliateUrl?: string; // Impact/ShareASale/CJ affiliate link
   volume: number;
   kd: number;
   cpc: number;
