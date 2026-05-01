@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { getViewCount } from "@/hooks/useViewTracking";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { blogArticles, blogCategories, blogHubs, seoKeywords } from "@/data/blogArticles";
@@ -181,6 +182,9 @@ const Blog = () => {
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         {new Date(article.publishedAt).toLocaleDateString()}
+                      </span>
+                      <span className="flex items-center gap-1 text-muted-foreground/60">
+                        {getViewCount('article:' + article.slug)} views
                       </span>
                     </div>
                   </div>

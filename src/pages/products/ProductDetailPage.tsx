@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { Bell, Layers, ExternalLink, DollarSign, Star, TrendingUp, Shield } from "lucide-react";
+import { useViewTracking, trackConversion } from "@/hooks/useViewTracking";
 import { toast } from "sonner";
 
 export default function ProductDetailPage() {
@@ -40,6 +41,8 @@ export default function ProductDetailPage() {
     await addBookmark({ userId: user.id, productId: details._id, listName: "default" });
     toast.success("Added to My Stack");
   };
+
+  const { totalViews } = useViewTracking('product', slug);
 
   const onSubscribe = async () => {
     if (!user) return toast.error("Sign in to subscribe");
@@ -123,12 +126,7 @@ export default function ProductDetailPage() {
               <Button
                 className="gap-2 flex-1 md:flex-initial"
                 onClick={() => {
-                  if (typeof window !== 'undefined' && (window as any).gtag) {
-                    (window as any).gtag('event', 'affiliate_click', {
-                      product_name: details.productName,
-                      product_slug: details.productSlug
-                    });
-                  }
+                  trackConversion('product', slug, 'affiliate_click');
                   window.open(details.officialUrl || details.websiteUrl || `https://www.google.com/search?q=${encodeURIComponent(details.productName + ' pricing')}`, '_blank', 'noopener');
                 }}
               >

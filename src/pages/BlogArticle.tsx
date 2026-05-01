@@ -33,6 +33,7 @@ const BlogArticle = () => {
 
   const relatedArticles = blogArticles.filter(a => article.relatedArticles.includes(a.id));
   const articleUrl = `https://thesynlab.com/blog/${article.slug}`;
+  const { totalViews } = useViewTracking('article', article.slug);
 
   // Parse content into structured sections
   const renderContent = (content: string) => {
@@ -213,6 +214,22 @@ const BlogArticle = () => {
             </div>
             
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">{article.title}</h1>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground mb-6">
+              <span className="flex items-center gap-1">
+                <Eye className="h-3 w-3" />
+                {totalViews} views
+              </span>
+              <span className="text-muted-foreground/30">•</span>
+              <span className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                {article.readingTime} min read
+              </span>
+              <span className="text-muted-foreground/30">•</span>
+              <span className="flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                {new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+            </div>
             <p className="text-xl text-muted-foreground mb-6 leading-relaxed">{article.excerpt}</p>
 
             {/* Editor Rating - PCMag Style */}
