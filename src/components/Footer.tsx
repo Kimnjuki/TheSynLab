@@ -10,9 +10,9 @@ import { toast } from "@/hooks/use-toast";
 
 const footerLinks = {
   hubs: [
-    { name: "AI Workflow Hub", href: "/hubs/ai-workflow" },
-    { name: "Intelligent Home Hub", href: "/hubs/intelligent-home" },
-    { name: "Hybrid Office Hub", href: "/hubs/hybrid-office" },
+    { name: "AI Workflow Hub", href: "/hub/ai-workflow" },
+    { name: "Intelligent Home Hub", href: "/hub/intelligent-home" },
+    { name: "Hybrid Office Hub", href: "/hub/hybrid-office" },
     { name: "AI & SaaS Tools Hub", href: "/hub/ai-tools" },
   ],
   tools: [

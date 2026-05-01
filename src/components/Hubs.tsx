@@ -14,7 +14,7 @@ const Hubs = () => {
         "Integration Tutorials"
       ],
       gradient: "bg-gradient-to-br from-primary to-primary/60",
-      href: "/hubs/ai-workflow"
+      href: "/hub/ai-workflow"
     },
     {
       icon: Home,
@@ -27,7 +27,7 @@ const Hubs = () => {
         "Troubleshooting Database"
       ],
       gradient: "bg-gradient-to-br from-secondary to-secondary/60",
-      href: "/hubs/intelligent-home"
+      href: "/hub/intelligent-home"
     },
     {
       icon: Briefcase,
@@ -40,7 +40,7 @@ const Hubs = () => {
         "Budget Build Guides"
       ],
       gradient: "bg-gradient-to-br from-accent to-accent/60",
-      href: "/hubs/hybrid-office"
+      href: "/hub/hybrid-office"
     }
   ];
 

@@ -30,9 +30,9 @@ const staticRoutes = [
   "/scoring-hub",
   "/hub/ai-tools",
   "/hubs",
-  "/hubs/intelligent-home",
-  "/hubs/hybrid-office",
-  "/hubs/ai-workflow",
+  "/hub/intelligent-home",
+  "/hub/hybrid-office",
+  "/hub/ai-workflow",
   // spec v2.0 canonical routes
   "/compare",
   "/stack-builder",
@@ -663,7 +663,7 @@ const buildStaticBodyHtml = (route: string): string => {
 <h1>Workflow Automation Templates &amp; No-Code Recipes</h1>
 <p>Curated, tool-scored integration playbooks. Each recipe links to integration-rated products so you pick the right stack, not just any stack. Covering sales, devops, content, e-commerce, analytics, and customer support.</p>
 <ul>${recipeItems}</ul>
-<p>All recipes are filterable by use-case, difficulty, and integrated tools. <a href="/hubs/ai-workflow">Open AI Workflow Hub →</a> to build custom automation pipelines.</p>
+<p>All recipes are filterable by use-case, difficulty, and integrated tools. <a href="/hub/ai-workflow">Open AI Workflow Hub →</a> to build custom automation pipelines.</p>
 </main>`;
   }
 

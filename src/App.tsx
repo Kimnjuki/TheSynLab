@@ -121,9 +121,9 @@ const App = () => (
                   <Route path="/recipes/:slug" element={<IntegrationRecipe />} />
                   <Route path="/community/setups" element={<CommunitySetups />} />
                   <Route path="/community/leaderboard" element={<CommunityLeaderboard />} />
-                  <Route path="/hubs/ai-workflow" element={<AIWorkflowHub />} />
-                  <Route path="/hubs/intelligent-home" element={<IntelligentHomeHub />} />
-                  <Route path="/hubs/hybrid-office" element={<HybridOfficeHub />} />
+                  <Route path="/hub/ai-workflow" element={<AIWorkflowHub />} />
+                  <Route path="/hub/intelligent-home" element={<IntelligentHomeHub />} />
+                  <Route path="/hub/hybrid-office" element={<HybridOfficeHub />} />
                   {/* Forum */}
                   <Route path="/forum" element={<Forum />} />
                   <Route path="/forum/category/:slug" element={<ForumCategory />} />

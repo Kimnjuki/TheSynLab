@@ -31,7 +31,7 @@ const RECIPES: WorkflowRecipe[] = [
     steps: 5,
     difficulty: "Intermediate",
     icon: Mail,
-    href: "/hubs/ai-workflow",
+    href: "/hub/ai-workflow",
   },
   {
     id: "content-pipeline",
@@ -42,7 +42,7 @@ const RECIPES: WorkflowRecipe[] = [
     steps: 5,
     difficulty: "Beginner",
     icon: Zap,
-    href: "/hubs/ai-workflow",
+    href: "/hub/ai-workflow",
   },
   {
     id: "devops-alert",
@@ -53,7 +53,7 @@ const RECIPES: WorkflowRecipe[] = [
     steps: 4,
     difficulty: "Advanced",
     icon: GitMerge,
-    href: "/hubs/ai-workflow",
+    href: "/hub/ai-workflow",
   },
   {
     id: "ecommerce-order",
@@ -64,7 +64,7 @@ const RECIPES: WorkflowRecipe[] = [
     steps: 4,
     difficulty: "Intermediate",
     icon: ShoppingCart,
-    href: "/hubs/ai-workflow",
+    href: "/hub/ai-workflow",
   },
   {
     id: "analytics-report",
@@ -75,7 +75,7 @@ const RECIPES: WorkflowRecipe[] = [
     steps: 3,
     difficulty: "Beginner",
     icon: BarChart2,
-    href: "/hubs/ai-workflow",
+    href: "/hub/ai-workflow",
   },
   {
     id: "ai-support-triage",
@@ -86,7 +86,7 @@ const RECIPES: WorkflowRecipe[] = [
     steps: 3,
     difficulty: "Intermediate",
     icon: Bot,
-    href: "/hubs/ai-workflow",
+    href: "/hub/ai-workflow",
   },
 ];
 
@@ -233,7 +233,7 @@ export default function WorkflowsIndex() {
             <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
               Use the AI Workflow Hub to design custom automation pipelines with drag-and-drop node editing.
             </p>
-            <Link to="/hubs/ai-workflow">
+            <Link to="/hub/ai-workflow">
               <Button className="gap-2"><Zap className="h-4 w-4" /> Open AI Workflow Hub</Button>
             </Link>
           </div>
