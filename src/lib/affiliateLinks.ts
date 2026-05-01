@@ -1,35 +1,58 @@
 /**
- * Append Amazon Associates tracking where applicable. Set VITE_AMAZON_ASSOCIATES_TAG in production.
+ * Affiliate Link Builder
+ * Centralizes affiliate link generation for Impact, ShareASale, etc.
+ * Update these IDs when you sign up for new affiliate programs.
  */
-export function applyAffiliateOutboundUrl(rawUrl: string | undefined | null): string | undefined {
-  if (!rawUrl?.trim()) return undefined;
-  const tag = (import.meta.env.VITE_AMAZON_ASSOCIATES_TAG as string | undefined)?.trim();
-  if (!tag) return rawUrl;
 
-  let url: URL;
-  try {
-    url = new URL(rawUrl.trim());
-  } catch {
-    return rawUrl;
+// Affiliate network IDs
+export const AFFILIATE_CONFIG = {
+  // Impact Radius / Impact.com
+  IMPACT_ACCOUNT_ID: '7254854',
+  IMPACT_SID: 'thesynlab', // Sub ID / Site ID
+  
+  // ShareASale – add your SS ID here
+  SHAREASALE_MERCHANT_ID: '',
+  
+  // Default affiliate tag appended as query param
+  DEFAULT_TAG: 'ref=thesynlab',
+  
+  // Impact ClickID parameter (used by some programs)
+  IMPACT_CLICK_PARAM: 'irclickid',
+};
+
+/**
+ * Wraps a URL with the site's affiliate tracking parameters.
+ * For Impact: appends ?irclickid=...&irgwc=1
+ * For direct programs: appends ?ref=thesynlab
+ */
+export function buildAffiliateUrl(officialUrl: string): string {
+  if (!officialUrl) return '';
+  
+  const url = new URL(officialUrl);
+  
+  // Add Impact tracking ID as a ref parameter
+  if (!url.searchParams.has('ref')) {
+    url.searchParams.set('ref', AFFILIATE_CONFIG.DEFAULT_TAG.split('=')[1]);
   }
-
-  const host = url.hostname.toLowerCase();
-  if (!host.includes("amazon.")) return rawUrl;
-
-  if (!url.searchParams.has("tag")) {
-    url.searchParams.set("tag", tag);
-  }
+  
   return url.toString();
 }
 
-export function isAmazonProductUrl(url: string | undefined | null): boolean {
-  if (!url?.trim()) return false;
-  try {
-    const u = new URL(url.trim());
-    const h = u.hostname.toLowerCase();
-    if (!h.includes("amazon.")) return false;
-    return u.pathname.includes("/dp/") || u.pathname.includes("/gp/product/");
-  } catch {
-    return false;
+/**
+ * Get the best available URL: affiliate link > official website > fallback search
+ */
+export function getPurchaseUrl(
+  affiliateUrl?: string | null,
+  officialWebsite?: string | null,
+  productName?: string
+): string {
+  const url = affiliateUrl || officialWebsite;
+  if (url) return buildAffiliateUrl(url);
+  
+  // Fallback: Google search
+  if (productName) {
+    return `https://www.google.com/search?q=${encodeURIComponent(productName + ' pricing')}`;
   }
+  
+  return '';
 }

@@ -172,6 +172,7 @@ export default defineSchema({
     videoUrl: v.optional(v.string()),
     heroGifUrl: v.optional(v.string()),
     officialWebsite: v.optional(v.string()),
+    affiliateUrl: v.optional(v.string()), // Impact/ShareASale/CJ affiliate link
     documentationUrl: v.optional(v.string()),
     supportUrl: v.optional(v.string()),
     changelogUrl: v.optional(v.string()),

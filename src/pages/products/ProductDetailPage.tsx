@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { Bell, Layers, ExternalLink, DollarSign, Star, TrendingUp, Shield } from "lucide-react";
 import { useViewTracking, trackConversion } from "@/hooks/useViewTracking";
+import { getPurchaseUrl, buildAffiliateUrl } from "@/lib/affiliateLinks";
 import { toast } from "sonner";
 
 export default function ProductDetailPage() {
@@ -127,7 +128,9 @@ export default function ProductDetailPage() {
                 className="gap-2 flex-1 md:flex-initial"
                 onClick={() => {
                   trackConversion('product', slug, 'affiliate_click');
-                  window.open(details.officialUrl || details.websiteUrl || `https://www.google.com/search?q=${encodeURIComponent(details.productName + ' pricing')}`, '_blank', 'noopener');
+                  const affUrl = getPurchaseUrl(details.affiliateUrl, details.officialWebsite, details.productName);
+                  trackConversion('product', slug, 'affiliate_click');
+                  window.open(affUrl, '_blank', 'noopener');
                 }}
               >
                 <ExternalLink className="w-4 h-4" />
