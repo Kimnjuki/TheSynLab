@@ -8,6 +8,8 @@ dist
 !.env.example
 .vscode
 .idea
+.claude
+.convex
 *.log
 npm-debug.log*
 .DS_Store
