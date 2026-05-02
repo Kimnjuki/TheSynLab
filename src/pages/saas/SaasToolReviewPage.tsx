@@ -61,8 +61,8 @@ export default function SaasToolReviewPage() {
   const year = new Date().getFullYear();
 
   const canonical = `https://www.thesynlab.com/tool/${tool.slug}`;
-  const title = `${tool.name} Review ${year} — Features, Pricing & Is It Worth It? | TheSynLab`;
-  const description = `TheSynLab's independent ${tool.name} review: Trust Score ${tool.trustScore}/5, honest pros & cons, pricing breakdown, and the best alternatives. Updated ${year}.`;
+  const title = `${tool.tagline} | ${tool.name} Review ${year} — Pricing, Pros & Cons | TheSynLab`;
+  const description = `TheSynLab's independent ${tool.name} review: ${tool.tagline}. Trust Score ${tool.trustScore}/5, honest pros & cons, pricing from ${tool.pricing.startingPrice}, and best alternatives. Updated ${year}.`;
 
   const breadcrumbs = [
     { name: "Home", url: "https://www.thesynlab.com" },

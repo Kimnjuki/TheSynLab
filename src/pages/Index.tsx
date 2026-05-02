@@ -58,8 +58,8 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <MetaTags
-        title="TheSynLab – Next-Gen Tech Reviews & Workflow Optimization"
-        description="In-depth tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware to build your perfect workflow ecosystem."
+        title="TheSynLab – Smart Home & Productivity Reviews with Trust Scores"
+        description="Expert reviews of smart home devices, productivity tools, and workflow automation. Data-driven Trust Scores help you make confident tech decisions."
         canonical="https://thesynlab.com/"
         ogType="website"
       />

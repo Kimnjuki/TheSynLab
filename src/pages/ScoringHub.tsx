@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ScoringMethodologyDocs from "@/components/scoring/ScoringMethodologyDocs";
 import EcosystemFitIndex from "@/components/scoring/EcosystemFitIndex";
@@ -14,6 +15,12 @@ import { Award, Layers, ChefHat, Network, FileStack, Eye, History, Vote } from "
 export default function ScoringHub() {
   return (
     <div className="min-h-screen flex flex-col">
+      <MetaTags
+        title="Trust & Integration Scores: Transparent Tech Scoring Methodology | TheSynLab"
+        description="See how TheSynLab calculates Trust Scores & Integration Scores. Transparent methodology for unbiased smart home, productivity, and office hardware reviews."
+        canonical="/scoring-hub"
+        ogType="website"
+      />
       <Header />
       
       <main className="flex-1">

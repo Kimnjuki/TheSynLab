@@ -58,6 +58,8 @@ const troubleshootingIssues: TroubleshootingIssue[] = [
   { id: 5, title: "Alexa routines not triggering at scheduled time", description: "Scheduled routines fail to run or run at wrong times.", category: "Automation", device: "Echo Devices", ecosystem: "Alexa", solution: ["Check device timezone", "Verify Echo is online", "Delete and recreate routine", "Check Do Not Disturb schedule", "Verify trigger conditions"], tags: ["Alexa", "routines", "scheduling"], votes: 289, views: 6543, resolved: 91, createdAt: "2024-01-01" },
 ];
 
+import { MetaTags } from "@/components/seo/MetaTags";
+
 const IntelligentHomeHub = () => {
   const avgTrustScore = deviceReviews.reduce((acc, d) => acc + d.trustScore, 0) / deviceReviews.length;
   const avgIntegrationScore = deviceReviews.reduce((acc, d) => acc + d.integrationScore, 0) / deviceReviews.length;
@@ -65,6 +67,12 @@ const IntelligentHomeHub = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <MetaTags
+        title="Intelligent Home Hub 2026 | Smart Home Device Reviews & Trust Scores"
+        description="Find the best smart home devices with expert reviews, Trust Scores, and ecosystem comparison. Compare Zigbee, Thread, Z-Wave devices and build your connected home."
+        canonical="/hub/intelligent-home"
+        ogType="website"
+      />
       <Header />
       <main className="container py-8">
         {/* Hero Section */}

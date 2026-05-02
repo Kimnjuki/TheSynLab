@@ -55,8 +55,13 @@ export default function ToolAlternativesPage() {
   const category = TOOL_CATEGORIES[tool.category];
 
   const canonical = `https://www.thesynlab.com/tool/${tool.slug}/alternatives`;
-  const title = `Best ${tool.name} Alternatives in ${year} — Ranked by TheSynLab`;
-  const description = `Looking for ${tool.name} alternatives? We compared ${allAlts.length}+ options on Trust Score, pricing, and features so you don't have to. Updated ${year}.`;
+  const bestAlt = allAlts[0];
+  const title = bestAlt
+    ? `Best ${tool.name} Alternatives in ${year}: ${bestAlt.name}, & More`
+    : `Best ${tool.name} Alternatives in ${year} — Ranked by TheSynLab`;
+  const description = bestAlt
+    ? `Looking for ${tool.name} alternatives? We compared ${allAlts.length}+ options by Trust Score & pricing. Top pick: ${bestAlt.name} (Trust Score ${bestAlt.trustScore}/5). Updated ${year}.`
+    : `Looking for ${tool.name} alternatives? We compared ${allAlts.length}+ options on Trust Score, pricing, and features so you don't have to. Updated ${year}.`;
 
   const breadcrumbs = [
     { name: "Home", url: "https://www.thesynlab.com" },
