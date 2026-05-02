@@ -24,7 +24,8 @@
     <meta name="twitter:description" content="In-depth tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware.">
 
     <!-- GA4 with Google Consent Mode v2 (default=denied until user accepts) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XMGRJBSN5Y"></script>
+    <!-- Measurement ID injected at build time via VITE_GA4_MEASUREMENT_ID (fallback: G-XMGRJBSN5Y) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=%VITE_GA4_MEASUREMENT_ID%"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -35,7 +36,7 @@
         'analytics_storage': 'denied'
       });
       gtag('js', new Date());
-      gtag('config', 'G-XMGRJBSN5Y', {
+      gtag('config', '%VITE_GA4_MEASUREMENT_ID%', {
         cookie_flags: 'SameSite=None;Secure'
       });
     </script>

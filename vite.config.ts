@@ -997,6 +997,14 @@ const sitemapPlugin = () => ({
   },
 });
 
+const injectGa4Plugin = () => ({
+  name: "inject-ga4-id",
+  transformIndexHtml(html: string) {
+    const id = process.env.VITE_GA4_MEASUREMENT_ID || "G-XMGRJBSN5Y";
+    return html.replace(/%VITE_GA4_MEASUREMENT_ID%/g, id);
+  },
+});
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -1005,6 +1013,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
+    injectGa4Plugin(),
     sitemapPlugin(),
     mode === "development" && componentTagger(),
   ].filter(Boolean),
