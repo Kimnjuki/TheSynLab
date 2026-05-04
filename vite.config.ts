@@ -5,6 +5,7 @@ import fs from "fs/promises";
 import { componentTagger } from "lovable-tagger";
 import { blogArticles } from "./src/data/blogArticles";
 import { saasTools, BEST_OF_LISTS, TOOL_CATEGORIES } from "./src/data/saasTools";
+import { HOMEPAGE_PRERENDER_HTML } from "./src/data/prerenderContent";
 
 const SITE_URL = "https://thesynlab.com";
 const HOME_TITLE = "TheSynLab – Next-Gen Tech Reviews & Workflow Optimization";
@@ -753,11 +754,13 @@ const buildStaticBodyHtml = (route: string): string => {
         tool.trustScore >= 4.3 ? "Highly Recommended" :
         tool.trustScore >= 4.0 ? "Recommended" :
         tool.trustScore >= 3.7 ? "Good with Caveats" : "Use with Caution";
+      const toolDesc = tool.description || tool.shortDescription;
       return `<main style="${MAIN_STYLE}">
 <nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › <a href="/hub/ai-tools">AI Tools</a> › ${escapeHtml(tool.name)}</nav>
 <h1>${escapeHtml(tool.name)} Review (${year})</h1>
 <p style="font-size:1.1rem">${escapeHtml(tool.tagline)}</p>
 <p>${escapeHtml(tool.shortDescription)}</p>
+<p>${escapeHtml(toolDesc)}</p>
 <section><h2>TheSynLab Verdict</h2><p><b>Trust Score:</b> ${tool.trustScore}/5 &nbsp;·&nbsp; <b>Integration Score:</b> ${tool.integrationScore}/5 &nbsp;·&nbsp; <b>Verdict:</b> ${verdict}</p></section>
 <section><h2>Pricing</h2><p>${tool.pricing.hasFree ? "Free plan available. " : ""}Starting at <b>${escapeHtml(tool.pricing.startingPrice)}</b>. ${escapeHtml(tool.pricing.pricingModel)}.</p></section>
 <section><h2>Key Features</h2><ul>${li(tool.keyFeatures)}</ul></section>
@@ -886,18 +889,11 @@ ${faqHtml}
     }
   }
 
-  // ── Default fallback ──────────────────────────────────────────────────────
+  // ── Default fallback (homepage) ────────────────────────────────────────────
+  // AdSense compliance: must return 400+ words of substantive content in prerender
   return `<main style="${MAIN_STYLE}">
 <h1>TheSynLab — Independent Tech Reviews</h1>
-<p>${escapeHtml(HOME_DESCRIPTION)}</p>
-<ul>
-<li><a href="/hub/ai-tools">AI &amp; SaaS Tools Hub</a></li>
-<li><a href="/blog">Tech Blog &amp; Reviews</a></li>
-<li><a href="/compare">Compare Tools</a></li>
-<li><a href="/decision-studio">Decision Studio</a></li>
-<li><a href="/workflows">Workflow Templates</a></li>
-<li><a href="/about">About TheSynLab</a></li>
-</ul>
+${HOMEPAGE_PRERENDER_HTML}
 </main>`;
 };
 
