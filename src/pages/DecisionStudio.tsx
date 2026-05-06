@@ -150,7 +150,7 @@ function TcoPanel() {
         <div className="space-y-3">
           {["Tool A", "Tool B", "Tool C"].map((label, i) => (
             <div key={i} className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full" style={{ background: ["#6366f1", "#10b981", "#f59e0b"][i] }} />
+              <div className={`w-3 h-3 rounded-full ${['bg-indigo-500', 'bg-emerald-500', 'bg-amber-500'][i % 3]}`} />
               <Input placeholder={`Search ${label}…`} className="flex-1" />
             </div>
           ))}

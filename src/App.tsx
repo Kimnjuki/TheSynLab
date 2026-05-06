@@ -9,6 +9,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import CookieBanner from "./components/CookieBanner";
 import AnalyticsScripts from "./components/AnalyticsScripts";
+import { FacebookPixel } from "./components/FacebookPixel";
 import { AdSlotProvider } from "./components/ads/AdSlotProvider";
 import { ComparisonBarProvider } from "./contexts/ComparisonBarContext";
 import { ComparisonBar } from "./components/ComparisonBar";
@@ -165,6 +166,7 @@ const App = () => (
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <AnalyticsScripts />
+      <FacebookPixel />
                 <CookieBanner />
                 <ComparisonBar />
                 </AdSlotProvider>
