@@ -751,8 +751,8 @@ export const seedAll = mutation({
     }
 
     // Seed ad policy rules
-    const existingRules = await ctx.db.query("adPolicyRules").first();
-    if (!existingRules) {
+    const existingAdPolicyRules = await ctx.db.query("adPolicyRules").first();
+    if (!existingAdPolicyRules) {
       let count = 0;
       for (const rule of adPolicyRulesData) {
         await ctx.db.insert("adPolicyRules", rule);
@@ -790,8 +790,8 @@ export const seedAll = mutation({
     }
 
     // Seed quiz result rules
-    const existingRules = await ctx.db.query("quizResultRules").first();
-    if (!existingRules) {
+    const existingQuizRules = await ctx.db.query("quizResultRules").first();
+    if (!existingQuizRules) {
       let count = 0;
       for (const r of quizResultRulesData) {
         await ctx.db.insert("quizResultRules", r);
