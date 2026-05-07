@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Clock, Calendar, ArrowLeft, Bookmark, Share2, ThumbsUp, Eye, FlaskConical, Award, CheckCircle } from "lucide-react";
 import ScoreBadge from "@/components/ScoreBadge";
+import { useViewTracking } from "@/hooks/useViewTracking";
 import { Separator } from "@/components/ui/separator";
 
 const BlogArticle = () => {
