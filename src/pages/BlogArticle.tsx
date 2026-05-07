@@ -17,6 +17,9 @@ const BlogArticle = () => {
   const { slug } = useParams();
   const article = blogArticles.find(a => a.slug === slug);
 
+  // Must call all hooks before any conditional return
+  const { totalViews } = useViewTracking('article', article?.slug ?? '');
+
   if (!article) {
     return (
       <div className="min-h-screen bg-background">
@@ -34,7 +37,6 @@ const BlogArticle = () => {
 
   const relatedArticles = blogArticles.filter(a => article.relatedArticles.includes(a.id));
   const articleUrl = `https://thesynlab.com/blog/${article.slug}`;
-  const { totalViews } = useViewTracking('article', article.slug);
 
   // Parse content into structured sections
   const renderContent = (content: string) => {

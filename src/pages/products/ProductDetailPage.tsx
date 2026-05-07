@@ -30,6 +30,8 @@ export default function ProductDetailPage() {
   const addBookmark = useMutation(api.productBookmarks.insert);
   const addAlert = useMutation(api.productAlerts.insert);
 
+  const { totalViews } = useViewTracking('product', slug);
+
   if (details === undefined) {
     return <div className="min-h-screen"><Header /><main className="container py-10">Loading...</main><Footer /></div>;
   }
@@ -42,8 +44,6 @@ export default function ProductDetailPage() {
     await addBookmark({ userId: user.id, productId: details._id, listName: "default" });
     toast.success("Added to My Stack");
   };
-
-  const { totalViews } = useViewTracking('product', slug);
 
   const onSubscribe = async () => {
     if (!user) return toast.error("Sign in to subscribe");
