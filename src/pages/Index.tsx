@@ -22,6 +22,7 @@ import { AdSlot } from "@/components/ads/AdSlot";
 import Footer from "@/components/Footer";
 import { OnboardingTour, useOnboarding } from "@/components/dashboard/OnboardingTour";
 import { StackArchitectChat } from "@/components/ai/StackArchitectChat";
+import { InteractiveToolsSection } from "@/components/landing/InteractiveToolsSection";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
 
@@ -85,6 +86,7 @@ const Index = () => {
             position="below_insights"
           />
         </div>
+        <InteractiveToolsSection />
         <FeaturedReviews />
         <TrendingTopics />
         <Hubs />
