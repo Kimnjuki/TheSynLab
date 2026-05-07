@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 import { useQuery, useAction } from "convex/react";
 import { api } from "@/../convex/_generated/api";
 import { MetaTags } from "@/components/seo/MetaTags";
+import { ToolPageSEO } from "@/components/seo/ToolPageSEO";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -383,7 +384,24 @@ const WorkflowBlueprint = () => {
   // ---- ROLE SELECTION ----
   return (
     <div className="min-h-screen bg-background">
-      <MetaTags title="AI Workflow Blueprint Generator — Build Your Automation Stack" description="Select your role and goals, and get a step-by-step AI workflow blueprint with recommended tools, Trust Scores, and cost estimates." canonical="/workflow-blueprint" />
+      <ToolPageSEO
+        title="AI Workflow Blueprint Generator — Build Your Automation Stack"
+        description="Select your role and goals, and get a step-by-step AI workflow blueprint with recommended tools, Trust Scores, and cost estimates."
+        canonical="/workflow-blueprint"
+        toolName="Workflow Blueprint Generator"
+        toolDescription="Select your role, choose a goal, and get a custom step-by-step automation blueprint with recommended tools and cost estimates."
+        faqs={[
+          { question: "How does the Workflow Blueprint work?", answer: "Select your role (Content Marketer, Sales, Developer, etc.), choose a workflow goal, optionally add your existing tools, and get a step-by-step blueprint." },
+          { question: "What roles are supported?", answer: "Content Marketer, Sales Lead, Customer Support, Developer, Operations, and Founder — with pre-built goals for each." },
+          { question: "Is the blueprint free?", answer: "Yes — completely free, no account required." },
+        ]}
+        howToSteps={[
+          { name: "Select your role", text: "Choose from 6 roles: Content Marketer, Sales Lead, Customer Support, Developer, Operations, or Founder." },
+          { name: "Pick a workflow goal", text: "Select a pre-built automation goal tailored to your role." },
+          { name: "Add your current tools (optional)", text: "Tell us which tools you already use for a more tailored blueprint." },
+          { name: "Get your blueprint", text: "Receive a complete step-by-step automation blueprint with tool recommendations, cost estimates, and pitfalls to avoid." },
+        ]}
+      />
       <Header />
       <main className="mx-auto max-w-3xl px-4 py-12">
         <div className="mb-8 text-center">

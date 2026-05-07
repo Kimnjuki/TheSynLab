@@ -3,6 +3,7 @@ import { useQuery, useAction, useMutation } from "convex/react";
 import { api } from "@/../convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { MetaTags } from "@/components/seo/MetaTags";
+import { ToolPageSEO } from "@/components/seo/ToolPageSEO";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -111,10 +112,18 @@ const TcoCalculator = () => {
   // ---- Render ----
   return (
     <div className="min-h-screen bg-background">
-      <MetaTags
+      <ToolPageSEO
         title="SaaS TCO Calculator — True 3-Year Cost of Any Tool — TheSynLab"
         description="Calculate the real 1, 2, and 3-year total cost of ownership for any SaaS tool — including hidden costs, onboarding, and add-ons. Compare up to 3 tools side-by-side."
         canonical="/tco-calculator"
+        toolName="TCO Calculator"
+        toolDescription="Compare up to 3 SaaS products side-by-side with full total cost of ownership breakdown, including hidden costs like onboarding, training, and integration fees."
+        faqs={[
+          { question: "What is TCO?", answer: "TCO (Total Cost of Ownership) includes subscription fees, onboarding costs, training, integration expenses, and any hidden add-ons over the contract term." },
+          { question: "Can I compare multiple tools?", answer: "Yes — add up to 3 tools for side-by-side comparison with year-by-year cost breakdowns." },
+          { question: "Are hidden costs included?", answer: "Toggle 'Include Hidden Costs' to factor in onboarding, training, and integration setup fees." },
+          { question: "Is the TCO Calculator free?", answer: "Yes — it's completely free with no account required." },
+        ]}
       />
 
       <Header />

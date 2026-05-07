@@ -3,6 +3,7 @@ import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/../convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { MetaTags } from "@/components/seo/MetaTags";
+import { ToolPageSEO } from "@/components/seo/ToolPageSEO";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -238,10 +239,24 @@ const StackQuiz = () => {
   // --- Quiz ---
   return (
     <div className="min-h-screen bg-background">
-      <MetaTags
+      <ToolPageSEO
         title="SynLab Stack Quiz — Find the Right AI & SaaS Tools"
         description="Answer 6 questions and get your personalised AI tool stack with Trust Scores, Integration Scores, and 3-year TCO estimates."
         canonical="/stack-quiz"
+        toolName="Stack Quiz"
+        toolDescription="A 6-question interactive quiz that recommends your optimal AI SaaS stack, complete with Trust Scores, Integration Scores, and estimated costs."
+        faqs={[
+          { question: "How does the Stack Quiz work?", answer: "Answer 6 quick questions about your team size, workflow needs, and budget. Our algorithm matches you with the best tools from our catalog." },
+          { question: "Is the Stack Quiz free?", answer: "Yes — the quiz is completely free. You can optionally enter your email to get a PDF report." },
+          { question: "What tools do you recommend?", answer: "We recommend from 500+ products across productivity, AI software, collaboration, marketing, and office hardware." },
+        ]}
+        howToSteps={[
+          { name: "Tell us about yourself", text: "Select your role, team size, and primary workflow needs." },
+          { name: "Choose your priorities", text: "Pick the features and capabilities that matter most." },
+          { name: "Set your budget range", text: "Indicate your per-seat budget to narrow recommendations." },
+          { name: "Review your personalized stack", text: "See your top 3 tool recommendations with Trust & Integration Scores." },
+          { name: "Download your report", text: "Get a full PDF report with your recommendations and estimated TCO." },
+        ]}
       />
       <Header />
       <main className="mx-auto max-w-2xl px-4 py-12">

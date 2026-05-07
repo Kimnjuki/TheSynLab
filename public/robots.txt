@@ -1,6 +1,7 @@
 # robots.txt for thesynlab.com
-# Last updated: 2026-04-29
+# Last updated: 2026-05-07
 
+# Allow all standard crawlers full access to indexable content
 User-agent: *
 Allow: /
 Allow: /blog/
@@ -9,6 +10,12 @@ Allow: /hub/
 Allow: /products/
 Allow: /best/
 Allow: /compare/
+Allow: /stack-quiz/
+Allow: /tco-calculator/
+Allow: /vendor-risk-checker/
+Allow: /workflow-blueprint/
+Allow: /trust-index/
+Allow: /tools/
 
 # Block CMS admin and sensitive paths
 Disallow: /wp-admin/
@@ -17,8 +24,6 @@ Disallow: /admin/
 Disallow: /private/
 Disallow: /api/
 Disallow: /?s=
-# /search/ is a valid SPA page — let Google index it
-# Disallow: /search/
 Disallow: /cart/
 Disallow: /checkout/
 Disallow: /my-account/
@@ -27,42 +32,73 @@ Disallow: /my-account/
 User-agent: Googlebot
 Allow: /
 
-# Bingbot specific
-User-agent: Bingbot
-Allow: /
-
-# Google AI crawler (AI Overviews training and citations)
+# Google AI crawler (Google-Extended) — allow all tool content
 User-agent: Google-Extended
 Allow: /
+Allow: /stack-quiz/
+Allow: /tco-calculator/
+Allow: /vendor-risk-checker/
+Allow: /workflow-blueprint/
+Allow: /trust-index/
+Allow: /tools/
+Allow: /blog/
+Allow: /products/
+Allow: /compare/
+Disallow: /wp-admin/
 
-# OpenAI crawlers (ChatGPT citations and training)
+# Common AI crawlers — allow tool content
 User-agent: GPTBot
 Allow: /
+Allow: /stack-quiz/
+Allow: /tco-calculator/
+Allow: /vendor-risk-checker/
+Allow: /workflow-blueprint/
+Allow: /trust-index/
+Allow: /tools/
+Allow: /blog/
+Allow: /products/
+Disallow: /wp-admin/
+Disallow: /api/
+Disallow: /admin/
 
-User-agent: OAI-SearchBot
+User-agent: CCBot
 Allow: /
+Allow: /stack-quiz/
+Allow: /tco-calculator/
+Allow: /vendor-risk-checker/
+Allow: /workflow-blueprint/
+Allow: /trust-index/
+Allow: /tools/
+Allow: /blog/
+Allow: /products/
+Disallow: /wp-admin/
+Disallow: /api/
 
-User-agent: ChatGPT-User
+User-agent: Claude-Web
 Allow: /
+Allow: /stack-quiz/
+Allow: /tco-calculator/
+Allow: /vendor-risk-checker/
+Allow: /workflow-blueprint/
+Allow: /trust-index/
+Allow: /tools/
+Allow: /blog/
+Allow: /products/
+Disallow: /wp-admin/
+Disallow: /api/
 
-# Anthropic / Claude crawler
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: anthropic-ai
-Allow: /
-
-# Perplexity AI crawler
 User-agent: PerplexityBot
 Allow: /
-
-# ByteDance / TikTok AI
-User-agent: Bytespider
-Allow: /
-
-# Apple AI
-User-agent: Applebot-Extended
-Allow: /
+Allow: /stack-quiz/
+Allow: /tco-calculator/
+Allow: /vendor-risk-checker/
+Allow: /workflow-blueprint/
+Allow: /trust-index/
+Allow: /tools/
+Allow: /blog/
+Allow: /products/
+Disallow: /wp-admin/
+Disallow: /api/
 
 # Sitemap
 Sitemap: https://thesynlab.com/sitemap.xml

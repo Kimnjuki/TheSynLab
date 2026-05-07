@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/../convex/_generated/api";
 import { MetaTags } from "@/components/seo/MetaTags";
+import { ToolPageSEO } from "@/components/seo/ToolPageSEO";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -114,10 +115,17 @@ const TrustIndexLeaderboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <MetaTags
+      <ToolPageSEO
         title="Trust Index Leaderboard — TheSynLab"
         description="Ranked by unique Trust Score & Integration Score. See the most trustworthy tools in productivity, AI, smart home, and more."
         canonical="/trust-index"
+        toolName="Trust Index Leaderboard"
+        toolDescription="Product trust leaderboard ranked by TheSynLab's proprietary Trust Score and Integration Score across 6 categories."
+        faqs={[
+          { question: "What is the Trust Score?", answer: "The Trust Score is a proprietary rating based on data portability, API stability, contract fairness, and integration depth." },
+          { question: "How often is the leaderboard updated?", answer: "Monthly — each snapshot reflects the latest data and user reports." },
+          { question: "What categories are available?", answer: "Productivity, AI Software, Smart Home, Office Hardware, MarTech, and Collaboration tools." },
+        ]}
       />
       <Header />
       <main className="mx-auto max-w-5xl px-4 py-12">

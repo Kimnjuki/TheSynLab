@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 import { useQuery, useAction } from "convex/react";
 import { api } from "@/../convex/_generated/api";
 import { MetaTags } from "@/components/seo/MetaTags";
+import { ToolPageSEO } from "@/components/seo/ToolPageSEO";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -386,7 +387,24 @@ const VendorRiskChecker = () => {
   // ----- SEARCH VIEW -----
   return (
     <div className="min-h-screen bg-background">
-      <MetaTags title="SaaS Vendor Risk Checker — Assess Lock-in, Exit Risk & Data Portability" description="Run a vendor risk check on any SaaS tool in 60 seconds. Get a lock-in score, data portability grade, and safer alternatives." canonical="/vendor-risk-checker" />
+      <ToolPageSEO
+        title="SaaS Vendor Risk Checker — Assess Lock-in, Exit Risk & Data Portability"
+        description="Run a vendor risk check on any SaaS tool in 60 seconds. Get a lock-in score, data portability grade, and safer alternatives."
+        canonical="/vendor-risk-checker"
+        toolName="Vendor Risk Checker"
+        toolDescription="Assess vendor lock-in risk, data portability, contract dependency, integration depth, and API stability for any SaaS tool. Get safer alternatives."
+        faqs={[
+          { question: "What does the Vendor Risk Checker assess?", answer: "It evaluates 5 dimensions: data portability, contract lock-in, proprietary formats, integration dependency, and API stability." },
+          { question: "How long does the assessment take?", answer: "About 60 seconds — just search for a tool and answer 4 quick questions." },
+          { question: "Are the results personalized?", answer: "Yes — the risk score adapts based on how central the tool is to your operations, how often you export data, and your contract situation." },
+          { question: "Is this free?", answer: "Yes — completely free, no account required." },
+        ]}
+        howToSteps={[
+          { name: "Search for a tool", text: "Search our catalog of 500+ SaaS products to find the tool you want to assess." },
+          { name: "Answer 4 questions", text: "Tell us how central the tool is, how often you export data, your contract situation, and integration depth." },
+          { name: "Get your risk profile", text: "See your lock-in meter, dimension breakdown, alternatives, and mitigation tips." },
+        ]}
+      />
       <Header />
       <main className="mx-auto max-w-2xl px-4 py-12">
         <div className="mb-8 text-center">
