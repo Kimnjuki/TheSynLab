@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
 import { Users, Target, Award, Lightbulb, Heart, Shield, CheckCircle, Star } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -64,6 +65,11 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <MetaTags
+        title="About TheSynLab — Tech Reviews You Can Actually Trust"
+        description="We're a team of tech enthusiasts and engineers on a mission to deliver honest, in-depth reviews with proprietary Trust & Integration Scores."
+        canonical="/about"
+      />
       <Header />
       
       <main>

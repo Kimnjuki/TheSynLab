@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
 import { Shield, Cookie, Database, Eye, Lock, Mail, Globe, Settings } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -117,6 +118,7 @@ We will respond to your request within 30 days as required by applicable law.`
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <MetaTags title="Privacy Policy — TheSynLab" description="How TheSynLab collects, uses, and protects your data. Our commitment to your privacy and transparency." canonical="/privacy" />
       
       <main className="container py-12">
         {/* Hero Section */}

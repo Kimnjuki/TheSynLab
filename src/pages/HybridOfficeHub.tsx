@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -217,6 +218,7 @@ const HybridOfficeHub = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <MetaTags title="Hybrid Office Hub — Remote Work Setup Reviews <Header /> Guides" description="Build the perfect hybrid office setup. Reviews of standing desks, ergonomic chairs, monitors, and remote work tech." canonical="/hub/hybrid-office" />
       <main className="container py-8">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">

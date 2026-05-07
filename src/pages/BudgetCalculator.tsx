@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
@@ -43,6 +44,7 @@ export default function BudgetCalculator() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+      <MetaTags title="Tech Budget Calculator — Plan Your Smart Home or Office Setup" description="Calculate the cost of your ideal tech setup. Budget planning tool for smart home, office, and productivity stacks." canonical="/tools/budget-calculator" />
       
       <main className="flex-1">
         <section className="bg-gradient-to-br from-primary/5 to-secondary/5 py-16">

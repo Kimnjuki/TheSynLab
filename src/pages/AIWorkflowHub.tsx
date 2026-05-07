@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -291,6 +292,7 @@ const AIWorkflowHub = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <MetaTags title="AI Workflow Hub — Automation <Header /> Productivity Stack Reviews" description="Discover the best AI tools and workflows. Expert reviews of AI productivity tools, automation platforms, and smart assistants." canonical="/hub/ai-workflow" />
       <main className="container py-8">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">

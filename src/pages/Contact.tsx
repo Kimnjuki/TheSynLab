@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
 import { Mail, MessageSquare, Clock, MapPin, Send, Phone, HelpCircle, Building, Newspaper } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -82,6 +83,7 @@ const Contact = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <MetaTags title="Contact TheSynLab — Get in Touch" description="Have a question about a review, want to suggest a product, or interested in partnering? Reach out to TheSynLab team." canonical="/contact" />
       
       <main className="container py-12">
         {/* Hero Section */}

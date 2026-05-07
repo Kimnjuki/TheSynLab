@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
 import { DollarSign, Shield, CheckCircle, AlertCircle, HandHeart, Scale } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -9,6 +10,7 @@ const AffiliateDisclosure = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <MetaTags title="Affiliate Disclosure — TheSynLab" description="TheSynLab participates in affiliate programs. We disclose our affiliate relationships and how they work." canonical="/disclosure" />
       
       <main className="container py-12">
         {/* Hero Section */}

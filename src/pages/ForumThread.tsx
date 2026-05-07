@@ -115,7 +115,7 @@ const ForumThread = () => {
       <Helmet>
         <title>{`${thread.title} – Forum | TheSynLab`}</title>
         <meta name="description" content={thread.content.slice(0, 155)} />
-        <link rel="canonical" href={`https://www.thesynlab.com/forum/thread/${slug}`} />
+        <link rel="canonical" href={`https://thesynlab.com/forum/thread/${slug}`} />
         <meta property="og:title" content={thread.title} />
         <meta property="og:description" content={thread.content.slice(0, 155)} />
         <meta property="og:type" content="article" />

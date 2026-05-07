@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MetaTags } from "@/components/seo/MetaTags";
 import { FileText, Scale, AlertTriangle, Users, Shield, Ban, RefreshCw, Mail } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -138,6 +139,7 @@ If any provision of these Terms is found unenforceable, the remaining provisions
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <MetaTags title="Terms of Service — TheSynLab" description="Terms and conditions for using TheSynLab. Please read these terms carefully before using our service." canonical="/terms" />
       
       <main className="container py-12">
         {/* Hero Section */}
