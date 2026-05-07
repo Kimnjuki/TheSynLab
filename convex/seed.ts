@@ -640,6 +640,85 @@ export const seedUsers = mutation({
 });
 
 // Seed All Data (does NOT include competitive products - use seedCompetitiveProducts for those)
+export const seedQuiz = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const results: Record<string, any> = {};
+
+    const existingQuestions = await ctx.db.query("quizQuestions").first();
+    if (!existingQuestions) {
+      let count = 0;
+      for (const q of quizQuestionsData) {
+        await ctx.db.insert("quizQuestions", q);
+        count++;
+      }
+      results.quizQuestions = { seeded: true, count };
+    } else {
+      results.quizQuestions = { seeded: false, message: "Already exists" };
+    }
+
+    // Get existing products for rule recommendations
+    const products = await ctx.db.query("novaProducts").collect();
+    const productBySlug = new Map(products.map((p: any) => [p.productSlug, p._id]));
+
+    const getProductIds = (slugs: string[]) =>
+      slugs.map((s) => productBySlug.get(s)).filter(Boolean) as any[];
+
+    const rulesWithProducts = [
+      {
+        ...quizResultRulesData[0],
+        recommendedProductIds: getProductIds(["canva", "notion", "grammarly"]),
+      },
+      {
+        ...quizResultRulesData[1],
+        recommendedProductIds: getProductIds(["canva", "notion", "mailchimp"]),
+      },
+      {
+        ...quizResultRulesData[2],
+        recommendedProductIds: getProductIds(["asana", "notion", "slack"]),
+      },
+      {
+        ...quizResultRulesData[3],
+        recommendedProductIds: getProductIds(["hubspot", "notion", "slack"]),
+      },
+      {
+        ...quizResultRulesData[4],
+        recommendedProductIds: getProductIds(["github", "vercel", "sentry"]),
+      },
+      {
+        ...quizResultRulesData[5],
+        recommendedProductIds: getProductIds(["asana", "clickup", "microsoft-teams"]),
+      },
+      {
+        ...quizResultRulesData[6],
+        recommendedProductIds: getProductIds(["canva", "notion", "buffer"]),
+      },
+      {
+        ...quizResultRulesData[7],
+        recommendedProductIds: getProductIds(["zapier", "make", "notion"]),
+      },
+      {
+        ...quizResultRulesData[8],
+        recommendedProductIds: getProductIds(["notion", "clickup", "zapier"]),
+      },
+    ];
+
+    const existingRules = await ctx.db.query("quizResultRules").first();
+    if (!existingRules) {
+      let count = 0;
+      for (const r of rulesWithProducts) {
+        await ctx.db.insert("quizResultRules", r);
+        count++;
+      }
+      results.quizResultRules = { seeded: true, count };
+    } else {
+      results.quizResultRules = { seeded: false, message: "Already exists" };
+    }
+
+    return results;
+  },
+});
+
 export const seedAll = mutation({
   args: {},
   handler: async (ctx) => {
@@ -697,6 +776,218 @@ export const seedAll = mutation({
       results.users = { seeded: false, message: "Already exists" };
     }
 
+    // Seed quiz questions
+    const existingQuestions = await ctx.db.query("quizQuestions").first();
+    if (!existingQuestions) {
+      let count = 0;
+      for (const q of quizQuestionsData) {
+        await ctx.db.insert("quizQuestions", q);
+        count++;
+      }
+      results.quizQuestions = { seeded: true, count };
+    } else {
+      results.quizQuestions = { seeded: false, message: "Already exists" };
+    }
+
+    // Seed quiz result rules
+    const existingRules = await ctx.db.query("quizResultRules").first();
+    if (!existingRules) {
+      let count = 0;
+      for (const r of quizResultRulesData) {
+        await ctx.db.insert("quizResultRules", r);
+        count++;
+      }
+      results.quizResultRules = { seeded: true, count };
+    } else {
+      results.quizResultRules = { seeded: false, message: "Already exists" };
+    }
+
     return results;
   },
 });
+
+const quizQuestionsData = [
+  {
+    questionText: "What best describes your role?",
+    questionKey: "role",
+    questionType: "single_choice",
+    options: [
+      { id: "solopreneur", label: "Solopreneur / Freelancer", valueTag: "solo", icon: "user" },
+      { id: "smb_team", label: "SMB Team (2-50)", valueTag: "smb", icon: "users" },
+      { id: "enterprise", label: "Enterprise (50+)", valueTag: "enterprise", icon: "building" },
+      { id: "developer", label: "Developer / Engineer", valueTag: "dev", icon: "code" },
+      { id: "creator", label: "Content Creator / Marketer", valueTag: "creator", icon: "pen" },
+    ],
+    category: "profile",
+    sortOrder: 1,
+    isActive: true,
+    helpText: "This helps us understand your context and tool needs.",
+  },
+  {
+    questionText: "What's your primary focus area?",
+    questionKey: "useCase",
+    questionType: "single_choice",
+    options: [
+      { id: "content_creation", label: "Content Creation & Marketing", valueTag: "content", icon: "pen-tool" },
+      { id: "crm_sales", label: "CRM & Sales Pipeline", valueTag: "sales", icon: "trending-up" },
+      { id: "project_mgmt", label: "Project Management & Collaboration", valueTag: "pm", icon: "layout" },
+      { id: "dev_tools", label: "Developer Tools & Infrastructure", valueTag: "devtools", icon: "terminal" },
+      { id: "automation", label: "Automation & Workflow", valueTag: "automation", icon: "zap" },
+      { id: "ai_workflow", label: "AI Workflow & Analytics", valueTag: "ai", icon: "brain" },
+    ],
+    category: "focus",
+    sortOrder: 2,
+    isActive: true,
+  },
+  {
+    questionText: "How big is your team?",
+    questionKey: "teamSize",
+    questionType: "single_choice",
+    options: [
+      { id: "just_me", label: "Just me (1)", valueTag: "1", icon: "user" },
+      { id: "small", label: "Small team (2-10)", valueTag: "2-10", icon: "users" },
+      { id: "growing", label: "Growing team (11-50)", valueTag: "11-50", icon: "briefcase" },
+      { id: "large", label: "Large team (50+)", valueTag: "50+", icon: "building-2" },
+    ],
+    category: "scale",
+    sortOrder: 3,
+    isActive: true,
+  },
+  {
+    questionText: "What's your monthly budget for tools?",
+    questionKey: "budget",
+    questionType: "single_choice",
+    options: [
+      { id: "free", label: "Free / Mostly free tools", valueTag: "free", icon: "smile" },
+      { id: "low", label: "Under $50/month total", valueTag: "under50", icon: "dollar-sign" },
+      { id: "medium", label: "$50-$200/month", valueTag: "50-200", icon: "credit-card" },
+      { id: "high", label: "$200+/month — invest in quality", valueTag: "200plus", icon: "star" },
+    ],
+    category: "budget",
+    sortOrder: 4,
+    isActive: true,
+  },
+  {
+    questionText: "Which features are must-haves?",
+    questionKey: "features",
+    questionType: "multi_choice",
+    options: [
+      { id: "api_access", label: "API access & integrations", valueTag: "api" },
+      { id: "privacy", label: "Privacy-first / GDPR compliant", valueTag: "privacy" },
+      { id: "no_lockin", label: "No vendor lock-in / data export", valueTag: "portable" },
+      { id: "offline", label: "Offline mode", valueTag: "offline" },
+      { id: "whitelabel", label: "White-label / custom branding", valueTag: "whitelabel" },
+      { id: "collaboration", label: "Real-time collaboration", valueTag: "collab" },
+      { id: "mobile", label: "Mobile app", valueTag: "mobile" },
+      { id: "analytics", label: "Built-in analytics & reporting", valueTag: "analytics" },
+    ],
+    category: "features",
+    sortOrder: 5,
+    isActive: true,
+    helpText: "Select all that apply to you.",
+  },
+  {
+    questionText: "What tools are you already using?",
+    questionKey: "currentStack",
+    questionType: "multi_choice",
+    options: [
+      { id: "notion", label: "Notion", valueTag: "notion" },
+      { id: "asana", label: "Asana / Monday.com", valueTag: "asana" },
+      { id: "slack", label: "Slack", valueTag: "slack" },
+      { id: "gmail", label: "Google Workspace", valueTag: "google" },
+      { id: "hubspot", label: "HubSpot", valueTag: "hubspot" },
+      { id: "figma", label: "Figma / Design tools", valueTag: "figma" },
+      { id: "github", label: "GitHub / GitLab", valueTag: "github" },
+      { id: "jira", label: "Jira", valueTag: "jira" },
+      { id: "none", label: "None — starting fresh", valueTag: "fresh" },
+    ],
+    category: "current",
+    sortOrder: 6,
+    isActive: true,
+    helpText: "Optional — helps us avoid recommending what you already have.",
+  },
+];
+
+const quizResultRulesData = [
+  {
+    ruleName: "Solopreneur Content Creator — Budget-Conscious",
+    conditions: { role: "solopreneur", useCase: "content_creation", budget: "free" },
+    recommendedProductIds: [], // will be filled by seed with actual product IDs
+    primaryUseCase: "content_creation",
+    confidenceScore: 0.9,
+    segmentTag: "Solo Creator (Free)",
+    isActive: true,
+  },
+  {
+    ruleName: "Solopreneur Content Creator — Mid Budget",
+    conditions: { role: "solopreneur", useCase: "content_creation", budget: "low" },
+    recommendedProductIds: [],
+    primaryUseCase: "content_creation",
+    confidenceScore: 0.85,
+    segmentTag: "Solo Creator (Budget)",
+    isActive: true,
+  },
+  {
+    ruleName: "SMB Team — Project Management",
+    conditions: { role: "smb_team", useCase: "project_mgmt", teamSize: "small" },
+    recommendedProductIds: [],
+    primaryUseCase: "project_mgmt",
+    confidenceScore: 0.9,
+    segmentTag: "Small Team — PM Focused",
+    isActive: true,
+  },
+  {
+    ruleName: "SMB Team — CRM & Sales",
+    conditions: { role: "smb_team", useCase: "crm_sales" },
+    recommendedProductIds: [],
+    primaryUseCase: "crm_sales",
+    confidenceScore: 0.85,
+    segmentTag: "SMB — Sales Stack",
+    isActive: true,
+  },
+  {
+    ruleName: "Developer — Dev Tools",
+    conditions: { role: "developer", useCase: "dev_tools" },
+    recommendedProductIds: [],
+    primaryUseCase: "dev_tools",
+    confidenceScore: 0.9,
+    segmentTag: "Developer Stack",
+    isActive: true,
+  },
+  {
+    ruleName: "Enterprise Team — PM & Collaboration",
+    conditions: { role: "enterprise", useCase: "project_mgmt" },
+    recommendedProductIds: [],
+    primaryUseCase: "project_mgmt",
+    confidenceScore: 0.8,
+    segmentTag: "Enterprise — PM & Collaboration",
+    isActive: true,
+  },
+  {
+    ruleName: "Content Creator — Marketing Stack",
+    conditions: { role: "creator", useCase: "content_creation" },
+    recommendedProductIds: [],
+    primaryUseCase: "content_creation",
+    confidenceScore: 0.85,
+    segmentTag: "Content Creator Stack",
+    isActive: true,
+  },
+  {
+    ruleName: "Automation Enthusiast",
+    conditions: { useCase: "automation" },
+    recommendedProductIds: [],
+    primaryUseCase: "automation",
+    confidenceScore: 0.75,
+    segmentTag: "Automation-Focused Stack",
+    isActive: true,
+  },
+  {
+    ruleName: "AI Workflow & Analytics",
+    conditions: { useCase: "ai_workflow" },
+    recommendedProductIds: [],
+    primaryUseCase: "ai_workflow",
+    confidenceScore: 0.8,
+    segmentTag: "AI Workflow Stack",
+    isActive: true,
+  },
+];
