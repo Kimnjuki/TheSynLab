@@ -42,6 +42,8 @@ const staticRoutes = [
   "/alternatives",
   "/stack-quiz",
   "/tools/stack-quiz",
+  "/tco-calculator",
+  "/tools/tco-calculator",
 ];
 
 // Pages with no server-renderable content — tell Google not to index until real content exists

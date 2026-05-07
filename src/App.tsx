@@ -74,6 +74,7 @@ import HubsIndex from "./pages/HubsIndex";
 import DecisionStudio from "./pages/DecisionStudio";
 import WorkflowsIndex from "./pages/WorkflowsIndex";
 import StackQuiz from "./pages/tools/StackQuiz";
+import TcoCalculator from "./pages/tools/TcoCalculator";
 import AlternativesIndex from "./pages/AlternativesIndex";
 
 const queryClient = new QueryClient();
@@ -164,6 +165,8 @@ const App = () => (
                   <Route path="/workflows" element={<WorkflowsIndex />} />
                   <Route path="/stack-quiz" element={<StackQuiz />} />
                   <Route path="/tools/stack-quiz" element={<StackQuiz />} />
+                  <Route path="/tco-calculator" element={<TcoCalculator />} />
+                  <Route path="/tools/tco-calculator" element={<TcoCalculator />} />
                   <Route path="/alternatives" element={<AlternativesIndex />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
