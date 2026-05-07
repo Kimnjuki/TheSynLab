@@ -46,6 +46,8 @@ const staticRoutes = [
   "/tools/tco-calculator",
   "/vendor-risk-checker",
   "/tools/vendor-risk-checker",
+  "/workflow-blueprint",
+  "/tools/workflow-blueprint",
 ];
 
 // Pages with no server-renderable content — tell Google not to index until real content exists

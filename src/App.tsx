@@ -76,6 +76,7 @@ import WorkflowsIndex from "./pages/WorkflowsIndex";
 import StackQuiz from "./pages/tools/StackQuiz";
 import TcoCalculator from "./pages/tools/TcoCalculator";
 import VendorRiskChecker from "./pages/tools/VendorRiskChecker";
+import WorkflowBlueprint from "./pages/tools/WorkflowBlueprint";
 import AlternativesIndex from "./pages/AlternativesIndex";
 
 const queryClient = new QueryClient();
@@ -170,6 +171,8 @@ const App = () => (
                   <Route path="/tools/tco-calculator" element={<TcoCalculator />} />
                   <Route path="/vendor-risk-checker" element={<VendorRiskChecker />} />
                   <Route path="/tools/vendor-risk-checker" element={<VendorRiskChecker />} />
+                  <Route path="/workflow-blueprint" element={<WorkflowBlueprint />} />
+                  <Route path="/tools/workflow-blueprint" element={<WorkflowBlueprint />} />
                   <Route path="/alternatives" element={<AlternativesIndex />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
