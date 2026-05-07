@@ -48,6 +48,8 @@ const staticRoutes = [
   "/tools/vendor-risk-checker",
   "/workflow-blueprint",
   "/tools/workflow-blueprint",
+  "/trust-index",
+  "/my-stack",
 ];
 
 // Pages with no server-renderable content — tell Google not to index until real content exists
