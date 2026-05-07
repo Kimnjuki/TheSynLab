@@ -60,14 +60,14 @@ export default function SaasToolReviewPage() {
   const verdict = VERDICT(tool.trustScore);
   const year = new Date().getFullYear();
 
-  const canonical = `https://www.thesynlab.com/tool/${tool.slug}`;
+  const canonical = `https://thesynlab.com/tool/${tool.slug}`;
   const title = `${tool.tagline} | ${tool.name} Review ${year} — Pricing, Pros & Cons | TheSynLab`;
   const description = `TheSynLab's independent ${tool.name} review: ${tool.tagline}. Trust Score ${tool.trustScore}/5, honest pros & cons, pricing from ${tool.pricing.startingPrice}, and best alternatives. Updated ${year}.`;
 
   const breadcrumbs = [
-    { name: "Home", url: "https://www.thesynlab.com" },
-    { name: "AI Tools Hub", url: "https://www.thesynlab.com/hub/ai-tools" },
-    { name: category.name, url: `https://www.thesynlab.com/hub/ai-tools/${tool.category}` },
+    { name: "Home", url: "https://thesynlab.com" },
+    { name: "AI Tools Hub", url: "https://thesynlab.com/hub/ai-tools" },
+    { name: category.name, url: `https://thesynlab.com/hub/ai-tools/${tool.category}` },
     { name: tool.name, url: canonical },
   ];
 

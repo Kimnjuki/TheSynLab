@@ -96,7 +96,7 @@ export default function ProductsHub() {
       <MetaTags
         title="Products Hub"
         description="Every product scored on trust, integration depth, and lock-in risk."
-        canonical="https://www.thesynlab.com/products"
+        canonical="https://thesynlab.com/products"
       />
       <Header />
       <main className="container mx-auto flex-1 px-4 py-8">

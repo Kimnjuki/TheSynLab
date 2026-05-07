@@ -33,7 +33,7 @@ export default function BestForEcosystem() {
             "@type": "ListItem",
             position: idx + 1,
             name: r.product.productName,
-            url: `https://www.thesynlab.com/products/${r.product.productSlug}`,
+            url: `https://thesynlab.com/products/${r.product.productSlug}`,
           })),
         }}
       />

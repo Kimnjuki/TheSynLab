@@ -17,7 +17,8 @@ Disallow: /admin/
 Disallow: /private/
 Disallow: /api/
 Disallow: /?s=
-Disallow: /search/
+# /search/ is a valid SPA page — let Google index it
+# Disallow: /search/
 Disallow: /cart/
 Disallow: /checkout/
 Disallow: /my-account/

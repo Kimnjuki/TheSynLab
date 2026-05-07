@@ -85,7 +85,7 @@ const ToolReviewTemplate: React.FC<ToolReviewTemplateProps> = ({ tool, relatedCo
     "publisher": {
       "@type": "Organization",
       "name": "TheSynLab",
-      "url": "https://www.thesynlab.com"
+      "url": "https://thesynlab.com"
     },
     "itemReviewed": {
       "@type": "SoftwareApplication",

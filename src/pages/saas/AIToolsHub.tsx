@@ -44,13 +44,13 @@ export default function AIToolsHub() {
   const featured = saasTools.filter((t) => t.kd <= 65 && t.volume >= 4400).slice(0, 8);
   const categories = Object.entries(TOOL_CATEGORIES) as [ToolCategory, (typeof TOOL_CATEGORIES)[ToolCategory]][];
 
-  const canonical = "https://www.thesynlab.com/hub/ai-tools";
+  const canonical = "https://thesynlab.com/hub/ai-tools";
   const title = "AI & SaaS Tools Hub — Reviews, Comparisons & Alternatives | TheSynLab";
   const description =
     "Independent reviews, side-by-side comparisons, and curated alternatives for 80+ AI and SaaS tools. Trust-scored by TheSynLab so you choose the right tool faster.";
 
   const breadcrumbs = [
-    { name: "Home", url: "https://www.thesynlab.com" },
+    { name: "Home", url: "https://thesynlab.com" },
     { name: "AI Tools Hub", url: canonical },
   ];
 
@@ -63,7 +63,7 @@ export default function AIToolsHub() {
     publisher: {
       "@type": "Organization",
       name: "TheSynLab",
-      url: "https://www.thesynlab.com",
+      url: "https://thesynlab.com",
     },
   };
 

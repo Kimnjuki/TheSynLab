@@ -66,7 +66,7 @@ export default function Hub() {
         custom={{
           name: `${title} | TheSynLab`,
           description,
-          url: `https://www.thesynlab.com${canonical}`,
+          url: `https://thesynlab.com${canonical}`,
           mainEntity: {
             "@type": "ItemList",
             numberOfItems: products?.length ?? 0,
@@ -74,7 +74,7 @@ export default function Hub() {
               "@type": "ListItem",
               position: i + 1,
               name: p.productName,
-              url: `https://www.thesynlab.com/products/${p.productSlug}`,
+              url: `https://thesynlab.com/products/${p.productSlug}`,
             })),
           },
         }}

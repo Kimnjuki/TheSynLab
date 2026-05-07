@@ -78,7 +78,8 @@ const ForumNewThread = () => {
     <>
       <Helmet>
         <title>New Thread – Forum | TheSynLab</title>
-        <meta name="robots" content="noindex" />
+        <meta name="robots" content="noindex,follow" />
+        <link rel="canonical" href="https://thesynlab.com/forum/new" />
       </Helmet>
 
       <Header />

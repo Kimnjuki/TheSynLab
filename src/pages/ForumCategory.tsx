@@ -62,7 +62,7 @@ const ForumCategory = () => {
       <Helmet>
         <title>{`${category.name} – Forum | TheSynLab`}</title>
         <meta name="description" content={category.description || `Discussions about ${category.name}`} />
-        <link rel="canonical" href={`https://www.thesynlab.com/forum/category/${slug}`} />
+        <link rel="canonical" href={`https://thesynlab.com/forum/category/${slug}`} />
       </Helmet>
 
       <Header />

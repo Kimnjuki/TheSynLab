@@ -45,13 +45,13 @@ export default function BestToolsRoundup() {
   const sorted = [...tools].sort((a, b) => b.trustScore - a.trustScore);
   const winner = sorted[0];
 
-  const canonical = `https://www.thesynlab.com/best/${useCase}`;
+  const canonical = `https://thesynlab.com/best/${useCase}`;
   const title = `${listMeta.title} in ${year} — Ranked & Reviewed | TheSynLab`;
   const description = `TheSynLab's definitive ranking of the ${listMeta.title.toLowerCase()} in ${year}. Trust-scored, independently tested, with pricing breakdowns and honest comparisons.`;
 
   const breadcrumbs = [
-    { name: "Home", url: "https://www.thesynlab.com" },
-    { name: "AI Tools Hub", url: "https://www.thesynlab.com/hub/ai-tools" },
+    { name: "Home", url: "https://thesynlab.com" },
+    { name: "AI Tools Hub", url: "https://thesynlab.com/hub/ai-tools" },
     { name: listMeta.title, url: canonical },
   ];
 
@@ -66,7 +66,7 @@ export default function BestToolsRoundup() {
       "@type": "ListItem",
       position: i + 1,
       name: t.name,
-      url: `https://www.thesynlab.com/tool/${t.slug}`,
+      url: `https://thesynlab.com/tool/${t.slug}`,
       description: t.shortDescription,
     })),
   };

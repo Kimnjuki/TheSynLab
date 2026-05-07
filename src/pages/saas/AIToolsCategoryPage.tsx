@@ -36,15 +36,15 @@ export default function AIToolsCategoryPage() {
     );
   }
 
-  const canonical = `https://www.thesynlab.com/hub/ai-tools/${category}`;
+  const canonical = `https://thesynlab.com/hub/ai-tools/${category}`;
   const title = `${cat.name} — ${tools.length} Tools Reviewed & Compared | TheSynLab`;
   const description = `Independent reviews of ${tools.length} ${cat.name.toLowerCase()} tools. Trust Scores, pricing breakdowns, and curated alternatives — updated ${new Date().getFullYear()}.`;
 
   const topTools = [...tools].sort((a, b) => b.trustScore - a.trustScore).slice(0, 3);
 
   const breadcrumbs = [
-    { name: "Home", url: "https://www.thesynlab.com" },
-    { name: "AI Tools Hub", url: "https://www.thesynlab.com/hub/ai-tools" },
+    { name: "Home", url: "https://thesynlab.com" },
+    { name: "AI Tools Hub", url: "https://thesynlab.com/hub/ai-tools" },
     { name: cat.name, url: canonical },
   ];
 
@@ -59,7 +59,7 @@ export default function AIToolsCategoryPage() {
       "@type": "ListItem",
       position: i + 1,
       name: t.name,
-      url: `https://www.thesynlab.com/tool/${t.slug}`,
+      url: `https://thesynlab.com/tool/${t.slug}`,
       description: t.shortDescription,
     })),
   };

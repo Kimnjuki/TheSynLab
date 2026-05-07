@@ -54,7 +54,7 @@ export default function ToolAlternativesPage() {
   const year = new Date().getFullYear();
   const category = TOOL_CATEGORIES[tool.category];
 
-  const canonical = `https://www.thesynlab.com/tool/${tool.slug}/alternatives`;
+  const canonical = `https://thesynlab.com/tool/${tool.slug}/alternatives`;
   const bestAlt = allAlts[0];
   const title = bestAlt
     ? `Best ${tool.name} Alternatives in ${year}: ${bestAlt.name}, & More`
@@ -64,10 +64,10 @@ export default function ToolAlternativesPage() {
     : `Looking for ${tool.name} alternatives? We compared ${allAlts.length}+ options on Trust Score, pricing, and features so you don't have to. Updated ${year}.`;
 
   const breadcrumbs = [
-    { name: "Home", url: "https://www.thesynlab.com" },
-    { name: "AI Tools Hub", url: "https://www.thesynlab.com/hub/ai-tools" },
-    { name: category.name, url: `https://www.thesynlab.com/hub/ai-tools/${tool.category}` },
-    { name: tool.name, url: `https://www.thesynlab.com/tool/${tool.slug}` },
+    { name: "Home", url: "https://thesynlab.com" },
+    { name: "AI Tools Hub", url: "https://thesynlab.com/hub/ai-tools" },
+    { name: category.name, url: `https://thesynlab.com/hub/ai-tools/${tool.category}` },
+    { name: tool.name, url: `https://thesynlab.com/tool/${tool.slug}` },
     { name: "Alternatives", url: canonical },
   ];
 
@@ -82,7 +82,7 @@ export default function ToolAlternativesPage() {
       "@type": "ListItem",
       position: i + 1,
       name: alt.name,
-      url: `https://www.thesynlab.com/tool/${alt.slug}`,
+      url: `https://thesynlab.com/tool/${alt.slug}`,
       description: alt.shortDescription,
     })),
   };

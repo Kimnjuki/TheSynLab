@@ -22,7 +22,7 @@ export default function ProductsWatchlist() {
       <MetaTags
         title="My Products Watchlist | TheSynLab"
         description="Track your saved products with trust and integration signals."
-        canonical="https://www.thesynlab.com/products/watchlist"
+        canonical="https://thesynlab.com/products/watchlist"
       />
       <Header />
       <main className="container mx-auto flex-1 px-4 py-8">

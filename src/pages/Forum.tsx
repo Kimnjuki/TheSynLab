@@ -46,7 +46,7 @@ const Forum = () => {
     "@type": "DiscussionForumPosting",
     "name": "TheSynLab Community Forum",
     "description": "Community forum for smart home, tech reviews, and automation discussions",
-    "url": "https://www.thesynlab.com/forum",
+    "url": "https://thesynlab.com/forum",
   };
 
   return (
@@ -55,11 +55,11 @@ const Forum = () => {
         <title>Community Forum – Smart Home & Tech Discussions | TheSynLab</title>
         <meta name="description" content="Join TheSynLab community forum. Discuss smart home setups, share product reviews, troubleshoot devices, and discover automation workflows." />
         <meta name="keywords" content="smart home forum, tech community, product reviews discussion, home automation help, smart home troubleshooting" />
-        <link rel="canonical" href="https://www.thesynlab.com/forum" />
+        <link rel="canonical" href="https://thesynlab.com/forum" />
         <meta property="og:title" content="Community Forum – TheSynLab" />
         <meta property="og:description" content="Join thousands of smart home enthusiasts. Discuss setups, reviews, and automations." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.thesynlab.com/forum" />
+        <meta property="og:url" content="https://thesynlab.com/forum" />
         <meta name="twitter:card" content="summary_large_image" />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>

@@ -46,9 +46,9 @@ export default function HubPost() {
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.thesynlab.com/" },
-            { "@type": "ListItem", position: 2, name: hubName, item: `https://www.thesynlab.com/hubs/${hubSlug ?? ""}` },
-            { "@type": "ListItem", position: 3, name: title, item: `https://www.thesynlab.com/hubs/${hubSlug ?? ""}/${postSlug ?? ""}` },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://thesynlab.com/" },
+            { "@type": "ListItem", position: 2, name: hubName, item: `https://thesynlab.com/hubs/${hubSlug ?? ""}` },
+            { "@type": "ListItem", position: 3, name: title, item: `https://thesynlab.com/hubs/${hubSlug ?? ""}/${postSlug ?? ""}` },
           ],
         }}
       />
