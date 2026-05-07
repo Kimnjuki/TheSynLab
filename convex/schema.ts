@@ -2226,4 +2226,234 @@ export default defineSchema({
   }).index("by_simulation", ["simulationId"])
     .index("by_user", ["userId"])
     .index("by_products", ["fromProductId", "toProductId"]),
+
+  // ============ PHASE 1: STACK QUIZ ============
+  quizQuestions: defineTable({
+    questionText: v.string(),
+    questionKey: v.string(),
+    questionType: v.union(v.literal("single_choice"), v.literal("multi_choice"), v.literal("scale")),
+    options: v.array(v.object({ id: v.string(), label: v.string(), valueTag: v.string(), icon: v.optional(v.string()) })),
+    category: v.string(),
+    sortOrder: v.float64(),
+    isActive: v.boolean(),
+    helpText: v.optional(v.string()),
+  }).index("by_category", ["category"])
+    .index("by_active", ["isActive"])
+    .index("by_order", ["sortOrder"]),
+
+  quizResultRules: defineTable({
+    ruleName: v.string(),
+    conditions: v.any(),
+    recommendedProductIds: v.array(v.id("novaProducts")),
+    primaryUseCase: v.string(),
+    confidenceScore: v.float64(),
+    segmentTag: v.optional(v.string()),
+    isActive: v.boolean(),
+  }).index("by_use_case", ["primaryUseCase"])
+    .index("by_active", ["isActive"]),
+
+  quizSessions: defineTable({
+    sessionId: v.string(),
+    userId: v.optional(v.string()),
+    answers: v.any(),
+    recommendedProductIds: v.array(v.id("novaProducts")),
+    matchedRuleId: v.optional(v.id("quizResultRules")),
+    segmentTag: v.optional(v.string()),
+    emailCaptured: v.boolean(),
+    convertedToSignup: v.boolean(),
+    completedAt: v.float64(),
+    utmSource: v.optional(v.string()),
+    utmCampaign: v.optional(v.string()),
+    referrer: v.optional(v.string()),
+  }).index("by_session", ["sessionId"])
+    .index("by_user", ["userId"])
+    .index("by_segment", ["segmentTag"])
+    .index("by_date", ["completedAt"]),
+
+  // ============ PHASE 1: TCO PRICING ============
+  productPricingParams: defineTable({
+    productId: v.id("novaProducts"),
+    basePriceMonthly: v.float64(),
+    basePriceAnnual: v.optional(v.float64()),
+    billingModel: v.union(v.literal("per_user"), v.literal("per_account"), v.literal("tiered"), v.literal("usage_based"), v.literal("flat")),
+    minSeats: v.optional(v.float64()),
+    maxSeats: v.optional(v.float64()),
+    addOns: v.array(v.object({ name: v.string(), monthlyCostPerUser: v.optional(v.float64()), oneTimeCost: v.optional(v.float64()), isRequired: v.boolean() })),
+    hiddenCostParams: v.object({ onboardingHours: v.optional(v.float64()), trainingHours: v.optional(v.float64()), integrationHours: v.optional(v.float64()), hourlyRateAssumption: v.optional(v.float64()), annualPriceIncreasePercent: v.optional(v.float64()) }),
+    freeTierAvailable: v.boolean(),
+    freeTierLimits: v.optional(v.any()),
+    enterpriseCustomPricing: v.boolean(),
+    hasFreeTrialDays: v.optional(v.float64()),
+    currency: v.string(),
+    lastVerifiedAt: v.float64(),
+    sourceUrl: v.optional(v.string()),
+  }).index("by_product", ["productId"])
+    .index("by_billing", ["billingModel"]),
+
+  tcoCalculations: defineTable({
+    sessionId: v.string(),
+    userId: v.optional(v.string()),
+    productIds: v.array(v.id("novaProducts")),
+    seatCount: v.float64(),
+    contractLengthYears: v.float64(),
+    selectedAddOnIds: v.optional(v.array(v.string())),
+    includeHiddenCosts: v.boolean(),
+    results: v.array(v.object({ productId: v.id("novaProducts"), year1Cost: v.float64(), year2Cost: v.float64(), year3Cost: v.float64(), totalTco: v.float64(), hiddenCostBreakdown: v.optional(v.any()), licenseBreakdown: v.optional(v.any()) })),
+    recommendedAlternativeIds: v.optional(v.array(v.id("novaProducts"))),
+    emailCaptured: v.boolean(),
+    calculatedAt: v.float64(),
+  }).index("by_session", ["sessionId"])
+    .index("by_user", ["userId"])
+    .index("by_date", ["calculatedAt"]),
+
+  // ============ PHASE 1: VENDOR RISK ============
+  vendorRiskAssessments: defineTable({
+    productId: v.id("novaProducts"),
+    isCurrent: v.boolean(),
+    dataPortabilityScore: v.float64(),
+    proprietaryFormatsScore: v.float64(),
+    contractLockInScore: v.float64(),
+    integrationDependencyScore: v.float64(),
+    apiStabilityScore: v.float64(),
+    vendorFinancialHealthScore: v.optional(v.float64()),
+    overallRiskScore: v.float64(),
+    riskLabel: v.union(v.literal("Low"), v.literal("Medium"), v.literal("High"), v.literal("Critical")),
+    dataExportFormats: v.array(v.string()),
+    contractTerms: v.optional(v.string()),
+    apiBreakingChanges12m: v.optional(v.float64()),
+    suggestedAlternativeIds: v.optional(v.array(v.id("novaProducts"))),
+    assessedAt: v.float64(),
+    assessedBy: v.string(),
+    evidenceUrls: v.optional(v.array(v.string())),
+  }).index("by_product", ["productId"])
+    .index("by_current", ["productId", "isCurrent"])
+    .index("by_risk", ["riskLabel"]),
+
+  vendorRiskSessions: defineTable({
+    sessionId: v.string(),
+    userId: v.optional(v.string()),
+    productId: v.id("novaProducts"),
+    userAnswers: v.any(),
+    riskProfileSnapshot: v.optional(v.any()),
+    alternativesShown: v.optional(v.array(v.id("novaProducts"))),
+    emailCaptured: v.boolean(),
+    checkedAt: v.float64(),
+  }).index("by_session", ["sessionId"])
+    .index("by_product", ["productId"])
+    .index("by_user", ["userId"]),
+
+  // ============ PHASE 1: WORKFLOW BLUEPRINTS ============
+  workflowBlueprints: defineTable({
+    blueprintSlug: v.string(),
+    blueprintTitle: v.string(),
+    description: v.string(),
+    roleTag: v.string(),
+    useCaseTag: v.string(),
+    teamSizeRange: v.optional(v.string()),
+    difficulty: v.union(v.literal("Beginner"), v.literal("Intermediate"), v.literal("Advanced")),
+    estimatedSetupHours: v.float64(),
+    estimatedMonthlyCost: v.optional(v.float64()),
+    steps: v.array(v.object({ stepNumber: v.float64(), title: v.string(), description: v.string(), toolProductId: v.optional(v.id("novaProducts")), toolName: v.string(), toolRole: v.string(), automationPlatform: v.optional(v.string()), estimatedMinutes: v.optional(v.float64()) })),
+    stackProductIds: v.array(v.id("novaProducts")),
+    keyAutomations: v.array(v.string()),
+    pitfalls: v.array(v.string()),
+    diagramData: v.optional(v.any()),
+    isPublished: v.boolean(),
+    viewCount: v.float64(),
+    saveCount: v.float64(),
+    emailGated: v.boolean(),
+    lastUpdatedAt: v.float64(),
+  }).index("by_slug", ["blueprintSlug"])
+    .index("by_role", ["roleTag"])
+    .index("by_use_case", ["useCaseTag"])
+    .index("by_published", ["isPublished"]),
+
+  workflowBlueprintSessions: defineTable({
+    sessionId: v.string(),
+    userId: v.optional(v.string()),
+    selectedRole: v.string(),
+    selectedUseCase: v.string(),
+    selectedStack: v.optional(v.array(v.id("novaProducts"))),
+    generatedBlueprintId: v.optional(v.id("workflowBlueprints")),
+    customBlueprintData: v.optional(v.any()),
+    emailCaptured: v.boolean(),
+    exportedFormat: v.optional(v.string()),
+    generatedAt: v.float64(),
+  }).index("by_session", ["sessionId"])
+    .index("by_user", ["userId"])
+    .index("by_role", ["selectedRole"]),
+
+  // ============ PHASE 1: TRUST INDEX ============
+  trustIndexSnapshots: defineTable({
+    hubSlug: v.string(),
+    snapshotMonth: v.float64(),
+    snapshotYear: v.float64(),
+    isCurrent: v.boolean(),
+    rankedEntries: v.array(v.object({ rank: v.float64(), productId: v.id("novaProducts"), trustScore: v.float64(), integrationScore: v.float64(), rankDelta: v.float64(), badge: v.optional(v.string()) })),
+    publishedAt: v.float64(),
+    editorialNotes: v.optional(v.string()),
+  }).index("by_hub_current", ["hubSlug", "isCurrent"])
+    .index("by_period", ["snapshotYear", "snapshotMonth"])
+    .index("by_hub", ["hubSlug"]),
+
+  // ============ PHASE 1: MY STACK ============
+  userMyStack: defineTable({
+    userId: v.optional(v.string()),
+    sessionId: v.string(),
+    stackName: v.optional(v.string()),
+    productIds: v.array(v.id("novaProducts")),
+    riskWarnings: v.optional(v.array(v.object({ productId: v.id("novaProducts"), warningType: v.string(), warningMessage: v.string(), severity: v.string() }))),
+    tcoEstimate: v.optional(v.float64()),
+    lastComputedAt: v.optional(v.float64()),
+    createdAt: v.float64(),
+    updatedAt: v.float64(),
+  }).index("by_user", ["userId"])
+    .index("by_session", ["sessionId"]),
+
+  // ============ PHASE 1: WIDGETS ============
+  synlabScorecardWidgets: defineTable({
+    productId: v.id("novaProducts"),
+    widgetToken: v.string(),
+    partnerDomain: v.optional(v.string()),
+    customAccentColor: v.optional(v.string()),
+    showTrustScore: v.boolean(),
+    showIntegrationScore: v.boolean(),
+    showTco: v.boolean(),
+    showRiskBadge: v.boolean(),
+    impressions: v.float64(),
+    clicks: v.float64(),
+    isActive: v.boolean(),
+    createdAt: v.float64(),
+  }).index("by_product", ["productId"])
+    .index("by_token", ["widgetToken"])
+    .index("by_active", ["isActive"]),
+
+  // ============ PHASE 1: LEAD MAGNETS ============
+  leadMagnets: defineTable({
+    title: v.string(),
+    slug: v.string(),
+    magnetType: v.union(v.literal("pdf_guide"), v.literal("spreadsheet"), v.literal("checklist"), v.literal("blueprint_export"), v.literal("quiz_result"), v.literal("tco_report")),
+    description: v.string(),
+    fileUrl: v.optional(v.string()),
+    thumbnailUrl: v.optional(v.string()),
+    relatedHubSlug: v.optional(v.string()),
+    relatedProductIds: v.optional(v.array(v.id("novaProducts"))),
+    downloadCount: v.float64(),
+    emailsCollected: v.float64(),
+    isActive: v.boolean(),
+    createdAt: v.float64(),
+  }).index("by_slug", ["slug"])
+    .index("by_type", ["magnetType"])
+    .index("by_active", ["isActive"]),
+
+  leadMagnetDownloads: defineTable({
+    magnetId: v.id("leadMagnets"),
+    email: v.string(),
+    userId: v.optional(v.string()),
+    sessionId: v.optional(v.string()),
+    utmSource: v.optional(v.string()),
+    downloadedAt: v.float64(),
+  }).index("by_magnet", ["magnetId"])
+    .index("by_email", ["email"])
+    .index("by_date", ["downloadedAt"]),
 });
