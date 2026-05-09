@@ -14,56 +14,82 @@ import {
   type ConsentFlags,
 } from "@/lib/consent";
 
+const LOCAL_CONSENT_KEY = "synlab_cookie_consent";
+
+function loadLocalConsent(): ConsentFlags | null {
+  try {
+    const raw = localStorage.getItem(LOCAL_CONSENT_KEY);
+    if (raw) return JSON.parse(raw) as ConsentFlags;
+  } catch {
+    // localStorage unavailable (private mode, etc.)
+  }
+  return null;
+}
+
+function saveLocalConsent(flags: ConsentFlags) {
+  try {
+    localStorage.setItem(LOCAL_CONSENT_KEY, JSON.stringify(flags));
+  } catch {
+    // Silently ignore — localStorage may be full or blocked
+  }
+}
+
 export default function CookieBanner() {
   const convex = useConvex();
   const [open, setOpen] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [sessionId, setSessionId] = useState<string>("");
   const [consent, setConsent] = useState<ConsentFlags>(defaultConsent);
-  const [currentConsent, setCurrentConsent] = useState<any | undefined>(undefined);
 
   useEffect(() => {
     setSessionId(getOrCreateSessionId());
+    // Always start by checking localStorage — works even if Convex is down
+    const local = loadLocalConsent();
+    if (local) {
+      setConsent(local);
+      emitConsentUpdated(local);
+      // Still check Convex in background for server sync, but don't block the UI
+      setOpen(false);
+    } else {
+      setOpen(true);
+    }
   }, []);
 
   const createConsent = useMutation(api.cmpConsent.createCmpConsentRecord);
   const updateConsent = useMutation(api.cmpConsent.updateCmpConsentRecord);
 
+  // Background sync: load Convex record and reconcile with localStorage
   useEffect(() => {
     if (!sessionId) return;
+    const local = loadLocalConsent();
     let cancelled = false;
     void convex
       .query(api.cmpConsent.getCmpConsent, { sessionId })
       .then((result) => {
         if (cancelled) return;
-        setCurrentConsent(result ?? null);
+        if (result) {
+          const serverFlags: ConsentFlags = {
+            necessaryCookies: result.necessaryCookies,
+            analyticsCookies: result.analyticsCookies,
+            advertisingCookies: result.advertisingCookies,
+            functionalCookies: result.functionalCookies,
+          };
+          // Server wins if user has a saved server record but no local one
+          if (!local) {
+            setConsent(serverFlags);
+            saveLocalConsent(serverFlags);
+            emitConsentUpdated(serverFlags);
+            setOpen(false);
+          }
+        }
       })
       .catch(() => {
-        // During partial deploys/back-end drift, avoid crashing UI: fall back to local default.
-        if (cancelled) return;
-        setCurrentConsent(null);
+        // Convex unavailable — no-op, localStorage consent already applied
       });
     return () => {
       cancelled = true;
     };
   }, [convex, sessionId]);
-
-  useEffect(() => {
-    if (currentConsent === undefined) return;
-    if (!currentConsent) {
-      setOpen(true);
-      return;
-    }
-    const loaded: ConsentFlags = {
-      necessaryCookies: currentConsent.necessaryCookies,
-      analyticsCookies: currentConsent.analyticsCookies,
-      advertisingCookies: currentConsent.advertisingCookies,
-      functionalCookies: currentConsent.functionalCookies,
-    };
-    setConsent(loaded);
-    emitConsentUpdated(loaded);
-    setOpen(false);
-  }, [currentConsent]);
 
   useEffect(() => {
     const reopen = () => {
@@ -83,26 +109,32 @@ export default function CookieBanner() {
     [consent]
   );
 
-  const saveConsent = async (method: "explicit_accept" | "explicit_reject" | "granular") => {
-    if (!sessionId) return;
-    if (!currentConsent) {
-      await createConsent({
-        sessionId,
-        consentVersion: CONSENT_VERSION,
-        consentMethod: method,
-        ipCountry: getIpCountryGuess(),
-        userAgent: navigator.userAgent,
-        ...consent,
-      });
-    } else {
-      await updateConsent({
-        sessionId,
-        updatedFlags: actionable,
-      });
-    }
-    emitConsentUpdated(consent);
+  const handleConsent = (
+    flags: ConsentFlags,
+    method: "explicit_accept" | "explicit_reject" | "granular",
+  ) => {
+    // 1. Save locally immediately — always works, no async
+    setConsent(flags);
+    saveLocalConsent(flags);
+    emitConsentUpdated(flags);
     setOpen(false);
     setPreferencesOpen(false);
+
+    // 2. Fire-and-forget to Convex — never blocks the UI
+    if (!sessionId) return;
+    const record = {
+      sessionId,
+      consentVersion: CONSENT_VERSION,
+      consentMethod: method,
+      ipCountry: getIpCountryGuess(),
+      userAgent: navigator.userAgent,
+      ...flags,
+    };
+    createConsent(record).catch(() => {
+      updateConsent({ sessionId, updatedFlags: actionable }).catch(() => {
+        // Convex unavailable — consent is saved locally, no data loss
+      });
+    });
   };
 
   if (!open) {
@@ -180,30 +212,33 @@ export default function CookieBanner() {
             )}
             <Button
               type="button"
-              onClick={() => {
-                setConsent({
-                  necessaryCookies: true,
-                  analyticsCookies: true,
-                  advertisingCookies: true,
-                  functionalCookies: true,
-                });
-                void saveConsent("explicit_accept");
-              }}
+              onClick={() =>
+                handleConsent(
+                  {
+                    necessaryCookies: true,
+                    analyticsCookies: true,
+                    advertisingCookies: true,
+                    functionalCookies: true,
+                  },
+                  "explicit_accept",
+                )
+              }
             >
               Accept all
             </Button>
             <Button
               type="button"
               variant="outline"
-              onClick={() => {
-                setConsent(defaultConsent);
-                void saveConsent("explicit_reject");
-              }}
+              onClick={() => handleConsent(defaultConsent, "explicit_reject")}
             >
               Reject optional
             </Button>
             {preferencesOpen && (
-              <Button type="button" variant="outline" onClick={() => void saveConsent("granular")}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleConsent(consent, "granular")}
+              >
                 Save preferences
               </Button>
             )}
