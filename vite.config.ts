@@ -22,6 +22,8 @@ const staticRoutes = [
   "/terms",
   "/disclosure",
   "/blog",
+  "/guides",
+  "/glossary",
   "/products",
   "/tools",
   "/tools/compare",
@@ -193,6 +195,14 @@ const staticMetaByRoute: Record<string, { title: string; description: string }> 
     title: "Tech Blog & Reviews | TheSynLab",
     description: "Latest smart home, productivity, and AI tool deep dives from TheSynLab editors.",
   },
+  "/guides": {
+    title: "How-To Guides & Tutorials | TheSynLab",
+    description: "Step-by-step guides and tutorials for SaaS tools, smart home setups, privacy evaluations, and workflow optimization.",
+  },
+  "/glossary": {
+    title: "Tech Glossary & Definitions | TheSynLab",
+    description: "Definitions and explanations of SaaS, smart home, privacy, and productivity terms from TheSynLab.",
+  },
   "/products": {
     title: "Products Hub | TheSynLab",
     description: "Explore reviewed products with Trust Scores and Integration Scores. Smart home, AI tools, SaaS platforms.",
@@ -276,6 +286,28 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
       noindex: NOINDEX_ROUTES.has(route),
     });
   }
+
+  // ── Blog / Guides index — ItemList of BlogPosting ──────────────────────
+  const addBlogItemList = (pageRoute: string, filterFn?: (a: typeof blogArticles[0]) => boolean) => {
+    const index = pages.find(p => p.route === pageRoute);
+    if (!index) return;
+    const items = [...blogArticles]
+      .filter(filterFn ?? (() => true))
+      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+    index.jsonLd = [index.jsonLd, {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: items.slice(0, 20).map((a, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: a.title,
+        url: `${SITE_URL}/blog/${a.slug}`,
+      })),
+      numberOfItems: Math.min(items.length, 20),
+    }];
+  };
+  addBlogItemList("/blog");
+  addBlogItemList("/guides", a => a.category === "Guides");
 
   // Blog articles — Article schema + BreadcrumbList + FAQPage + HowTo
   for (const article of blogArticles) {
@@ -840,6 +872,34 @@ const buildStaticBodyHtml = (route: string): string => {
 <h1>Tech Blog &amp; Reviews</h1>
 <p>In-depth reviews, comparisons, and workflow guides for SaaS tools, AI products, smart home devices, and productivity software — all independently scored.</p>
 <ul style="list-style:none;padding:0">${articleLinks}</ul>
+</main>`;
+  }
+
+  // ── Guides listing ───────────────────────────────────────────────────────
+  if (route === "/guides") {
+    const guideArticles = blogArticles
+      .filter(a => a.category === "Guides")
+      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+      .map((a) =>
+        `<li style="margin-bottom:.75rem"><a href="/blog/${a.slug}"><b>${escapeHtml(a.title)}</b></a> ` +
+        `<span style="color:#666;font-size:.85rem">— ${escapeHtml(a.excerpt.slice(0, 120))}…</span></li>`
+      )
+      .join("");
+    return `<main style="${MAIN_STYLE}">
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › <a href="/blog">Blog</a> › Guides</nav>
+<h1>How-To Guides &amp; Tutorials</h1>
+<p>Step-by-step guides for evaluating, selecting, and optimizing your SaaS tools, smart home setup, and workflow stack. All independently researched.</p>
+<ul style="list-style:none;padding:0">${guideArticles}</ul>
+</main>`;
+  }
+
+  // ── Glossary listing ─────────────────────────────────────────────────────
+  if (route === "/glossary") {
+    return `<main style="${MAIN_STYLE}">
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › Glossary</nav>
+<h1>Tech Glossary</h1>
+<p>Definitions and explanations of key terms in SaaS, smart home technology, privacy, and productivity — plain language, independently verified.</p>
+<p style="color:#666">Glossary entries coming soon. In the meantime, browse our <a href="/blog">blog</a> and <a href="/guides">how-to guides</a>.</p>
 </main>`;
   }
 
