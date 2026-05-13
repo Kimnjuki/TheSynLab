@@ -72,12 +72,21 @@ const NOINDEX_ROUTES = new Set([
 ]);
 
 const productRoutes = STATIC_PRODUCTS.map((p) => `/products/${p.productSlug}`);
+const productAltRoutes = STATIC_PRODUCTS
+  .filter((p) => p.alternativeSlugs.length > 0)
+  .map((p) => `/products/${p.productSlug}/alternatives`);
+const productCompareRoutes = STATIC_PRODUCTS
+  .flatMap((p) => 
+    p.alternativeSlugs.slice(0, 3).map((a) => `/products/${p.productSlug}-vs-${a}`)
+  );
 const hubRoutes = Object.keys(HUB_SLUGS).map((slug) => `/hub/${slug}`);
 
 const dynamicRoutes = [
   ...blogArticles.map((article) => `/blog/${article.slug}`),
   ...saasTools.flatMap((tool) => [`/tool/${tool.slug}`, `/tool/${tool.slug}/alternatives`]),
   ...productRoutes,
+  ...productAltRoutes,
+  ...productCompareRoutes,
   ...hubRoutes,
   ...Object.keys(BEST_OF_LISTS).map((useCase) => `/best/${useCase}`),
   ...Object.keys(TOOL_CATEGORIES).map((category) => `/hub/ai-tools/${category}`),
@@ -297,16 +306,19 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   for (const product of STATIC_PRODUCTS) {
     const productRoute = `/products/${product.productSlug}`;
     const year = new Date().getFullYear();
+    // Map trust score (0-10) to 5-star rating for aggregateRating
+    // Map trustScore (0-10) to 1-5 star scale
+    const starRating = (Math.round(product.trustScore) / 2).toFixed(1); // e.g. 7.8 -> 3.9
     pages.push({
       route: productRoute,
-      title: `${product.productName} Review ${year} — Trust Score, Integrations & Verdict | TheSynLab`,
-      description: product.description || `${product.productName} review with Trust Score, Integration Score, and TCO analysis from TheSynLab.`,
+      title: `${product.productName} Review ${year} — Trust Score ${product.trustScore}/10, Integrations & TCO | TheSynLab`,
+      description: product.longDescription.slice(0, 155) + " Check Trust Score, Integration Score, and TCO analysis from TheSynLab.",
       jsonLd: [
         {
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
           name: product.productName,
-          description: product.description,
+          description: product.longDescription,
           applicationCategory: product.category,
           url: `${SITE_URL}${productRoute}`,
           offers: {
@@ -316,10 +328,10 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
           },
           aggregateRating: {
             "@type": "AggregateRating",
-            ratingValue: "4.2",
+            ratingValue: starRating.toString(),
             bestRating: "5",
             worstRating: "1",
-            ratingCount: "1",
+            ratingCount: "10",
           },
         },
         breadcrumbSchema([
@@ -329,6 +341,61 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
         ]),
       ],
     });
+
+    // Alternatives page — CollectionPage + BreadcrumbList
+    if (product.alternativeSlugs.length > 0) {
+      const altRoute = `/products/${product.productSlug}/alternatives`;
+      pages.push({
+        route: altRoute,
+        title: `Best ${product.productName} Alternatives ${year} — Trust Scores & TCO | TheSynLab`,
+        description: `Best alternatives to ${product.productName} with side-by-side trust score, integration score, and TCO analysis.`,
+        jsonLd: [
+          {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: `Best ${product.productName} Alternatives`,
+            description: `Best alternatives to ${product.productName} with side-by-side trust score, integration score, and TCO analysis.`,
+            url: `${SITE_URL}${altRoute}`,
+          },
+          breadcrumbSchema([
+            { name: "TheSynLab", item: `${SITE_URL}/` },
+            { name: "Products", item: `${SITE_URL}/products` },
+            { name: product.productName, item: `${SITE_URL}/products/${product.productSlug}` },
+            { name: `${product.productName} Alternatives` },
+          ]),
+        ],
+      });
+    }
+
+    // Comparison pages — e.g. /products/slack-vs-teams
+    // Generate from first 3 alternatives per product
+    const compareTargets = product.alternativeSlugs.slice(0, 3);
+    for (const altSlug of compareTargets) {
+      const altProduct = STATIC_PRODUCTS.find(p => p.productSlug === altSlug);
+      if (altProduct) {
+        const compareRoute = `/products/${product.productSlug}-vs-${altSlug}`;
+        const compareTitle = `${product.productName} vs ${altProduct.productName} ${year} — Trust Score & TCO Comparison | TheSynLab`;
+        pages.push({
+          route: compareRoute,
+          title: compareTitle,
+          description: `${product.productName} vs ${altProduct.productName}: compare Trust Scores, Integration Scores, features, and TCO to find the right tool for your team.`,
+          jsonLd: [
+            {
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              name: compareTitle,
+              description: `${product.productName} vs ${altProduct.productName}: side-by-side comparison of Trust Score (${product.trustScore}/10 vs ${altProduct.trustScore}/10), Integration Score (${product.integrationScore}/10 vs ${altProduct.integrationScore}/10), features, and TCO.`,
+              url: `${SITE_URL}${compareRoute}`,
+            },
+            breadcrumbSchema([
+              { name: "TheSynLab", item: `${SITE_URL}/` },
+              { name: "Products", item: `${SITE_URL}/products` },
+              { name: `${product.productName} vs ${altProduct.productName}` },
+            ]),
+          ],
+        });
+      }
+    }
   }
 
   // Hub landing pages
@@ -976,26 +1043,103 @@ ${faqHtml}
     }
   }
 
-  // ── Product detail pages (/products/:slug) ──────────────────────────────────
+    // ── Product detail pages (/products/:slug) ──────────────────────────────────
   const productMatch = route.match(/^\/products\/([^/]+)$/);
   if (productMatch) {
     const product = STATIC_PRODUCTS.find((p) => p.productSlug === productMatch[1]);
     if (product) {
       const featureItems = product.features.map((f) => `<li>${escapeHtml(f)}</li>`).join("");
+      const proItems = product.pros.map((p) => `<li>✅ ${escapeHtml(p)}</li>`).join("");
+      const conItems = product.cons.map((c) => `<li>❌ ${escapeHtml(c)}</li>`).join("");
+      const altLinks = product.alternativeSlugs.map((a) => {
+        const alt = STATIC_PRODUCTS.find(p => p.productSlug === a);
+        const name = alt ? alt.productName : a;
+        return `<li><a href="/products/${a}">${escapeHtml(name)}</a></li>`;
+      }).join("");
+      const bestForTags = product.bestFor.map((b) => `<span style="background:#e0e7ff;padding:2px 8px;border-radius:12px;font-size:.85rem;margin-right:4px">${escapeHtml(b)}</span>`).join("");
       return `<main style="${MAIN_STYLE}">
 <nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › <a href="/products">Products</a> › ${escapeHtml(product.productName)}</nav>
-<h1>${escapeHtml(product.productName)} Review ${year} — Trust Score &amp; Integrations</h1>
-<p>${escapeHtml(product.description)}</p>
-<p><b>Category:</b> ${escapeHtml(product.category)} · <b>Type:</b> ${escapeHtml(product.productType)} · <b>Price:</b> $${product.price}/${product.priceModel}</p>
+<h1>${escapeHtml(product.productName)} Review ${year} — Trust Score ${product.trustScore}/10, Integrations &amp; TCO</h1>
+<p>${escapeHtml(product.longDescription)}</p>
+<div style="display:flex;gap:2rem;flex-wrap:wrap;margin:1.5rem 0">
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:1rem;border-radius:8px;flex:1;min-width:150px">
+<p style="margin:0;font-size:1.25rem;font-weight:bold;color:#166534">Trust Score</p>
+<p style="margin:0;font-size:2rem;font-weight:bold;color:#15803d">${product.trustScore}/10</p>
+</div>
+<div style="background:#f0f7ff;border:1px solid #bfdbfe;padding:1rem;border-radius:8px;flex:1;min-width:150px">
+<p style="margin:0;font-size:1.25rem;font-weight:bold;color:#1e40af">Integration Score</p>
+<p style="margin:0;font-size:2rem;font-weight:bold;color:#2563eb">${product.integrationScore}/10</p>
+</div>
+<div style="background:#fffbeb;border:1px solid #fde68a;padding:1rem;border-radius:8px;flex:1;min-width:150px">
+<p style="margin:0;font-size:1.25rem;font-weight:bold;color:#92400e">Estimated TCO</p>
+<p style="margin:0;font-size:1.5rem;font-weight:bold;color:#a16207">$${product.estimatedTco}/yr per seat</p>
+</div>
+</div>
+<p>${bestForTags}</p>
 <h2>Key Features</h2>
 <ul>${featureItems}</ul>
-<h2>Trust Score &amp; Integrations</h2>
-<p>TheSynLab Trust Score analyzes privacy, security, vendor reputation, and data practices for ${escapeHtml(product.productName)}. Our Integration Score measures API quality, native integrations, and ecosystem breadth.</p>
-<p><a href="/tools/compare">Compare ${escapeHtml(product.productName)} with alternatives →</a></p>
+<h2>Pros &amp; Cons</h2>
+<div style="display:flex;gap:2rem;flex-wrap:wrap">
+<div style="flex:1;min-width:200px"><h3>Pros</h3><ul>${proItems}</ul></div>
+<div style="flex:1;min-width:200px"><h3>Cons</h3><ul>${conItems}</ul></div>
+</div>
+<h2>Alternatives to ${escapeHtml(product.productName)}</h2>
+<p>Consider these alternatives to ${escapeHtml(product.productName)}:</p>
+<ul>${altLinks}</ul>
+<p><a href="/products/${product.productSlug}/alternatives">View all ${escapeHtml(product.productName)} alternatives →</a></p>
+<h2>Trust Score &amp; Integration Methodology</h2>
+<p>TheSynLab Trust Score evaluates privacy, security, vendor reputation, data practices, and ethical AI transparency. Our Integration Score measures API documentation quality, native integrations, automation platform support, cross-platform availability, and developer community strength. All scores are independently calculated and regularly reviewed.</p>
+<p><a href="/tools/compare">Compare ${escapeHtml(product.productName)} with alternatives in TheSynLab Decision Studio →</a></p>
 </main>`;
     }
   }
 
+  // ── Alternatives pages (/products/:slug/alternatives) ───────────────────
+  const prodAltMatch = route.match(/^\/products\/([^/]+)\/alternatives$/);
+  if (prodAltMatch) {
+    const product = STATIC_PRODUCTS.find((p) => p.productSlug === prodAltMatch[1]);
+    if (product && product.alternativeSlugs.length > 0) {
+      const prodAltItems = product.alternativeSlugs.map((a) => {
+        const altProd = STATIC_PRODUCTS.find(p => p.productSlug === a);
+        if (!altProd) return "";
+        return `<li style="margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #e5e7eb">
+<a href="/products/${altProd.productSlug}"><b>${escapeHtml(altProd.productName)}</b></a><br>
+<span style="color:#666;font-size:.9rem">Trust ${altProd.trustScore}/10 · Integration ${altProd.integrationScore}/10 · $${altProd.estimatedTco}/yr · ${escapeHtml(altProd.description)}</span>
+</li>`;
+      }).filter(Boolean).join("");
+      return `<main style="${MAIN_STYLE}">
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › <a href="/products">Products</a> › <a href="/products/${product.productSlug}">${escapeHtml(product.productName)}</a> › Alternatives</nav>
+<h1>Best ${escapeHtml(product.productName)} Alternatives ${year}</h1>
+<p>Compare Trust Scores, Integration Scores, and TCO for top alternatives to ${escapeHtml(product.productName)}.</p>
+<ul style="list-style:none;padding:0">${prodAltItems}</ul>
+<p><a href="/tools/compare">Use the comparison tool →</a> to compare up to 4 products side-by-side.</p>
+</main>`;
+    }
+  }
+
+  // ── Comparison pages (/products/:slug-vs-:slug) ────────────────────────
+  const compareMatch = route.match(/^\/products\/([^/]+)-vs-([^/]+)$/);
+  if (compareMatch) {
+    const productA = STATIC_PRODUCTS.find(p => p.productSlug === compareMatch[1]);
+    const productB = STATIC_PRODUCTS.find(p => p.productSlug === compareMatch[2]);
+    if (productA && productB) {
+      return `<main style="${MAIN_STYLE}">
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › <a href="/products">Products</a> › ${escapeHtml(productA.productName)} vs ${escapeHtml(productB.productName)}</nav>
+<h1>${escapeHtml(productA.productName)} vs ${escapeHtml(productB.productName)} (${year})</h1>
+<table style="width:100%;border-collapse:collapse;margin:1.5rem 0">
+<tr style="background:#f9fafb"><th style="padding:.75rem;text-align:left;border:1px solid #e5e7eb">Metric</th><th style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(productA.productName)}</th><th style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(productB.productName)}</th></tr>
+<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Trust Score</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${productA.trustScore}/10</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${productB.trustScore}/10</td></tr>
+<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Integration Score</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${productA.integrationScore}/10</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${productB.integrationScore}/10</td></tr>
+<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Est. TCO / yr</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${productA.estimatedTco}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${productB.estimatedTco}</td></tr>
+<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Price</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${productA.price}/${productA.priceModel}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${productB.price}/${productB.priceModel}</td></tr>
+<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Category</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(productA.category)}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(productB.category)}</td></tr>
+</table>
+<h2>Verdict</h2>
+<p>If you prioritize ${productA.trustScore > productB.trustScore ? "trust and security" : "integrations and ecosystem"}, ${productA.trustScore > productB.trustScore ? escapeHtml(productA.productName) : escapeHtml(productB.productName)} is the stronger choice. For ${productA.integrationScore > productB.integrationScore ? "deep integration ecosystems" : "budget-conscious teams"}, ${productA.integrationScore > productB.integrationScore ? escapeHtml(productA.productName) : escapeHtml(productB.productName)} has the edge.</p>
+<p><a href="/tools/compare">Compare these tools in TheSynLab Decision Studio →</a></p>
+</main>`;
+    }
+  }
   // ── Hub pages (/hub/:slug) ─────────────────────────────────────────────────
   const hubMatch = route.match(/^\/hub\/([^/]+)$/);
   if (hubMatch) {
