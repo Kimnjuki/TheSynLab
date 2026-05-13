@@ -819,6 +819,8 @@ export const seedAll = mutation({
     } else {
       results.leadMagnet = { seeded: false, message: "Already exists" };
     }
+
+    return results;
   },
 });
 
