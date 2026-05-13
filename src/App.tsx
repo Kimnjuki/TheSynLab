@@ -79,6 +79,7 @@ import VendorRiskChecker from "./pages/tools/VendorRiskChecker";
 import WorkflowBlueprint from "./pages/tools/WorkflowBlueprint";
 import TrustIndexLeaderboard from "./pages/TrustIndex";
 import MyStackDashboard from "./pages/MyStack";
+import WidgetGallery from "./pages/WidgetGallery";
 import AlternativesIndex from "./pages/AlternativesIndex";
 
 const queryClient = new QueryClient();
@@ -177,6 +178,7 @@ const App = () => (
                   <Route path="/tools/workflow-blueprint" element={<WorkflowBlueprint />} />
                   <Route path="/trust-index" element={<TrustIndexLeaderboard />} />
                   <Route path="/my-stack" element={<MyStackDashboard />} />
+                  <Route path="/widgets" element={<WidgetGallery />} />
                   <Route path="/alternatives" element={<AlternativesIndex />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />

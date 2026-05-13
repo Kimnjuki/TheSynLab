@@ -53,6 +53,7 @@ const staticRoutes = [
   "/tools/workflow-blueprint",
   "/trust-index",
   "/my-stack",
+  "/widgets",
 ];
 
 // Pages with no server-renderable content — tell Google not to index until real content exists
@@ -202,6 +203,10 @@ const staticMetaByRoute: Record<string, { title: string; description: string }> 
   "/glossary": {
     title: "Tech Glossary & Definitions | TheSynLab",
     description: "Definitions and explanations of SaaS, smart home, privacy, and productivity terms from TheSynLab.",
+  },
+  "/widgets": {
+    title: "Embeddable Scorecard Widgets | TheSynLab",
+    description: "Copy and paste Trust Score and Integration Score widgets for any product. Embed independent ratings on your own website.",
   },
   "/products": {
     title: "Products Hub | TheSynLab",
@@ -903,8 +908,46 @@ const buildStaticBodyHtml = (route: string): string => {
 </main>`;
   }
 
-  // ── Products hub ─────────────────────────────────────────────────────────
-  if (route === "/products") {
+  // ── Widget gallery ─────────────────────────────────────────────────────
+    // ── Widget gallery ─────────────────────────────────────────────────────
+  if (route === "/widgets") {
+    const allProducts = STATIC_PRODUCTS;
+    const widgetCards = allProducts.slice(0, 10).map((p) => {
+      const slug = p.productSlug;
+      const pname = p.productName || p.name || slug;
+      const tcoRaw = p.estimatedTCO || '';
+      const tcoStr = tcoRaw.replace(/^\$/, '');
+      return `<div style="border:1px solid #e2e8f0;border-radius:12px;padding:1.25rem;background:#fff">
+<h3>${pname}</h3>
+<div style="display:flex;gap:1rem;margin:.75rem 0;font-size:.8rem">
+<span>Trust: <b>${p.trustScore}/10</b></span>
+<span>Integration: <b>${p.integrationScore}/10</b></span>
+${tcoStr ? '<span>TCO: <b>$${tcoStr}</b></span>' : ''}
+</div>
+<pre style="background:#f8fafc;padding:.5rem;border-radius:6px;font-size:.7rem;overflow:auto">&lt;iframe src="https://thesynlab.com/widget/product/${slug}"
+width="360" height="220" loading="lazy"
+referrerpolicy="strict-origin-when-cross-origin"&gt;&lt;/iframe&gt;</pre>
+<p style="font-size:.75rem;color:#666;margin-top:.5rem">Click the product page to customize colors and options.</p>
+</div>`;
+    }).join('');
+
+    return `<main style="${MAIN_STYLE}">
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › Widgets</nav>
+<h1>Embeddable Trust Score Widgets</h1>
+<p>Copy and paste these iframe embed codes to display TheSynLab Trust Scores, Integration Scores, and TCO data on your own website. Each widget includes a do-follow link back to the full review.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;margin-top:2rem">
+${widgetCards}
+</div>
+<h2 style="margin-top:2rem">How to Embed</h2>
+<ol>
+<li>Choose a product widget above</li>
+<li>Copy the iframe embed code</li>
+<li>Paste into your website's HTML where you want the scorecard to appear</li>
+<li>The widget will display live Trust Score, Integration Score, and TCO data</li>
+</ol>
+<p style="margin-top:1.5rem;padding:1rem;background:#f0f9ff;border-radius:8px"><strong>Want a custom widget for your site?</strong> TheSynLab offers partner badge programs for featured products. <a href="/contact">Contact us</a> for details.</p>
+</main>`;
+  }if (route === "/products") {
     return `<main style="${MAIN_STYLE}">
 <nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › Products</nav>
 <h1>Products Hub — Trust Scored &amp; Integration Rated</h1>
