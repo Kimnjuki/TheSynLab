@@ -6,7 +6,7 @@ import { componentTagger } from "lovable-tagger";
 import { blogArticles } from "./src/data/blogArticles";
 import { saasTools, BEST_OF_LISTS, TOOL_CATEGORIES } from "./src/data/saasTools";
 import { HOMEPAGE_PRERENDER_HTML } from "./src/data/prerenderContent";
-import { STATIC_PRODUCTS, HUB_SLUGS } from "./src/data/staticProductData";
+import { STATIC_PRODUCTS, HUB_SLUGS, HUB_FAQS } from "./src/data/staticProductData";
 
 const SITE_URL = "https://thesynlab.com";
 const HOME_TITLE = "TheSynLab – Next-Gen Tech Reviews & Workflow Optimization";
@@ -302,44 +302,62 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
     });
   }
 
-  // Product detail pages (/products/:slug) from static product data — SoftwareApplication + BreadcrumbList
+  // Product detail pages (/products/:slug) from static product data — SoftwareApplication + BreadcrumbList + FAQPage
   for (const product of STATIC_PRODUCTS) {
     const productRoute = `/products/${product.productSlug}`;
     const year = new Date().getFullYear();
     // Map trust score (0-10) to 5-star rating for aggregateRating
     // Map trustScore (0-10) to 1-5 star scale
     const starRating = (Math.round(product.trustScore) / 2).toFixed(1); // e.g. 7.8 -> 3.9
+    const schemas: any[] = [
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        name: product.productName,
+        description: product.longDescription,
+        applicationCategory: product.category,
+        url: `${SITE_URL}${productRoute}`,
+        offers: {
+          "@type": "Offer",
+          price: product.price,
+          priceCurrency: product.priceCurrency,
+        },
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: starRating.toString(),
+          bestRating: "5",
+          worstRating: "1",
+          ratingCount: "10",
+        },
+      },
+      breadcrumbSchema([
+        { name: "TheSynLab", item: `${SITE_URL}/` },
+        { name: "Products", item: `${SITE_URL}/products` },
+        { name: product.productName },
+      ]),
+    ];
+
+    // MF-02: Inject FAQPage schema from product's faqs array
+    if (product.faqs && product.faqs.length >= 1) {
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: product.faqs.slice(0, 6).map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      });
+    }
+
     pages.push({
       route: productRoute,
       title: `${product.productName} Review ${year} — Trust Score ${product.trustScore}/10, Integrations & TCO | TheSynLab`,
       description: product.longDescription.slice(0, 155) + " Check Trust Score, Integration Score, and TCO analysis from TheSynLab.",
-      jsonLd: [
-        {
-          "@context": "https://schema.org",
-          "@type": "SoftwareApplication",
-          name: product.productName,
-          description: product.longDescription,
-          applicationCategory: product.category,
-          url: `${SITE_URL}${productRoute}`,
-          offers: {
-            "@type": "Offer",
-            price: product.price,
-            priceCurrency: product.priceCurrency,
-          },
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: starRating.toString(),
-            bestRating: "5",
-            worstRating: "1",
-            ratingCount: "10",
-          },
-        },
-        breadcrumbSchema([
-          { name: "TheSynLab", item: `${SITE_URL}/` },
-          { name: "Products", item: `${SITE_URL}/products` },
-          { name: product.productName },
-        ]),
-      ],
+      jsonLd: schemas,
     });
 
     // Alternatives page — CollectionPage + BreadcrumbList
@@ -398,26 +416,67 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
     }
   }
 
-  // Hub landing pages
+  // Hub landing pages — CollectionPage + BreadcrumbList + ItemList + FAQPage
   for (const [hubSlug, hubInfo] of Object.entries(HUB_SLUGS)) {
     const hubRoute = `/hub/${hubSlug}`;
+    const hubProducts = STATIC_PRODUCTS.filter((p) => p.hub === hubSlug);
+    const schemas: any[] = [
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: `Best ${hubInfo.name}`,
+        description: hubInfo.description,
+        url: `${SITE_URL}${hubRoute}`,
+      },
+      breadcrumbSchema([
+        { name: "TheSynLab", item: `${SITE_URL}/` },
+        { name: hubInfo.name },
+      ]),
+    ];
+
+    // MF-03: Inject ItemList schema for ranked products in this hub
+    if (hubProducts.length >= 1) {
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: `Best ${hubInfo.name} Tools ${new Date().getFullYear()}`,
+        description: hubInfo.description,
+        url: `${SITE_URL}${hubRoute}`,
+        numberOfItems: hubProducts.length,
+        itemListElement: hubProducts
+          .sort((a, b) => b.trustScore - a.trustScore)
+          .slice(0, 15)
+          .map((p, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            url: `${SITE_URL}/products/${p.productSlug}`,
+            name: p.productName,
+          })),
+      });
+    }
+
+    // MF-02: Inject FAQPage schema on hub pages
+    const hubFaqs = HUB_FAQS[hubSlug];
+    if (hubFaqs && hubFaqs.length >= 1) {
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: hubFaqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      });
+    }
+
     pages.push({
       route: hubRoute,
       title: `Best ${hubInfo.name} ${new Date().getFullYear()} — Trust Scores & Reviews | TheSynLab`,
       description: hubInfo.description,
-      jsonLd: [
-        {
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          name: `Best ${hubInfo.name}`,
-          description: hubInfo.description,
-          url: `${SITE_URL}${hubRoute}`,
-        },
-        breadcrumbSchema([
-          { name: "TheSynLab", item: `${SITE_URL}/` },
-          { name: hubInfo.name },
-        ]),
-      ],
+      jsonLd: schemas,
     });
   }
 
