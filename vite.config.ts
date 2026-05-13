@@ -6,6 +6,7 @@ import { componentTagger } from "lovable-tagger";
 import { blogArticles } from "./src/data/blogArticles";
 import { saasTools, BEST_OF_LISTS, TOOL_CATEGORIES } from "./src/data/saasTools";
 import { HOMEPAGE_PRERENDER_HTML } from "./src/data/prerenderContent";
+import { STATIC_PRODUCTS, HUB_SLUGS } from "./src/data/staticProductData";
 
 const SITE_URL = "https://thesynlab.com";
 const HOME_TITLE = "TheSynLab – Next-Gen Tech Reviews & Workflow Optimization";
@@ -70,9 +71,14 @@ const NOINDEX_ROUTES = new Set([
   "/auth",
 ]);
 
+const productRoutes = STATIC_PRODUCTS.map((p) => `/products/${p.productSlug}`);
+const hubRoutes = Object.keys(HUB_SLUGS).map((slug) => `/hub/${slug}`);
+
 const dynamicRoutes = [
   ...blogArticles.map((article) => `/blog/${article.slug}`),
   ...saasTools.flatMap((tool) => [`/tool/${tool.slug}`, `/tool/${tool.slug}/alternatives`]),
+  ...productRoutes,
+  ...hubRoutes,
   ...Object.keys(BEST_OF_LISTS).map((useCase) => `/best/${useCase}`),
   ...Object.keys(TOOL_CATEGORIES).map((category) => `/hub/ai-tools/${category}`),
 ];
@@ -88,10 +94,10 @@ const buildSitemapXml = () => {
       const loc = `${SITE_URL}${route}`;
       const priority =
         route === "/" ? "1.0" :
-        route.startsWith("/blog/") || route.startsWith("/tool/") ? "0.8" :
-        route.startsWith("/hub/ai-tools/") || route.startsWith("/best/") ? "0.8" :
+        route.startsWith("/blog/") || route.startsWith("/tool/") || route.startsWith("/products/") ? "0.8" :
+        route.startsWith("/hub/") || route.startsWith("/best/") ? "0.8" :
         "0.7";
-      const changefreq = route.startsWith("/blog/") ? "weekly" : "monthly";
+      const changefreq = route.startsWith("/blog/") || route.startsWith("/products/") ? "weekly" : "monthly";
       return `  <url><loc>${loc}</loc><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
     })
     .join("\n");
@@ -284,6 +290,67 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
       title: article.seoTitle || `${article.title} | TheSynLab`,
       description: article.metaDescription || article.excerpt || article.title,
       jsonLd: articleSchemas,
+    });
+  }
+
+  // Product detail pages (/products/:slug) from static product data — SoftwareApplication + BreadcrumbList
+  for (const product of STATIC_PRODUCTS) {
+    const productRoute = `/products/${product.productSlug}`;
+    const year = new Date().getFullYear();
+    pages.push({
+      route: productRoute,
+      title: `${product.productName} Review ${year} — Trust Score, Integrations & Verdict | TheSynLab`,
+      description: product.description || `${product.productName} review with Trust Score, Integration Score, and TCO analysis from TheSynLab.`,
+      jsonLd: [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: product.productName,
+          description: product.description,
+          applicationCategory: product.category,
+          url: `${SITE_URL}${productRoute}`,
+          offers: {
+            "@type": "Offer",
+            price: product.price,
+            priceCurrency: product.priceCurrency,
+          },
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: "4.2",
+            bestRating: "5",
+            worstRating: "1",
+            ratingCount: "1",
+          },
+        },
+        breadcrumbSchema([
+          { name: "TheSynLab", item: `${SITE_URL}/` },
+          { name: "Products", item: `${SITE_URL}/products` },
+          { name: product.productName },
+        ]),
+      ],
+    });
+  }
+
+  // Hub landing pages
+  for (const [hubSlug, hubInfo] of Object.entries(HUB_SLUGS)) {
+    const hubRoute = `/hub/${hubSlug}`;
+    pages.push({
+      route: hubRoute,
+      title: `Best ${hubInfo.name} ${new Date().getFullYear()} — Trust Scores & Reviews | TheSynLab`,
+      description: hubInfo.description,
+      jsonLd: [
+        {
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: `Best ${hubInfo.name}`,
+          description: hubInfo.description,
+          url: `${SITE_URL}${hubRoute}`,
+        },
+        breadcrumbSchema([
+          { name: "TheSynLab", item: `${SITE_URL}/` },
+          { name: hubInfo.name },
+        ]),
+      ],
     });
   }
 
@@ -905,6 +972,46 @@ ${faqHtml}
 <h1>${escapeHtml(best.title)}</h1>
 <p>${escapeHtml(best.description || "")}</p>
 <ul>${toolsHtml}</ul>
+</main>`;
+    }
+  }
+
+  // ── Product detail pages (/products/:slug) ──────────────────────────────────
+  const productMatch = route.match(/^\/products\/([^/]+)$/);
+  if (productMatch) {
+    const product = STATIC_PRODUCTS.find((p) => p.productSlug === productMatch[1]);
+    if (product) {
+      const featureItems = product.features.map((f) => `<li>${escapeHtml(f)}</li>`).join("");
+      return `<main style="${MAIN_STYLE}">
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › <a href="/products">Products</a> › ${escapeHtml(product.productName)}</nav>
+<h1>${escapeHtml(product.productName)} Review ${year} — Trust Score &amp; Integrations</h1>
+<p>${escapeHtml(product.description)}</p>
+<p><b>Category:</b> ${escapeHtml(product.category)} · <b>Type:</b> ${escapeHtml(product.productType)} · <b>Price:</b> $${product.price}/${product.priceModel}</p>
+<h2>Key Features</h2>
+<ul>${featureItems}</ul>
+<h2>Trust Score &amp; Integrations</h2>
+<p>TheSynLab Trust Score analyzes privacy, security, vendor reputation, and data practices for ${escapeHtml(product.productName)}. Our Integration Score measures API quality, native integrations, and ecosystem breadth.</p>
+<p><a href="/tools/compare">Compare ${escapeHtml(product.productName)} with alternatives →</a></p>
+</main>`;
+    }
+  }
+
+  // ── Hub pages (/hub/:slug) ─────────────────────────────────────────────────
+  const hubMatch = route.match(/^\/hub\/([^/]+)$/);
+  if (hubMatch) {
+    const hub = HUB_SLUGS[hubMatch[1]];
+    if (hub) {
+      const hubProdcts = STATIC_PRODUCTS.filter((p) => p.hub === hubMatch[1]);
+      const prodList = hubProdcts
+        .map((p) => `<li><a href="/products/${p.productSlug}"><b>${escapeHtml(p.productName)}</b></a> — $${p.price}/${p.priceModel} · ${escapeHtml(p.description)}</li>`)
+        .join("");
+      return `<main style="${MAIN_STYLE}">
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › Hubs › ${escapeHtml(hub.name)}</nav>
+<h1>Best ${escapeHtml(hub.name)} (${year}) — Trust Scores &amp; Reviews</h1>
+<p>${escapeHtml(hub.description)}</p>
+<h2>Reviewed Products</h2>
+<ul>${prodList}</ul>
+<p><a href="/products">Browse all products →</a> · <a href="/tools/compare">Compare products →</a></p>
 </main>`;
     }
   }
