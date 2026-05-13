@@ -80,6 +80,7 @@ import WorkflowBlueprint from "./pages/tools/WorkflowBlueprint";
 import TrustIndexLeaderboard from "./pages/TrustIndex";
 import MyStackDashboard from "./pages/MyStack";
 import WidgetGallery from "./pages/WidgetGallery";
+import StateOfSaaSTrust2026 from "./pages/report/StateOfSaaSTrust2026";
 import AlternativesIndex from "./pages/AlternativesIndex";
 
 const queryClient = new QueryClient();
@@ -179,6 +180,7 @@ const App = () => (
                   <Route path="/trust-index" element={<TrustIndexLeaderboard />} />
                   <Route path="/my-stack" element={<MyStackDashboard />} />
                   <Route path="/widgets" element={<WidgetGallery />} />
+                  <Route path="/report/state-of-saas-trust-2026" element={<StateOfSaaSTrust2026 />} />
                   <Route path="/alternatives" element={<AlternativesIndex />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />

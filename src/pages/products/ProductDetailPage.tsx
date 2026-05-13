@@ -11,6 +11,7 @@ import { VisualStoryGallery } from "@/components/pdp/VisualStoryGallery";
 import { BenchmarkDashboard } from "@/components/pdp/BenchmarkDashboard";
 import { WorkflowRecipeCard } from "@/components/pdp/WorkflowRecipeCard";
 import { AlternativesStrip } from "@/components/pdp/AlternativesStrip";
+import NewsletterSignupBanner from "@/components/newsletter/NewsletterSignupBanner";
 import { CoreMetaPanel } from "@/components/pdp/CoreMetaPanel";
 import { RoiEstimatorCard } from "@/components/pdp/RoiEstimatorCard";
 import { DecisionSummaryCard } from "@/components/pdp/DecisionSummaryCard";
@@ -228,6 +229,9 @@ export default function ProductDetailPage() {
             <BenchmarkDashboard trustScore={details.trustScore} integrationScore={details.integrationScore} benchmarkData={details.benchmarkData} />
             <RoiEstimatorCard productId={details._id as any} userId={user?.id} />
             <AlternativesStrip alternatives={(details.alternatives ?? []) as any} />
+            <div className="mt-8">
+              <NewsletterSignupBanner variant="card" source={`product_${details.productSlug}`} />
+            </div>
           </div>
 
           <div>

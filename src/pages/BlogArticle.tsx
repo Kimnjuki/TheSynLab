@@ -12,6 +12,7 @@ import { Clock, Calendar, ArrowLeft, Bookmark, Share2, ThumbsUp, Eye, FlaskConic
 import ScoreBadge from "@/components/ScoreBadge";
 import { useViewTracking } from "@/hooks/useViewTracking";
 import { Separator } from "@/components/ui/separator";
+import NewsletterSignupBanner from "@/components/newsletter/NewsletterSignupBanner";
 
 const BlogArticle = () => {
   const { slug } = useParams();
@@ -352,6 +353,11 @@ const BlogArticle = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Newsletter Signup */}
+          <div className="mt-8">
+            <NewsletterSignupBanner variant="card" source={`blog_${article.slug}`} />
+          </div>
 
           {/* Related Articles */}
           {relatedArticles.length > 0 && (

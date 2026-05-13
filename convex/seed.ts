@@ -803,6 +803,25 @@ export const seedAll = mutation({
     }
 
     return results;
+
+
+    // Seed lead magnet: State of SaaS Trust 2026
+    const existingMagnet = await ctx.db.query("leadMagnets").withIndex("by_slug", q => q.eq("slug", "state-of-saas-trust-2026")).first();
+    if (!existingMagnet) {
+      await ctx.db.insert("leadMagnets", {
+        title: "2026 State of SaaS Trust & Integrations Report",
+        slug: "state-of-saas-trust-2026",
+        magnetType: "pdf_guide",
+        description: "15+ pages covering average Trust Scores by category, top 10 most-trusted tools, bottom 10 highest-risk vendors, integration cluster analysis, year-over-year score changes, and privacy policy change tracker.",
+        downloadCount: 0,
+        emailsCollected: 0,
+        isActive: true,
+        createdAt: Date.now() / 1000,
+      });
+      results.leadMagnet = { seeded: true, slug: "state-of-saas-trust-2026" };
+    } else {
+      results.leadMagnet = { seeded: false, message: "Already exists" };
+    }
   },
 });
 

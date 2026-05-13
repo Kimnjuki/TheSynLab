@@ -54,6 +54,7 @@ const staticRoutes = [
   "/trust-index",
   "/my-stack",
   "/widgets",
+  "/report/state-of-saas-trust-2026",
 ];
 
 // Pages with no server-renderable content — tell Google not to index until real content exists
@@ -152,6 +153,7 @@ const buildSitemapXml = () => {
         route === "/" ? "1.0" :
         route.startsWith("/blog/") || route.startsWith("/tool/") || route.startsWith("/products/") || route.startsWith("/vs/") ? "0.8" :
         route.startsWith("/hub/") || route.startsWith("/best/") ? "0.8" :
+        route.startsWith("/report/") ? "0.9" :
         "0.7";
       const changefreq = route.startsWith("/blog/") || route.startsWith("/products/") || route.startsWith("/vs/") ? "weekly" : "monthly";
       return `  <url><loc>${loc}</loc><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
@@ -207,6 +209,10 @@ const staticMetaByRoute: Record<string, { title: string; description: string }> 
   "/widgets": {
     title: "Embeddable Scorecard Widgets | TheSynLab",
     description: "Copy and paste Trust Score and Integration Score widgets for any product. Embed independent ratings on your own website.",
+  },
+  "/report/state-of-saas-trust-2026": {
+    title: "2026 State of SaaS Trust & Integrations | TheSynLab Research",
+    description: "15+ pages of data — Trust Scores, integration cluster analysis, privacy policy tracker, and actionable vendor risk insights.",
   },
   "/products": {
     title: "Products Hub | TheSynLab",
@@ -947,7 +953,25 @@ ${widgetCards}
 </ol>
 <p style="margin-top:1.5rem;padding:1rem;background:#f0f9ff;border-radius:8px"><strong>Want a custom widget for your site?</strong> TheSynLab offers partner badge programs for featured products. <a href="/contact">Contact us</a> for details.</p>
 </main>`;
-  }if (route === "/products") {
+  }
+
+  // ── Research Report (MF-09) ─────────────────────────────────────────
+  if (route === "/report/state-of-saas-trust-2026") {
+    return `<main style="${MAIN_STYLE}">
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › Reports</nav>
+<h1>2026 State of SaaS Trust &amp; Integrations</h1>
+<p>15+ pages of data covering average Trust Scores by category, top 10 most-trusted tools, bottom 10 highest-risk vendors, integration cluster analysis, year-over-year score changes, and the privacy policy change tracker.</p>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:.75rem 0">
+<span style="background:#e2e8f0;padding:.15rem .5rem;border-radius:4px;font-size:.8rem">${STATIC_PRODUCTS.length} products</span>
+<span style="background:#e2e8f0;padding:.15rem .5rem;border-radius:4px;font-size:.8rem">6 categories</span>
+<span style="background:#e2e8f0;padding:.15rem .5rem;border-radius:4px;font-size:.8rem">100+ data points</span>
+</div>
+<p>This report is gated behind a free email signup. Sign up to access the full report including downloadable PDF, interactive charts, and embeddable data visualizations.</p>
+<p style="margin-top:1rem;padding:1rem;background:#f0f9ff;border-radius:8px"><strong>Download the full report</strong> — enter your email on the <a href="/report/state-of-saas-trust-2026">report page</a> to unlock the complete analysis.</p>
+</main>`;
+  }
+
+  if (route === "/products") {
     return `<main style="${MAIN_STYLE}">
 <nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › Products</nav>
 <h1>Products Hub — Trust Scored &amp; Integration Rated</h1>
