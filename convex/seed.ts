@@ -802,9 +802,6 @@ export const seedAll = mutation({
       results.quizResultRules = { seeded: false, message: "Already exists" };
     }
 
-    return results;
-
-
     // Seed lead magnet: State of SaaS Trust 2026
     const existingMagnet = await ctx.db.query("leadMagnets").withIndex("by_slug", q => q.eq("slug", "state-of-saas-trust-2026")).first();
     if (!existingMagnet) {
