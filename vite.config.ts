@@ -81,12 +81,56 @@ const productCompareRoutes = STATIC_PRODUCTS
   );
 const hubRoutes = Object.keys(HUB_SLUGS).map((slug) => `/hub/${slug}`);
 
+// MF-04: /vs/ comparison landing pages — all product pairs from same hub + alternatives
+const comparePairs: [string, string][] = [
+  ["clickup", "todoist"],
+  ["clickup", "asana"],
+  ["clickup", "notion"],
+  ["todoist", "asana"],
+  ["todoist", "notion"],
+  ["asana", "notion"],
+  ["notion", "confluence"],
+  ["slack", "discord"],
+  ["slack", "teams"],
+  ["zapier", "make"],
+  ["teams", "discord"],
+  ["confluence", "clickup"],
+  ["prowritingaid", "grammarly"],
+  ["clickup", "zapier"],
+  ["clickup", "make"],
+  ["todoist", "canva"],
+  ["todoist", "github"],
+  ["todoist", "grammarly"],
+  ["todoist", "confluence"],
+  ["todoist", "prowritingaid"],
+  ["asana", "canva"],
+  ["asana", "github"],
+  ["asana", "grammarly"],
+  ["asana", "confluence"],
+  ["asana", "prowritingaid"],
+  ["notion", "canva"],
+  ["notion", "github"],
+  ["notion", "grammarly"],
+  ["notion", "prowritingaid"],
+  ["canva", "github"],
+  ["canva", "grammarly"],
+  ["canva", "confluence"],
+  ["canva", "prowritingaid"],
+  ["github", "grammarly"],
+  ["github", "confluence"],
+  ["github", "prowritingaid"],
+  ["grammarly", "confluence"],
+  ["confluence", "prowritingaid"],
+];
+const vsRoutes = comparePairs.map(([a, b]) => `/vs/${a}-vs-${b}`);
+
 const dynamicRoutes = [
   ...blogArticles.map((article) => `/blog/${article.slug}`),
   ...saasTools.flatMap((tool) => [`/tool/${tool.slug}`, `/tool/${tool.slug}/alternatives`]),
   ...productRoutes,
   ...productAltRoutes,
   ...productCompareRoutes,
+  ...vsRoutes,
   ...hubRoutes,
   ...Object.keys(BEST_OF_LISTS).map((useCase) => `/best/${useCase}`),
   ...Object.keys(TOOL_CATEGORIES).map((category) => `/hub/ai-tools/${category}`),
@@ -103,10 +147,10 @@ const buildSitemapXml = () => {
       const loc = `${SITE_URL}${route}`;
       const priority =
         route === "/" ? "1.0" :
-        route.startsWith("/blog/") || route.startsWith("/tool/") || route.startsWith("/products/") ? "0.8" :
+        route.startsWith("/blog/") || route.startsWith("/tool/") || route.startsWith("/products/") || route.startsWith("/vs/") ? "0.8" :
         route.startsWith("/hub/") || route.startsWith("/best/") ? "0.8" :
         "0.7";
-      const changefreq = route.startsWith("/blog/") || route.startsWith("/products/") ? "weekly" : "monthly";
+      const changefreq = route.startsWith("/blog/") || route.startsWith("/products/") || route.startsWith("/vs/") ? "weekly" : "monthly";
       return `  <url><loc>${loc}</loc><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
     })
     .join("\n");
@@ -212,6 +256,7 @@ type StaticPageMeta = {
 };
 
 const buildStaticPagesMeta = (): StaticPageMeta[] => {
+  const year = new Date().getFullYear();
   const pages: StaticPageMeta[] = [];
 
   // Static pages
@@ -413,7 +458,58 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
           ],
         });
       }
+
     }
+  }
+  // ── /vs/ comparison landing pages (MF-04) ────────────────────────────
+  // Add /vs/{slug-a}-vs-{slug-b} pages with Article + BreadcrumbList schema
+  for (const [slugA, slugB] of comparePairs) {
+    const prodA = STATIC_PRODUCTS.find(p => p.productSlug === slugA);
+    const prodB = STATIC_PRODUCTS.find(p => p.productSlug === slugB);
+    if (!prodA || !prodB) continue;
+
+    const vsRoute = `/vs/${slugA}-vs-${slugB}`;
+    const aName = prodA.productName;
+    const bName = prodB.productName;
+    const vsTitle = `${aName} vs ${bName} (${year}): Trust Score, TCO & Integration Depth Compared | TheSynLab`;
+    const verdictA = prodA.bestFor.slice(0, 2).join(" and ");
+    const verdictB = prodB.bestFor.slice(0, 2).join(" and ");
+    const verdictWinner = prodA.trustScore > prodB.trustScore ? aName : bName;
+    const winnerReason = prodA.trustScore > prodB.trustScore ? "trust and privacy" : "integration ecosystem";
+    const verdictSentence = `${verdictWinner} is the stronger choice if you prioritize ${winnerReason}.`;
+
+    pages.push({
+      route: vsRoute,
+      title: vsTitle,
+      description: `Independent ${aName} vs ${bName} comparison — Trust Scores (${prodA.trustScore}/10 vs ${prodB.trustScore}/10), 3-year TCO ($${prodA.estimatedTco} vs $${prodB.estimatedTco}/yr), and integration depth side by side. ${verdictSentence}`,
+      jsonLd: [
+        {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: `${aName} vs ${bName}: Side-by-Side Comparison`,
+          description: `Independent comparison of ${aName} and ${bName} with Trust Scores, 3-year TCO, Integration Scores, and feature analysis.`,
+          datePublished: "2026-01-01",
+          dateModified: `${year}-05-13`,
+          author: {
+            "@type": "Organization",
+            name: "TheSynLab",
+            url: SITE_URL,
+          },
+          publisher: {
+            "@type": "Organization",
+            name: "TheSynLab",
+            url: SITE_URL,
+          },
+          url: `${SITE_URL}${vsRoute}`,
+          mainEntityOfPage: `${SITE_URL}${vsRoute}`,
+        },
+        breadcrumbSchema([
+          { name: "TheSynLab", item: `${SITE_URL}/` },
+          { name: "Comparisons", item: `${SITE_URL}/compare` },
+          { name: `${aName} vs ${bName}` },
+        ]),
+      ],
+    });
   }
 
   // Hub landing pages — CollectionPage + BreadcrumbList + ItemList + FAQPage
@@ -1199,6 +1295,95 @@ ${faqHtml}
 </main>`;
     }
   }
+  // ── /vs/ comparison landing pages (MF-04) ───────────────────────────────
+  const vsMatch = route.match(/^\/vs\/([^/]+)-vs-([^/]+)$/);
+  if (vsMatch) {
+    const prodA = STATIC_PRODUCTS.find(p => p.productSlug === vsMatch[1]);
+    const prodB = STATIC_PRODUCTS.find(p => p.productSlug === vsMatch[2]);
+    if (prodA && prodB) {
+      const aName = prodA.productName;
+      const bName = prodB.productName;
+      const aFeatures = prodA.features.map(f => `<li>${escapeHtml(f)}</li>`).join("");
+      const bFeatures = prodB.features.map(f => `<li>${escapeHtml(f)}</li>`).join("");
+      const trustWinner = prodA.trustScore > prodB.trustScore ? aName : bName;
+      const intWinner = prodA.integrationScore > prodB.integrationScore ? aName : bName;
+      const tcoWinner = prodA.estimatedTco < prodB.estimatedTco ? aName : bName;
+      const bestForAHtml = prodA.bestFor.map(b => `<span style="background:#e0e7ff;padding:2px 8px;border-radius:12px;font-size:.85rem;margin-right:4px">${escapeHtml(b)}</span>`).join("");
+      const bestForBHtml = prodB.bestFor.map(b => `<span style="background:#e0e7ff;padding:2px 8px;border-radius:12px;font-size:.85rem;margin-right:4px">${escapeHtml(b)}</span>`).join("");
+      const trustDiff = Math.abs(prodA.trustScore - prodB.trustScore).toFixed(1);
+      const intDiff = Math.abs(prodA.integrationScore - prodB.integrationScore).toFixed(1);
+
+      const narrative = `${escapeHtml(aName)} and ${escapeHtml(bName)} serve overlapping but distinct needs in the ${escapeHtml(prodA.category)} space. ` +
+        `${escapeHtml(aName)} achieves a Trust Score of ${prodA.trustScore}/10, while ${escapeHtml(bName)} scores ${prodB.trustScore}/10 — a difference of ${trustDiff} points. ` +
+        `On integration depth, ${escapeHtml(intWinner)} leads with ${prodA.integrationScore > prodB.integrationScore ? prodA.integrationScore : prodB.integrationScore}/10 vs ${prodA.integrationScore > prodB.integrationScore ? prodB.integrationScore : prodA.integrationScore}/10 (difference: ${intDiff} points). ` +
+        `When it comes to total cost of ownership, ${escapeHtml(tcoWinner)} is more budget-friendly at $${Math.min(prodA.estimatedTco, prodB.estimatedTco)}/year vs $${Math.max(prodA.estimatedTco, prodB.estimatedTco)}/year per seat. ` +
+        `${escapeHtml(trustWinner)} is the recommended choice if trust, security, and vendor reputation are your primary concerns. However, the right choice depends on your specific team size, existing tool ecosystem, and budget constraints.`;
+
+      // Build related comparisons from alternatives
+      const relatedHtml = [];
+      for (const slug of [vsMatch[1], vsMatch[2]]) {
+        const prod = slug === vsMatch[1] ? prodA : prodB;
+        for (const altSlug of prod.alternativeSlugs.slice(0, 4)) {
+          if (altSlug !== prodB.productSlug && altSlug !== prodA.productSlug) {
+            const alt = STATIC_PRODUCTS.find(p => p.productSlug === altSlug);
+            if (alt) {
+              relatedHtml.push(`<li><a href="/vs/${slug}-vs-${altSlug}">${escapeHtml(prod.productName)} vs ${escapeHtml(alt.productName)}</a></li>`);
+            }
+          }
+        }
+      }
+
+      return `<main style="${MAIN_STYLE}">
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › <a href="/compare">Comparisons</a> › ${escapeHtml(aName)} vs ${escapeHtml(bName)}</nav>
+<h1>${escapeHtml(aName)} vs ${escapeHtml(bName)} (${year}): Trust Score, TCO &amp; Integration Compared</h1>
+
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:1.25rem;border-radius:8px;margin:1.5rem 0">
+<h2 style="margin:0 0 .5rem 0;font-size:1.1rem">⚡ Quick Verdict</h2>
+<p style="margin:0"><b>${escapeHtml(trustWinner)}</b> is the stronger choice if you prioritize trust, security, and data privacy (Trust Score: ${prodA.trustScore > prodB.trustScore ? prodA.trustScore : prodB.trustScore}/10 vs ${prodA.trustScore > prodB.trustScore ? prodB.trustScore : prodA.trustScore}/10). For deeper integration ecosystems and API flexibility, <b>${escapeHtml(intWinner)}</b> has the edge (Integration Score: ${prodA.integrationScore > prodB.integrationScore ? prodA.integrationScore : prodB.integrationScore}/10).</p>
+</div>
+
+<div style="background:#faf5ff;border:1px solid #e9d5ff;padding:1.25rem;border-radius:8px;margin:1.5rem 0">
+<h2 style="margin:0 0 .5rem 0;font-size:1.1rem">📊 Comparison Overview</h2>
+<p style="margin:0;line-height:1.6">${narrative}</p>
+</div>
+
+<h2>Side-by-Side Score Comparison</h2>
+<table style="width:100%;border-collapse:collapse;margin:1.5rem 0">
+<tr style="background:#f9fafb"><th style="padding:.75rem;text-align:left;border:1px solid #e5e7eb">Metric</th><th style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(aName)}</th><th style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(bName)}</th></tr>
+<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Trust Score</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb${prodA.trustScore > prodB.trustScore ? ';font-weight:bold' : ''}">${prodA.trustScore}/10${prodA.trustScore > prodB.trustScore ? ' 🏆' : ''}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb${prodB.trustScore > prodA.trustScore ? ';font-weight:bold' : ''}">${prodB.trustScore}/10${prodB.trustScore > prodA.trustScore ? ' 🏆' : ''}</td></tr>
+<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Integration Score</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb${prodA.integrationScore > prodB.integrationScore ? ';font-weight:bold' : ''}">${prodA.integrationScore}/10${prodA.integrationScore > prodB.integrationScore ? ' 🏆' : ''}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb${prodB.integrationScore > prodA.integrationScore ? ';font-weight:bold' : ''}">${prodB.integrationScore}/10${prodB.integrationScore > prodA.integrationScore ? ' 🏆' : ''}</td></tr>
+<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Est. TCO / yr</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb${prodA.estimatedTco < prodB.estimatedTco ? ';font-weight:bold' : ''}">$${prodA.estimatedTco}${prodA.estimatedTco < prodB.estimatedTco ? ' 🏆' : ''}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb${prodB.estimatedTco < prodA.estimatedTco ? ';font-weight:bold' : ''}">$${prodB.estimatedTco}${prodB.estimatedTco < prodA.estimatedTco ? ' 🏆' : ''}</td></tr>
+<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Price</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${prodA.price}/${prodA.priceModel}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${prodB.price}/${prodB.priceModel}</td></tr>
+<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Category</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(prodA.category)}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(prodB.category)}</td></tr>
+</table>
+
+<h2>Feature Comparison</h2>
+<div style="display:flex;gap:2rem;flex-wrap:wrap">
+<div style="flex:1;min-width:200px"><h3>${escapeHtml(aName)} Features</h3><ul>${aFeatures}</ul></div>
+<div style="flex:1;min-width:200px"><h3>${escapeHtml(bName)} Features</h3><ul>${bFeatures}</ul></div>
+</div>
+
+<h2>Best For</h2>
+<div style="display:flex;gap:2rem;flex-wrap:wrap;margin:1rem 0">
+<div style="flex:1;min-width:200px"><h3 style="margin:0 0 .5rem 0">${escapeHtml(aName)}</h3><p>${bestForAHtml}</p><p>${escapeHtml(prodA.longDescription.slice(0, 200))}... <a href="/products/${prodA.productSlug}">Read full review →</a></p></div>
+<div style="flex:1;min-width:200px"><h3 style="margin:0 0 .5rem 0">${escapeHtml(bName)}</h3><p>${bestForBHtml}</p><p>${escapeHtml(prodB.longDescription.slice(0, 200))}... <a href="/products/${prodB.productSlug}">Read full review →</a></p></div>
+</div>
+
+<h2>Verdict</h2>
+<p><b>${escapeHtml(trustWinner)}</b> wins on trust, security, and data practices with a Trust Score of ${prodA.trustScore > prodB.trustScore ? prodA.trustScore : prodB.trustScore}/10. <b>${escapeHtml(intWinner)}</b> wins on integration depth and ecosystem connectivity. For budget-conscious teams, <b>${escapeHtml(tcoWinner)}</b> offers the lower total cost of ownership at $${Math.min(prodA.estimatedTco, prodB.estimatedTco)}/year vs $${Math.max(prodA.estimatedTco, prodB.estimatedTco)}/year.</p>
+<p>The right choice depends on your team's priorities. If you value privacy, ethical AI, and vendor transparency, choose ${escapeHtml(trustWinner)}. If you need deep API integrations and a large app ecosystem, choose ${escapeHtml(intWinner)}.</p>
+
+<h2>Related Comparisons</h2>
+<ul>
+<li><a href="/vs/${vsMatch[2]}-vs-${vsMatch[1]}">${escapeHtml(bName)} vs ${escapeHtml(aName)}</a></li>
+${relatedHtml.slice(0, 6).join("\n")}
+</ul>
+
+<p><a href="/tools/compare">Model this comparison in TheSynLab Decision Studio →</a></p>
+</main>`;
+    }
+  }
+
   // ── Hub pages (/hub/:slug) ─────────────────────────────────────────────────
   const hubMatch = route.match(/^\/hub\/([^/]+)$/);
   if (hubMatch) {
