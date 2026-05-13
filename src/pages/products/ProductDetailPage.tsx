@@ -12,6 +12,7 @@ import { BenchmarkDashboard } from "@/components/pdp/BenchmarkDashboard";
 import { WorkflowRecipeCard } from "@/components/pdp/WorkflowRecipeCard";
 import { AlternativesStrip } from "@/components/pdp/AlternativesStrip";
 import NewsletterSignupBanner from "@/components/newsletter/NewsletterSignupBanner";
+import RelatedContent from "@/components/related/RelatedContent";
 import { CoreMetaPanel } from "@/components/pdp/CoreMetaPanel";
 import { RoiEstimatorCard } from "@/components/pdp/RoiEstimatorCard";
 import { DecisionSummaryCard } from "@/components/pdp/DecisionSummaryCard";
@@ -232,6 +233,7 @@ export default function ProductDetailPage() {
             <div className="mt-8">
               <NewsletterSignupBanner variant="card" source={`product_${details.productSlug}`} />
             </div>
+            <RelatedContent productSlug={details.productSlug} hubSlug={details.hubSlug || details.category} />
           </div>
 
           <div>

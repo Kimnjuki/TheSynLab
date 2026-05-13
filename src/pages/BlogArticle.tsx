@@ -13,6 +13,7 @@ import ScoreBadge from "@/components/ScoreBadge";
 import { useViewTracking } from "@/hooks/useViewTracking";
 import { Separator } from "@/components/ui/separator";
 import NewsletterSignupBanner from "@/components/newsletter/NewsletterSignupBanner";
+import RelatedContent from "@/components/related/RelatedContent";
 
 const BlogArticle = () => {
   const { slug } = useParams();
@@ -358,6 +359,9 @@ const BlogArticle = () => {
           <div className="mt-8">
             <NewsletterSignupBanner variant="card" source={`blog_${article.slug}`} />
           </div>
+
+          {/* Related Content — products in same hub */}
+          <RelatedContent hubSlug={article.hub} />
 
           {/* Related Articles */}
           {relatedArticles.length > 0 && (

@@ -7,6 +7,7 @@ import { useParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import NewsletterSignupBanner from "@/components/newsletter/NewsletterSignupBanner";
+import RelatedContent from "@/components/related/RelatedContent";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { useProducts } from "@/hooks/convex/useProducts";
@@ -175,6 +176,8 @@ export default function Hub() {
       <div className="mx-auto max-w-6xl px-4 py-6">
         <NewsletterSignupBanner variant="card" source={`hub_${hubSlug}`} />
       </div>
+
+      <RelatedContent hubSlug={hubSlug} limit={4} />
 
       <Footer />
     </div>
