@@ -1639,13 +1639,6 @@ const generateStaticHtmlPages = async (distDir: string) => {
       html = html.replace("</head>", `    ${jsonLdScripts}\n  </head>`);
     }
 
-    // Inject canonical link for every page
-    const canonRoute = page.route === "/" ? "" : page.route;
-    html = html.replace(
-      "</head>",
-      `    <link rel="canonical" href="https://thesynlab.com${canonRoute}" />\n  </head>`
-    );
-
     // Inject noindex for thin/dynamic pages
     if (page.noindex) {
       html = html.replace(
