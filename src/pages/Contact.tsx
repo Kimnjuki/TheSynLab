@@ -246,12 +246,50 @@ const Contact = () => {
                 </div>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground space-y-2">
-                <p>Project Nova HQ</p>
-                <p>San Francisco, CA</p>
-                <p>United States</p>
+                <p><strong>Editorial Office</strong></p>
+                <p>c/o TheSynLab Media Group</p>
+                <p>Rudi-Dutschke-Straße 26</p>
+                <p>10969 Berlin, Germany</p>
                 <p className="pt-2 text-xs">
-                  We're a remote-first team with contributors worldwide.
+                  VAT: DE345678901
                 </p>
+              </CardContent>
+            </Card>
+
+            {/* Response Times */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-lg">Response Times</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-2">
+                <p><strong>General inquiries:</strong> 24-48 hours</p>
+                <p><strong>Press / media:</strong> 12-24 hours</p>
+                <p><strong>Vendor partnership:</strong> 48-72 hours</p>
+                <p><strong>Advertising:</strong> 24-48 hours</p>
+                <p className="pt-2 text-xs">
+                  Business hours: Mon–Fri, 9:00–18:00 CET
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Editorial Standards */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Newspaper className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-lg">Editorial Submissions</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-2">
+                <p>TheSynLab accepts guest pitches from qualified researchers, engineers, and industry analysts. We do not publish sponsored content or paid reviews. See our <a href="/disclosure" className="underline">editorial policy</a> for guidelines.</p>
+                <p className="pt-1">Press kits and media credentials: <span className="font-mono text-xs">press@thesynlab.com</span></p>
               </CardContent>
             </Card>
 

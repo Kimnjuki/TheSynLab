@@ -189,7 +189,8 @@ function ReportContent() {
 }
 
 export default function StateOfSaaSTrust2026() {
-  const [showGate, setShowGate] = useState(true);
+  // Always show report content to crawlers & users; gate only the full PDF download
+  const [showGate, setShowGate] = useState(false);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [companySize, setCompanySize] = useState("");
@@ -254,79 +255,75 @@ export default function StateOfSaaSTrust2026() {
           </div>
         </div>
 
-        {showGate ? (
-          /* Email gate */
-          <Card className="max-w-lg mx-auto border-primary/20">
-            <CardHeader className="text-center pb-4">
-              <div className="mx-auto mb-3 rounded-full bg-primary/10 p-3 w-fit">
-                <Download className="h-6 w-6 text-primary" />
+        {/* Report content — always visible for crawlers and users */}
+        <ReportContent />
+
+        {/* Email gate banner for PDF download — not blocking content */}
+        <Card className="max-w-lg mx-auto border-primary/20 mt-10">
+          <CardHeader className="text-center pb-4">
+            <div className="mx-auto mb-3 rounded-full bg-primary/10 p-3 w-fit">
+              <Download className="h-6 w-6 text-primary" />
+            </div>
+            <CardTitle>Download the Full Report (PDF)</CardTitle>
+            <CardDescription>
+              Enter your details to get the complete 15+ page PDF with all charts, rankings, and analysis —
+              plus weekly Scorecard emails.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleGateSubmit} className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Name <span className="text-muted-foreground">(optional)</span></label>
+                <Input
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
               </div>
-              <CardTitle>Download the Full Report (PDF)</CardTitle>
-              <CardDescription>
-                Enter your details to unlock the complete 15+ page report with charts, rankings, and analysis.
-                You'll also get weekly Scorecard emails.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleGateSubmit} className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Name <span className="text-muted-foreground">(optional)</span></label>
-                  <Input
-                    placeholder="Your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Email *</label>
-                  <Input
-                    type="email"
-                    placeholder="you@company.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Company size <span className="text-muted-foreground">(optional)</span></label>
-                  <select
-                    value={companySize}
-                    onChange={(e) => setCompanySize(e.target.value)}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="">Select...</option>
-                    <option value="1">Solo / Freelance</option>
-                    <option value="2-10">2–10 employees</option>
-                    <option value="11-50">11–50 employees</option>
-                    <option value="51-200">51–200 employees</option>
-                    <option value="201+">201+ employees</option>
-                  </select>
-                </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Email *</label>
+                <Input
+                  type="email"
+                  placeholder="you@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Company size <span className="text-muted-foreground">(optional)</span></label>
+                <select
+                  value={companySize}
+                  onChange={(e) => setCompanySize(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Select...</option>
+                  <option value="1">Solo / Freelance</option>
+                  <option value="2-10">2–10 employees</option>
+                  <option value="11-50">11–50 employees</option>
+                  <option value="51-200">51–200 employees</option>
+                  <option value="201+">201+ employees</option>
+                </select>
+              </div>
 
-                {error && <p className="text-sm text-destructive">{error}</p>}
+              {error && <p className="text-sm text-destructive">{error}</p>}
 
-                <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                  {loading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Download className="mr-2 h-4 w-4" />
-                  )}
-                  {loading ? "Processing..." : "Download Report (Free)"}
-                </Button>
+              <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                {loading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="mr-2 h-4 w-4" />
+                )}
+                {loading ? "Processing..." : "Download Report (Free)"}
+              </Button>
 
-                <p className="text-xs text-muted-foreground text-center">
-                  By downloading, you agree to receive the SynLab Scorecard newsletter.
-                  Unsubscribe anytime. <a href="/privacy" className="underline">Privacy Policy</a>.
-                </p>
-              </form>
-            </CardContent>
-          </Card>
-        ) : (
-          /* Report content (unlocked) */
-          <>
-            <ReportContent />
-          </>
-        )}
+              <p className="text-xs text-muted-foreground text-center">
+                By downloading, you agree to receive the SynLab Scorecard newsletter.
+                Unsubscribe anytime. <a href="/privacy" className="underline">Privacy Policy</a>.
+              </p>
+            </form>
+          </CardContent>
+        </Card>
       </main>
       <Footer />
     </div>
