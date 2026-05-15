@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { FAQSection } from "@/components/seo/FAQSection";
 import { blogArticles, seoKeywords, competitorFeatures } from "@/data/blogArticles";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -175,8 +176,8 @@ const BlogArticle = () => {
   return (
     <div className="min-h-screen bg-background">
       <MetaTags
-        title={article.title}
-        description={article.excerpt || article.title}
+        title={article.seoTitle || article.title}
+        description={article.metaDescription || article.excerpt || article.title}
         canonical={articleUrl}
         ogImage={article.image}
         ogType="article"
@@ -184,11 +185,12 @@ const BlogArticle = () => {
       <JsonLd
         type="Article"
         article={{
-          title: article.title,
-          description: article.excerpt || article.title,
+          title: article.seoTitle || article.title,
+          description: article.metaDescription || article.excerpt || article.title,
           image: article.image,
           url: articleUrl,
         }}
+        faq={article.faqs}
       />
       <Header />
       <main className="container py-8">
@@ -354,6 +356,16 @@ const BlogArticle = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Article FAQs — only if article has FAQ data */}
+          {article.faqs && article.faqs.length > 0 && (
+            <div className="mt-8">
+              <FAQSection
+                faqs={article.faqs}
+                title={`Frequently Asked Questions about ${article.title}`}
+              />
+            </div>
+          )}
 
           {/* Newsletter Signup */}
           <div className="mt-8">

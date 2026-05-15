@@ -16,8 +16,8 @@ export default function ScoringHub() {
   return (
     <div className="min-h-screen flex flex-col">
       <MetaTags
-        title="Trust & Integration Scores: Transparent Tech Scoring Methodology | TheSynLab"
-        description="See how TheSynLab calculates Trust Scores & Integration Scores. Transparent methodology for unbiased smart home, productivity, and office hardware reviews."
+        title="Trust Score Ratings: Compare Products by Privacy, Security & Integration | TheSynLab"
+        description="TheSynLab Trust Scores rate products on privacy, security, and transparency. Compare 100+ smart home, productivity, and office tools by trustworthiness — not marketing."
         canonical="/scoring-hub"
         ogType="website"
       />
