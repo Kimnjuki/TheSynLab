@@ -1,49 +1,138 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TheSynLab – Smart Home & Productivity Reviews You Can Trust</title>
-    <meta name="description" content="In-depth tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware to build your perfect workflow ecosystem.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>TheSynLab – Tech Reviews, Comparisons & Tool Alternatives</title>
+    <meta name="description" content="In-depth tech reviews with Trust Scores. Compare the best productivity tools, smart home devices, and SaaS solutions. Expert analysis and real alternatives.">
     <meta name="author" content="TheSynLab" />
     <meta name="google-site-verification" content="SNhz-KkeLZzVcCXi5CcIlZwHZ5DPTb3n_A3xR7b_Bco" />
     <meta name='impact-site-verification' value='e9d2490a-4351-4db1-a10a-9ef75dccd135'>
-    <link rel="manifest" href="/manifest.json" />
 
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="canonical" href="https://thesynlab.com/" />
+
+    <!-- ── Preconnect to critical origins ── -->
+    <link rel="preconnect" href="https://thesynlab.com">
+    <link rel="dns-prefetch" href="https://thesynlab.com">
+
+    <!-- ── Open Graph ── -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://thesynlab.com/" />
     <meta property="og:site_name" content="TheSynLab" />
     <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f8f36f0c-e7ec-4d45-90a0-2036be5191f5/id-preview-b0cd2a6d--f300eb6b-f1a7-48c2-9b76-81c2c602b334.lovable.app-1770468126707.png">
-    <meta property="og:title" content="TheSynLab – Smart Home & Productivity Reviews You Can Trust">
-    <meta property="og:description" content="In-depth tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware.">
+    <meta property="og:title" content="TheSynLab – Tech Reviews, Comparisons & Tool Alternatives">
+    <meta property="og:description" content="In-depth tech reviews with Trust Scores. Compare productivity tools, smart home devices, and SaaS. Expert analysis and real alternatives.">
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@thesynlab" />
     <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f8f36f0c-e7ec-4d45-90a0-2036be5191f5/id-preview-b0cd2a6d--f300eb6b-f1a7-48c2-9b76-81c2c602b334.lovable.app-1770468126707.png">
-    <meta name="twitter:title" content="TheSynLab – Smart Home & Productivity Reviews You Can Trust">
-    <meta name="twitter:description" content="In-depth tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware.">
+    <meta name="twitter:title" content="TheSynLab – Tech Reviews, Comparisons & Tool Alternatives">
+    <meta name="twitter:description" content="In-depth tech reviews with Trust Scores. Compare productivity tools, smart home devices, and SaaS solutions.">
 
-    <!-- GA4 with Google Consent Mode v2 (default=denied until user accepts) -->
-    <!-- Measurement ID injected at build time via VITE_GA4_MEASUREMENT_ID (fallback: G-XMGRJBSN5Y) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=%VITE_GA4_MEASUREMENT_ID%"></script>
+    <!-- ── Theme color prevents white flash ── -->
+    <meta name="theme-color" content="#0f172a" />
+
+    <!-- ── Dark background prevents FOUC ── -->
+    <style>
+      html.dark { background: #0f172a !important; }
+      html, body { background: #0f172a; color: #f8fafc; margin: 0; padding: 0; }
+      #root { min-height: 100vh; }
+    </style>
+
+    <!-- ── GA4 (hardcoded fallback G-XMGRJBSN5Y if env var not set) ── -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', {
-        'ad_storage': 'denied',
-        'ad_user_data': 'denied',
-        'ad_personalization': 'denied',
-        'analytics_storage': 'denied'
-      });
-      gtag('js', new Date());
-      gtag('config', '%VITE_GA4_MEASUREMENT_ID%', {
-        cookie_flags: 'SameSite=None;Secure'
-      });
+      (function() {
+        var ga = "G-XMGRJBSN5Y";  // fallback
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('consent', 'default', {
+          'ad_storage': 'denied',
+          'ad_user_data': 'denied',
+          'ad_personalization': 'denied',
+          'analytics_storage': 'denied'
+        });
+        gtag('js', new Date());
+        gtag('config', ga, { cookie_flags: 'SameSite=None;Secure' });
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga;
+        document.head.appendChild(s);
+      })();
     </script>
-    <!-- GA4 / GTM / Ahrefs also load after analytics cookie consent via src/components/AnalyticsScripts.tsx -->
+
+    <!-- ── Route-specific meta injection (crawler-friendly before JS) ── -->
+    <script>
+      (function () {
+        var routes = {
+          '/': { t: 'TheSynLab – Tech Reviews, Comparisons & Tool Alternatives', d: 'In-depth tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware to build your perfect workflow ecosystem.' },
+          '/blog': { t: 'Tech Reviews Blog | TheSynLab', d: 'Expert reviews and comparisons of the latest tech products, software tools, and smart home devices.' },
+          '/tools': { t: 'SaaS & Tech Tool Reviews | TheSynLab', d: 'Compare the best SaaS tools, software alternatives, and tech products. Expert reviews with Trust Scores.' },
+          '/products': { t: 'Product Reviews & Scores | TheSynLab', d: 'Detailed product reviews with Trust & Integration Scores. Find the best tech for your workflow.' },
+          '/scoring-hub': { t: 'Trust & Integration Scores Explained | TheSynLab', d: 'How we rate tech products and SaaS tools. Our scoring methodology explained.' },
+          '/compare': { t: 'Tech Product Comparison | TheSynLab', d: 'Side-by-side comparisons of the best tech products, SaaS tools, and smart home devices.' },
+          '/guides': { t: 'Tech Buying Guides & How-Tos | TheSynLab', d: 'Expert buying guides and tutorials for tech products, smart home setup, and productivity tools.' },
+          '/about': { t: 'About TheSynLab – Our Mission & Team', d: 'TheSynLab provides independent, data-driven tech reviews to help you build the perfect workflow ecosystem.' },
+          '/contact': { t: 'Contact TheSynLab', d: 'Get in touch with the TheSynLab team for press inquiries, partnership opportunities, or feedback.' },
+          '/privacy': { t: 'Privacy Policy | TheSynLab', d: 'TheSynLab privacy policy explains how we collect, use, and protect your personal data.' },
+          '/terms': { t: 'Terms of Service | TheSynLab', d: 'TheSynLab terms of service governing your use of our website and services.' },
+          '/disclosure': { t: 'Affiliate Disclosure | TheSynLab', d: 'TheSynLab may earn commissions through affiliate links. Our editorial independence is guaranteed.' }
+        };
+        var p = window.location.pathname;
+        var m = routes[p] || routes['/'];
+        if (m) {
+          document.title = m.t;
+          var d = document.querySelector('meta[name="description"]');
+          if (d) d.setAttribute('content', m.d);
+          var ogt = document.querySelector('meta[property="og:title"]');
+          if (ogt) ogt.setAttribute('content', m.t);
+          var ogd = document.querySelector('meta[property="og:description"]');
+          if (ogd) ogd.setAttribute('content', m.d);
+          var can = document.querySelector('link[rel="canonical"]');
+          if (can) can.setAttribute('href', 'https://thesynlab.com' + p);
+        }
+      })();
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- ── Static shell: renders before React hydrates ── -->
+      <div id="static-shell" style="min-height:100vh;font-family:system-ui,sans-serif;background:#0f172a;color:#f8fafc">
+        <header style="border-bottom:1px solid rgba(148,163,184,0.2);padding:1rem 1.5rem">
+          <nav aria-label="Main" style="max-width:80rem;margin:0 auto;display:flex;flex-wrap:wrap;gap:1rem;align-items:center">
+            <a href="/" aria-label="TheSynLab home" style="font-weight:700;font-size:1.25rem;color:#f8fafc;text-decoration:none">TheSynLab</a>
+            <a href="/blog" style="color:#94a3b8;text-decoration:none">Reviews</a>
+            <a href="/tools" style="color:#94a3b8;text-decoration:none">Tools</a>
+            <a href="/products" style="color:#94a3b8;text-decoration:none">Products</a>
+            <a href="/guides" style="color:#94a3b8;text-decoration:none">Guides</a>
+            <a href="/compare" style="color:#94a3b8;text-decoration:none">Compare</a>
+            <a href="/about" style="color:#94a3b8;text-decoration:none">About</a>
+          </nav>
+        </header>
+        <main style="max-width:80rem;margin:0 auto;padding:2rem 1.5rem">
+          <h1 style="font-size:2rem;margin-bottom:0.5rem">TheSynLab – Independent Tech Reviews</h1>
+          <p style="font-size:1.125rem;color:#94a3b8;margin-bottom:1.5rem">In-depth tech reviews with Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware.</p>
+          <p style="color:#cbd5e1;line-height:1.6;margin-bottom:2rem">Compare the best tech products and SaaS tools. Real alternatives, side-by-side comparisons, and buying guides to build your perfect workflow ecosystem.</p>
+          <section aria-label="Explore" style="margin-bottom:2rem">
+            <h2 style="font-size:1.25rem;margin-bottom:1rem;color:#f8fafc">Explore</h2>
+            <ul style="list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem">
+              <li><a href="/blog" style="color:#60a5fa;text-decoration:none">Expert Tech Reviews</a></li>
+              <li><a href="/tools" style="color:#60a5fa;text-decoration:none">SaaS Tool Reviews</a></li>
+              <li><a href="/products" style="color:#60a5fa;text-decoration:none">Product Scores & Ratings</a></li>
+              <li><a href="/hub/smart-home" style="color:#60a5fa;text-decoration:none">Smart Home Hub</a></li>
+              <li><a href="/hub/hybrid-office" style="color:#60a5fa;text-decoration:none">Hybrid Office Setup</a></li>
+              <li><a href="/hub/ai-workflow" style="color:#60a5fa;text-decoration:none">AI Workflow Tools</a></li>
+              <li><a href="/scoring-hub" style="color:#60a5fa;text-decoration:none">Scoring Methodology</a></li>
+              <li><a href="/guides" style="color:#60a5fa;text-decoration:none">Buying Guides</a></li>
+            </ul>
+          </section>
+          <p style="font-size:0.875rem;color:#64748b" aria-live="polite">Loading full experience…</p>
+        </main>
+        <footer style="border-top:1px solid rgba(148,163,184,0.2);padding:1.5rem;text-align:center;color:#64748b;font-size:0.875rem">
+          <p>&copy; 2026 TheSynLab. All rights reserved. <a href="/privacy" style="color:#60a5fa">Privacy</a> &middot; <a href="/terms" style="color:#60a5fa">Terms</a> &middot; <a href="/disclosure" style="color:#60a5fa">Disclosure</a></p>
+        </footer>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

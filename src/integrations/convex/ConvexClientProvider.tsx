@@ -1,19 +1,31 @@
 import { ConvexProvider, ConvexReactClient } from "convex/react";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 
-// Convex deployment URL - ensure this matches your npx convex dev/deploy output
-const CONVEX_URL = import.meta.env.VITE_CONVEX_URL || "https://kindhearted-lark-661.convex.cloud";
+// Convex is disabled by default until functions are deployed.
+// To enable: set VITE_CONVEX_FUNCTIONS_DEPLOYED=true in Coolify.
+const rawUrl = (import.meta.env.VITE_CONVEX_URL || "").trim();
+const hasUrl = rawUrl.length > 0 && rawUrl.startsWith("http");
+const functionsDeployed =
+  (import.meta.env.VITE_CONVEX_FUNCTIONS_DEPLOYED ?? "").trim().toLowerCase() === "true";
+const isDisabled = !hasUrl || !functionsDeployed;
 
-const convex = new ConvexReactClient(CONVEX_URL);
-
-interface ConvexClientProviderProps {
-  children: ReactNode;
+function createClient(): ConvexReactClient {
+  if (!isDisabled) {
+    try {
+      return new ConvexReactClient(rawUrl, { skipConvexDeploymentUrlCheck: true });
+    } catch (err) {
+      console.warn("Convex connection failed, using placeholder:", err);
+    }
+  }
+  // Silent placeholder — never actually connects
+  return new ConvexReactClient("https://placeholder.convex.cloud", {
+    skipConvexDeploymentUrlCheck: true,
+  });
 }
 
-export function ConvexClientProvider({ children }: ConvexClientProviderProps) {
-  // Using basic Convex without Clerk auth for Git Bash deployment
-  // Mock auth is handled via AuthContext
-  return <ConvexProvider client={convex}>{children}</ConvexProvider>;
-}
+interface Props { children: ReactNode; }
 
-export { convex };
+export function ConvexClientProvider({ children }: Props) {
+  const client = useMemo(() => createClient(), []);
+  return <ConvexProvider client={client}>{children}</ConvexProvider>;
+}

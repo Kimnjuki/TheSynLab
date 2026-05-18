@@ -1,7 +1,36 @@
-# llms.txt for thesynlab.com
+# TheSynLab - Tech Reviews, Comparisons & Tool Alternatives
 
-User-agent: *
-Allow: /
+> In-depth tech reviews with Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware.
 
-Host: https://thesynlab.com
-Sitemap: https://thesynlab.com/sitemap.xml
+## Notable URLs
+
+- https://thesynlab.com/ — Homepage: Tech reviews hub
+- https://thesynlab.com/blog — Latest reviews and comparisons
+- https://thesynlab.com/tools — Interactive decision tools
+- https://thesynlab.com/products — Product review directory
+- https://thesynlab.com/compare — Side-by-side product comparisons
+- https://thesynlab.com/scoring-hub — Trust Score methodology explained
+- https://thesynlab.com/stack-builder — Build your ideal tech stack
+- https://thesynlab.com/decision-studio — ROI calculator and TCO analysis
+- https://thesynlab.com/alternatives — Find software alternatives
+- https://thesynlab.com/hub/ai-tools — AI tools and SaaS reviews
+- https://thesynlab.com/hub/smart-home — Smart home device reviews
+- https://thesynlab.com/hub/hybrid-office — Hybrid office and remote work tools
+- https://thesynlab.com/trust-index — Trust Score methodology and data
+- https://thesynlab.com/guides — How-to guides and tutorials
+- https://thesynlab.com/about — About TheSynLab
+- https://thesynlab.com/report/state-of-saas-trust-2026 — 2026 State of SaaS Trust report
+
+## Trust Score Methodology
+All products on TheSynLab are scored using a weighted 6-dimension model: privacy transparency (25%), data security (20%), vendor lock-in risk (15%), integration openness (15%), pricing transparency (13%), and customer support (12%). Scores range 0-100/10.
+
+## Tool Categories Reviewed
+- AI writing & content generation
+- AI image & video generation
+- Productivity software
+- Smart home devices
+- SaaS collaboration tools
+- Developer tools & infrastructure
+- Privacy & security tools
+- CRM & sales tools
+- Email marketing platforms
