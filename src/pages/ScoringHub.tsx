@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import { JsonLd } from "@/components/seo/JsonLd";
 import Footer from "@/components/Footer";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,6 +22,7 @@ export default function ScoringHub() {
         canonical="/scoring-hub"
         ogType="website"
       />
+      <JsonLd schema={{ "@context": "https://schema.org", "@type": "CollectionPage", name: "Scoring & Decision Hub — TheSynLab", description: "Transparent scoring methodology, ecosystem fit analysis, and curated product stacks powered by Trust & Integration Scores.", url: "https://thesynlab.com/scoring-hub" }} />
       <Header />
       
       <main className="flex-1">
