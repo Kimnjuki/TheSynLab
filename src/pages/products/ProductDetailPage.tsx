@@ -182,6 +182,17 @@ export default function ProductDetailPage() {
           />
         </div>
 
+        <div className="mt-6">
+          <VerdictCtaBox
+            productName={details.productName}
+            productSlug={slug}
+            score={details.trustScore?.total}
+            bullets={details.meta?.verdictBullets}
+            affiliateUrl={getPurchaseUrl(details.affiliateUrl, details.officialWebsite, details.productName)}
+            alternativesCount={details.competitors?.length}
+          />
+        </div>
+
         <div className="mt-4"><QuickStatsBar
           timeToFirstValueMinutes={details.meta?.timeToFirstValueMinutes}
           setupDifficulty={details.meta?.setupDifficulty}
