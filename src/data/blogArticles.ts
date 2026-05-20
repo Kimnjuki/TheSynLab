@@ -58,6 +58,16 @@ export interface BlogArticle {
   competitorMentions?: string[]; // Products tested against competitors
   /** Article-specific FAQs for FAQPage schema rich results */
   faqs?: Array<{ question: string; answer: string }>;
+  /** Quick Picks product recommendations shown at top of article */
+  hasQuickPicksData?: boolean;
+  quickPicks?: Array<{
+    productName: string;
+    productSlug: string;
+    priceRange: string;
+    trustScore: number;
+    bestFor: string;
+    affiliateUrl?: string;
+  }>;
 }
 
 export const blogArticles: BlogArticle[] = [

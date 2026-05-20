@@ -14,6 +14,7 @@ import ScoreBadge from "@/components/ScoreBadge";
 import { useViewTracking } from "@/hooks/useViewTracking";
 import { Separator } from "@/components/ui/separator";
 import NewsletterSignupBanner from "@/components/newsletter/NewsletterSignupBanner";
+import QuickPicksBox from "@/components/QuickPicksBox";
 import RelatedContent from "@/components/related/RelatedContent";
 
 const BlogArticle = () => {
@@ -307,6 +308,17 @@ const BlogArticle = () => {
               </span>
             </div>
           </header>
+
+          {/* Quick Picks - interactive product recommendations */}
+          {article.hasQuickPicksData && article.quickPicks && article.quickPicks.length > 0 && (
+            <div className="mb-8">
+              <QuickPicksBox
+                headline="Quick Picks"
+                items={article.quickPicks}
+                contextLabel={`Best tools for ${article.category}`}
+              />
+            </div>
+          )}
 
           {/* Full Content */}
           <div className="prose-lg max-w-none">
