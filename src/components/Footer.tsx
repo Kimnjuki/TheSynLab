@@ -26,6 +26,7 @@ const footerLinks = {
   ],
   company: [
     { name: "About Us", href: "/about" },
+    { name: "How We Make Money", href: "/how-we-make-money" },
     { name: "Blog", href: "/blog" },
     { name: "Community", href: "/community/setups" },
     { name: "Contact", href: "/contact" },
@@ -34,6 +35,9 @@ const footerLinks = {
     { name: "Privacy Policy", href: "/privacy" },
     { name: "Terms of Service", href: "/terms" },
     { name: "Affiliate Disclosure", href: "/disclosure" },
+    { name: "Editorial Policy", href: "/disclosure#editorial-policy" },
+    { name: "Scoring Methodology", href: "/scoring-hub" },
+    { name: "Advertise With Us", href: "/contact#advertise" },
     { name: "Ad Compliance", href: "/ad-compliance" },
   ],
 };

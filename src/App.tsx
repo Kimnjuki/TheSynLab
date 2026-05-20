@@ -37,6 +37,7 @@ import TermsOfService from "./pages/TermsOfService";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import AffiliateDisclosure from "./pages/AffiliateDisclosure";
+import HowWeMakeMoney from "./pages/HowWeMakeMoney";
 import NotFound from "./pages/NotFound";
 import Blog from "./pages/Blog";
 import BlogArticle from "./pages/BlogArticle";
@@ -144,6 +145,7 @@ const App = () => (
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/disclosure" element={<AffiliateDisclosure />} />
+          <Route path="/how-we-make-money" element={<HowWeMakeMoney />} />
                   {/* Blog */}
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogArticle />} />
