@@ -1,7 +1,6 @@
 import Header from "@/components/Header";
 import { lazy, Suspense } from "react";
 import Hero from "@/components/Hero";
-import AnimatedStats from "@/components/landing/AnimatedStats";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 
 const HomepageInsights = lazy(() =>
