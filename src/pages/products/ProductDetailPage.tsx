@@ -12,6 +12,11 @@ import { BenchmarkDashboard } from "@/components/pdp/BenchmarkDashboard";
 import { WorkflowRecipeCard } from "@/components/pdp/WorkflowRecipeCard";
 import { AlternativesStrip } from "@/components/pdp/AlternativesStrip";
 import NewsletterSignupBanner from "@/components/newsletter/NewsletterSignupBanner";
+import AffiliateDisclosureBanner from "@/components/AffiliateDisclosureBanner";
+import StickyCtaRail from "@/components/pdp/StickyCtaRail";
+import VerdictCtaBox from "@/components/pdp/VerdictCtaBox";
+import MidPageCta from "@/components/pdp/MidPageCta";
+import MobileStickyBar from "@/components/pdp/MobileStickyBar";
 import RelatedContent from "@/components/related/RelatedContent";
 import { CoreMetaPanel } from "@/components/pdp/CoreMetaPanel";
 import { RoiEstimatorCard } from "@/components/pdp/RoiEstimatorCard";
@@ -109,6 +114,7 @@ export default function ProductDetailPage() {
           onSubscribe={onSubscribe}
         />
 
+        <AffiliateDisclosureBanner className="mb-4" />
         {/* Affiliate / Price CTA Strip — drives income by linking to product site */}
         <div className="mt-6 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-primary/10 to-secondary/5 p-4 md:p-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -253,6 +259,19 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
+      <StickyCtaRail
+        productName={details.productName}
+        productSlug={slug}
+        priceFrom={details.price || details.tcoScore?.costTier}
+        trustScore={details.trustScore?.total}
+        integrationScore={details.integrationScore?.total}
+        affiliateUrl={getPurchaseUrl(details.affiliateUrl, details.officialWebsite, details.productName)}
+      />
+      <MobileStickyBar
+        productName={details.productName}
+        priceFrom={details.price || details.tcoScore?.costTier}
+        affiliateUrl={getPurchaseUrl(details.affiliateUrl, details.officialWebsite, details.productName)}
+      />
       <Footer />
     </div>
   );
