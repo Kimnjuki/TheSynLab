@@ -54,7 +54,7 @@ const Newsletter = () => {
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto pt-4">
             <Input 
               type="email" 
-              placeholder="Enter your email" 
+              placeholder="your@email.com" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={status === "loading"}

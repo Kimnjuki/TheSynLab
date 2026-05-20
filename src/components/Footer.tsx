@@ -93,7 +93,7 @@ const Footer = () => {
             <form onSubmit={handleNewsletterSubmit} className="flex w-full max-w-md gap-2">
               <Input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="flex-1"
