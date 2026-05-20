@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, LogOut, User, UserCircle, ChevronRight, Sparkles } from "lucide-react";
+import { Menu, LogOut, User, UserCircle, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { CommandPalette } from "@/components/dashboard/CommandPalette";
@@ -12,14 +12,55 @@ import { EmailVerificationBanner } from "@/components/auth/EmailVerificationBann
 import { VerifiedBadge } from "@/components/auth/VerifiedBadge";
 import { useEmailVerification } from "@/hooks/useEmailVerification";
 
-const navLinks = [
-  { name: "Hubs", href: "/hubs" },
-  { name: "Compare", href: "/compare" },
-  { name: "Stack Builder", href: "/stack-builder" },
-  { name: "Decision Studio", href: "/decision-studio" },
-  { name: "Workflows", href: "/workflows" },
-  { name: "Scoring Hub", href: "/scoring-hub" },
-  { name: "Blog", href: "/blog" },
+type NavLink = {
+  name: string;
+  href: string;
+  items?: { name: string; href: string }[];
+};
+
+const navLinks: NavLink[] = [
+  {
+    name: "Reviews",
+    href: "/tools",
+    items: [
+      { name: "Browse All Tools", href: "/tools" },
+      { name: "AI & Productivity", href: "/hubs?tag=ai-tools" },
+      { name: "Smart Home", href: "/hubs?tag=intelligent-home" },
+      { name: "Hybrid Office", href: "/hubs?tag=hybrid-office" },
+      { name: "Trending", href: "/tools?sort=trending" },
+      { name: "Recently Updated", href: "/tools?sort=updated" },
+    ],
+  },
+  {
+    name: "Decide",
+    href: "/compare",
+    items: [
+      { name: "Compare Tools", href: "/compare" },
+      { name: "TCO Calculator", href: "/tools/budget-calculator" },
+      { name: "Vendor Risk Checker", href: "/tools/vendor-risk" },
+      { name: "Decision Studio", href: "/decision-studio" },
+    ],
+  },
+  {
+    name: "Build My Stack",
+    href: "/stack-quiz",
+    items: [
+      { name: "Stack Quiz", href: "/stack-quiz" },
+      { name: "AI Stack Architect", href: "/ai/stack-architect" },
+      { name: "My Stack", href: "/my-stack" },
+      { name: "Workflow Blueprints", href: "/workflows" },
+    ],
+  },
+  {
+    name: "Learn",
+    href: "/scoring-hub",
+    items: [
+      { name: "Buying Guides", href: "/blog?type=guide" },
+      { name: "Scoring Hub", href: "/scoring-hub" },
+      { name: "Blog", href: "/blog" },
+      { name: "About", href: "/about" },
+    ],
+  },
 ];
 
 const Header = () => {
@@ -49,7 +90,8 @@ const Header = () => {
   };
 
   const isActiveLink = (href: string) => {
-    return location.pathname === href || location.pathname.startsWith(href + "/");
+    const path = href.includes("?") ? href.split("?")[0] : href;
+    return location.pathname === path || location.pathname.startsWith(path + "/");
   };
 
   return (
@@ -101,21 +143,40 @@ const Header = () => {
 
             <nav className="hidden lg:flex items-center gap-1">
               {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  className={cn(
-                    "relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200",
-                    isActiveLink(link.href)
-                      ? "text-primary bg-primary/10"
-                      : "text-foreground/70 hover:text-foreground hover:bg-muted"
+                <div key={link.name} className="relative group">
+                  <Link
+                    to={link.href}
+                    className={cn(
+                      "relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-1",
+                      isActiveLink(link.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-foreground/70 hover:text-foreground hover:bg-muted"
+                    )}
+                  >
+                    {link.name}
+                    {link.items && link.items.length > 0 && (
+                      <ChevronDown className="h-3 w-3 opacity-50 group-hover:rotate-180 transition-transform duration-200" />
+                    )}
+                    {isActiveLink(link.href) && (
+                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+                    )}
+                  </Link>
+                  {link.items && link.items.length > 0 && (
+                    <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 group-hover:translate-y-0">
+                      <div className="bg-card border rounded-xl shadow-xl p-2 min-w-[220px] backdrop-blur-sm">
+                        {link.items.map((item) => (
+                          <Link
+                            key={item.name}
+                            to={item.href}
+                            className="block px-4 py-2.5 text-sm text-foreground/70 hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
                   )}
-                >
-                  {link.name}
-                  {isActiveLink(link.href) && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
-                  )}
-                </Link>
+                </div>
               ))}
             </nav>
           </div>
@@ -182,20 +243,29 @@ const Header = () => {
 
                   <nav className="flex-1 py-6">
                     {navLinks.map((link) => (
-                      <Link
-                        key={link.name}
-                        to={link.href}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={cn(
-                          "flex items-center justify-between px-6 py-4 text-lg font-medium transition-colors",
-                          isActiveLink(link.href)
-                            ? "text-primary bg-primary/5 border-r-2 border-primary"
-                            : "text-foreground/70 hover:text-foreground hover:bg-muted"
-                        )}
-                      >
-                        {link.name}
-                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                      </Link>
+                      <div key={link.name}>
+                        <div className="px-6 py-2">
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                            {link.name}
+                          </p>
+                        </div>
+                        {(link.items || [{ name: link.name, href: link.href }]).map((item) => (
+                          <Link
+                            key={item.name}
+                            to={item.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={cn(
+                              "flex items-center justify-between px-6 py-3 text-sm transition-colors",
+                              isActiveLink(item.href)
+                                ? "text-primary bg-primary/5 border-r-2 border-primary"
+                                : "text-foreground/70 hover:text-foreground hover:bg-muted"
+                            )}
+                          >
+                            {item.name}
+                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                          </Link>
+                        ))}
+                      </div>
                     ))}
                   </nav>
 
