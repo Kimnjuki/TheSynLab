@@ -17,6 +17,7 @@ import StickyCtaRail from "@/components/pdp/StickyCtaRail";
 import VerdictCtaBox from "@/components/pdp/VerdictCtaBox";
 import MidPageCta from "@/components/pdp/MidPageCta";
 import MobileStickyBar from "@/components/pdp/MobileStickyBar";
+import ContextualEmailCapture from "@/components/contextual/ContextualEmailCapture";
 import RelatedContent from "@/components/related/RelatedContent";
 import { CoreMetaPanel } from "@/components/pdp/CoreMetaPanel";
 import { RoiEstimatorCard } from "@/components/pdp/RoiEstimatorCard";
@@ -259,6 +260,7 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
+      <ContextualEmailCapture scrollThreshold={55} triggerOn="scroll" source="product-detail" />
       <StickyCtaRail
         productName={details.productName}
         productSlug={slug}
