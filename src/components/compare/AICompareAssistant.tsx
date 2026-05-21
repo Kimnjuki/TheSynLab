@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Bot, Send, ChevronRight, Loader2, X } from "lucide-react";
+import { chatCompletion } from "@/lib/ai/client";
 
 interface Message {
   role: "user" | "assistant";
@@ -24,22 +25,9 @@ const SUGGESTED_PROMPTS = [
   "Which would you recommend for a small business?",
 ];
 
-export function AICompareAssistant({ products, onClose }: AICompareAssistantProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content: `Hi! I'm TheSynLab's AI comparison assistant. I've reviewed the ${products.length} product(s) you're comparing. Ask me anything about them — scores, compatibility, value for money, or which one suits your needs best.`,
-    },
-  ]);
-  const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const productContext = JSON.stringify(
+/** Build product context structured for the AI to reason with */
+function buildProductContext(products: any[]): string {
+  return JSON.stringify(
     products.map((p) => ({
       name: p.productName,
       category: p.category,
@@ -47,62 +35,60 @@ export function AICompareAssistant({ products, onClose }: AICompareAssistantProp
       trustScore: p.trustScore?.totalScore,
       integrationScore: p.integrationScore?.totalScore,
       hub: p.hub,
-      description: p.description?.slice(0, 200),
+      description: p.description?.slice(0, 300),
     })),
     null,
     2
   );
+}
+
+export function AICompareAssistant({ products, onClose }: AICompareAssistantProps) {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: "assistant",
+      content: `Hi! I'm TheSynLab's AI comparison assistant. I've reviewed the ${products.length} product(s) you're comparing. Ask me about scores, compatibility, value — or which one fits your needs best.`,
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  const productContext = buildProductContext(products);
+  const hasNvidiaKey = Boolean(import.meta.env.VITE_NVIDIA_API_KEY);
+  const hasAnthropicKey = Boolean((window as any).__ANTHROPIC_KEY__);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const sendMessage = async (text: string) => {
     if (!text.trim() || isLoading) return;
+
     const userMsg: Message = { role: "user", content: text };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsLoading(true);
 
     try {
-      const apiKey = (window as any).__ANTHROPIC_KEY__;
-      if (!apiKey) {
-        const mockReply = `Based on the products you're comparing, here's my analysis of "${text}":\n\nI can see ${products.length} product(s): ${products.map((p) => p.productName).join(", ")}. To get full AI-powered answers, configure your Anthropic API key. In the meantime, you can check the Trust & Integration scores, TCO calculator, and compatibility matrix for detailed comparisons.`;
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: mockReply },
-        ]);
-        return;
-      }
-
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": apiKey,
-          "anthropic-version": "2023-06-01",
+      const reply = await chatCompletion([
+        {
+          role: "system",
+          content: `You are TheSynLab's comparison assistant. Here is the product data:\n${productContext}\n\nAnswer questions about which product is better for specific use cases, explain score differences, and give setup advice. Be concise and factual. Always cite scores when relevant. Keep responses under 200 words.`,
         },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: `You are TheSynLab's comparison assistant. You have detailed knowledge of the products the user is comparing. Here is the product data:\n${productContext}\n\nAnswer questions about which product is better for specific use cases, explain score differences, and give setup advice. Be concise and factual. Always cite scores when relevant.`,
-          messages: [
-            ...messages.map((m) => ({ role: m.role, content: m.content })),
-            { role: "user", content: text },
-          ],
-        }),
-      });
+        ...messages.map(({ role, content }) => ({ role: role as 'user' | 'assistant', content })),
+        { role: "user" as const, content: text },
+      ], { temperature: 0.4, maxTokens: 800 });
 
-      const data = (await response.json()) as {
-        content?: { type: string; text?: string }[];
-      };
-      const reply =
-        data.content?.find((c) => c.type === "text")?.text ??
-        "I couldn't generate a response. Please try again.";
-      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: reply || "I couldn't generate a response. Please try again." },
+      ]);
     } catch {
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content:
-            "Sorry, I ran into an error. Please check your API configuration and try again.",
+          content: "Sorry, I ran into an error. Please try again or check your API configuration.",
         },
       ]);
     } finally {
@@ -116,6 +102,11 @@ export function AICompareAssistant({ products, onClose }: AICompareAssistantProp
         <CardTitle className="flex items-center gap-2 text-sm">
           <Bot className="h-4 w-4 text-primary" />
           AI Compare Assistant
+          {hasNvidiaKey && (
+            <Badge variant="outline" className="text-[10px] h-5 px-1.5">
+              NVIDIA
+            </Badge>
+          )}
         </CardTitle>
         {onClose && (
           <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onClose}>
@@ -191,7 +182,7 @@ export function AICompareAssistant({ products, onClose }: AICompareAssistantProp
           </Button>
         </div>
         <p className="text-[10px] text-muted-foreground text-center">
-          Powered by Claude · Answers cite actual product scores
+          Powered by {hasNvidiaKey ? 'NVIDIA NIM' : hasAnthropicKey ? 'Claude' : 'AI (configure API key for live answers)'}
         </p>
       </CardContent>
     </Card>
