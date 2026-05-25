@@ -36,6 +36,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import EditorialPolicy from "./pages/EditorialPolicy";
 import AffiliateDisclosure from "./pages/AffiliateDisclosure";
 import HowWeMakeMoney from "./pages/HowWeMakeMoney";
 import DigitalProducts from "./pages/DigitalProducts";
