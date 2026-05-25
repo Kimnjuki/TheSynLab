@@ -193,6 +193,12 @@ const BlogArticle = () => {
         }}
         faq={article.faqs}
       />
+      {article.faqs && article.faqs.length > 0 && (
+        <JsonLd
+          type="FAQPage"
+          faq={article.faqs}
+        />
+      )}
       <Header />
       <main className="container py-8">
         {/* Back Button */}

@@ -1,54 +1,38 @@
-import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SEOHead } from "@/components/seo/SEOHead";
+
+interface FaqItem {
+  question: string;
+  answer: string;
+}
 
 export function FAQSection({
-  keyword,
-  hubSlug,
-  expertName = "TheSynLab Editorial",
+  faqs,
+  title = "Frequently Asked Questions",
 }: {
+  faqs: FaqItem[];
+  title?: string;
   keyword?: string;
   hubSlug?: string;
   expertName?: string;
 }) {
-  const questions = useQuery(api.paa.getUncoveredQuestions, {
-    keyword,
-    hubSlug,
-    limit: 8,
-  });
-
-  const qas =
-    (questions ?? []).map((q) => ({
-      question: q.question,
-      answer: `Expert answer by ${expertName}: This is an evidence-backed explanation based on SynLab scoring methodology and lab notes.`,
-    })) ?? [];
-
-  if (!qas.length) return null;
+  if (!faqs || faqs.length === 0) return null;
 
   return (
     <div className="space-y-4">
-      <SEOHead
-        title=""
-        schemaMarkup={{
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: qas.map((qa) => ({
-            "@type": "Question",
-            name: qa.question,
-            acceptedAnswer: { "@type": "Answer", text: qa.answer },
-          })),
-        }}
+      <JsonLd
+        type="FAQPage"
+        faq={faqs}
       />
       <Card>
         <CardHeader>
-          <CardTitle>People Also Ask</CardTitle>
+          <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {qas.map((qa) => (
-            <div key={qa.question} className="space-y-1">
-              <div className="font-medium">{qa.question}</div>
-              <div className="text-sm text-muted-foreground">{qa.answer}</div>
+          {faqs.map((faq) => (
+            <div key={faq.question} className="space-y-1">
+              <div className="font-medium">{faq.question}</div>
+              <div className="text-sm text-muted-foreground">{faq.answer}</div>
             </div>
           ))}
         </CardContent>
@@ -56,4 +40,3 @@ export function FAQSection({
     </div>
   );
 }
-
