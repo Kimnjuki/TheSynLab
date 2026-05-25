@@ -37,6 +37,35 @@ const Blog = () => {
         canonical="/blog"
       />
       <JsonLd type="BreadcrumbList" breadcrumbs={breadcrumbs} />
+      {/* ItemList of all blog articles for discovery */}
+      <JsonLd
+        type="ItemList"
+        itemList={blogArticles.map((a) => ({
+          name: a.seoTitle || a.title,
+          url: `https://thesynlab.com/blog/${a.slug}`,
+        }))}
+      />
+      {/* WebSite SearchAction for SiteLinksSearchBox */}
+      <JsonLd
+        type="WebSite"
+        webSite={{
+          name: "TheSynLab",
+          url: "https://thesynlab.com",
+          searchAction: {
+            target: "https://thesynlab.com/blog?q={search_term_string}",
+            queryInput: "search_term_string",
+          },
+        }}
+      />
+      {/* Organization schema */}
+      <JsonLd
+        type="Organization"
+        organization={{
+          name: "TheSynLab",
+          description: "Independent product reviews with proprietary Trust & Integration Scores.",
+          url: "https://thesynlab.com",
+        }}
+      />
       <Header />
       <main className="container py-8">
         {/* Hero */}

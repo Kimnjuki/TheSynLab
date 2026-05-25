@@ -183,13 +183,21 @@ const BlogArticle = () => {
         ogImage={article.image}
         ogType="article"
       />
+      {/* NewsArticle schema with full author, publisher, word count, dates */}
       <JsonLd
-        type="Article"
+        type="NewsArticle"
         article={{
           title: article.seoTitle || article.title,
           description: article.metaDescription || article.excerpt || article.title,
           image: article.image,
           url: articleUrl,
+          publishedTime: article.publishedAt,
+          modifiedTime: article.updatedAt || article.publishedAt,
+          author: article.author,
+          authorBio: article.authorBio,
+          wordCount: article.wordCount,
+          tags: article.tags,
+          timeRequired: `PT${article.readingTime}M`,
         }}
         faq={article.faqs}
       />
@@ -197,6 +205,51 @@ const BlogArticle = () => {
         <JsonLd
           type="FAQPage"
           faq={article.faqs}
+        />
+      )}
+
+      {/* Person schema for author with bio */}
+      <JsonLd
+        type="Person"
+        person={{
+          name: article.author,
+          description: article.authorBio,
+          url: `/blog`,
+        }}
+      />
+
+      {/* Organization schema */}
+      <JsonLd
+        type="Organization"
+        organization={{
+          name: "TheSynLab",
+          description: "Independent product reviews with proprietary Trust & Integration Scores. Lab-tested comparisons for smart home, AI tools, SaaS platforms.",
+          url: "https://thesynlab.com",
+          sameAs: [],
+        }}
+      />
+
+      {/* WebSite schema with SearchAction for SiteLinksSearchBox */}
+      <JsonLd
+        type="WebSite"
+        webSite={{
+          name: "TheSynLab",
+          url: "https://thesynlab.com",
+          searchAction: {
+            target: "https://thesynlab.com/blog?q={search_term_string}",
+            queryInput: "search_term_string",
+          },
+        }}
+      />
+
+      {/* Related Articles — ItemList for internal linking signal */}
+      {relatedArticles.length > 0 && (
+        <JsonLd
+          type="ItemList"
+          itemList={relatedArticles.map((ra) => ({
+            name: ra.title,
+            url: `https://thesynlab.com/blog/${ra.slug}`,
+          }))}
         />
       )}
       <Header />

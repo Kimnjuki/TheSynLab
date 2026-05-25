@@ -114,34 +114,40 @@ export default function SaasToolReviewPage() {
     ],
   };
 
-  const productSchema = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: tool.name,
-    description: tool.shortDescription,
-    url: tool.officialUrl,
-    applicationCategory: category.name,
-    operatingSystem: "Web",
-    offers: {
-      "@type": "Offer",
-      price: tool.pricing.hasFree ? "0" : tool.pricing.startingPrice.replace(/[^0-9.]/g, ""),
-      priceCurrency: "USD",
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: tool.trustScore,
-      bestRating: 5,
-      worstRating: 1,
-      ratingCount: 47,
-      reviewCount: 47,
-    },
-  };
+  const softwareVersion = tool.websiteLink ? undefined : undefined;
+  const priceNum = tool.pricing.hasFree 
+    ? 0 
+    : parseFloat(tool.pricing.startingPrice.replace(/[^0-9.]/g, "")) || 0;
 
   return (
     <div className="min-h-screen bg-background">
       <MetaTags title={title} description={description} canonical={canonical} ogType="article" />
       <JsonLd type="BreadcrumbList" breadcrumbs={breadcrumbs} />
-      <JsonLd type="SoftwareApplication" custom={productSchema} />
+      <JsonLd
+        type="SoftwareApplication"
+        softwareApp={{
+          name: tool.name,
+          description: tool.shortDescription,
+          url: tool.officialUrl,
+          applicationCategory: category.name,
+          operatingSystem: "Web",
+          price: priceNum,
+          priceCurrency: "USD",
+          rating: tool.trustScore,
+          reviewCount: 47,
+          featureList: tool.features?.length ? tool.features : (tool as any).keyFeatures || [],
+          image: tool.logo || tool.image,
+        }}
+      />
+      {/* Organization schema for brand authority */}
+      <JsonLd
+        type="Organization"
+        organization={{
+          name: "TheSynLab",
+          description: "Independent product reviews with proprietary Trust & Integration Scores.",
+          url: "https://thesynlab.com",
+        }}
+      />
       <JsonLd type="FAQPage" custom={faqSchema} />
       <Header />
 
