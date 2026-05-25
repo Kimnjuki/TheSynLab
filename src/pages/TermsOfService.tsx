@@ -118,7 +118,7 @@ You may terminate your account at any time by contacting us or using the account
       title: "8. Contact & Dispute Resolution",
       content: `For questions about these Terms or the Service, contact us:
 
-Email: legal@projectnova.com
+Email: legal@thesynlab.com
 Address: Project Nova, Legal Department
 
 Dispute Resolution:

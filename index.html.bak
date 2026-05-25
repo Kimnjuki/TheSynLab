@@ -43,7 +43,7 @@
     <!-- ── GA4 (hardcoded fallback G-XMGRJBSN5Y if env var not set) ── -->
     <script>
       (function() {
-        var ga = "G-TJ1VXE91NE";  // fallback
+        var ga = "G-XMGRJBSN5Y";  // fallback
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('consent', 'default', {

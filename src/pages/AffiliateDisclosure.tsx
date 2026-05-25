@@ -205,7 +205,7 @@ const AffiliateDisclosure = () => {
           <p className="text-sm text-muted-foreground mt-4">
             Questions? Contact us at{" "}
             <a href="mailto:disclosure@projectnova.com" className="text-primary hover:underline">
-              disclosure@projectnova.com
+              disclosure@thesynlab.com
             </a>
           </p>
         </div>

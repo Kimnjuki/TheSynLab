@@ -85,7 +85,7 @@ Rights under CCPA (California residents):
 • Right to access your personal information
 • Right to equal service and price
 
-To exercise these rights, please contact us at privacy@thesynlab.com or use the "Cookie Settings" button at the bottom of our site.`
+To exercise these rights, please contact us at privacy@projectnova.com or use the "Cookie Settings" button at the bottom of our site.`
     },
     {
       icon: Settings,
@@ -106,16 +106,12 @@ We only use analytics and advertising cookies after obtaining your explicit cons
       title: "7. Contact Us",
       content: `If you have any questions about this Privacy Policy, your personal data, or wish to exercise your rights, please contact us:
 
-Email: privacy@thesynlab.com
-Address: TheSynLab Media Group, Rudi-Dutschke-Straße 26, 10969 Berlin, Germany
+Email: privacy@projectnova.com
+Address: Project Nova, Data Protection Team
 
 For complaints regarding data processing, you may also contact your local data protection authority.
 
-We will respond to your request within 30 days as required by applicable law.
-
-### Data Retention & Deletion
-
-We retain your personal data only for as long as necessary to fulfill the purposes described in this policy. When data is no longer needed, we securely delete or anonymize it. To request deletion of your data, email privacy@thesynlab.com with the subject "Data Deletion Request." We will confirm deletion within 30 days.`
+We will respond to your request within 30 days as required by applicable law.`
     }
   ];
 

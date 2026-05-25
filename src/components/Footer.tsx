@@ -35,7 +35,7 @@ const footerLinks = {
     { name: "Privacy Policy", href: "/privacy" },
     { name: "Terms of Service", href: "/terms" },
     { name: "Affiliate Disclosure", href: "/disclosure" },
-    { name: "Editorial Policy", href: "/disclosure#editorial-policy" },
+    { name: "Editorial Policy", href: "/editorial" },
     { name: "Scoring Methodology", href: "/scoring-hub" },
     { name: "Advertise With Us", href: "/contact#advertise" },
     { name: "Ad Compliance", href: "/ad-compliance" },
