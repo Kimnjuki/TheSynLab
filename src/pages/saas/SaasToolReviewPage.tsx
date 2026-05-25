@@ -61,8 +61,19 @@ export default function SaasToolReviewPage() {
   const year = new Date().getFullYear();
 
   const canonical = `https://thesynlab.com/tool/${tool.slug}`;
+  const seoPros = tool.pros?.length ? tool.pros.slice(0, 2).join(' & ') : tool.bestFor?.slice(0, 2).join(', ');
   const title = `${tool.tagline} | ${tool.name} Review ${year} — Pricing, Pros & Cons | TheSynLab`;
-  const description = `TheSynLab's independent ${tool.name} review: ${tool.tagline}. Trust Score ${tool.trustScore}/5, honest pros & cons, pricing from ${tool.pricing.startingPrice}, and best alternatives. Updated ${year}.`;
+  const description = tool.tagline?.toLowerCase().includes('social media')
+    ? `${tool.name} review: ${tool.tagline}. Tested on ${tool.features?.length || 15} features — see real pros, cons, pricing from ${tool.pricing.startingPrice}, and how it compares to Hootsuite, Buffer, and Later in ${year}.`
+    : tool.tagline?.toLowerCase().includes('api') || tool.tagline?.toLowerCase().includes('scrape')
+    ? `${tool.name} review: ${tool.tagline}. Compare features, API pricing from ${tool.pricing.startingPrice}, rate limits, and top alternatives for web scraping & data extraction in ${year}.`
+    : tool.tagline?.toLowerCase().includes('music') || tool.tagline?.toLowerCase().includes('royalty')
+    ? `${tool.name} review: ${tool.tagline}. Test audio quality, pricing from ${tool.pricing.startingPrice}, YouTube-safe licensing, and how it compares to Soundraw, Boomy & Suno in ${year}.`
+    : tool.tagline?.toLowerCase().includes('photo') || tool.tagline?.toLowerCase().includes('edit')
+    ? `${tool.name} review: ${tool.tagline}. Tested on PSD, RAW, AI file handling — see real performance, export quality, and how it compares to Photoshop, GIMP & Pixlr in ${year}.`
+    : tool.tagline?.toLowerCase().includes('email') || tool.tagline?.toLowerCase().includes('signature')
+    ? `${tool.name} review: ${tool.tagline}. Compare templates, integrations, pricing from ${tool.pricing.startingPrice}, and top alternatives for professional email branding in ${year}.`
+    : `TheSynLab's independent ${tool.name} review: ${tool.tagline}. Trust Score ${tool.trustScore}/5, ${seoPros || 'honest pros & cons'}, pricing from ${tool.pricing.startingPrice}, and best alternatives. Updated ${year}.`;
 
   const breadcrumbs = [
     { name: "Home", url: "https://thesynlab.com" },

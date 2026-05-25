@@ -32,8 +32,8 @@ const Blog = () => {
   return (
     <div className="min-h-screen bg-background">
       <MetaTags
-        title="Insights &amp; Reviews"
-        description="In-depth analysis powered by Trust &amp; Integration Scores. Data-driven reviews of productivity tools, smart home devices, and office hardware."
+        title="TheSynLab Blog: Product Reviews, Trust Scores & Buying Guides (2026)"
+        description="TheSynLab's independent product reviews and comparisons. Lab-tested Trust Scores for smart home, AI tools, SaaS, and productivity software — updated weekly with fresh data."
         canonical="/blog"
       />
       <JsonLd type="BreadcrumbList" breadcrumbs={breadcrumbs} />

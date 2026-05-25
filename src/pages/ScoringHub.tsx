@@ -17,8 +17,8 @@ export default function ScoringHub() {
   return (
     <div className="min-h-screen flex flex-col">
       <MetaTags
-        title="Trust Score Ratings: Compare Products by Privacy, Security & Integration | TheSynLab"
-        description="TheSynLab Trust Scores rate products on privacy, security, and transparency. Compare 100+ smart home, productivity, and office tools by trustworthiness — not marketing."
+        title="Scoring & Decision Hub: Compare Products by Trust Score (2026) | TheSynLab"
+        description="Compare 100+ products by Trust Score and Integration Score. Our transparent methodology reveals which smart home, AI, and productivity tools are actually worth your money in 2026."
         canonical="/scoring-hub"
         ogType="website"
       />
