@@ -17,8 +17,8 @@ export default function ScoringHub() {
   return (
     <div className="min-h-screen flex flex-col">
       <MetaTags
-        title="Scoring & Decision Hub: Compare Products by Trust Score (2026) | TheSynLab"
-        description="Compare 100+ products by Trust Score and Integration Score. Our transparent methodology reveals which smart home, AI, and productivity tools are actually worth your money in 2026."
+        title="Scoring & Decision Hub: Compare Tools by Trust Score 2026 | TheSynLab"
+        description="We score 100+ tools on trust, integration, and value. Compare Wisestamp, Photopea, SocialPilot, Outscraper & more by Trust Score. Find the software that actually delivers in 2026."
         canonical="/scoring-hub"
         ogType="website"
       />

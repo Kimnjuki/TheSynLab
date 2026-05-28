@@ -62,8 +62,29 @@ export default function SaasToolReviewPage() {
 
   const canonical = `https://thesynlab.com/tool/${tool.slug}`;
   const seoPros = tool.pros?.length ? tool.pros.slice(0, 2).join(' & ') : tool.bestFor?.slice(0, 2).join(', ');
+  // ── Tool-specific CTR-optimized meta descriptions ──
+  // Override for high-opportunity pages appearing in GSC with 0% CTR
+  const CTR_DESCRIPTIONS: Record<string, string> = {
+    'syllaby': `Syllaby review 2026: Tested AI script & video creator. Is it worth $49/mo? Real pros vs cons, pricing breakdown, and the best free alternatives to Syllaby for faceless content.`,
+    'socialpilot': `SocialPilot review 2026: Best Hootsuite alternative for agencies? Tested white-label features, bulk scheduling, pricing from $30/mo, and head-to-head vs Sprout Social & Publer.`,
+    'outscraper': `Outscraper review 2026: Google Maps scraper tested. Extract business data at $3/task. Compare Outscraper vs PhantomBuster vs Apify for lead generation, local SEO & Google Reviews scraping.`,
+    'wisestamp': `WiseStamp review 2026: Best email signature generator? Tested templates, integrations, pricing, and how WiseStamp compares to Exclaimer, CodeTwo & MySignature for professional email branding.`,
+    'mailmeteor': `Mailmeteor review 2026: Send mass mail from Google. Tested daily limits, pricing, deliverability rates, and how Mailmeteor compares to Yet Another Mail Merge and GMass.`,
+    'photopea': `Photopea review 2026: Free Photoshop alternative tested. PSD editing, RAW support, AI features, pricing — and how Photopea compares to GIMP, Pixlr & the real Photoshop.`,
+    'vectr': `Vectr review 2026: Free vector editor tested. Compare Vectr vs Illustrator vs Inkscape vs Figma for real vector design. Pricing, features, and when it works.`,
+    'videvo': `Videvo review 2026: Free stock video & music tested. Compare Videvo vs Pexels vs Artgrid vs Storyblocks for YouTube-safe royalty-free footage. Pricing and licensing explained.`,
+    'remnote': `RemNote review 2026: Spaced repetition meets note-taking. Tested on active recall, PDF annotation, pricing, and how RemNote compares to Obsidian, Notion & Anki for students.`,
+    'lambdatest': `LambdaTest review 2026: Cross-browser testing at scale. Tested 3000+ browser combos, HyperExecute speed, visual regression, and how LambdaTest compares to BrowserStack & Sauce Labs.`,
+    'mubert': `Mubert review 2026: AI music generator for creators. Tested audio quality, licensing, pricing, and how Mubert compares to Soundraw, Suno & Boomy for YouTube-safe royalty-free music.`,
+    'radaar': `Radaar review 2026: Social listening tool tested. Monitor brand mentions, competitor analysis, AI sentiment scoring, and how Radaar compares to Brand24, Mention & Awario.`,
+    'productboard': `Productboard review 2026: Product management platform tested. Feature prioritization, roadmap planning, user feedback integration, and how it compares to Aha!, Jira & Notion.`,
+    'snappa': `Snappa review 2026: Quick social media graphic tool tested. Templates, ease of use, pricing, and how Snappa compares to Canva, PicMonkey & Adobe Express for social graphics.`,
+    'workos': `WorkOS alternatives reviewed: Compare Auth0 vs Clerk vs WorkOS vs Supabase Auth. Pricing, features, integration complexity, and which developer auth solution fits your stack.`,
+    'topview': `TopView AI alternative: Compare 16+ AI presentation tools. Head-to-head analysis of Beautiful.ai, Gamma, Tome, Pitch, and SlidesAI for automated slide creation in 2026.`,
+  };
+
   const title = `${tool.tagline} | ${tool.name} Review ${year} — Pricing, Pros & Cons | TheSynLab`;
-  const description = tool.tagline?.toLowerCase().includes('social media')
+  const description = CTR_DESCRIPTIONS[tool.slug] || tool.tagline?.toLowerCase().includes('social media')
     ? `${tool.name} review: ${tool.tagline}. Tested on ${tool.features?.length || 15} features — see real pros, cons, pricing from ${tool.pricing.startingPrice}, and how it compares to Hootsuite, Buffer, and Later in ${year}.`
     : tool.tagline?.toLowerCase().includes('api') || tool.tagline?.toLowerCase().includes('scrape')
     ? `${tool.name} review: ${tool.tagline}. Compare features, API pricing from ${tool.pricing.startingPrice}, rate limits, and top alternatives for web scraping & data extraction in ${year}.`
