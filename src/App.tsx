@@ -126,6 +126,7 @@ const App = () => (
                   <Route path="/tasks" element={<Tasks />} />
                   <Route path="/products" element={<ProductsHub />} />
                   <Route path="/products/watchlist" element={<ProductsWatchlist />} />
+                  <Route path="/products/category/:category" element={<ProductCategoryPage />} />
                   <Route path="/products/:slug" element={<ProductDetailPage />} />
                   <Route path="/hub/:slug" element={<Hub />} />
                   <Route path="/hubs/:hubSlug/:postSlug" element={<HubPost />} />
@@ -148,6 +149,8 @@ const App = () => (
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/disclosure" element={<AffiliateDisclosure />} />
+                  <Route path="/guides" element={<GuidesPage />} />
+                  <Route path="/glossary" element={<GlossaryPage />} />
           <Route path="/how-we-make-money" element={<HowWeMakeMoney />} />
           <Route path="/editorial" element={<EditorialPolicy />} />
           <Route path="/products" element={<DigitalProducts />} />
