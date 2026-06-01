@@ -58,8 +58,8 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <MetaTags
-        title="TheSynLab: Honest Tech Reviews with Trust Scores — Smart Home, Productivity & Tools"
-        description="Independent reviews of smart home devices, productivity tools, and SaaS. TheSynLab Trust Scores rate every product on privacy, security, and integration — not affiliate commissions."
+        title="TheSynLab 2026: Honest Tool Reviews You Can Trust — Smart Home, SaaS & Productivity"
+        description="Stop guessing which tool to buy. TheSynLab scores every product on trust, value, and integration quality. Real reviews for smart home, SaaS, AI tools, and productivity software — backed by data, not hype."
         canonical="https://thesynlab.com/"
         ogType="website"
       />

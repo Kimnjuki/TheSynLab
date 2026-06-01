@@ -122,7 +122,7 @@ We retain your personal data only for as long as necessary to fulfill the purpos
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <MetaTags title="Privacy Policy — TheSynLab" description="How TheSynLab collects, uses, and protects your data. Our commitment to your privacy and transparency." canonical="/privacy" />
+      <MetaTags title="Privacy Policy — TheSynLab: How We Handle Your Data & Privacy" description="TheSynLab's privacy policy explained in plain English. What data we collect, why, how we protect it, and your rights including GDPR requests — transparent and straightforward." canonical="/privacy" />
       
       <main className="container py-12">
         {/* Hero Section */}

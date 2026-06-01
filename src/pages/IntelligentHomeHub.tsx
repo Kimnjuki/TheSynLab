@@ -68,8 +68,8 @@ const IntelligentHomeHub = () => {
   return (
     <div className="min-h-screen bg-background">
       <MetaTags
-        title="Smart Home Hub 2026 | Reviews, Trust Scores & Ecosystem Comparison | TheSynLab"
-        description="Compare smart home ecosystems: Apple HomeKit vs Google Home vs Alexa vs SmartThings vs Home Assistant. Trust Scores, privacy ratings, device counts, and which one is right for you in 2026."
+        title="Smart Home Ecosystem Comparison 2026: HomeKit vs Alexa vs Google — Which Wins?"
+        description="Compare Apple HomeKit vs Google Home vs Amazon Alexa vs SmartThings vs Home Assistant by Trust Scores, privacy ratings, device compatibility, and real-world performance. Find your smart home ecosystem in 2026."
         canonical="/hub/intelligent-home"
         ogType="website"
       />

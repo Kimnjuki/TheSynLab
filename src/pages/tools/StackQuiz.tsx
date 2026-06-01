@@ -113,7 +113,7 @@ const StackQuiz = () => {
     return (
       <div className="min-h-screen bg-background">
         <MetaTags
-          title="Your Personalized AI Tool Stack — SynLab Stack Quiz"
+          title="Stack Quiz 2026: Build Your Ideal Software Stack in 60 Seconds — TheSynLab"
           description="See your top 3 recommended AI & SaaS tools with Trust Scores, Integration Scores, and cost estimates — personalized by the SynLab Stack Quiz."
           canonical="/stack-quiz"
         />
@@ -240,7 +240,7 @@ const StackQuiz = () => {
   return (
     <div className="min-h-screen bg-background">
       <ToolPageSEO
-        title="SynLab Stack Quiz — Find the Right AI & SaaS Tools"
+        title="Stack Quiz 2026: Find Your Ideal SaaS & AI Stack in 60 Seconds — TheSynLab"
         description="Answer 6 questions and get your personalised AI tool stack with Trust Scores, Integration Scores, and 3-year TCO estimates."
         canonical="/stack-quiz"
         toolName="Stack Quiz"

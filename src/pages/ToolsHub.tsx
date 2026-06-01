@@ -86,8 +86,8 @@ export default function ToolsHub() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <MetaTags
-        title="Interactive Tools — TheSynLab"
-        description="Interactive tools for stack discovery, TCO comparison, vendor risk assessment, workflow automation, and product comparison. Filter and sort by category, name, or trust level."
+        title="Free SaaS Decision Tools: Compare, Calculate & Choose Smarter — TheSynLab"
+        description="Interactive tools to compare vendors, calculate TCO, assess risk, and discover your ideal software stack. TCO Calculator, Stack Quiz, Vendor Risk Checker, and more — all free, all data-backed."
         canonical="/tools"
       />
       <Header />

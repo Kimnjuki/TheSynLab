@@ -39,8 +39,8 @@ export default function AlternativesIndex() {
   return (
     <div className="min-h-screen flex flex-col">
       <MetaTags
-        title="Best Alternatives – Find Better Software Replacements | TheSynLab"
-        description="Discover the best alternatives to popular SaaS tools. Every alternative scored for integration depth, TCO, vendor risk, and trust. Find your perfect stack match."
+        title="Best SaaS Alternatives Compared: Find Smarter Replacements — TheSynLab"
+        description="Looking for a better tool? Compare alternatives to popular SaaS with Trust Scores, integration depth, TCO, and vendor risk data. Side-by-side comparisons for Wisestamp, Photopea, Mailmeteor, and 100+ more tools."
         canonical="/alternatives"
       />
       <Header />

@@ -42,7 +42,7 @@ export default function Hub() {
   const filteredProducts = applyHubFilters(products ?? [], filters);
 
   const title = HUB_LABELS[hubSlug] ?? hubSlug.replace(/_/g, " ");
-  const description = `Compare and discover the best products in ${title}. Trust scores, integration scores, and expert reviews.`;
+  const description = `Compare ${title.toLowerCase()} tools and products side by side. Trust Scores, features, pricing, and real user data — find your best fit without the marketing noise.`;
   const canonical = `/hub/${hubSlug}`;
   const hubMeta = useQuery(api.hubs.getHubBySlug, { slug: hubSlug });
 
@@ -55,7 +55,7 @@ export default function Hub() {
   return (
     <div className="min-h-screen flex flex-col">
       <MetaTags
-        title={`${title} – Product Reviews & Scores`}
+        title={`${title} — Best Tools Compared by Trust Score 2026 | TheSynLab`}
         description={description}
         canonical={canonical}
       />

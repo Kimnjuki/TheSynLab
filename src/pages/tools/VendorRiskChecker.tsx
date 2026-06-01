@@ -335,7 +335,7 @@ const VendorRiskChecker = () => {
   if (step === "questions" && selectedProduct) {
     return (
       <div className="min-h-screen bg-background">
-        <MetaTags title="SaaS Vendor Risk Checker — TheSynLab" description="Run a vendor risk check on any SaaS tool. Get a lock-in score, data portability grade, and safer alternatives." canonical="/vendor-risk-checker" />
+        <MetaTags title="Vendor Risk Checker: Evaluate Lock-In & Data Portability — TheSynLab" description="Assess vendor lock-in risk, data portability, and compliance for any SaaS product. Free tool scores security, migration ease, and alternatives — make informed vendor decisions in 2026." canonical="/vendor-risk-checker" />
         <Header />
         <main className="mx-auto max-w-2xl px-4 py-12">
           <div className="mb-8 text-center">
