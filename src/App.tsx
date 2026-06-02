@@ -86,6 +86,9 @@ import MyStackDashboard from "./pages/MyStack";
 import WidgetGallery from "./pages/WidgetGallery";
 import StateOfSaaSTrust2026 from "./pages/report/StateOfSaaSTrust2026";
 import AlternativesIndex from "./pages/AlternativesIndex";
+import ProductCategoryPage from "./pages/ProductCategoryPage";
+import GuidesPage from "./pages/GuidesPage";
+import GlossaryPage from "./pages/GlossaryPage";
 
 const queryClient = new QueryClient();
 
