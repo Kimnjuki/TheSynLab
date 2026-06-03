@@ -105,6 +105,11 @@ export default function Search() {
         <section className="bg-gradient-to-br from-primary/5 to-secondary/5 py-10">
           <div className="container mx-auto px-4">
             <h1 className="text-3xl font-bold mb-4">Product Search</h1>
+            <p className="text-muted-foreground mb-6 max-w-3xl">
+              Search our database of 5,000+ SaaS products, smart home devices, and productivity tools. 
+              Every result includes a TheSynLab Trust Score, Integration Grade, and total cost of ownership analysis. 
+              Filter by category, ecosystem, and minimum score to find your ideal product.
+            </p>
             <div className="flex gap-2 max-w-2xl">
               <Input
                 placeholder="Search products, categories, features…"
