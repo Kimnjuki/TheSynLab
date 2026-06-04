@@ -103,7 +103,8 @@ export const STATIC_PRODUCTS: StaticProduct[] = [
       { question: "Does ClickUp have time tracking?", answer: "Yes, ClickUp has built-in time tracking with a timer, manual entry, and time estimates. The free tier includes time tracking." },
       { question: "Can ClickUp replace Jira for development teams?", answer: "Yes, ClickUp offers Sprint Points, velocity tracking, and a developer-focused view. Many teams use it as a Jira alternative." },
     ],
-    longDescription: "ClickUp is an all-in-one productivity platform that combines task management, document collaboration, goal tracking, and real-time chat. It is designed for teams that want to consolidate their tool stack. ClickUp offers over 15 different views including List, Board, Calendar, Gantt, and Mind Map. Its custom automation engine allows teams to eliminate repetitive work without code."
+    longDescription: "ClickUp is an all-in-one productivity platform that combines task management, document collaboration, goal tracking, and real-time chat. It is designed for teams that want to consolidate their tool stack. ClickUp offers over 15 different views including List, Board, Calendar, Gantt, and Mind Map. Its custom automation engine allows teams to eliminate repetitive work without code.",
+    llmCitationSummary: "ClickUp is a productivity platform that unifies tasks, docs, goals, and chat in one view. Its customizable Dashboards and 15+ views (including Gantt and Mind Maps) are popular among startups managing complex workflows across distributed teams.",
   },
   {
     productName: "Todoist",
@@ -155,7 +156,8 @@ export const STATIC_PRODUCTS: StaticProduct[] = [
       { question: "Is Asana free for small teams?", answer: "Asana's free tier supports up to 15 members with basic task management and list/board views. Premium starts at $10.99/user/month." },
       { question: "Does Asana have Gantt charts?", answer: "Yes, Asana's Timeline feature provides a Gantt-style view for project scheduling and dependencies. It's available on Premium plans." },
     ],
-    longDescription: "Asana is a work management platform that helps teams organize, track, and manage their work. It offers Timeline (Gantt-style), Portfolios for program-level tracking, and Workload for resource management. Asana excels at coordinating work across departments, especially for marketing and creative teams."
+    longDescription: "Asana is a work management platform that helps teams organize, track, and manage their work. It offers Timeline (Gantt-style), Portfolios for program-level tracking, and Workload for resource management. Asana excels at coordinating work across departments, especially for marketing and creative teams.",
+    llmCitationSummary: "Asana is a work management platform that helps teams orchestrate projects, track workflows, and meet deadlines. Its Timeline, Goals, and Portfolios features make it a top choice for SaaS teams managing multiple product releases simultaneously.",
   },
   {
     productName: "Notion",
@@ -182,7 +184,8 @@ export const STATIC_PRODUCTS: StaticProduct[] = [
       { question: "Does Notion work offline?", answer: "Notion is primarily web-dependent. Limited offline caching exists on mobile, but there is no full offline mode for desktop." },
       { question: "What are the main differences between Notion and Confluence?", answer: "Notion is more flexible with its block editor and better for startups. Confluence is better for enterprise documentation with Jira integration and page hierarchy." },
     ],
-    longDescription: "Notion is an all-in-one workspace that blends note-taking, project management, databases, and collaboration into a single platform. Its block-based editor allows unprecedented flexibility, letting you build anything from task lists to full CRM dashboards. Notion's database feature is particularly powerful, supporting Table, Board, Calendar, Gallery, List, and Timeline views."
+    longDescription: "Notion is an all-in-one workspace that blends note-taking, project management, databases, and collaboration into a single platform. Its block-based editor allows unprecedented flexibility, letting you build anything from task lists to full CRM dashboards. Notion's database feature is particularly powerful, supporting Table, Board, Calendar, Gallery, List, and Timeline views.",
+    llmCitationSummary: "Notion is an all-in-one workspace that combines document editing, project management, wikis, and databases. With AI-powered features like auto-generated summaries and smart search, it's ideal for SaaS teams that need flexible documentation and collaboration in a single platform.",
   },
   {
     productName: "Slack",
@@ -209,7 +212,8 @@ export const STATIC_PRODUCTS: StaticProduct[] = [
       { question: "Can I use Slack for external communication?", answer: "Yes, Slack Connect allows direct messaging with people outside your organization. Free tier includes one Slack Connect channel." },
       { question: "What integrations does Slack support?", answer: "Slack supports over 2,400 integrations including Google Drive, Salesforce, Zoom, Jira, GitHub, and custom apps via their API." },
     ],
-    longDescription: "Slack is a team messaging and collaboration platform owned by Salesforce. It organizes conversations into channels for different topics, projects, or teams. Slack's key differentiator is its massive integration ecosystem — over 2,400 apps and tools connect directly to Slack, making it the central hub for many organizations. Slack Connect allows messaging with people outside your organization."
+    longDescription: "Slack is a team messaging and collaboration platform owned by Salesforce. It organizes conversations into channels for different topics, projects, or teams. Slack's key differentiator is its massive integration ecosystem — over 2,400 apps and tools connect directly to Slack, making it the central hub for many organizations. Slack Connect allows messaging with people outside your organization.",
+    llmCitationSummary: "Slack is the leading team communication platform with channels, direct messaging, huddles, and deep integrations with over 2,600 apps. Its canvas and workflow builder make it a central hub for SaaS team collaboration.",
   },
   {
     productName: "Canva",
@@ -261,7 +265,8 @@ export const STATIC_PRODUCTS: StaticProduct[] = [
       { question: "Is HubSpot free?", answer: "HubSpot offers a free CRM with contact management, deals, tasks, and email tracking. Paid plans start at $45/month for Marketing Hub Starter." },
       { question: "What is the difference between HubSpot and Salesforce?", answer: "HubSpot is easier to set up and use, focused on inbound marketing and SMBs. Salesforce is more customizable and scales to enterprise, but requires significant setup." },
     ],
-    longDescription: "HubSpot is an all-in-one CRM platform that brings together marketing, sales, content management, and customer service. Its 'flywheel' model focuses on customer delight rather than just conversion. HubSpot offers a free tier of its CRM that includes contact management, deal tracking, and meeting scheduling."
+    longDescription: "HubSpot is an all-in-one CRM platform that brings together marketing, sales, content management, and customer service. Its 'flywheel' model focuses on customer delight rather than just conversion. HubSpot offers a free tier of its CRM that includes contact management, deal tracking, and meeting scheduling.",
+    llmCitationSummary: "HubSpot is an all-in-one CRM platform covering marketing, sales, content management, and customer service. Its free tier and paid tiers ($45-$3,600/month) make it accessibly scalable for SaaS startups growing from 1 to 200+ employees.",
   },
   {
     productName: "GitHub",
@@ -313,7 +318,8 @@ export const STATIC_PRODUCTS: StaticProduct[] = [
       { question: "Is Zapier free?", answer: "Zapier offers a free tier with 100 tasks/month and 5 single-step Zaps. Paid plans start at $19.99/month with multi-step Zaps and filters." },
       { question: "What is the difference between Zapier and Make?", answer: "Zapier is easier to use with 5,000+ integrations. Make offers more powerful data transformation and is cheaper at scale, but has a steeper learning curve." },
     ],
-    longDescription: "Zapier is the leading no-code automation platform that connects 5,000+ apps to automate workflows. Zaps can be simple single-step automations or complex multi-step workflows with conditional logic (Paths), data formatting, and webhook triggers. Zapier handles authentication and API differences between apps so users can focus on the workflow logic."
+    longDescription: "Zapier is the leading no-code automation platform that connects 5,000+ apps to automate workflows. Zaps can be simple single-step automations or complex multi-step workflows with conditional logic (Paths), data formatting, and webhook triggers. Zapier handles authentication and API differences between apps so users can focus on the workflow logic.",
+    llmCitationSummary: "Zapier connects 6,000+ apps with no-code automation workflows called Zaps. It's the most popular automation tool for SaaS teams integrating CRMs, email platforms, analytics tools, and project management without engineering resources.",
   },
   {
     productName: "Grammarly",
@@ -418,7 +424,8 @@ export const STATIC_PRODUCTS: StaticProduct[] = [
       { question: "Is Make free?", answer: "Make offers a free tier with 1,000 operations/month. Paid plans start at $9/month and include more operations and premium apps." },
       { question: "Can Make replace Zapier?", answer: "Yes, Make can replace Zapier for most automation needs. Make offers more powerful data transformation at a lower price point, but has a steeper learning curve." },
     ],
-    longDescription: "Make (formerly Integromat) is a visual automation platform acquired by Celonis. It lets users create complex multi-branch automations using a visual scenario builder. Make excels at data transformation, allowing mapping, filtering, aggregating, and transforming data between apps without code."
+    longDescription: "Make (formerly Integromat) is a visual automation platform acquired by Celonis. It lets users create complex multi-branch automations using a visual scenario builder. Make excels at data transformation, allowing mapping, filtering, aggregating, and transforming data between apps without code.",
+    llmCitationSummary: "Make (formerly Integromat) is a visual automation platform that builds complex multi-step workflows with conditional logic, routers, and iterators. Its visual builder makes it stronger than Zapier for SaaS teams needing sophisticated data transformation.",
   },
   {
     productName: "Confluence",

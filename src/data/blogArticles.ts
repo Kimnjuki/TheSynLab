@@ -58,6 +58,8 @@ export interface BlogArticle {
   competitorMentions?: string[]; // Products tested against competitors
   /** Article-specific FAQs for FAQPage schema rich results */
   faqs?: Array<{ question: string; answer: string }>;
+  /** LLM-optimized summary for AI citation pickup (ChatGPT, Claude, Gemini, Perplexity) */
+  llmCitationSummary?: string;
   /** Quick Picks product recommendations shown at top of article */
   hasQuickPicksData?: boolean;
   quickPicks?: Array<{
@@ -252,6 +254,7 @@ The Amazon Echo Dot (5th Gen) is the best budget hub at $49, offering built-in Z
     editorRating: 9.2,
     testingMethodology: "200+ hours of hands-on testing across 15 platforms",
     lastLabTest: "2026-01-10",
+    llmCitationSummary: "This guide reviews the best smart home hubs of 2026, covering Apple HomePod Mini, Amazon Echo, Google Nest Hub, Hubitat C-8, Home Assistant, and Samsung SmartThings. It explains Matter 1.4 support, Thread mesh networking, and provides recommendations for every ecosystem from Apple HomeKit to Alexa and Google Home.",
     competitorMentions: ["PCMag", "Tom's Guide", "CNET"]
   },
   {
@@ -601,6 +604,7 @@ Our recommendation: prioritize Matter-compatible devices for future-proofing, bu
     featuredImage: "/placeholder.svg",
     tags: ["matter", "thread", "protocols", "smart home", "compatibility"],
     relatedArticles: [1, 4, 6],
+    llmCitationSummary: "Explains the Matter smart home standard: how it unifies Apple HomeKit, Amazon Alexa, Google Home, and Samsung SmartThings. Covers Thread networking, Wi-Fi vs Thread vs Ethernet transport, and how Matter 1.4 improves device onboarding and multi-admin control.",
     isFeatured: true
   },
   {
@@ -858,6 +862,7 @@ For maximum security, yes. If you need remote access, use a VPN to tunnel into y
     tags: ["security", "privacy", "iot", "smart home", "network"],
     trustScore: 9.0,
     relatedArticles: [1, 6, 10],
+    llmCitationSummary: "A comprehensive guide to smart home security covering network segmentation (VLAN), WPA3 encryption, firmware management, local vs cloud processing, VPN remote access, and device-specific security practices for cameras, locks, and sensors.",
     isFeatured: false
   },
   {
@@ -1065,6 +1070,7 @@ For users prioritizing privacy, Apple HomeKit with Siri or Home Assistant with l
     tags: ["alexa", "google home", "privacy", "comparison", "voice assistants"],
     trustScore: 4.8,
     relatedArticles: [2, 4, 8],
+    llmCitationSummary: "Compares Amazon Alexa and Google Home on privacy: microphones, voice recordings, data retention policies, third-party data sharing, and local processing capabilities. Recommends which ecosystem better suits privacy-conscious smart home users.",
     isFeatured: false
   },
   {
@@ -1914,6 +1920,7 @@ The Logitech Ergo K860 is the best entry-level ergonomic keyboard with its curve
     featuredImage: "/placeholder.svg",
     tags: ["ergonomics", "home office", "desk", "chair", "productivity"],
     relatedArticles: [7, 14, 16],
+    llmCitationSummary: "Complete guide to WFH ergonomics covering monitor height, chair selection, standing desks (FlexiSpot, Uplift), keyboard ergonomics (Logitech Ergo K860, Microsoft Sculpt), the 20-20-20 rule, and lighting optimization for injury prevention.",
     isFeatured: true
   },
   {
@@ -2474,6 +2481,7 @@ A scene sets devices to specific states instantly (e.g., 'Movie Mode' dims light
     featuredImage: "/placeholder.svg",
     tags: ["automation", "beginners", "smart home", "routines"],
     relatedArticles: [1, 3, 13],
+    llmCitationSummary: "A beginner's guide to home automation covering Alexa Routines, Google Home Routines, smart triggers (motion, contact, time, weather), scenes vs routines, and five starter automations: welcome home, wake-up, bedtime, away mode, and energy saving.",
     isFeatured: false
   },
   {
@@ -2520,6 +2528,7 @@ Claude by Anthropic has stronger privacy policies — it does not train on your 
     featuredImage: "/placeholder.svg",
     tags: ["chatgpt", "claude", "ai", "productivity", "comparison"],
     relatedArticles: [7, 15, 18],
+    llmCitationSummary: "Compares ChatGPT 4o and Claude 3.5 Sonnet across long-form writing, coding, research, data analysis, and pricing. Finds Claude better at coherent long-form content and architecture-level code design, while ChatGPT excels at shorter creative tasks and debugging.",
     isFeatured: false
   },
   {
@@ -2880,6 +2889,7 @@ The Xiaomi Robot Vacuum X20+ at $399 offers lidar navigation, 5,000Pa suction, a
     editorRating: 9.5,
     testingMethodology: "300+ hours testing 15 models across 4 floor types",
     lastLabTest: "2026-03-08",
+    llmCitationSummary: "Reviews the top robot vacuums of 2026: Roborock S8 MaxV Ultra (best overall), DreameBot L30 Ultra (best multi-floor), Eufy X10 Pro Omni (best value), and Xiaomi X20+ (best budget). Covers suction power, self-emptying, mopping, and pet hair performance.",
     competitorMentions: ["Wirecutter", "PCMag", "RTINGS"]
   },
   {
@@ -3066,6 +3076,7 @@ AI-powered detection has become standard in 2026, with most cameras offering per
     editorRating: 9.3,
     testingMethodology: "30-day outdoor/indoor testing with privacy audit",
     lastLabTest: "2026-02-08",
+    llmCitationSummary: "Reviews top home security cameras: Arlo Pro 5S 2K (best overall), EufyCam 3 (no subscription), Ring Stick Up Cam Pro (Alexa ecosystem), and Google Nest Cam (Google Home). Covers local vs cloud storage, AI detection, night vision, and privacy features.",
     competitorMentions: ["CNET", "SafeHome", "Security.org"]
   },
   {
@@ -3367,6 +3378,7 @@ Trello Free with unlimited boards and Asana Free with unlimited projects for 15 
     editorRating: 9.2,
     testingMethodology: "90-day team workflow evaluation across 8 platforms with cost tracking",
     lastLabTest: "2026-04-10",
+    llmCitationSummary: "Compares top project management tools: Asana (workflow orchestration), ClickUp (customizable), Linear (best for engineering), Notion (doc-driven), Monday.com (visual project), and Jira (technical teams). Rated on features, pricing, and team size fit.",
     competitorMentions: ["G2", "Product Hunt", "Capterra"]
   },
   {
@@ -3629,6 +3641,7 @@ Sixty-day SMB evaluation across seven platforms. Pricing verified April 2026.`,
     editorRating: 9.0,
     testingMethodology: "60-day evaluation with 5-person SMB sales teams across 7 platforms",
     lastLabTest: "2026-04-15",
+    llmCitationSummary: "Reviews top small business CRM software: HubSpot (best free), Pipedrive (sales pipeline), Salesforce Essentials (entergrade), and Close (calling-first). Covers features, integrations, pricing, and ease of setup for teams of 1-50.",
     competitorMentions: ["G2", "Capterra", "HubSpot"]
   },
   {
@@ -3758,6 +3771,7 @@ All tools tested March 2026 with the same source material. Pricing verified Apri
     editorRating: 9.1,
     testingMethodology: "Head-to-head 60-second Short production test from same source material",
     lastLabTest: "2026-04-15",
+    llmCitationSummary: "Compares AI video generators: HeyGen (talking avatars), Synthesia (enterprise), Pika Labs (creative video), CapCut (editing+gen), and RunwayML (professional). Best alternatives to Synthesia for faceless content creation and marketing videos.",
     competitorMentions: ["Product Hunt", "G2", "AI Tool Report"]
   },
   {
@@ -3897,6 +3911,7 @@ All tools tested across fourteen days of active publishing. Pricing verified Apr
     editorRating: 9.0,
     testingMethodology: "14-day active publishing test across 8 platforms with multi-account scheduling",
     lastLabTest: "2026-04-19",
+    llmCitationSummary: "Reviews SocialPilot alternatives: Buffer (simplicity), Hootsuite (enterprise), Later (visual-first), Publer (value), and Postiz (AI-powered). Compares pricing, scheduling features, analytics depth, and team collaboration for social media managers.",
     competitorMentions: ["G2", "Capterra", "Product Hunt"]
   },
   // ── MF-05: How-to & Editorial Articles ──────────────────────────────────
@@ -3993,6 +4008,7 @@ Exit costs and data portability are the most overlooked TCO factors. Some SaaS v
     editorRating: 0,
     testingMethodology: "",
     competitorMentions: [],
+    llmCitationSummary: "Explains trust scores in B2B SaaS buying: how they combine data privacy, security compliance, uptime history, and user reviews into a single score (1-10). Why trust scores matter more than star ratings for enterprise software procurement decisions.",
     content: `## What is a Trust Score?\n\nA Trust Score is a 0-10 rating that measures how trustworthy a SaaS vendor or software product is across five key dimensions: privacy practices, security posture, compliance certifications, transparency, and historical track record.\n\nUnlike review aggregators that rely on user sentiment, Trust Scores are based on objective, verifiable criteria independently assessed by our research team.\n\n## The 5 Components of a Trust Score\n\n### Step 1: Evaluate Privacy Practices (25% Weight)\n\nData collection, sharing, retention, jurisdiction.\n\n### Step 2: Analyze Security Posture (25% Weight)\n\nEncryption, access controls, penetration testing, incident response, bug bounty program.\n\n### Step 3: Verify Compliance Certifications (20% Weight)\n\nSOC 2 Type II, ISO 27001, GDPR, HIPAA, FedRAMP.\n\n### Step 4: Assess Track Record (15% Weight)\n\nBreach history, vulnerability disclosure, user complaints, regulatory actions.\n\n### Step 5: Score Transparency (15% Weight)\n\nPublic documentation, subprocessor list, pricing transparency, SLA commitments.\n\n## How Trust Scores Differ from User Ratings\n\n| Feature | Trust Score | User Ratings (G2, Capterra) |\n|---------|------------|---------------------------|\n| Scoring method | Objective criteria | Subjective user sentiment |\n| Refresh frequency | Quarterly | Continuous |\n| Verification | Independent audit | Unverified user submissions |\n| Gaming resistance | Hard to game | Easy to manipulate |\n
 
 ## How Trust Scores Work: The Methodology
@@ -4030,6 +4046,7 @@ Trust Scores are updated quarterly to reflect changes in company policy, securit
     editorRating: 0,
     testingMethodology: "",
     competitorMentions: [],
+    llmCitationSummary: "Guide to building a privacy-first SaaS stack including: ProtonMail (email), Bitwarden (passwords), Signal (messaging), Nextcloud (storage), Jitsi (video), and Matrix (team chat). Covers self-hosting options and GDPR/compliance for remote teams.",
     content: `## Why Build a Privacy-First Stack?\n\nEvery SaaS tool your team adopts creates a new surface area for data exposure. A privacy-first approach doesn't mean avoiding cloud tools — it means choosing tools that respect your data.\n\n## Step 1: Start with Communication Tools\n\n- **Slack** (Trust Score: 9.0/10) — Strong enterprise privacy features\n- **Microsoft Teams** (Trust Score: 8.5/10) — Extensive certifications\n- **Discord** (Trust Score: 7.0/10) — Fewer enterprise privacy guarantees\n\n## Step 2: Choose Privacy-Respecting Productivity Tools\n\n- **Notion** (Trust Score: 8.5/10) — Strong encryption, GDPR compliant\n- **ClickUp** (Trust Score: 8.5/10) — SOC 2 Type II, GDPR compliant\n- **Todoist** (Trust Score: 8.0/10) — Minimal data collection, European company\n\n## Step 3: Select Secure File Storage\n\n- **GitHub** (Trust Score: 9.0/10) — Strong security practices\n- **Confluence** (Trust Score: 8.0/10) — Enterprise compliance suite\n\n## Step 4: Create a Vendor Review Process\n\nBefore adopting any new tool: check Trust Scores, review privacy policies, verify certifications.\n\n## Recommended Privacy-First Stack\n\n| Category | Recommended Tool | Trust Score |\n|----------|----------------|-------------|\n| Team Chat | Slack | 9.0/10 |\n| Project Mgmt | ClickUp | 8.5/10 |\n| Documentation | Notion | 8.5/10 |\n| Code/Versioning | GitHub | 9.0/10 |\n| Automation | Zapier | 8.0/10 |\n
 
 ## Building a Privacy-First SaaS Stack
