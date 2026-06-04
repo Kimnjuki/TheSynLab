@@ -209,6 +209,8 @@ export default defineSchema({
     trendingRank: v.optional(v.float64()),
     isTrending: v.optional(v.boolean()),
     isBestOfMonth: v.optional(v.boolean()),
+    // Growth Plan: LLM citation optimization
+    llmCitationSummary: v.optional(v.string()),
   }).index("by_slug", ["productSlug"])
     .index("by_hub", ["hub"])
     .index("by_category", ["category"])
@@ -325,6 +327,9 @@ export default defineSchema({
     aiGeneratedDraft: v.optional(v.boolean()),
     aiDraftReviewedBy: v.optional(v.string()),
     copilotSessionCount: v.optional(v.float64()),
+    // Growth Plan: SEO & LLM optimization fields
+    faqSchema: v.optional(v.array(v.object({ question: v.string(), answer: v.string() }))),
+    llmCitationSummary: v.optional(v.string()),
   }).index("by_slug", ["postSlug"])
     .index("by_author", ["authorId"])
     .index("by_status", ["postStatus"])
@@ -2029,6 +2034,11 @@ export default defineSchema({
     orphanedPostCount: v.optional(v.float64()),
     postsWithNoSchema: v.optional(v.float64()),
     staleScoreCount: v.optional(v.float64()),
+    // Growth Plan: CWV & AI overview tracking
+    cwvPassStatus: v.optional(v.string()),
+    crawlBudgetUsed: v.optional(v.float64()),
+    aiOverviewAppearances: v.optional(v.float64()),
+    llmCitationCount: v.optional(v.float64()),
   }).index("by_hub", ["hubSlug"])
     .index("by_date", ["recordedAt"]),
 
@@ -2456,4 +2466,20 @@ export default defineSchema({
   }).index("by_magnet", ["magnetId"])
     .index("by_email", ["email"])
     .index("by_date", ["downloadedAt"]),
+
+  // ============ GROWTH PLAN: LLM/AI Citation Tracking ============
+  aiCitationTracker: defineTable({
+    citedUrl: v.string(),
+    citingPlatform: v.string(),
+    queryThatTriggered: v.optional(v.string()),
+    detectedAt: v.float64(),
+    productId: v.optional(v.id("novaProducts")),
+    postId: v.optional(v.id("novaPosts")),
+    hubSlug: v.optional(v.string()),
+    trafficGenerated: v.optional(v.float64()),
+    sessionId: v.optional(v.string()),
+  }).index("by_platform", ["citingPlatform"])
+    .index("by_post", ["postId"])
+    .index("by_hub", ["hubSlug"])
+    .index("by_date", ["detectedAt"]),
 });
