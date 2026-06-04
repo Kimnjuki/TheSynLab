@@ -749,7 +749,8 @@ const extractFaqFromMd = (md: string, title: string): { question: string; answer
       const answerParts: string[] = [];
       for (let j = i + 1; j < Math.min(i + 10, lines.length); j++) {
         const next = lines[j].trim();
-        if (!next || next.startsWith("#") || next.match(/^[-*+]\s/)) break;
+        if (!next) continue; // skip blank lines between Q and A
+        if (next.startsWith("#") || next.match(/^[-*+]\s/)) break;
         answerParts.push(next.replace(/\*\*/g, "").replace(/`(.+?)`/g, "$1"));
       }
       if (answerParts.length >= 1) {
@@ -1649,7 +1650,7 @@ const generateStaticHtmlPages = async (distDir: string) => {
 
     // Inject pre-rendered body so crawlers see real content
     const staticBody = buildStaticBodyHtml(page.route);
-    html = html.replace(/<div id="root">\s*<\/div>/, `<div id="root">\n${staticBody}\n</div>`);
+    html = html.replace(/<div id="root">[\s\S]*?<\/div>/, `<div id="root">\n${staticBody}\n</div>`);
 
     const outputPath =
       page.route === "/"
