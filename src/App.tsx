@@ -88,6 +88,7 @@ import StateOfSaaSTrust2026 from "./pages/report/StateOfSaaSTrust2026";
 import AlternativesIndex from "./pages/AlternativesIndex";
 import ProductCategoryPage from "./pages/ProductCategoryPage";
 import GuidesPage from "./pages/GuidesPage";
+import AdminGrowthDashboard from "./pages/AdminGrowthDashboard";
 import GlossaryPage from "./pages/GlossaryPage";
 
 const queryClient = new QueryClient();
@@ -115,6 +116,7 @@ const App = () => (
                   <Route path="/admin/content-quality" element={<AdminContentQuality />} />
                   <Route path="/admin/moderation" element={<AdminModeration />} />
                   <Route path="/admin/seo-opportunities" element={<AdminSeoOpportunities />} />
+                  <Route path="/admin/growth" element={<AdminGrowthDashboard />} />
                   <Route path="/tools/compare" element={<Compare />} />
                   <Route path="/compare/:slug" element={<CompareSlug />} />
                   <Route path="/tools" element={<ToolsHub />} />
