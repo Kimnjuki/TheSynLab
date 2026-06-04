@@ -6,7 +6,9 @@
  * Gracefully degrades to canned responses when no API key is set.
  */
 
-const NVIDIA_BASE_URL = 'https://integrate.api.nvidia.com/v1';
+// Use server-side proxy to avoid browser CORS / DNS issues
+// The nginx config at /api/ai/chat forwards to NVIDIA NIM
+const NVIDIA_BASE_URL = '/api/ai';
 const ANTHROPIC_BASE_URL = 'https://api.anthropic.com/v1';
 
 interface ChatMessage {
@@ -71,7 +73,7 @@ async function nvidiaChat(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
+      // API key injected by nginx server-side; don't send from browser
     },
     body: JSON.stringify({
       model,

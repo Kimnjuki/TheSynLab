@@ -56,4 +56,5 @@ EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -qO- http://localhost/ >/dev/null || exit 1
 
-CMD ["nginx", "-g", "daemon off;"]
+# Substitute NVIDIA_API_KEY into nginx config at startup, then start nginx
+CMD sh -c 'envsubst "\$NVIDIA_API_KEY" < /etc/nginx/conf.d/default.conf > /tmp/nginx.conf && mv /tmp/nginx.conf /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"'
