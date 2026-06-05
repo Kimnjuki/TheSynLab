@@ -698,10 +698,10 @@ export const saasTools: SaasTool[] = [
   {
     slug: "photopea",
     name: "Photopea",
-    tagline: "Free browser-based Photoshop alternative",
+    tagline: "Free online Photoshop alternative — no install needed (PSD, AI, XD)",
     category: "design",
     subCategory: "Photo Editing",
-    shortDescription: "Photopea is a free, browser-based photo editor with full PSD, AI, and RAW support—no install needed.",
+    shortDescription: "Photopea is a free online Photoshop alternative that runs in your browser. Supports PSD, AI, XD, Sketch, and RAW files. Full layer support, no download required.",
     description:
       "Photopea is the internet's best free Photoshop alternative, running entirely in the browser with no plugin or installation required. It opens and saves PSD, XD, Sketch, and Figma files natively, supports RAW formats, and replicates most of Photoshop's core tools including layers, masks, blend modes, and adjustment layers. For designers who can't justify an Adobe subscription or need to make quick edits on a non-primary machine, Photopea is the definitive solution.",
     keyFeatures: [
@@ -788,10 +788,10 @@ export const saasTools: SaasTool[] = [
   {
     slug: "vectr",
     name: "Vectr",
-    tagline: "Free vector graphics editor in your browser",
+    tagline: "Free vector graphics editor — online and desktop",
     category: "design",
     subCategory: "Vector Graphics",
-    shortDescription: "Vectr is a free browser and desktop vector editor for logos, icons, and simple illustrations.",
+    shortDescription: "Vectr is a free vector graphics editor for logos, icons, and illustrations. Runs in browser or desktop. Real-time collaboration and PNG/SVG export.",
     description:
       "Vectr offers a free alternative to Adobe Illustrator for users who need vector editing without the complexity or cost. It runs in-browser with real-time collaboration and syncs to a desktop app, making it accessible on any machine. While it lacks the advanced features of Illustrator or Affinity Designer, Vectr covers the core needs of logo design, icon creation, and simple illustrations with a clean, approachable interface. Its free price tag makes it a frequent recommendation for students and freelancers just starting out.",
     keyFeatures: [
@@ -943,10 +943,10 @@ export const saasTools: SaasTool[] = [
   {
     slug: "wisestamp",
     name: "WiseStamp",
-    tagline: "Professional email signature generator for teams",
+    tagline: "Professional email signature generator for teams and professionals",
     category: "social-marketing",
     subCategory: "Email Branding",
-    shortDescription: "WiseStamp creates branded email signatures for individuals and teams with CTA banners and social links.",
+    shortDescription: "WiseStamp creates branded email signatures for Gmail, Outlook, and Apple Mail. Professional signature templates with CTA banners, social icons, and team management.",
     description:
       "WiseStamp is the dominant email signature tool, making what is typically a tedious IT task into a marketing opportunity. Its drag-and-drop editor creates professional signatures with social icons, headshots, CTA banners, and even animated GIFs. For companies, the Teams plan pushes consistent signatures to every employee's inbox—Gmail, Outlook, and Apple Mail—via a central dashboard, ensuring brand compliance without involving IT. The high CPC ($10.70) reflects strong commercial intent from SMB owners.",
     keyFeatures: [
@@ -973,10 +973,10 @@ export const saasTools: SaasTool[] = [
   {
     slug: "mailmeteor",
     name: "Mailmeteor",
-    tagline: "Mass email campaigns directly inside Google Sheets",
+    tagline: "Send mass email campaigns from Google Sheets with Mailmeteor",
     category: "social-marketing",
     subCategory: "Email Marketing",
-    shortDescription: "Mailmeteor sends personalised bulk emails from Gmail using Google Sheets as your contact list.",
+    shortDescription: "Mailmeteor sends personalised bulk emails directly from Gmail using Google Sheets. Mail merge with tracking, templates, and scheduling. Free tier available.",
     description:
       "Mailmeteor is the highest-rated Gmail mail merge tool, sending personalised mass emails directly from your Gmail account using a Google Sheets contact list. For small businesses, nonprofits, and sales teams who already live in Google Workspace, it avoids the complexity and cost of a dedicated ESP like Mailchimp. Open tracking, sending limits, and unsubscribe management are all included. Because emails are sent from your real Gmail account, deliverability is significantly higher than most bulk email platforms.",
     keyFeatures: [
@@ -1429,10 +1429,10 @@ export const saasTools: SaasTool[] = [
   {
     slug: "remnote",
     name: "RemNote",
-    tagline: "The all-in-one study and knowledge management tool",
+    tagline: "All-in-one study tool with notes and spaced repetition flashcards",
     category: "productivity",
     subCategory: "Note-Taking",
-    shortDescription: "RemNote combines note-taking with spaced repetition flashcards so knowledge sticks as you write.",
+    shortDescription: "RemNote combines note-taking with built-in spaced repetition flashcards. Ideal for medical students, language learners, and knowledge management.",
     description:
       "RemNote is built for learners and knowledge workers who want their notes to become long-term memory, not just a searchable archive. Its core innovation is the integration of spaced repetition flashcards directly inside notes—highlight a concept and it becomes a flashcard automatically, reviewed via an Anki-like algorithm. This makes RemNote the favourite tool of medical students, law students, and researchers. Its bidirectional linking and outliner interface also satisfy the PKM crowd previously using Roam or Obsidian.",
     keyFeatures: [
