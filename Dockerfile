@@ -47,14 +47,21 @@ FROM nginx:alpine
 # Remove default config
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy config directly (no envsubst template processing — nginx.conf uses $nginx
-# variables like $request_uri, $uri, etc. that would be corrupted by envsubst)
+# Copy nginx.conf (uses $NVIDIA_API_KEY — envsubst with whitelist below will
+# substitute only that variable, leaving nginx's own $request_uri, $uri, etc.
+# untouched)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy built assets from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80
+
+# Use envsubst with a whitelist to inject $NVIDIA_API_KEY at startup, then
+# launch nginx. The whitelist ('$NVIDIA_API_KEY') ensures nginx's own $variables
+# like $request_uri, $uri, etc. are NOT corrupted.
+# gettext (which provides envsubst) is pre-installed in nginx:alpine.
+CMD sh -c 'envsubst '\''$NVIDIA_API_KEY'\'' < /etc/nginx/conf.d/default.conf > /tmp/default.conf && mv /tmp/default.conf /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"'
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl -f http://127.0.0.1:80/ || exit 1
