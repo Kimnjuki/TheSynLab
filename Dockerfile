@@ -44,8 +44,11 @@ RUN npm run build
 # Production stage
 FROM nginx:alpine
 
-# Remove default config and use our SPA config
+# Remove default config
 RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy config directly (no envsubst template processing — nginx.conf uses $nginx
+# variables like $request_uri, $uri, etc. that would be corrupted by envsubst)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy built assets from builder
@@ -54,7 +57,4 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://localhost/ >/dev/null || exit 1
-
-# Substitute NVIDIA_API_KEY into nginx config at startup, then start nginx
-CMD sh -c 'envsubst "\$NVIDIA_API_KEY" < /etc/nginx/conf.d/default.conf > /tmp/nginx.conf && mv /tmp/nginx.conf /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"'
+  CMD curl -f http://127.0.0.1:80/ || exit 1
