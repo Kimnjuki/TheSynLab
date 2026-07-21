@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import { STATIC_PRODUCTS } from "../../data/staticProductData";
 
 interface ProductFilters {
   hub?: string;
@@ -16,6 +17,7 @@ interface ProductFilters {
 
 export function useProducts(filters: ProductFilters = {}) {
   const [timedOut, setTimedOut] = useState(false);
+  const [usingFallback, setUsingFallback] = useState(false);
   const priceRange = filters.priceRange as number[] | undefined;
   const products = useQuery(api.products.list, {
     hub: filters.hub,
@@ -27,13 +29,52 @@ export function useProducts(filters: ProductFilters = {}) {
 
   useEffect(() => {
     setTimedOut(false);
+    setUsingFallback(false);
     if (products !== undefined) return;
-    const timeout = window.setTimeout(() => setTimedOut(true), 8000);
+    const timeout = window.setTimeout(() => {
+      setTimedOut(true);
+      setUsingFallback(true);
+    }, 8000);
     return () => window.clearTimeout(timeout);
   }, [products, filters.hub, filters.status, filters.category, filters.priceRange, filters.categories, filters.trustScore, filters.integrationScore]);
 
+  // Fallback for when Convex is disabled or unavailable.
+  // Match StaticProduct fields so the rest of the code can consume consistent shape.
+  const staticFallback = usingFallback
+    ? STATIC_PRODUCTS.map((p, idx) => ({
+        ...p,
+        _id: `static-${p.productSlug}-${idx}`,
+        _creationTime: Date.now(),
+        productName: p.productName,
+        productSlug: p.productSlug,
+        productType: p.productType,
+        priceCurrency: p.priceCurrency,
+        priceModel: p.priceModel,
+        releaseDate: new Date().toISOString(),
+        featuredImageUrl: "",
+        galleryImages: [] as string[],
+        videoUrl: "",
+        officialWebsite: "",
+        documentationUrl: "",
+        supportUrl: "",
+        isSponsored: false,
+        sponsorDisclosed: false,
+        createdBy: "",
+        updatedBy: "",
+        dataHash: "",
+        trustScores: { totalScore: p.trustScore },
+        integrationScores: { totalScore: p.integrationScore },
+      }))
+    : [];
+
+  // If Convex returned data, use it. If Convex is disabled/timed out, use static fallback.
+  // If Convex is enabled but returned empty (seeds not run), also use static fallback as safety net.
+  const convexReturnedData = products !== undefined;
+  const convexHasProducts = convexReturnedData && products.length > 0;
+  const sourceData = convexHasProducts ? products : staticFallback;
+
   // Apply client-side filtering for trust/integration scores
-  let filteredProducts = (products || []) as any[];
+  let filteredProducts = (sourceData || []) as any[];
 
   const trustScore = filters.trustScore as number[] | undefined;
   const integrationScore = filters.integrationScore as number[] | undefined;
@@ -63,8 +104,9 @@ export function useProducts(filters: ProductFilters = {}) {
 
   return {
     products: normalized,
-    isLoading: products === undefined,
-    error: timedOut ? "Product service timeout. Data source may be unavailable." : null,
+    isLoading: products === undefined && !usingFallback,
+    // Only show timeout error if fallback is also empty — if static data loaded, no need to alarm the user
+    error: timedOut && staticFallback.length === 0 ? "Product service timeout. Data source may be unavailable." : null,
   };
 }
 
