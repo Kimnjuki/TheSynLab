@@ -276,6 +276,8 @@ type StaticPageMeta = {
   noindex?: boolean;
 };
 
+type JsonLdValue = Record<string, unknown> | Record<string, unknown>[];
+
 const buildStaticPagesMeta = (): StaticPageMeta[] => {
   const year = new Date().getFullYear();
   const pages: StaticPageMeta[] = [];
@@ -293,7 +295,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
         name: fromMap?.title ?? `${slugToTitle(route)} | TheSynLab`,
         description: fromMap?.description ?? HOME_DESCRIPTION,
         url: `${SITE_URL}${route === "/" ? "/" : route}`,
-      },
+      } as JsonLdValue,
       noindex: NOINDEX_ROUTES.has(route),
     });
   }
@@ -315,7 +317,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
         url: `${SITE_URL}/blog/${a.slug}`,
       })),
       numberOfItems: Math.min(items.length, 20),
-    }];
+    }] as JsonLdValue;
   };
   addBlogItemList("/blog");
   addBlogItemList("/guides", a => a.category === "Guides");
@@ -334,7 +336,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
         datePublished: article.publishedAt,
         dateModified: article.updatedAt || article.publishedAt,
         author: article.author ? { "@type": "Person", name: article.author } : undefined,
-        image: article.image,
+        image: article.featuredImage,
         mainEntityOfPage: `${SITE_URL}${route}`,
         url: `${SITE_URL}${route}`,
         publisher: {
@@ -856,6 +858,15 @@ const mdToHtml = (md: string, maxChars = 8000): string => {
       lines.push(`<li>${escapeHtml(li[1])}</li>`);
       continue;
     }
+    // Handle markdown images: ![alt text](url)
+    const img = line.match(/^!\[(.*?)\]\((.*?)\)$/);
+    if (img) {
+      if (inList) { lines.push("</ul>"); inList = false; }
+      const alt = escapeHtml(img[1]);
+      const src = escapeHtml(img[2]);
+      lines.push(`<p><img src="${src}" alt="${alt}" style="max-width:100%;height:auto;border-radius:8px;margin:1rem 0" loading="lazy" /></p>`);
+      continue;
+    }
     if (inList) { lines.push("</ul>"); inList = false; }
     lines.push(`<p>${escapeHtml(line.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1").replace(/`(.+?)`/g, "$1"))}</p>`);
   }
@@ -921,9 +932,9 @@ const buildStaticBodyHtml = (route: string): string => {
     const allProducts = STATIC_PRODUCTS;
     const widgetCards = allProducts.slice(0, 10).map((p) => {
       const slug = p.productSlug;
-      const pname = p.productName || p.name || slug;
-      const tcoRaw = p.estimatedTCO || '';
-      const tcoStr = tcoRaw.replace(/^\$/, '');
+      const pname = p.productName || slug;
+      const tcoRaw = p.estimatedTco || '';
+      const tcoStr = typeof tcoRaw === 'number' ? String(tcoRaw) : tcoRaw.replace(/^\$/, '');
       return `<div style="border:1px solid #e2e8f0;border-radius:12px;padding:1.25rem;background:#fff">
 <h3>${pname}</h3>
 <div style="display:flex;gap:1rem;margin:.75rem 0;font-size:.8rem">

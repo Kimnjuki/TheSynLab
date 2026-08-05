@@ -1,7 +1,11 @@
 import { createRoot } from "react-dom/client";
 import { Component, type ReactNode } from "react";
 import App from "./App.tsx";
+import { initGA } from "@/lib/analytics";
 import "./index.css";
+
+// Initialise Google Analytics 4 (ID from VITE_GA4_MEASUREMENT_ID in .env)
+initGA();
 
 // Suppress console noise from Convex placeholder (no functions deployed)
 const origError = console.error;

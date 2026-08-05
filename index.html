@@ -43,25 +43,14 @@
       #root { min-height: 100vh; }
     </style>
 
-    <!-- ── GA4 (hardcoded fallback G-XMGRJBSN5Y if env var not set) ── -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NC8K7M5LRX"></script>
     <script>
-      (function() {
-        var ga = "G-TJ1VXE91NE";  // fallback
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('consent', 'default', {
-          'ad_storage': 'denied',
-          'ad_user_data': 'denied',
-          'ad_personalization': 'denied',
-          'analytics_storage': 'denied'
-        });
-        gtag('js', new Date());
-        gtag('config', ga, { cookie_flags: 'SameSite=None;Secure' });
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga;
-        document.head.appendChild(s);
-      })();
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-NC8K7M5LRX');
     </script>
 
     <!-- ── Route-specific meta injection (crawler-friendly before JS) ── -->

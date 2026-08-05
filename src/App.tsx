@@ -2,7 +2,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { trackPageView } from "@/lib/analytics";
 import { HelmetProvider } from "react-helmet-async";
 import { ConvexClientProvider } from "./integrations/convex/ConvexClientProvider";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -93,6 +95,15 @@ import GlossaryPage from "./pages/GlossaryPage";
 
 const queryClient = new QueryClient();
 
+/** Tracks page views on every route change for GA4. */
+function RouteTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView(location.pathname + location.search);
+  }, [location]);
+  return null;
+}
+
 const App = () => (
   <ErrorBoundary>
     <HelmetProvider>
@@ -103,6 +114,7 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
+                <RouteTracker />
                 <ComparisonBarProvider>
                 <AdSlotProvider>
                 <Routes>
