@@ -154,6 +154,24 @@ const BlogArticle = () => {
       // Handle empty lines
       if (trimmedLine === '') return;
 
+      // Handle markdown images
+      if (trimmedLine.startsWith('![')) {
+        const imgMatch = trimmedLine.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+        if (imgMatch) {
+          const [, altText, imgSrc] = imgMatch;
+          elements.push(
+            <img
+              key={index}
+              src={imgSrc}
+              alt={altText}
+              className="my-6 rounded-lg max-w-full h-auto"
+              loading="lazy"
+            />
+          );
+        }
+        return;
+      }
+
       // Handle regular paragraphs with inline formatting
       const formattedContent = trimmedLine
         .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-semibold text-foreground">$1</strong>')
@@ -180,7 +198,7 @@ const BlogArticle = () => {
         title={article.seoTitle || article.title}
         description={article.metaDescription || article.excerpt || article.title}
         canonical={articleUrl}
-        ogImage={article.image}
+        ogImage={article.featuredImage}
         ogType="article"
       />
       {/* NewsArticle schema with full author, publisher, word count, dates */}
@@ -189,7 +207,7 @@ const BlogArticle = () => {
         article={{
           title: article.seoTitle || article.title,
           description: article.metaDescription || article.excerpt || article.title,
-          image: article.image,
+          image: article.featuredImage,
           url: articleUrl,
           publishedTime: article.publishedAt,
           modifiedTime: article.updatedAt || article.publishedAt,
