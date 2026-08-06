@@ -52,6 +52,7 @@ import type * as communityScoreRatings from "../communityScoreRatings.js";
 import type * as community_leaderboard from "../community/leaderboard.js";
 import type * as comparisons from "../comparisons.js";
 import type * as compatibilityLeaderboard from "../compatibilityLeaderboard.js";
+import type * as contentQualityAudits from "../contentQualityAudits.js";
 import type * as cronHandlers from "../cronHandlers.js";
 import type * as crons from "../crons.js";
 import type * as forum from "../forum.js";
@@ -67,10 +68,12 @@ import type * as integrationRecipes from "../integrationRecipes.js";
 import type * as integrationScores from "../integrationScores.js";
 import type * as integrationSimulations from "../integrationSimulations.js";
 import type * as internalLinks from "../internalLinks.js";
+import type * as leadMagnets from "../leadMagnets.js";
 import type * as livingGuides from "../livingGuides.js";
 import type * as mlPredictionJobs from "../mlPredictionJobs.js";
 import type * as ml_featureExtractor from "../ml/featureExtractor.js";
 import type * as ml_predictReliability from "../ml/predictReliability.js";
+import type * as myStack from "../myStack.js";
 import type * as newsletter from "../newsletter.js";
 import type * as novaTrustScores from "../novaTrustScores.js";
 import type * as paa from "../paa.js";
@@ -82,6 +85,7 @@ import type * as productFinder from "../productFinder.js";
 import type * as products from "../products.js";
 import type * as productsHub from "../productsHub.js";
 import type * as profiles from "../profiles.js";
+import type * as quiz from "../quiz.js";
 import type * as recommendations_matchScore from "../recommendations/matchScore.js";
 import type * as redirectRules from "../redirectRules.js";
 import type * as reviewTranslations from "../reviewTranslations.js";
@@ -96,7 +100,10 @@ import type * as scores from "../scores.js";
 import type * as search from "../search.js";
 import type * as security from "../security.js";
 import type * as seed from "../seed.js";
+import type * as seedAiReportGuide from "../seedAiReportGuide.js";
 import type * as seedCompetitiveProducts from "../seedCompetitiveProducts.js";
+import type * as seedN8nVsZapierVsMake from "../seedN8nVsZapierVsMake.js";
+import type * as seedProductionData from "../seedProductionData.js";
 import type * as seedSmartHomeArticles from "../seedSmartHomeArticles.js";
 import type * as seoOpportunities from "../seoOpportunities.js";
 import type * as seoSchema from "../seoSchema.js";
@@ -104,11 +111,15 @@ import type * as simulator_getCompatibility from "../simulator/getCompatibility.
 import type * as sitemap from "../sitemap.js";
 import type * as synTokenLedger from "../synTokenLedger.js";
 import type * as tasks from "../tasks.js";
+import type * as tco from "../tco.js";
 import type * as tco_energyCost from "../tco/energyCost.js";
 import type * as tco_personalizedTco from "../tco/personalizedTco.js";
 import type * as tools from "../tools.js";
+import type * as trustIndex from "../trustIndex.js";
 import type * as userWorkflowConfigs from "../userWorkflowConfigs.js";
 import type * as users from "../users.js";
+import type * as vendorRisk from "../vendorRisk.js";
+import type * as workflowBlueprint from "../workflowBlueprint.js";
 
 import type {
   ApiFromModules,
@@ -161,6 +172,7 @@ declare const fullApi: ApiFromModules<{
   "community/leaderboard": typeof community_leaderboard;
   comparisons: typeof comparisons;
   compatibilityLeaderboard: typeof compatibilityLeaderboard;
+  contentQualityAudits: typeof contentQualityAudits;
   cronHandlers: typeof cronHandlers;
   crons: typeof crons;
   forum: typeof forum;
@@ -176,10 +188,12 @@ declare const fullApi: ApiFromModules<{
   integrationScores: typeof integrationScores;
   integrationSimulations: typeof integrationSimulations;
   internalLinks: typeof internalLinks;
+  leadMagnets: typeof leadMagnets;
   livingGuides: typeof livingGuides;
   mlPredictionJobs: typeof mlPredictionJobs;
   "ml/featureExtractor": typeof ml_featureExtractor;
   "ml/predictReliability": typeof ml_predictReliability;
+  myStack: typeof myStack;
   newsletter: typeof newsletter;
   novaTrustScores: typeof novaTrustScores;
   paa: typeof paa;
@@ -191,6 +205,7 @@ declare const fullApi: ApiFromModules<{
   products: typeof products;
   productsHub: typeof productsHub;
   profiles: typeof profiles;
+  quiz: typeof quiz;
   "recommendations/matchScore": typeof recommendations_matchScore;
   redirectRules: typeof redirectRules;
   reviewTranslations: typeof reviewTranslations;
@@ -205,7 +220,10 @@ declare const fullApi: ApiFromModules<{
   search: typeof search;
   security: typeof security;
   seed: typeof seed;
+  seedAiReportGuide: typeof seedAiReportGuide;
   seedCompetitiveProducts: typeof seedCompetitiveProducts;
+  seedN8nVsZapierVsMake: typeof seedN8nVsZapierVsMake;
+  seedProductionData: typeof seedProductionData;
   seedSmartHomeArticles: typeof seedSmartHomeArticles;
   seoOpportunities: typeof seoOpportunities;
   seoSchema: typeof seoSchema;
@@ -213,11 +231,15 @@ declare const fullApi: ApiFromModules<{
   sitemap: typeof sitemap;
   synTokenLedger: typeof synTokenLedger;
   tasks: typeof tasks;
+  tco: typeof tco;
   "tco/energyCost": typeof tco_energyCost;
   "tco/personalizedTco": typeof tco_personalizedTco;
   tools: typeof tools;
+  trustIndex: typeof trustIndex;
   userWorkflowConfigs: typeof userWorkflowConfigs;
   users: typeof users;
+  vendorRisk: typeof vendorRisk;
+  workflowBlueprint: typeof workflowBlueprint;
 }>;
 
 /**
