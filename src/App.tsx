@@ -20,7 +20,6 @@ import Compare from "./pages/Compare";
 import CommunitySetups from "./pages/CommunitySetups";
 import BudgetCalculator from "./pages/BudgetCalculator";
 import CompatibilityChecker from "./pages/CompatibilityChecker";
-import ProductReview from "./pages/ProductReview";
 import ProductDetailPage from "./pages/products/ProductDetailPage";
 import ProductsHub from "./pages/ProductsHub";
 import ProductsWatchlist from "./pages/ProductsWatchlist";
@@ -41,7 +40,6 @@ import Contact from "./pages/Contact";
 import EditorialPolicy from "./pages/EditorialPolicy";
 import AffiliateDisclosure from "./pages/AffiliateDisclosure";
 import HowWeMakeMoney from "./pages/HowWeMakeMoney";
-import DigitalProducts from "./pages/DigitalProducts";
 import VendorProgram from "./pages/VendorProgram";
 import NotFound from "./pages/NotFound";
 import Blog from "./pages/Blog";
@@ -118,6 +116,7 @@ const App = () => (
                 <ComparisonBarProvider>
                 <AdSlotProvider>
                 <Routes>
+                  {/* Core */}
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/profile" element={<Profile />} />
@@ -129,8 +128,8 @@ const App = () => (
                   <Route path="/admin/moderation" element={<AdminModeration />} />
                   <Route path="/admin/seo-opportunities" element={<AdminSeoOpportunities />} />
                   <Route path="/admin/growth" element={<AdminGrowthDashboard />} />
-                  <Route path="/tools/compare" element={<Compare />} />
-                  <Route path="/compare/:slug" element={<CompareSlug />} />
+
+                  {/* Tools */}
                   <Route path="/tools" element={<ToolsHub />} />
                   <Route path="/tools/budget-calculator" element={<BudgetCalculator />} />
                   <Route path="/tools/compatibility" element={<CompatibilityChecker />} />
@@ -141,80 +140,82 @@ const App = () => (
                   <Route path="/tools/roi-calculator" element={<RoiCalculatorTool />} />
                   <Route path="/tools/automations" element={<Automations />} />
                   <Route path="/tasks" element={<Tasks />} />
+
+                  {/* Compare — canonical root-level route; /tools/compare kept for embed CSP */}
+                  <Route path="/compare" element={<Compare />} />
+                  <Route path="/tools/compare" element={<Compare />} />
+                  <Route path="/compare/:slug" element={<CompareSlug />} />
+
+                  {/* Products — /products renders ProductsHub (not DigitalProducts) */}
                   <Route path="/products" element={<ProductsHub />} />
                   <Route path="/products/watchlist" element={<ProductsWatchlist />} />
                   <Route path="/products/category/:category" element={<ProductCategoryPage />} />
                   <Route path="/products/:slug" element={<ProductDetailPage />} />
+
+                  {/* Content Hubs */}
                   <Route path="/hub/:slug" element={<Hub />} />
+                  <Route path="/hubs" element={<HubsIndex />} />
                   <Route path="/hubs/:hubSlug/:postSlug" element={<HubPost />} />
                   <Route path="/hubs/:slug/pillar" element={<PillarGuide />} />
-                  <Route path="/best/for-:ecosystem" element={<BestForEcosystem />} />
-                  <Route path="/recipes/:slug" element={<IntegrationRecipe />} />
-                  <Route path="/community/setups" element={<CommunitySetups />} />
-                  <Route path="/community/leaderboard" element={<CommunityLeaderboard />} />
                   <Route path="/hub/ai-workflow" element={<AIWorkflowHub />} />
                   <Route path="/hub/intelligent-home" element={<IntelligentHomeHub />} />
                   <Route path="/hub/hybrid-office" element={<HybridOfficeHub />} />
+                  <Route path="/hub/ai-tools" element={<AIToolsHub />} />
+                  <Route path="/hub/ai-tools/:category" element={<AIToolsCategoryPage />} />
+
+                  {/* SaaS Tool Reviews */}
+                  <Route path="/tool/:slug" element={<SaasToolReviewPage />} />
+                  <Route path="/tool/:slug/alternatives" element={<ToolAlternativesPage />} />
+                  <Route path="/best/:useCase" element={<BestToolsRoundup />} />
+                  <Route path="/best/for-:ecosystem" element={<BestForEcosystem />} />
+
                   {/* Forum */}
                   <Route path="/forum" element={<Forum />} />
                   <Route path="/forum/category/:slug" element={<ForumCategory />} />
                   <Route path="/forum/thread/:slug" element={<ForumThread />} />
                   <Route path="/forum/new" element={<ForumNewThread />} />
+
+                  {/* Community */}
+                  <Route path="/community/setups" element={<CommunitySetups />} />
+                  <Route path="/community/leaderboard" element={<CommunityLeaderboard />} />
+
                   {/* Legal & Company Pages */}
                   <Route path="/privacy" element={<PrivacyPolicy />} />
                   <Route path="/terms" element={<TermsOfService />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/disclosure" element={<AffiliateDisclosure />} />
+                  <Route path="/editorial" element={<EditorialPolicy />} />
+                  <Route path="/how-we-make-money" element={<HowWeMakeMoney />} />
+                  <Route path="/vendor-program" element={<VendorProgram />} />
                   <Route path="/guides" element={<GuidesPage />} />
                   <Route path="/glossary" element={<GlossaryPage />} />
-          <Route path="/how-we-make-money" element={<HowWeMakeMoney />} />
-          <Route path="/editorial" element={<EditorialPolicy />} />
-          <Route path="/products" element={<DigitalProducts />} />
-          <Route path="/vendor-program" element={<VendorProgram />} />
-                  {/* Blog */}
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/blog/:slug" element={<BlogArticle />} />
-                  {/* Scoring Hub */}
                   <Route path="/scoring-hub" element={<ScoringHub />} />
-                  {/* Ad Compliance */}
                   <Route path="/ad-compliance" element={<AdCompliance />} />
-                  {/* New v2.0 routes */}
-                  <Route path="/tools/stack-builder" element={<StackBuilder />} />
+
+                  {/* Canonical root-level routes (v2.0) — old /tools/* versions 301-redirected by nginx */}
+                  <Route path="/stack-builder" element={<StackBuilder />} />
+                  <Route path="/tco-calculator" element={<TcoCalculator />} />
+                  <Route path="/vendor-risk-checker" element={<VendorRiskChecker />} />
+                  <Route path="/workflow-blueprint" element={<WorkflowBlueprint />} />
+                  <Route path="/stack-quiz" element={<StackQuiz />} />
                   <Route path="/search" element={<Search />} />
                   <Route path="/scores/trust-score-index" element={<TrustScoreIndex />} />
                   <Route path="/scores/integration-score-index" element={<IntegrationScoreIndex />} />
-                  {/* ── AI & SaaS Tools Intelligence Layer ── */}
-                  <Route path="/hub/ai-tools" element={<AIToolsHub />} />
-                  <Route path="/hub/ai-tools/:category" element={<AIToolsCategoryPage />} />
-                  <Route path="/tool/:slug" element={<SaasToolReviewPage />} />
-                  <Route path="/tool/:slug/alternatives" element={<ToolAlternativesPage />} />
-                  <Route path="/best/:useCase" element={<BestToolsRoundup />} />
-                  {/* ── Spec v2.0 canonical routes ── */}
-                  <Route path="/hubs" element={<HubsIndex />} />
-                  {/* /compare and /stack-builder as canonical aliases */}
-                  <Route path="/compare" element={<Compare />} />
-                  <Route path="/stack-builder" element={<StackBuilder />} />
                   <Route path="/decision-studio" element={<DecisionStudio />} />
                   <Route path="/workflows" element={<WorkflowsIndex />} />
-                  <Route path="/stack-quiz" element={<StackQuiz />} />
-                  <Route path="/tools/stack-quiz" element={<StackQuiz />} />
-                  <Route path="/tco-calculator" element={<TcoCalculator />} />
-                  <Route path="/tools/tco-calculator" element={<TcoCalculator />} />
-                  <Route path="/vendor-risk-checker" element={<VendorRiskChecker />} />
-                  <Route path="/tools/vendor-risk-checker" element={<VendorRiskChecker />} />
-                  <Route path="/workflow-blueprint" element={<WorkflowBlueprint />} />
-                  <Route path="/tools/workflow-blueprint" element={<WorkflowBlueprint />} />
+                  <Route path="/alternatives" element={<AlternativesIndex />} />
                   <Route path="/trust-index" element={<TrustIndexLeaderboard />} />
                   <Route path="/my-stack" element={<MyStackDashboard />} />
                   <Route path="/widgets" element={<WidgetGallery />} />
                   <Route path="/report/state-of-saas-trust-2026" element={<StateOfSaaSTrust2026 />} />
-                  <Route path="/alternatives" element={<AlternativesIndex />} />
+                  <Route path="/recipes/:slug" element={<IntegrationRecipe />} />
+
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <AnalyticsScripts />
-      <FacebookPixel />
+                <FacebookPixel />
                 <CookieBanner />
                 <ComparisonBar />
                 </AdSlotProvider>

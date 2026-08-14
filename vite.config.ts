@@ -75,6 +75,12 @@ const NOINDEX_ROUTES = new Set([
   "/auth",
 ]);
 
+// Canonical alias routes: /tools/* paths that duplicate root-level canonical routes.
+// These are kept in staticRoutes for prerendering but canonicalize to the root-level
+// version, are excluded from sitemap, and get noindex,follow.
+const CANONICAL_ALIASES: Record<string, string> = {
+  "/tools/compare": "/compare",
+};
 const productRoutes = STATIC_PRODUCTS.map((p) => `/products/${p.productSlug}`);
 const productAltRoutes = STATIC_PRODUCTS
   .filter((p) => p.alternativeSlugs.length > 0)
@@ -144,7 +150,9 @@ const prerenderRoutes = Array.from(new Set([...staticRoutes, ...dynamicRoutes]))
 
 const buildSitemapXml = () => {
   // Exclude noindex routes from sitemap
-  const sitemapRoutes = prerenderRoutes.filter((r) => !NOINDEX_ROUTES.has(r));
+  const sitemapRoutes = prerenderRoutes.filter(
+    (r) => !NOINDEX_ROUTES.has(r) && !Object.keys(CANONICAL_ALIASES).includes(r)
+  );
 
   const urls = sitemapRoutes
     .map((route) => {
@@ -230,10 +238,6 @@ const staticMetaByRoute: Record<string, { title: string; description: string }> 
     title: "Compare Tech Products Side-by-Side | TheSynLab",
     description: "Compare any two or more products on trust score, integration score, TCO, and ecosystem fit.",
   },
-  "/tools/stack-builder": {
-    title: "Tech Stack Builder | TheSynLab",
-    description: "Build your ideal tech stack, check compatibility scores, and get AI-generated integration notes.",
-  },
   "/stack-builder": {
     title: "Tech Stack Builder | TheSynLab",
     description: "Build your ideal tech stack, check compatibility scores, and get AI-generated integration notes.",
@@ -274,7 +278,8 @@ type StaticPageMeta = {
   description: string;
   jsonLd: Record<string, unknown> | Record<string, unknown>[];
   noindex?: boolean;
-};
+  canonicalOverride?: string;
+}
 
 type JsonLdValue = Record<string, unknown> | Record<string, unknown>[];
 
@@ -285,6 +290,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   // Static pages
   for (const route of [...staticRoutes, ...Array.from(NOINDEX_ROUTES)]) {
     const fromMap = staticMetaByRoute[route];
+    const isAlias = Object.keys(CANONICAL_ALIASES).includes(route);
     pages.push({
       route,
       title: fromMap?.title ?? `${slugToTitle(route)} | TheSynLab`,
@@ -296,7 +302,8 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
         description: fromMap?.description ?? HOME_DESCRIPTION,
         url: `${SITE_URL}${route === "/" ? "/" : route}`,
       } as JsonLdValue,
-      noindex: NOINDEX_ROUTES.has(route),
+      noindex: NOINDEX_ROUTES.has(route) || isAlias,
+      canonicalOverride: isAlias ? CANONICAL_ALIASES[route] : undefined,
     });
   }
 
@@ -1018,7 +1025,9 @@ ${widgetCards}
 <p style="font-size:.85rem;color:#6b7280;margin-top:.5rem">Enter your email on the <a href="/report/state-of-saas-trust-2026" style="font-weight:600;color:#2563eb">report page</a> to receive the complete 15+ page PDF.</p>
 </div>
 </main>`;
-  }  if (route === "/products") {
+  }
+
+  if (route === "/products") {
     return `<main style="${MAIN_STYLE}">
 <nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › Products</nav>
 <h1>Products Hub — Trust Scored &amp; Integration Rated</h1>
@@ -1052,7 +1061,7 @@ ${widgetCards}
   }
 
   // ── Compare (canonical alias) ─────────────────────────────────────────────
-  if (route === "/compare") {
+  if (route === "/compare" || route === "/tools/compare") {
     const topTools = saasTools.slice(0, 12);
     const toolLinks = topTools.map((t) =>
       `<li><a href="/tool/${t.slug}">${escapeHtml(t.name)}</a> (Trust ${t.trustScore}/5, Integration ${t.integrationScore}/5)</li>`
@@ -1592,7 +1601,10 @@ const generateStaticHtmlPages = async (distDir: string) => {
   const pages = buildStaticPagesMeta();
 
   for (const page of pages) {
-    const canonical = `${SITE_URL}${page.route === "/" ? "/" : page.route}`;
+    const canonicalUrl = page.canonicalOverride
+    ? `${SITE_URL}${page.canonicalOverride}`
+    : `${SITE_URL}${page.route === "/" ? "/" : page.route}`;
+  const canonical = canonicalUrl;
 
     // Build JSON-LD script block(s) — supports single object or array
     const jsonLdBlocks = Array.isArray(page.jsonLd) ? page.jsonLd : [page.jsonLd];

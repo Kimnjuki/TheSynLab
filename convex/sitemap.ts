@@ -65,7 +65,7 @@ export const getSitemap = httpAction(async (ctx) => {
     "<url><loc>" + SITE_URL + "/</loc><changefreq>weekly</changefreq><priority>1</priority></url>",
     "<url><loc>" + SITE_URL + "/blog</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>",
     "<url><loc>" + SITE_URL + "/forum</loc><changefreq>daily</changefreq><priority>0.8</priority></url>",
-    "<url><loc>" + SITE_URL + "/tools/compare</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>",
+    "<url><loc>" + SITE_URL + "/compare</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>",
   ];
 
   for (const p of posts) {
