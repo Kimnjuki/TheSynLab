@@ -15,7 +15,7 @@ import Footer from "@/components/layout/Footer";
 
 const ComparisonSandbox = lazy(() =>
   import("@/components/home/ComparisonSandbox").then((m) => ({
-    default: m.ComparisonSandbox,
+    default: m.default,
   }))
 );
 
