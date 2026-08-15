@@ -1,7 +1,18 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
+
+# IMPORTANT: builder must be glibc-based (node:20-slim / node:20), NOT alpine.
+# @vitejs/plugin-react-swc uses @swc/core native binaries; the musl (Alpine)
+# variant is known to segfault silently on large projects (exit 255, zero
+# output) shortly after "transforming..." starts. Debian/glibc uses the
+# stable @swc/core-linux-x64-gnu binary and builds the full 3500+ module app
+# reliably.
+#
+# We also raise Node's heap limit because the build transforms 3500+ modules
+# and prerenders hundreds of HTML pages in closeBundle.
+ENV NODE_OPTIONS=--max-old-space-size=4096
 
 # Install dependencies.
 # - dns-result-order=ipv4first is the key fix for npm silently hanging ~100s then dying with no output inside Docker/normal build containers (IPv6 DNS black-holed by the registry).
