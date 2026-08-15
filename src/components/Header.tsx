@@ -37,7 +37,7 @@ const navLinks: NavLink[] = [
     items: [
       { name: "Compare Tools", href: "/compare" },
       { name: "TCO Calculator", href: "/tools/budget-calculator" },
-      { name: "Vendor Risk Checker", href: "/tools/vendor-risk" },
+      { name: "Vendor Risk Checker", href: "/vendor-risk-checker" },
       { name: "Decision Studio", href: "/decision-studio" },
     ],
   },

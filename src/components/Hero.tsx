@@ -71,7 +71,7 @@ const Hero = () => {
               </div>
             </Link>
             <Link
-              to="/tools/vendor-risk"
+              to="/vendor-risk-checker"
               className="group flex items-center gap-4 p-4 rounded-xl border bg-card hover:bg-muted/50 hover:border-primary/30 transition-all"
             >
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
