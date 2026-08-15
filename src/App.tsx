@@ -87,6 +87,7 @@ import WidgetGallery from "./pages/WidgetGallery";
 import StateOfSaaSTrust2026 from "./pages/report/StateOfSaaSTrust2026";
 import AlternativesIndex from "./pages/AlternativesIndex";
 import ProductCategoryPage from "./pages/ProductCategoryPage";
+import CategoryPage from "./pages/CategoryPage";
 import GuidesPage from "./pages/GuidesPage";
 import AdminGrowthDashboard from "./pages/AdminGrowthDashboard";
 import GlossaryPage from "./pages/GlossaryPage";
@@ -211,8 +212,11 @@ const App = () => (
                   <Route path="/report/state-of-saas-trust-2026" element={<StateOfSaaSTrust2026 />} />
                   <Route path="/recipes/:slug" element={<IntegrationRecipe />} />
 
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
+                   {/* Categories */}
+                   <Route path="/category/:slug" element={<CategoryPage />} />
+
+                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <AnalyticsScripts />
                 <FacebookPixel />
