@@ -3,12 +3,20 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies (retry + longer timeouts for flaky remote-builder networks)
+# Install dependencies.
+# - dns-result-order=ipv4first is the key fix for npm silently hanging ~100s then dying with no output inside Docker/normal build containers (IPv6 DNS black-holed by the registry).
+# - --loglevel=http streams every registry request so if the install fails we see exactly which URL hung instead of an empty log.
+# - --no-audit/--no-fund skip audit/funding network calls that sometimes cause hangs on slow egress.
 COPY package.json package-lock.json* ./
-RUN npm config set fetch-retries 5 && \
-    npm config set fetch-retry-mintimeout 20000 && \
-    npm config set fetch-retry-maxtimeout 120000 && \
-    (npm ci || (echo "Retry 1..." && sleep 15 && npm ci) || (echo "Retry 2..." && sleep 30 && npm ci) || (echo "Retry 3..." && sleep 60 && npm ci))
+RUN npm config set registry https://registry.npmjs.org && \
+    npm config set fetch-retries 3 && \
+    npm config set fetch-retry-mintimeout 10000 && \
+    npm config set fetch-retry-maxtimeout 60000 && \
+    npm config set network-timeout 600000 && \
+    npm config set dns-result-order ipv4first && \
+    npm ci --no-audit --no-fund --loglevel=http || \
+    (echo "=== npm ci attempt 1 FAILED (details above). Retrying with full output ===" && npm ci --no-audit --no-fund --loglevel=info) || \
+    (echo "=== npm ci attempt 2 FAILED ===" && sleep 20 && npm ci --no-audit --no-fund --loglevel=info)
 
 # Copy full source
 COPY . .

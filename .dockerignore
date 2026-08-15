@@ -1,8 +1,12 @@
 node_modules
 dist
+build
 .git
 .gitignore
 *.md
+*.bak
+*.ts.bak
+*.map
 .env
 .env.*
 !.env.example
@@ -12,4 +16,19 @@ dist
 .convex
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 .DS_Store
+*.tgz
+bun.lock
+bun.lockb
+**/bun.lockb
+
+# Local reproduction / temp artifacts
+.ci-repro
+ci-repro
+
+# Nested duplicate deployment workspace (not part of the published app)
+TheSynLab-deploy
+TheSynLab-deploy-pack
+thesynlab-deploy
