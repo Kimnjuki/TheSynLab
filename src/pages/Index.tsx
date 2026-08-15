@@ -1,39 +1,31 @@
 import Header from "@/components/Header";
 import { lazy, Suspense } from "react";
-import Hero from "@/components/Hero";
-import { ErrorBoundary } from "@/components/ui/error-boundary";
-
-const HomepageInsights = lazy(() =>
-  import("@/components/landing/HomepageInsights").then((m) => ({
-    default: m.HomepageInsights,
-  }))
-);
-import FeaturedReviews from "@/components/landing/FeaturedReviews";
-import TrendingTopics from "@/components/landing/TrendingTopics";
-import Hubs from "@/components/Hubs";
-import WhyChooseUs from "@/components/landing/WhyChooseUs";
-import TestimonialsCarousel from "@/components/landing/TestimonialsCarousel";
-import Methodology from "@/components/Methodology";
-import FAQAccordion from "@/components/landing/FAQAccordion";
-import CTABanner from "@/components/landing/CTABanner";
-import Newsletter from "@/components/Newsletter";
-import { AdSlot } from "@/components/ads/AdSlot";
-import Footer from "@/components/Footer";
-import { OnboardingTour, useOnboarding } from "@/components/dashboard/OnboardingTour";
-import { StackArchitectChat } from "@/components/ai/StackArchitectChat";
-import { InteractiveToolsSection } from "@/components/landing/InteractiveToolsSection";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
+import Hero from "@/components/home/Hero";
+import DecisionToolsStrip from "@/components/home/DecisionToolsStrip";
+import CategoryGrid from "@/components/home/CategoryGrid";
+import FeaturedComparisons from "@/components/home/FeaturedComparisons";
+import MethodologySnapshot from "@/components/home/MethodologySnapshot";
+import SocialProof from "@/components/home/SocialProof";
+import TrustDisclosure from "@/components/home/TrustDisclosure";
+import NewsletterCapture from "@/components/home/NewsletterCapture";
+import FinalCTA from "@/components/home/FinalCTA";
+import Footer from "@/components/layout/Footer";
+
+const ComparisonSandbox = lazy(() =>
+  import("@/components/home/ComparisonSandbox").then((m) => ({
+    default: m.ComparisonSandbox,
+  }))
+);
 
 const Index = () => {
-  const { showTour, closeTour } = useOnboarding();
-
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "TheSynLab",
     url: "https://thesynlab.com",
-    description: "Next-gen tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware.",
+    description: "Independent AI & SaaS reviews with lab-tested Trust Scores, Integration Scores, and TCO analysis.",
     potentialAction: {
       "@type": "SearchAction",
       "target": "https://thesynlab.com/blog?q={search_term_string}",
@@ -47,7 +39,7 @@ const Index = () => {
     name: "TheSynLab",
     url: "https://thesynlab.com",
     logo: "https://thesynlab.com/logo.png",
-    description: "Next-gen tech review platform with Trust & Integration Scores for productivity tools, smart home, and office hardware.",
+    description: "Independent AI & SaaS review platform with lab-tested Trust Scores, Integration Scores, and TCO analysis.",
     sameAs: [
       "https://twitter.com/thesynlab",
       "https://www.linkedin.com/company/thesynlab",
@@ -58,51 +50,30 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <MetaTags
-        title="TheSynLab 2026: Honest Tool Reviews You Can Trust — Smart Home, SaaS & Productivity"
-        description="Stop guessing which tool to buy. TheSynLab scores every product on trust, value, and integration quality. Real reviews for smart home, SaaS, AI tools, and productivity software — backed by data, not hype."
+        title="Independent AI & SaaS Reviews You Can Actually Trust | TheSynLab"
+        description="We test every tool for 14+ days and score it on Trust, Integration, and 3-Year TCO. Compare tools, build your stack, and choose faster with TheSynLab."
         canonical="https://thesynlab.com/"
         ogType="website"
       />
-      <JsonLd type="WebPage" custom={websiteSchema} />
+      <JsonLd type="WebSite" custom={websiteSchema} />
       <JsonLd type="Organization" custom={orgSchema} />
 
       <Header />
       <main>
         <Hero />
-        <section className="container py-8">
-          <StackArchitectChat />
-        </section>
-        <ErrorBoundary fallback={null}>
-          <Suspense fallback={null}>
-            <HomepageInsights />
-          </Suspense>
-        </ErrorBoundary>
-        <div className="container px-4">
-          <AdSlot
-            slotName="home_leaderboard"
-            pageTemplate="home_page"
-            iabFormat="728x90"
-            position="below_insights"
-          />
-        </div>
-        <InteractiveToolsSection />
-        <FeaturedReviews />
-        <TrendingTopics />
-        <Hubs />
-        <WhyChooseUs />
-        <TestimonialsCarousel />
-        <Methodology />
-        <CTABanner />
-        <FAQAccordion />
-        <Newsletter />
+        <DecisionToolsStrip />
+        <CategoryGrid />
+        <FeaturedComparisons />
+        <MethodologySnapshot />
+        <Suspense fallback={null}>
+          <ComparisonSandbox />
+        </Suspense>
+        <SocialProof />
+        <TrustDisclosure />
+        <NewsletterCapture />
+        <FinalCTA />
       </main>
       <Footer />
-      
-      <OnboardingTour
-        isOpen={showTour}
-        onClose={closeTour}
-        onComplete={closeTour}
-      />
     </div>
   );
 };

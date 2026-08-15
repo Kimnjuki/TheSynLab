@@ -51,16 +51,46 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+      sidebar: {
+        DEFAULT: "hsl(var(--sidebar-background))",
+        foreground: "hsl(var(--sidebar-foreground))",
+        primary: "hsl(var(--sidebar-primary))",
+        "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+        accent: "hsl(var(--sidebar-accent))",
+        "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+        border: "hsl(var(--sidebar-border))",
+        ring: "hsl(var(--sidebar-ring))",
+      },
+      tsl: {
+        bg: {
+          primary: "var(--tsl-bg-primary)",
+          secondary: "var(--tsl-bg-secondary)",
         },
+        surface: "var(--tsl-surface)",
+        border: "var(--tsl-border)",
+        text: {
+          DEFAULT: "var(--tsl-text)",
+          secondary: "var(--tsl-text-secondary)",
+        },
+        accent: {
+          DEFAULT: "var(--tsl-accent)",
+          secondary: "var(--tsl-accent-secondary)",
+        },
+        trust: {
+          high: "var(--tsl-trust-high)",
+          mid: "var(--tsl-trust-mid)",
+          low: "var(--tsl-trust-low)",
+        },
+        cta: {
+          primary: {
+            bg: "var(--tsl-cta-primary-bg)",
+            text: "var(--tsl-cta-primary-text)",
+          },
+          secondary: {
+            border: "var(--tsl-cta-secondary-border)",
+          },
+        },
+      },
       },
       borderRadius: {
         lg: "var(--radius)",

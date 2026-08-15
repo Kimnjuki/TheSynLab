@@ -121,12 +121,47 @@ All colors MUST be HSL.
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
+  @layer base {
+    * {
+      @apply border-border;
+    }
+
+    body {
+      @apply bg-background text-foreground;
+    }
   }
 
-  body {
-    @apply bg-background text-foreground;
+  /* ── Spec-derived design tokens ── */
+  :root {
+    --tsl-bg-primary: #0f172a;
+    --tsl-bg-secondary: #111827;
+    --tsl-surface: #1e293b;
+    --tsl-border: #334155;
+    --tsl-text: #f8fafc;
+    --tsl-text-secondary: #94a3b8;
+    --tsl-accent: #22d3ee;
+    --tsl-accent-secondary: #a78bfa;
+    --tsl-trust-high: #4ade80;
+    --tsl-trust-mid: #facc15;
+    --tsl-trust-low: #f87171;
+    --tsl-cta-primary-bg: #22d3ee;
+    --tsl-cta-primary-text: #0f172a;
+    --tsl-cta-secondary-border: #334155;
   }
-}
+
+  .dark {
+    --tsl-bg-primary: #0f172a;
+    --tsl-bg-secondary: #111827;
+    --tsl-surface: #1e293b;
+    --tsl-border: #334155;
+    --tsl-text: #f8fafc;
+    --tsl-text-secondary: #94a3b8;
+    --tsl-accent: #22d3ee;
+    --tsl-accent-secondary: #a78bfa;
+    --tsl-trust-high: #4ade80;
+    --tsl-trust-mid: #facc15;
+    --tsl-trust-low: #f87171;
+    --tsl-cta-primary-bg: #22d3ee;
+    --tsl-cta-primary-text: #0f172a;
+    --tsl-cta-secondary-border: #334155;
+  }
