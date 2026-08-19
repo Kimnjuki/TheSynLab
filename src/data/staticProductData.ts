@@ -37,6 +37,8 @@ export interface StaticProduct {
   bestFor: string[];
   /** Structured description paragraphs for SEO */
   longDescription: string;
+  /** LLM-optimized summary for AI citation pickup (ChatGPT, Claude, Gemini, Perplexity) */
+  llmCitationSummary?: string;
 }
 
 /** FAQ data per hub for hub page FAQPage schema */

@@ -53,6 +53,7 @@ import ForumNewThread from "./pages/ForumNewThread";
 import Hub from "./pages/Hub";
 import CommunityLeaderboard from "./pages/CommunityLeaderboard";
 import StackBuilder from "./pages/StackBuilder";
+import StackArchitect from "./pages/StackArchitect";
 import Search from "./pages/Search";
 import TrustScoreIndex from "./pages/TrustScoreIndex";
 import IntegrationScoreIndex from "./pages/IntegrationScoreIndex";
@@ -199,6 +200,7 @@ const App = () => (
                   <Route path="/ad-compliance" element={<AdCompliance />} />
 
                   {/* Canonical root-level routes (v2.0) — old /tools/* versions 301-redirected by nginx */}
+                  <Route path="/ai/stack-architect" element={<StackArchitect />} />
                   <Route path="/stack-builder" element={<StackBuilder />} />
                   <Route path="/tco-calculator" element={<TcoCalculator />} />
                   <Route path="/vendor-risk-checker" element={<VendorRiskChecker />} />
