@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, mutation, action } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 import { api } from "./_generated/api";
 
 // Get a user's saved stack by session or userId
@@ -132,7 +132,7 @@ export const removeFromMyStack = mutation({
 });
 
 // Compute risk warnings for a stack
-export const computeStackRiskWarnings = action({
+export const computeStackRiskWarnings = mutation({
   args: {
     stackId: v.id("userMyStack"),
   },
@@ -169,7 +169,10 @@ export const computeStackRiskWarnings = action({
       }
 
       // Check TCO vs category average
-      const pricing = await ctx.runQuery(api.tco.getProductPricing, { productId });
+      const pricing = await ctx.db
+        .query("productPricingParams")
+        .withIndex("by_product", (q) => q.eq("productId", productId))
+        .first();
       if (pricing && pricing.basePriceMonthly > 200) {
         warnings.push({
           productId,
@@ -184,13 +187,25 @@ export const computeStackRiskWarnings = action({
     if (stack.productIds.length >= 2) {
       for (let i = 0; i < stack.productIds.length; i++) {
         for (let j = i + 1; j < stack.productIds.length; j++) {
-          const edges = await ctx.runQuery(api.apiCompatibility.getCompatibilityEdges, {
-            productAId: stack.productIds[i],
-            productBId: stack.productIds[j],
-          });
+          const aId = stack.productIds[i];
+          const bId = stack.productIds[j];
+          // Query aiCompatibilityEdges in both directions
+          const edgeA = await ctx.db
+            .query("aiCompatibilityEdges")
+            .withIndex("by_pair", (q) =>
+              q.eq("productAId", aId).eq("productBId", bId)
+            )
+            .first();
+          const edgeB = await ctx.db
+            .query("aiCompatibilityEdges")
+            .withIndex("by_pair", (q) =>
+              q.eq("productAId", bId).eq("productBId", aId)
+            )
+            .first();
+          const edges = edgeA ?? edgeB;
           if (edges && !edges.isFeasible) {
             warnings.push({
-              productId: stack.productIds[i],
+              productId: aId,
               warningType: "integration_gap",
               warningMessage: `No native integration with another tool in your stack`,
               severity: "medium",

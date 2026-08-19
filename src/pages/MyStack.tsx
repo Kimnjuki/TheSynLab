@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { useQuery, useMutation, useAction } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/../convex/_generated/api";
 import { MetaTags } from "@/components/seo/MetaTags";
 import Header from "@/components/Header";
@@ -40,11 +40,11 @@ const MyStackDashboard = () => {
   const navigate = useNavigate();
 
   const myStack = useQuery(api.myStack.getMyStack, {
-    identifier: { type: "sessionId", value: sessionId },
+    sessionId,
   });
   const addToStack = useMutation(api.myStack.addToMyStack);
   const removeFromStack = useMutation(api.myStack.removeFromMyStack);
-  const computeRiskWarnings = useAction(api.myStack.computeStackRiskWarnings);
+  const computeRiskWarnings = useMutation(api.myStack.computeStackRiskWarnings);
   const allProducts = useQuery(api.products.list, { status: "active" }) ?? [];
 
   const stackData = myStack?.[0];
@@ -68,7 +68,7 @@ const MyStackDashboard = () => {
 
   const handleAddProduct = useCallback(async (productId: Id<"novaProducts">) => {
     try {
-      await addToStack({ sessionId, productIds: [productId], action: "add" });
+      await addToStack({ sessionId, productId });
       setSearchQuery("");
       toast.success("Added to your stack");
     } catch (err) {
@@ -78,7 +78,7 @@ const MyStackDashboard = () => {
 
   const handleRemoveProduct = useCallback(async (productId: Id<"novaProducts">) => {
     try {
-      await removeFromStack({ sessionId, productIds: [productId] });
+      await removeFromStack({ sessionId, productId });
       toast.success("Removed from your stack");
     } catch (err) {
       toast.error("Failed to remove");
@@ -86,13 +86,17 @@ const MyStackDashboard = () => {
   }, [sessionId, removeFromStack]);
 
   const handleRunRiskCheck = useCallback(async () => {
+    if (!stackData?._id) {
+      toast.error("No stack to analyze");
+      return;
+    }
     try {
-      await computeRiskWarnings({ sessionId });
+      await computeRiskWarnings({ stackId: stackData._id });
       toast.success("Risk analysis complete!");
     } catch (err) {
       toast.error("Risk analysis failed");
     }
-  }, [sessionId, computeRiskWarnings]);
+  }, [stackData, computeRiskWarnings]);
 
   const highSeverityWarnings = riskWarnings.filter((w: any) => w.severity === "high" || w.severity === "critical");
 
