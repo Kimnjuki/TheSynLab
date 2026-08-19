@@ -180,6 +180,10 @@ const App = () => (
                   <Route path="/community/setups" element={<CommunitySetups />} />
                   <Route path="/community/leaderboard" element={<CommunityLeaderboard />} />
 
+                  {/* Blog */}
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogArticle />} />
+
                   {/* Legal & Company Pages */}
                   <Route path="/privacy" element={<PrivacyPolicy />} />
                   <Route path="/terms" element={<TermsOfService />} />
