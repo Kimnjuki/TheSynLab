@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MetaTags } from "@/components/seo/MetaTags";
@@ -223,9 +224,18 @@ If any provision of these Terms is found unenforceable, the remaining provisions
 
         {/* Footer Note */}
         <div className="text-center mt-12 pt-8 border-t border-border">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mb-4">
             By continuing to use Project Nova, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
           </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Link to="/privacy" className="text-sm text-primary hover:underline">Privacy Policy</Link>
+            <span className="text-muted-foreground">·</span>
+            <Link to="/disclosure" className="text-sm text-primary hover:underline">Affiliate Disclosure</Link>
+            <span className="text-muted-foreground">·</span>
+            <Link to="/about" className="text-sm text-primary hover:underline">About TheSynLab</Link>
+            <span className="text-muted-foreground">·</span>
+            <Link to="/contact" className="text-sm text-primary hover:underline">Contact Us</Link>
+          </div>
         </div>
       </main>
 

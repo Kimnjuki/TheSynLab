@@ -143,6 +143,23 @@ const TrustIndexLeaderboard = () => {
               Last updated: {publishedDate}
             </p>
           )}
+          <div className="mt-4 flex flex-wrap gap-3 justify-center">
+            <Link to="/compare">
+              <Button variant="outline" size="sm" className="gap-2">
+                <GitCompare className="h-4 w-4" /> Compare Products
+              </Button>
+            </Link>
+            <Link to="/scoring-hub">
+              <Button variant="outline" size="sm" className="gap-2">
+                <Award className="h-4 w-4" /> Scoring Methodology
+              </Button>
+            </Link>
+            <Link to="/trust-index">
+              <Button variant="outline" size="sm" className="gap-2">
+                <BarChart3 className="h-4 w-4" /> Full Trust Index
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Hub tabs */}

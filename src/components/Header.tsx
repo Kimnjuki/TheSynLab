@@ -24,9 +24,9 @@ const navLinks: NavLink[] = [
     href: "/tools",
     items: [
       { name: "Browse All Tools", href: "/tools" },
-      { name: "AI & Productivity", href: "/hubs?tag=ai-tools" },
-      { name: "Smart Home", href: "/hubs?tag=intelligent-home" },
-      { name: "Hybrid Office", href: "/hubs?tag=hybrid-office" },
+      { name: "AI & Productivity", href: "/hub/ai-tools" },
+      { name: "Smart Home", href: "/hub/intelligent-home" },
+      { name: "Hybrid Office", href: "/hub/hybrid-office" },
       { name: "Trending", href: "/tools?sort=trending" },
       { name: "Recently Updated", href: "/tools?sort=updated" },
     ],

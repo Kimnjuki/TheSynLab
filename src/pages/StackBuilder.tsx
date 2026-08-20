@@ -20,6 +20,9 @@ import {
   XCircle,
   Save,
   Share2,
+  GitCompare,
+  Award,
+  Calculator,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -125,9 +128,9 @@ export default function StackBuilder() {
   return (
     <div className="min-h-screen flex flex-col">
       <MetaTags
-        title="Stack Builder"
-        description="Build and validate your product stack. Check real-time compatibility across your selected tools and smart devices."
-        canonical="/tools/stack-builder"
+        title="Stack Builder – Build & Validate Your Tech Stack | TheSynLab"
+        description="Build and validate your product stack with real-time compatibility scoring. Save and share your configuration."
+        canonical="/stack-builder"
       />
       <Header />
 
@@ -139,6 +142,23 @@ export default function StackBuilder() {
               Drag products into your stack and instantly see compatibility across ecosystems.
               Save and share your configuration.
             </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link to="/tools/compare">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <GitCompare className="h-4 w-4" /> Compare Products
+                </Button>
+              </Link>
+              <Link to="/scoring-hub">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Award className="h-4 w-4" /> View Scoring Methodology
+                </Button>
+              </Link>
+              <Link to="/decision-studio">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Calculator className="h-4 w-4" /> Open Decision Studio
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
 

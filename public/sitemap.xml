@@ -138,4 +138,21 @@
   <url><loc>https://thesynlab.com/hub/ai-tools/ai-hr-recruiting</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://thesynlab.com/hub/ai-tools/ai-email</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://thesynlab.com/hub/ai-tools/ai-meeting-assistants</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+
+  <!-- Additional Hub Pages -->
+  <url><loc>https://thesynlab.com/hub/ai-workflow</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://thesynlab.com/hub/intelligent-home</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://thesynlab.com/hub/hybrid-office</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://thesynlab.com/hubs</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+
+  <!-- Guides & Resources -->
+  <url><loc>https://thesynlab.com/guides</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://thesynlab.com/glossary</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Community -->
+  <url><loc>https://thesynlab.com/community/setups</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://thesynlab.com/community/leaderboard</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+
+  <!-- Vendor Program -->
+  <url><loc>https://thesynlab.com/vendor-program</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
 </urlset>

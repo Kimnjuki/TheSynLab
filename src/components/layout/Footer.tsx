@@ -3,31 +3,43 @@ import { Twitter } from "lucide-react";
 
 const linkGroups = [
   {
-    title: "Categories",
+    title: "Hubs",
     links: [
-      { name: "AI & Workflow Tools", href: "/hub/ai_workflow" },
-      { name: "SaaS & Developer Tools", href: "/category/saas-dev" },
-      { name: "Intelligent Home", href: "/category/smart-home" },
-      { name: "Hybrid Office", href: "/category/hybrid-office" },
-      { name: "Productivity & AI", href: "/blog/best-ai-productivity-tools-2026" },
+      { name: "AI & Workflow Tools", href: "/hub/ai-tools" },
+      { name: "SaaS & Developer Tools", href: "/hub/ai-tools" },
+      { name: "Intelligent Home", href: "/hub/intelligent-home" },
+      { name: "Hybrid Office", href: "/hub/hybrid-office" },
+      { name: "All Products", href: "/products" },
     ],
   },
   {
     title: "Decision Tools",
     links: [
-      { name: "Compare Tools", href: "/scoring-hub" },
+      { name: "Compare Tools", href: "/compare" },
+      { name: "TCO Calculator", href: "/tco-calculator" },
+      { name: "Vendor Risk Checker", href: "/vendor-risk-checker" },
+      { name: "Stack Builder", href: "/stack-builder" },
       { name: "Decision Studio", href: "/decision-studio" },
-      { name: "Stack Builder", href: "/decision-studio#stack-builder" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { name: "Blog", href: "/blog" },
+      { name: "Buying Guides", href: "/guides" },
+      { name: "Scoring Hub", href: "/scoring-hub" },
+      { name: "Trust Index", href: "/trust-index" },
+      { name: "About", href: "/about" },
     ],
   },
   {
     title: "Company",
     links: [
       { name: "About", href: "/about" },
-      { name: "Methodology", href: "/scoring-hub" },
-      { name: "Affiliate Disclosure", href: "/disclosure" },
-      { name: "Privacy", href: "/privacy" },
       { name: "Contact", href: "/contact" },
+      { name: "Affiliate Disclosure", href: "/disclosure" },
+      { name: "Privacy Policy", href: "/privacy" },
+      { name: "Terms of Service", href: "/terms" },
     ],
   },
 ];

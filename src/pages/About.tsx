@@ -234,6 +234,27 @@ const About = () => {
             </div>
           </div>
         </section>
+
+        {/* Related Resources */}
+        <section className="py-16 bg-muted/30 border-t">
+          <div className="container max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold mb-6 text-center">Explore More</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <Link to="/blog" className="group block p-6 bg-card border rounded-xl hover:shadow-md transition-shadow text-center">
+                <h3 className="font-semibold group-hover:text-primary transition-colors">Latest Reviews</h3>
+                <p className="text-sm text-muted-foreground mt-2">Expert reviews and comparisons of the latest tech products</p>
+              </Link>
+              <Link to="/compare" className="group block p-6 bg-card border rounded-xl hover:shadow-md transition-shadow text-center">
+                <h3 className="font-semibold group-hover:text-primary transition-colors">Compare Tools</h3>
+                <p className="text-sm text-muted-foreground mt-2">Side-by-side comparisons with Trust & Integration Scores</p>
+              </Link>
+              <Link to="/guides" className="group block p-6 bg-card border rounded-xl hover:shadow-md transition-shadow text-center">
+                <h3 className="font-semibold group-hover:text-primary transition-colors">Buying Guides</h3>
+                <p className="text-sm text-muted-foreground mt-2">Curated guides to help you choose the right products</p>
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </div>

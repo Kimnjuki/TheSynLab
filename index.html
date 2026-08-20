@@ -54,6 +54,8 @@
     </script>
 
     <!-- ── Route-specific meta injection (crawler-friendly before JS) ── -->
+    <!-- Note: React Helmet handles per-route meta tags after hydration. 
+         This script provides fallback meta for crawlers that don't execute JS. -->
     <script>
       (function () {
         var routes = {
@@ -73,15 +75,12 @@
         var p = window.location.pathname;
         var m = routes[p] || routes['/'];
         if (m) {
-          document.title = m.t;
+          var t = document.querySelector('title');
+          if (t && !t.textContent.includes('|')) t.textContent = m.t;
           var d = document.querySelector('meta[name="description"]');
-          if (d) d.setAttribute('content', m.d);
-          var ogt = document.querySelector('meta[property="og:title"]');
-          if (ogt) ogt.setAttribute('content', m.t);
-          var ogd = document.querySelector('meta[property="og:description"]');
-          if (ogd) ogd.setAttribute('content', m.d);
+          if (d && !d.getAttribute('content').length) d.setAttribute('content', m.d);
           var can = document.querySelector('link[rel="canonical"]');
-          if (can) can.setAttribute('href', 'https://thesynlab.com' + p);
+          if (can && can.getAttribute('href') === 'https://thesynlab.com/') can.setAttribute('href', 'https://thesynlab.com' + p);
         }
       })();
     </script>

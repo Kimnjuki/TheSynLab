@@ -108,6 +108,17 @@ const Contact = () => {
           </p>
         </div>
 
+        {/* Quick Links */}
+        <div className="flex flex-wrap gap-3 justify-center mb-10">
+          <Link to="/about" className="text-sm text-primary hover:underline">About TheSynLab</Link>
+          <span className="text-muted-foreground">·</span>
+          <Link to="/blog" className="text-sm text-primary hover:underline">Latest Reviews</Link>
+          <span className="text-muted-foreground">·</span>
+          <Link to="/scoring-hub" className="text-sm text-primary hover:underline">Scoring Methodology</Link>
+          <span className="text-muted-foreground">·</span>
+          <Link to="/disclosure" className="text-sm text-primary hover:underline">Affiliate Disclosure</Link>
+        </div>
+
         {/* Response Time Banner */}
         <div className="flex items-center justify-center gap-2 mb-12 text-muted-foreground">
           <Clock className="h-4 w-4" />

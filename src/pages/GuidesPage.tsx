@@ -39,6 +39,22 @@ export default function GuidesPage() {
             <p className="text-sm text-muted-foreground mt-2">Protect your smart home from privacy risks and security threats</p>
           </Link>
         </div>
+
+        {/* Additional internal links to hubs and tools */}
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <Link to="/hub/ai-tools" className="group block p-6 bg-card border rounded-xl hover:shadow-md transition-shadow">
+            <h3 className="text-lg font-semibold group-hover:text-primary transition-colors">AI & Workflow Tools</h3>
+            <p className="text-sm text-muted-foreground mt-2">Explore AI tools, automation platforms, and productivity software</p>
+          </Link>
+          <Link to="/hub/intelligent-home" className="group block p-6 bg-card border rounded-xl hover:shadow-md transition-shadow">
+            <h3 className="text-lg font-semibold group-hover:text-primary transition-colors">Intelligent Home</h3>
+            <p className="text-sm text-muted-foreground mt-2">Smart home devices, hubs, sensors, and automation</p>
+          </Link>
+          <Link to="/hub/hybrid-office" className="group block p-6 bg-card border rounded-xl hover:shadow-md transition-shadow">
+            <h3 className="text-lg font-semibold group-hover:text-primary transition-colors">Hybrid Office</h3>
+            <p className="text-sm text-muted-foreground mt-2">Remote work tools, ergonomics, and office hardware</p>
+          </Link>
+        </div>
       </main>
       <Footer />
     </div>

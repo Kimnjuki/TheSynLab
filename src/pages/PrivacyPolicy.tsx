@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MetaTags } from "@/components/seo/MetaTags";
@@ -206,9 +207,18 @@ We retain your personal data only for as long as necessary to fulfill the purpos
 
         {/* Footer Note */}
         <div className="text-center mt-12 pt-8 border-t border-border">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mb-4">
             This Privacy Policy is effective as of {lastUpdated} and will remain in effect except with respect to any changes in its provisions in the future, which will be in effect immediately after being posted on this page.
           </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Link to="/terms" className="text-sm text-primary hover:underline">Terms of Service</Link>
+            <span className="text-muted-foreground">·</span>
+            <Link to="/disclosure" className="text-sm text-primary hover:underline">Affiliate Disclosure</Link>
+            <span className="text-muted-foreground">·</span>
+            <Link to="/about" className="text-sm text-primary hover:underline">About TheSynLab</Link>
+            <span className="text-muted-foreground">·</span>
+            <Link to="/contact" className="text-sm text-primary hover:underline">Contact Us</Link>
+          </div>
         </div>
       </main>
 
