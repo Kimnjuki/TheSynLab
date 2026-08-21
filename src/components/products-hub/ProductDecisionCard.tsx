@@ -9,6 +9,7 @@ import { FollowButton } from "./FollowButton";
 import { RiskBadgeStrip } from "./RiskBadgeStrip";
 import { IntegrationMiniGraph } from "./IntegrationMiniGraph";
 import { PricingSignalBadge } from "./PricingSignalBadge";
+import { getProductImage } from "@/lib/productImages";
 import type { HubProduct, DecisionCardData } from "./types";
 
 type MiniNode = { id: string; name: string; logoUrl?: string | null; connectionMethod: string; strength: number };
@@ -69,11 +70,12 @@ export function ProductDecisionCard({
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex gap-3">
-          {product.featuredImageUrl ? (
-            <img src={product.featuredImageUrl} alt={`${product.productName} logo`} className="h-12 w-12 rounded-md object-cover" />
-          ) : (
-            <div className="flex h-12 w-12 items-center justify-center rounded-md bg-muted text-xs">{product.productName.slice(0, 2)}</div>
-          )}
+          <img
+            src={getProductImage(product as any)}
+            alt={`${product.productName} product image`}
+            loading="lazy"
+            className="h-12 w-12 rounded-md object-cover"
+          />
           <div>
             <h3 className="font-semibold">
               <Link

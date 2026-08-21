@@ -21,6 +21,7 @@ import {
 import { Search as SearchIcon, SlidersHorizontal, Star, FlaskConical } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { getProductImage } from "@/lib/productImages";
 
 const SORT_OPTIONS = [
   { value: "relevance", label: "Relevance" },
@@ -244,13 +245,12 @@ export default function Search() {
                     return (
                       <Card key={p._id}>
                         <CardContent className="pt-4 flex gap-4 items-start">
-                          {p.featuredImageUrl && (
-                            <img
-                              src={p.featuredImageUrl}
-                              alt={p.productName}
-                              className="w-16 h-16 rounded object-cover flex-shrink-0"
-                            />
-                          )}
+                          <img
+                            src={getProductImage(p as any)}
+                            alt={p.productName}
+                            loading="lazy"
+                            className="w-16 h-16 rounded object-cover flex-shrink-0"
+                          />
                           <div className="flex-1 min-w-0 space-y-1">
                             <div className="flex items-start justify-between gap-2">
                               <Link

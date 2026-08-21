@@ -22,6 +22,7 @@ import { HubPillarHeader } from "@/components/seo/HubPillarHeader";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { HubFacetedFilters, useHubFilters, applyHubFilters } from "@/components/HubFacetedFilters";
 import { useAddToComparison } from "@/hooks/useAddToComparison";
+import { getProductImage } from "@/lib/productImages";
 
 const HUB_LABELS: Record<string, string> = {
   ai_workflow: "AI & Workflow",
@@ -123,11 +124,12 @@ export default function Hub() {
                 <Card key={p._id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <Link to={`/products/${p.productSlug}`}>
                     <div className="aspect-video bg-muted">
-                      {p.featuredImageUrl ? (
-                        <img src={p.featuredImageUrl} alt={p.productName} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">No image</div>
-                      )}
+                      <img
+                        src={getProductImage(p as any)}
+                        alt={p.productName}
+                        loading="lazy"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   </Link>
                   <CardContent className="p-4 space-y-3">

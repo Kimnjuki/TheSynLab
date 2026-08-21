@@ -30,6 +30,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { AICompatibilityAssistant } from "@/components/compatibility/AICompatibilityAssistant";
 import { CompatibilitySimulationPanel } from "@/components/compatibility/CompatibilitySimulationPanel";
 import { ApiCompatibilitySnippet } from "@/components/compatibility/ApiCompatibilitySnippet";
+import { getProductImage } from "@/lib/productImages";
 
 const ALL_ECOSYSTEMS = [
   "Apple HomeKit",
@@ -154,13 +155,12 @@ function ProductSlot({
           </>
         ) : (
           <div className="space-y-3">
-            {product.featuredImageUrl && (
-              <img
-                src={product.featuredImageUrl}
-                alt={product.productName}
-                className="w-full h-28 object-cover rounded"
-              />
-            )}
+            <img
+              src={getProductImage(product as any)}
+              alt={product.productName}
+              loading="lazy"
+              className="w-full h-28 object-cover rounded"
+            />
             <h3 className="font-semibold">{product.productName}</h3>
             <div className="flex gap-1 flex-wrap">
               <Badge variant="secondary">{product.category}</Badge>

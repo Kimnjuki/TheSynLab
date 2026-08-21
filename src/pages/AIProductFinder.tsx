@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import ScoreBadge from "@/components/ScoreBadge";
 import { Search } from "lucide-react";
+import { getProductImage } from "@/lib/productImages";
 
 export default function AIProductFinder() {
   const [q, setQ] = useState("Matter smart lock under $200");
@@ -72,13 +73,12 @@ export default function AIProductFinder() {
           {results?.map((p) => (
             <Card key={p._id}>
               <CardContent className="p-4 space-y-3">
-                {p.featuredImageUrl && (
-                  <img
-                    src={p.featuredImageUrl}
-                    alt=""
-                    className="w-full h-32 object-cover rounded-md"
-                  />
-                )}
+                <img
+                  src={getProductImage(p as any)}
+                  alt={p.productName}
+                  loading="lazy"
+                  className="w-full h-32 object-cover rounded-md"
+                />
                 <div>
                   <Link
                     to={`/products/${p.productSlug}`}

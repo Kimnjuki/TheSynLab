@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { resolveProductImage } from "./productImageMap";
 
 // Get all active products with optional filters
 export const list = query({
@@ -374,6 +375,28 @@ export const getComparisons = query({
       })
     );
     return enriched.filter((e) => e.otherProduct !== null);
+  },
+});
+
+/**
+ * Backfill: give every product that is missing a `featuredImageUrl` a curated,
+ * product-relevant free image (Unsplash). Idempotent — run any time with:
+ *   npx convex run products:backfillProductImages
+ */
+export const backfillProductImages = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const products = await ctx.db.query("novaProducts").collect();
+    let updated = 0;
+    for (const p of products) {
+      if (!p.featuredImageUrl) {
+        await ctx.db.patch(p._id, {
+          featuredImageUrl: resolveProductImage(p),
+        });
+        updated++;
+      }
+    }
+    return { total: products.length, updated };
   },
 });
 

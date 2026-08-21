@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/../convex/_generated/api";
+import { getProductImage } from "@/lib/productImages";
 
 export default function ProductsWatchlist() {
   const { user, loading: authLoading } = useAuth();
@@ -71,11 +72,12 @@ export default function ProductsWatchlist() {
                     <CardTitle className="text-lg line-clamp-1">{row.product.productName}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {row.product.featuredImageUrl ? (
-                      <img src={row.product.featuredImageUrl} alt={row.product.productName} className="h-28 w-full rounded-md object-cover" />
-                    ) : (
-                      <div className="h-28 w-full rounded-md bg-muted" />
-                    )}
+                    <img
+                      src={getProductImage(row.product as any)}
+                      alt={row.product.productName}
+                      loading="lazy"
+                      className="h-28 w-full rounded-md object-cover"
+                    />
                     <p className="text-sm text-muted-foreground line-clamp-2">{row.product.verdictSummary || row.product.description || "No summary yet."}</p>
                     <div className="flex flex-wrap gap-2 text-xs">
                       <Badge variant="outline">Trust: {row.trustScore ?? "N/A"}</Badge>

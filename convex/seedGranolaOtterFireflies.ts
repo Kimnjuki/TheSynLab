@@ -414,6 +414,7 @@ Nicholas Michaels is an expert in automating workflows, connecting different sys
         isSponsored: false,
         sponsorDisclosed: false,
         verdictSummary: "Bot-free device-audio capture; best for private 1:1s and founder/consultant calls.",
+        featuredImageUrl: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop&auto=format",
       },
       {
         productName: "Otter.ai",
@@ -428,6 +429,7 @@ Nicholas Michaels is an expert in automating workflows, connecting different sys
         isSponsored: false,
         sponsorDisclosed: false,
         verdictSummary: "Live captions and searchable transcripts; best for lectures, research, and accessibility.",
+        featuredImageUrl: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&h=600&fit=crop&auto=format",
       },
       {
         productName: "Fireflies.ai",
@@ -442,6 +444,7 @@ Nicholas Michaels is an expert in automating workflows, connecting different sys
         isSponsored: false,
         sponsorDisclosed: false,
         verdictSummary: "CRM sync and workflow automation; best for sales, customer success, and recruiting.",
+        featuredImageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop&auto=format",
       },
     ];
 

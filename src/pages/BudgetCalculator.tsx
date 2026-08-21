@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useProducts } from "@/hooks/useProducts";
 import { Badge } from "@/components/ui/badge";
+import { getProductImage } from "@/lib/productImages";
 
 const CATEGORIES = [
   { id: "productivity", label: "Productivity Software", priority: 1 },
@@ -185,13 +186,17 @@ export default function BudgetCalculator() {
                               </div>
                             </div>
                           </div>
-                          {product.featured_image_url && (
-                            <img
-                              src={product.featured_image_url}
-                              alt={product.product_name}
-                              className="w-24 h-24 object-cover rounded"
-                            />
-                          )}
+                          <img
+                            src={getProductImage({
+                              productSlug: product.product_slug,
+                              productName: product.product_name,
+                              category: product.category,
+                              featuredImageUrl: product.featured_image_url,
+                            })}
+                            alt={product.product_name}
+                            loading="lazy"
+                            className="w-24 h-24 object-cover rounded"
+                          />
                         </div>
                       </CardContent>
                     </Card>

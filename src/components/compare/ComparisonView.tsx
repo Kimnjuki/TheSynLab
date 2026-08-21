@@ -6,6 +6,7 @@ import type { Id } from "../../../convex/_generated/dataModel";
 import { X, Share2, Download, Link as LinkIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { getProductImage } from "@/lib/productImages";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 interface ComparisonViewProps {
@@ -101,13 +102,17 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
                           <X className="w-4 h-4" />
                         </Button>
                       </div>
-                      {product.featured_image_url && (
-                        <img 
-                          src={product.featured_image_url} 
-                          alt={product.product_name}
-                          className="w-full h-24 object-cover rounded"
-                        />
-                      )}
+                      <img
+                        src={getProductImage({
+                          productSlug: product.productSlug ?? product.product_slug,
+                          productName: product.productName ?? product.product_name,
+                          category: product.category,
+                          featuredImageUrl: product.featuredImageUrl ?? product.featured_image_url,
+                        })}
+                        alt={product.productName ?? product.product_name}
+                        loading="lazy"
+                        className="w-full h-24 object-cover rounded"
+                      />
                     </Card>
                   </th>
                 ))}
