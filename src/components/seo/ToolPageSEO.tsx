@@ -29,7 +29,7 @@ export function ToolPageSEO({
   howToSteps,
   noindex,
 }: ToolPageSEOProps) {
-  const schemas = [
+  const schemas: Record<string, unknown>[] = [
     websiteSchema(),
     organizationSchema(),
     breadcrumbSchema([

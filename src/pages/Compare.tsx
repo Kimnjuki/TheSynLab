@@ -248,7 +248,6 @@ export default function Compare() {
                       onRemove={(idOrSlug) =>
                         setProducts(slugs.filter((s) => s !== idOrSlug))
                       }
-                      defaultSection="scores"
                     />
                   </TabsContent>
 
@@ -258,7 +257,6 @@ export default function Compare() {
                       onRemove={(idOrSlug) =>
                         setProducts(slugs.filter((s) => s !== idOrSlug))
                       }
-                      defaultSection="specs"
                     />
                   </TabsContent>
 
@@ -268,7 +266,6 @@ export default function Compare() {
                       onRemove={(idOrSlug) =>
                         setProducts(slugs.filter((s) => s !== idOrSlug))
                       }
-                      defaultSection="compatibility"
                     />
                   </TabsContent>
 
@@ -278,7 +275,6 @@ export default function Compare() {
                       onRemove={(idOrSlug) =>
                         setProducts(slugs.filter((s) => s !== idOrSlug))
                       }
-                      defaultSection="pricing"
                     />
                     <PriceHistoryChart
                       products={selectedProductsData.map((p: any) => ({
@@ -294,7 +290,6 @@ export default function Compare() {
                       onRemove={(idOrSlug) =>
                         setProducts(slugs.filter((s) => s !== idOrSlug))
                       }
-                      defaultSection="reviews"
                     />
                   </TabsContent>
                 </Tabs>

@@ -83,7 +83,7 @@ export default function HubPost() {
           </CardContent>
         </Card>
 
-        <FAQSection keyword={(post as any)?.primaryKeyword} hubSlug={hubSlug} />
+        <FAQSection faqs={[]} keyword={(post as any)?.primaryKeyword} hubSlug={hubSlug} />
       </main>
       <Footer />
     </div>

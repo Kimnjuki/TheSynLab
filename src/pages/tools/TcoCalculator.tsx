@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
-import { useQuery, useAction, useMutation } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/../convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
+import type { Id } from "../../../convex/_generated/dataModel";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { ToolPageSEO } from "@/components/seo/ToolPageSEO";
 import Header from "@/components/Header";
@@ -45,12 +45,20 @@ const TcoCalculator = () => {
   const [seatCount, setSeatCount] = useState(10);
   const [contractYears, setContractYears] = useState(1);
   const [includeHidden, setIncludeHidden] = useState(true);
-  const [results, setResults] = useState<any>(null);
+  const [calcArgs, setCalcArgs] = useState<{
+    productIds: Id<"novaProducts">[];
+    seatCount: number;
+    contractLengthYears: number;
+    includeHiddenCosts: boolean;
+    sessionId: string;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
 
   const allProducts = useQuery(api.products.list, { status: "active" }) ?? [];
-  const calculateTcoAction = useAction(api.tco.calculateTco);
+  const calculated = useQuery(api.tco.calculateTco, calcArgs ?? "skip");
   const saveCalc = useMutation(api.tco.saveTcoCalculation);
+
+  const results = calculated ?? null;
 
   const filteredProducts = useMemo(() => {
     if (!searchQuery) return [];
@@ -78,7 +86,7 @@ const TcoCalculator = () => {
 
   const removeProduct = useCallback((id: Id<"novaProducts">) => {
     setSelectedProductIds((prev) => prev.filter((pid) => pid !== id));
-    setResults(null);
+    setCalcArgs(null);
   }, []);
 
   const handleCalculate = useCallback(async () => {
@@ -89,22 +97,18 @@ const TcoCalculator = () => {
 
     setLoading(true);
     try {
-      const result = await calculateTcoAction({
+      setCalcArgs({
         productIds: selectedProductIds,
         seatCount,
         contractLengthYears: contractYears,
         includeHiddenCosts: includeHidden,
         sessionId,
       });
-      setResults(result);
       toast.success("TCO calculated!");
-    } catch (err) {
-      console.error("TCO error:", err);
-      toast.error("Calculation failed. Try again.");
     } finally {
       setLoading(false);
     }
-  }, [selectedProductIds, seatCount, contractYears, includeHidden, sessionId, calculateTcoAction]);
+  }, [selectedProductIds, seatCount, contractYears, includeHidden, sessionId]);
 
   const formatCost = (val: number) =>
     new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);

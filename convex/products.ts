@@ -1,6 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
-import { resolveProductImage } from "./productImageMap";
+import { resolveProductImage, resolveProductGallery } from "./productImageMap";
 
 // Get all active products with optional filters
 export const list = query({
@@ -380,23 +380,40 @@ export const getComparisons = query({
 
 /**
  * Backfill: give every product that is missing a `featuredImageUrl` a curated,
- * product-relevant free image (Unsplash). Idempotent — run any time with:
+ * product-relevant free image (Unsplash), and every product with fewer than 4
+ * `galleryImages` a related set of free images for its detail-page gallery.
+ * Idempotent — run any time with:
  *   npx convex run products:backfillProductImages
  */
 export const backfillProductImages = mutation({
   args: {},
   handler: async (ctx) => {
     const products = await ctx.db.query("novaProducts").collect();
-    let updated = 0;
+    let heroesUpdated = 0;
+    let galleriesUpdated = 0;
     for (const p of products) {
+      const patch: Record<string, unknown> = {};
       if (!p.featuredImageUrl) {
-        await ctx.db.patch(p._id, {
-          featuredImageUrl: resolveProductImage(p),
+        patch.featuredImageUrl = resolveProductImage(p);
+        heroesUpdated++;
+      }
+      const existingGallery = (p.galleryImages ?? []).filter(Boolean);
+      if (existingGallery.length < 4) {
+        patch.galleryImages = resolveProductGallery({
+          ...p,
+          featuredImageUrl: (patch.featuredImageUrl as string) ?? p.featuredImageUrl,
         });
-        updated++;
+        galleriesUpdated++;
+      }
+      if (Object.keys(patch).length > 0) {
+        await ctx.db.patch(p._id, patch);
       }
     }
-    return { total: products.length, updated };
+    return {
+      total: products.length,
+      heroesUpdated,
+      galleriesUpdated,
+    };
   },
 });
 

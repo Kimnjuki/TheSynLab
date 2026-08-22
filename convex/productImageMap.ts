@@ -86,6 +86,54 @@ export const PRODUCT_IMAGE_MAP: Record<string, string> = {
   "logitech-mx-master-3s": U("photo-1527864550417-7fd91fc51a46"),
   "standdesk-pro-electric": U("photo-1593642632559-0c6d3fc62b89"),
   "caldigit-ts4": U("photo-1593642702821-c8da6771f0c6"),
+
+  // ---- E-commerce & finance (2026 expansion) ----
+  shopify: U("photo-1441986300917-64674bd600d8"),
+  stripe: U("photo-1556740738-b6a63e27c4df"),
+  square: U("photo-1556742049-0cfed4f6a45d"),
+  quickbooks: U("photo-1554224155-6726b3ff858f"),
+  klaviyo: U("photo-1563986768494-4dee2763ff3f"),
+  mailchimp: U("photo-1563986768494-4dee2763ff3f"),
+
+  // ---- Design & creative (2026 expansion) ----
+  figma: U("photo-1581291518857-4e27b48ff24e"),
+  "adobe-express": U("photo-1626785774573-4b799315345d"),
+
+  // ---- Developer tools (2026 expansion) ----
+  jira: U("photo-1531403009284-440f080d1e12"),
+  gitlab: U("photo-1587620962725-abab7fe55159"),
+  bitbucket: U("photo-1587620962725-abab7fe55159"),
+  "vs-code": U("photo-1587620962725-abab7fe55159"),
+
+  // ---- Communication & meetings (2026 expansion) ----
+  zoom: U("photo-1587825140708-dfaf72ae4b04"),
+  loom: U("photo-1573164713988-8665fc963095"),
+  calendly: U("photo-1506784983877-45594efa4cbe"),
+  "google-meet": U("photo-1587825140708-dfaf72ae4b04"),
+
+  // ---- AI assistants (2026 expansion) ----
+  "chatgpt-plus": U("photo-1620712943543-bcc4688e7485"),
+  "claude-pro": U("photo-1620712943543-bcc4688e7485"),
+  "perplexity-pro": U("photo-1551288049-bebda4e38f71"),
+  "notion-ai": U("photo-1531403009284-440f080d1e12"),
+
+  // ---- Security (2026 expansion) ----
+  "1password": U("photo-1563013544-824ae1b704d3"),
+  bitwarden: U("photo-1563013544-824ae1b704d3"),
+
+  // ---- Knowledge, data & storage (2026 expansion) ----
+  airtable: U("photo-1551288049-bebda4e38f71"),
+  obsidian: U("photo-1517842645767-c639042777db"),
+  dropbox: U("photo-1597423244286-40db30950ff1"),
+  "google-drive": U("photo-1597423244286-40db30950ff1"),
+  trello: U("photo-1531403009284-440f080d1e12"),
+
+  // ---- CRM & support (2026 expansion) ----
+  salesforce: U("photo-1563986768609-322da13575f3"),
+  "zoho-crm": U("photo-1563986768609-322da13575f3"),
+  freshsales: U("photo-1563986768609-322da13575f3"),
+  intercom: U("photo-1553775282-20af80779df7"),
+  freshdesk: U("photo-1553775282-20af80779df7"),
 };
 
 /** Category keyword fallbacks (checked in order). */
@@ -97,6 +145,9 @@ export const CATEGORY_IMAGE_FALLBACKS: { match: RegExp; url: string }[] = [
   { match: /design/i, url: U("photo-1626785774573-4b799315345d") },
   { match: /writing/i, url: U("photo-1455390582262-044cdead277a") },
   { match: /developer/i, url: U("photo-1461749280684-dccba630e2f6") },
+  { match: /ecommerce|commerce/i, url: U("photo-1441986300917-64674bd600d8") },
+  { match: /finance|payment|accounting/i, url: U("photo-1556740738-b6a63e27c4df") },
+  { match: /security/i, url: U("photo-1563013544-824ae1b704d3") },
   { match: /smart home|intelligent home/i, url: U("photo-1558002038-1055907df827") },
   { match: /hybrid office|office hardware/i, url: U("photo-1497215728101-856f4ea42174") },
 ];
@@ -104,7 +155,7 @@ export const CATEGORY_IMAGE_FALLBACKS: { match: RegExp; url: string }[] = [
 /** Generic default (clean laptop workspace). */
 export const DEFAULT_PRODUCT_IMAGE = U("photo-1517694712202-14dd9538aa97");
 
-/** Resolve an image URL for a product record. */
+/** Resolve a hero image URL for a product record. */
 export function resolveProductImage(product: {
   productSlug?: string;
   productName?: string;
@@ -126,4 +177,227 @@ export function resolveProductImage(product: {
   if (name.includes("granola")) return PRODUCT_IMAGE_MAP.granola;
 
   return DEFAULT_PRODUCT_IMAGE;
+}
+
+/* ------------------------------------------------------------------ */
+/* Gallery resolution — used by the backfill mutation to give every    */
+/* product a related set of free images for its detail-page gallery.   */
+/* ------------------------------------------------------------------ */
+
+/** Contextual shot pools keyed by functionality tag. */
+const FUNCTIONALITY_GALLERY: Record<string, string[]> = {
+  "task-management": [
+    U("photo-1484480974693-6ca0a78fb36b"),
+    U("photo-1506784983877-45594efa4cbe"),
+    U("photo-1611224923853-80b023f02d71"),
+    U("photo-1455390582262-044cdead277a"),
+  ],
+  "project-management": [
+    U("photo-1611224923853-80b023f02d71"),
+    U("photo-1542744173-8e7e53415bb0"),
+    U("photo-1553877522-43269d4ea984"),
+    U("photo-1522071820081-009f0129c71c"),
+  ],
+  "knowledge-management": [
+    U("photo-1517694712202-14dd9538aa97"),
+    U("photo-1517842645767-c639042777db"),
+    U("photo-1531403009284-440f080d1e12"),
+    U("photo-1455390582262-044cdead277a"),
+  ],
+  "team-communication": [
+    U("photo-1522071820081-009f0129c71c"),
+    U("photo-1611606063065-ee7946f0787a"),
+    U("photo-1552664730-d307ca884978"),
+    U("photo-1542751371-adc38448a05e"),
+  ],
+  "video-conferencing": [
+    U("photo-1587825140708-dfaf72ae4b04"),
+    U("photo-1611532736597-de2d4265fba3"),
+    U("photo-1522071820081-009f0129c71c"),
+    U("photo-1626285861696-9f0bf5a49c6d"),
+  ],
+  "workflow-automation": [
+    U("photo-1558494949-ef010cbdcc31"),
+    U("photo-1551288049-bebda4e38f71"),
+    U("photo-1587620962725-abab7fe55159"),
+    U("photo-1553877522-43269d4ea984"),
+  ],
+  "ai-assistant": [
+    U("photo-1620712943543-bcc4688e7485"),
+    U("photo-1551288049-bebda4e38f71"),
+    U("photo-1522071820081-009f0129c71c"),
+    U("photo-1517694712202-14dd9538aa97"),
+  ],
+  "meeting-notes": [
+    U("photo-1552664730-d307ca884978"),
+    U("photo-1478737270239-2f02b77fc618"),
+    U("photo-1522071820081-009f0129c71c"),
+    U("photo-1455390582262-044cdead277a"),
+  ],
+  "crm-sales": [
+    U("photo-1563986768609-322da13575f3"),
+    U("photo-1551288049-bebda4e38f71"),
+    U("photo-1553775282-20af80779df7"),
+    U("photo-1522071820081-009f0129c71c"),
+  ],
+  "email-marketing": [
+    U("photo-1563986768494-4dee2763ff3f"),
+    U("photo-1563986768609-322da13575f3"),
+    U("photo-1551288049-bebda4e38f71"),
+    U("photo-1455390582262-044cdead277a"),
+  ],
+  "customer-support": [
+    U("photo-1553775282-20af80779df7"),
+    U("photo-1522071820081-009f0129c71c"),
+    U("photo-1553877522-43269d4ea984"),
+    U("photo-1551288049-bebda4e38f71"),
+  ],
+  "design-creative": [
+    U("photo-1626785774573-4b799315345d"),
+    U("photo-1581291518857-4e27b48ff24e"),
+    U("photo-1553877522-43269d4ea984"),
+    U("photo-1527443224154-c4a3942d3acf"),
+  ],
+  "developer-tools": [
+    U("photo-1461749280684-dccba630e2f6"),
+    U("photo-1587620962725-abab7fe55159"),
+    U("photo-1618401471353-b98afee0b2eb"),
+    U("photo-1551434678-e076c223a692"),
+  ],
+  "writing-assistant": [
+    U("photo-1455390582262-044cdead277a"),
+    U("photo-1468779036391-52341f60b55d"),
+    U("photo-1517842645767-c639042777db"),
+    U("photo-1517694712202-14dd9538aa97"),
+  ],
+  "ecommerce-platform": [
+    U("photo-1441986300917-64674bd600d8"),
+    U("photo-1556740738-b6a63e27c4df"),
+    U("photo-1556742049-0cfed4f6a45d"),
+    U("photo-1551288049-bebda4e38f71"),
+  ],
+  "payments-finance": [
+    U("photo-1556740738-b6a63e27c4df"),
+    U("photo-1554224155-6726b3ff858f"),
+    U("photo-1556742049-0cfed4f6a45d"),
+    U("photo-1551288049-bebda4e38f71"),
+  ],
+  scheduling: [
+    U("photo-1506784983877-45594efa4cbe"),
+    U("photo-1507925921958-8a62f3d1a50d"),
+    U("photo-1522071820081-009f0129c71c"),
+    U("photo-1484480974693-6ca0a78fb36b"),
+  ],
+  "async-video": [
+    U("photo-1573164713988-8665fc963095"),
+    U("photo-1587825140708-dfaf72ae4b04"),
+    U("photo-1626285861696-9f0bf5a49c6d"),
+    U("photo-1522071820081-009f0129c71c"),
+  ],
+  "security-passwords": [
+    U("photo-1563013544-824ae1b704d3"),
+    U("photo-1518770660439-4636190af475"),
+    U("photo-1558494949-ef010cbdcc31"),
+    U("photo-1563986768609-322da13575f3"),
+  ],
+  "database-spreadsheet": [
+    U("photo-1551288049-bebda4e38f71"),
+    U("photo-1542744173-8e7e53415bb0"),
+    U("photo-1553877522-43269d4ea984"),
+    U("photo-1611224923853-80b023f02d71"),
+  ],
+  "file-storage": [
+    U("photo-1597423244286-40db30950ff1"),
+    U("photo-1544197150-b99a580bb7a8"),
+    U("photo-1593642702821-c8da6771f0c6"),
+    U("photo-1517694712202-14dd9538aa97"),
+  ],
+  "smart-home": [
+    U("photo-1558002038-1055907df827"),
+    U("photo-1608043152269-423dbba4e7e1"),
+    U("photo-1473341304170-971dccb5ac1e"),
+    U("photo-1558618666-fcd25c85cd64"),
+  ],
+  "office-hardware": [
+    U("photo-1497215728101-856f4ea42174"),
+    U("photo-1593642702821-c8da6771f0c6"),
+    U("photo-1580480055273-228ff5388ef8"),
+    U("photo-1527443224154-c4a3942d3acf"),
+  ],
+};
+
+const GENERIC_GALLERY_SHOTS = [
+  U("photo-1499951360447-b19be8fe80f5"),
+  U("photo-1522202176988-66273c2fd55f"),
+  U("photo-1497215728101-856f4ea42174"),
+  U("photo-1517694712202-14dd9538aa97"),
+];
+
+/**
+ * Resolve 4–6 related free images for a product's gallery.
+ * Order: stored galleryImages → per-product map → functionality pool → pads.
+ */
+export function resolveProductGallery(product: {
+  productSlug?: string;
+  productName?: string;
+  category?: string;
+  subcategory?: string;
+  functionalityTags?: string[];
+  featuredImageUrl?: string;
+  galleryImages?: string[];
+}): string[] {
+  const stored = (product.galleryImages ?? []).filter(Boolean);
+  if (stored.length >= 4) return stored.slice(0, 6);
+
+  const hero = product.featuredImageUrl || resolveProductImage(product);
+  const pool: string[] = [];
+
+  const keys = [
+    ...(product.functionalityTags ?? []),
+    product.subcategory ?? "",
+    product.category ?? "",
+    product.productName ?? "",
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  const pushPool = (imgs: string[]) => {
+    for (const img of imgs) if (!pool.includes(img) && img !== hero) pool.push(img);
+  };
+
+  for (const [fnKey, imgs] of Object.entries(FUNCTIONALITY_GALLERY)) {
+    if (keys.includes(fnKey.replace(/-/g, " ")) || keys.includes(fnKey)) {
+      pushPool(imgs);
+    }
+  }
+
+  if (/task|todo/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["task-management"]);
+  if (/project|agile|sprint/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["project-management"]);
+  if (/wiki|knowledge|note|doc/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["knowledge-management"]);
+  if (/messaging|chat|communicat/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["team-communication"]);
+  if (/video|meeting|call/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["video-conferencing"]);
+  if (/automation|workflow|integration/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["workflow-automation"]);
+  if (/crm|sales|pipeline/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["crm-sales"]);
+  if (/email|newsletter/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["email-marketing"]);
+  if (/support|helpdesk|ticket/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["customer-support"]);
+  if (/design|graphic|ui|ux|creative/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["design-creative"]);
+  if (/code|developer|git|version control/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["developer-tools"]);
+  if (/writing|grammar/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["writing-assistant"]);
+  if (/ecommerce|store|shop|retail|commerce/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["ecommerce-platform"]);
+  if (/payment|finance|accounting|billing/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["payments-finance"]);
+  if (/schedul|calendar|appointment/.test(keys)) pushPool(FUNCTIONALITY_GALLERY.scheduling);
+  if (/password|security|vault/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["security-passwords"]);
+  if (/database|spreadsheet|grid/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["database-spreadsheet"]);
+  if (/storage|file|drive|backup/.test(keys)) pushPool(FUNCTIONALITY_GALLERY["file-storage"]);
+  if (/smart home|speaker|thermostat|lighting|lock|camera|sensor|vacuum|doorbell|plug|router/.test(keys))
+    pushPool(FUNCTIONALITY_GALLERY["smart-home"]);
+  if (/monitor|keyboard|chair|desk|headset|webcam|printer|mouse|dock/.test(keys))
+    pushPool(FUNCTIONALITY_GALLERY["office-hardware"]);
+
+  const merged = [hero, ...pool];
+  for (const pad of GENERIC_GALLERY_SHOTS) {
+    if (merged.length >= 5) break;
+    if (!merged.includes(pad)) merged.push(pad);
+  }
+  return merged.slice(0, 6);
 }

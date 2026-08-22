@@ -25,9 +25,9 @@ export const captureEmailFromTool = mutation({
     await ctx.db.insert("novaNewsletterSubscribers", {
       email: args.email,
       source: "tool_capture",
-      status: "active",
+      isVerified: false,
+      isActive: true,
       subscribedAt: Date.now(),
-      tags: [args.toolType],
     });
     return true;
   },

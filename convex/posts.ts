@@ -168,8 +168,8 @@ export const bulkUpdateYearModifiers = mutation({
     );
     for (const p of candidates) {
       await ctx.db.patch(p._id, {
-        postTitle: p.postTitle?.replaceAll(args.fromYear, args.toYear) ?? p.postTitle,
-        seoTitle: p.seoTitle?.replaceAll(args.fromYear, args.toYear) ?? p.seoTitle,
+        postTitle: p.postTitle?.split(args.fromYear).join(args.toYear) ?? p.postTitle,
+        seoTitle: p.seoTitle?.split(args.fromYear).join(args.toYear) ?? p.seoTitle,
       });
     }
     return { updated: candidates.length };

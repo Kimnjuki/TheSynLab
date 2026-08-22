@@ -2,10 +2,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Bell, Layers, ShieldCheck, FlaskConical, AlertTriangle } from "lucide-react";
+import { getProductImage } from "@/lib/productImages";
 
 type HeroProps = {
   product: {
     productName: string;
+    productSlug?: string;
+    category?: string;
+    subcategory?: string;
     verdictSummary?: string;
     featuredImageUrl?: string;
     videoUrl?: string;
@@ -46,13 +50,11 @@ export function ProductHero({
     <section className="grid gap-6 lg:grid-cols-2">
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          {product.featuredImageUrl ? (
-            <img src={product.featuredImageUrl} alt={`${product.productName} logo`} className="h-14 w-14 rounded-lg object-cover" />
-          ) : (
-            <div className="h-14 w-14 rounded-lg bg-primary/15 flex items-center justify-center text-lg font-bold">
-              {product.productName.slice(0, 2).toUpperCase()}
-            </div>
-          )}
+          <img
+            src={getProductImage(product)}
+            alt={`${product.productName} hero image`}
+            className="h-14 w-14 rounded-lg object-cover"
+          />
           <div>
             <h1 className="text-3xl font-bold">{product.productName}</h1>
             {product.verdictSummary && <p className="text-muted-foreground">{product.verdictSummary}</p>}
@@ -122,10 +124,13 @@ export function ProductHero({
               className="h-full w-full rounded-lg"
               allow="autoplay; encrypted-media"
             />
-          ) : product.featuredImageUrl ? (
-            <img src={product.featuredImageUrl} alt={product.productName} className="h-full w-full rounded-lg object-cover" />
           ) : (
-            <div className="h-full w-full rounded-lg bg-muted flex items-center justify-center text-sm text-muted-foreground">No media</div>
+            <img
+              src={getProductImage(product)}
+              alt={product.productName}
+              className="h-full w-full rounded-lg object-cover"
+              loading="eager"
+            />
           )}
         </AspectRatio>
       </div>

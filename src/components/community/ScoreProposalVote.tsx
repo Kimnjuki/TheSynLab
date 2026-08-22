@@ -16,10 +16,19 @@ export function ScoreProposalVote() {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const { user } = useAuth();
 
-  const proposals = useQuery(api.scoreWeightProposals.listOpen) ?? [];
+  const proposals = (useQuery(api.scoreWeightProposals.listOpen) ?? []) as Array<{
+    _id: Id<"scoreWeightProposals">;
+    category?: string;
+    weightFactor: string;
+    currentWeight: number;
+    proposedWeight: number;
+    rationale: string;
+    voteCount: number;
+    votes?: unknown[];
+  }>;
   const vote = useMutation(api.scoreWeightProposals.vote);
 
-  const categories = ["all", ...new Set(proposals.map((p) => p.category))];
+  const categories = ["all", ...new Set(proposals.map((p) => String(p.category)))];
 
   const filtered =
     categoryFilter === "all"

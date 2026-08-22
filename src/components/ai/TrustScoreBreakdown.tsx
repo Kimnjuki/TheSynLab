@@ -11,7 +11,9 @@ interface TrustDimension {
 }
 
 interface TrustScoreBreakdownProps {
-  dimensions: {
+  /** Simple overall score (0-100) when dimension data is unavailable */
+  score?: number;
+  dimensions?: {
     dataPrivacyPractices?: number;
     encryptionStandards?: number;
     termsTransparency?: number;
@@ -24,11 +26,13 @@ interface TrustScoreBreakdownProps {
 }
 
 const TrustScoreBreakdown: React.FC<TrustScoreBreakdownProps> = ({
-  dimensions,
+  score,
+  dimensions = {},
   overallScore,
   category,
   className = '',
 }) => {
+  const resolvedOverall = overallScore ?? score;
   const [hoveredDimension, setHoveredDimension] = useState<string | null>(null);
 
   const trustDimensions: TrustDimension[] = [
@@ -81,11 +85,11 @@ const TrustScoreBreakdown: React.FC<TrustScoreBreakdownProps> = ({
     <div className={`bg-gray-900 rounded-xl p-6 border border-gray-800 ${className}`}>
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-white">Trust Score Breakdown</h3>
-        {overallScore !== undefined && (
+        {resolvedOverall !== undefined && (
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-400">Overall</span>
-            <span className={`text-lg font-bold ${getScoreColor(overallScore).replace('bg-', 'text-')}`}>
-              {overallScore}
+            <span className={`text-lg font-bold ${getScoreColor(resolvedOverall).replace('bg-', 'text-')}`}>
+              {resolvedOverall}
             </span>
           </div>
         )}

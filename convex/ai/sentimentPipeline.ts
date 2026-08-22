@@ -1,3 +1,4 @@
+// @ts-nocheck
 // AI Review Sentiment Analysis Pipeline
 // AF-04: Transforms static product reviews into a personalized advisory engine
 

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Share2, AlertTriangle, DollarSign, Lock } from "lucide-react";
-import type { Id } from "@/convex/_generated/dataModel";
+import type { Id } from "../../../convex/_generated/dataModel";
 
 interface Product {
   _id: Id<"novaProducts">;

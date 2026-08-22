@@ -109,7 +109,7 @@ export default function SaasToolReviewPage() {
 
   const title = `${tool.tagline} | ${tool.name} Review ${year} — Pricing, Pros & Cons | TheSynLab`;
   const description = CTR_DESCRIPTIONS[tool.slug] || tool.tagline?.toLowerCase().includes('social media')
-    ? `${tool.name} review: ${tool.tagline}. Tested on ${tool.features?.length || 15} features — see real pros, cons, pricing from ${tool.pricing.startingPrice}, and how it compares to Hootsuite, Buffer, and Later in ${year}.`
+    ? `${tool.name} review: ${tool.tagline}. Tested on ${tool.keyFeatures.length || 15} features — see real pros, cons, pricing from ${tool.pricing.startingPrice}, and how it compares to Hootsuite, Buffer, and Later in ${year}.`
     : tool.tagline?.toLowerCase().includes('api') || tool.tagline?.toLowerCase().includes('scrape')
     ? `${tool.name} review: ${tool.tagline}. Compare features, API pricing from ${tool.pricing.startingPrice}, rate limits, and top alternatives for web scraping & data extraction in ${year}.`
     : tool.tagline?.toLowerCase().includes('music') || tool.tagline?.toLowerCase().includes('royalty')
@@ -170,8 +170,8 @@ export default function SaasToolReviewPage() {
     ],
   };
 
-  const softwareVersion = tool.websiteLink ? undefined : undefined;
-  const priceNum = tool.pricing.hasFree 
+  const softwareVersion = undefined;
+  const priceNum = tool.pricing.hasFree
     ? 0 
     : parseFloat(tool.pricing.startingPrice.replace(/[^0-9.]/g, "")) || 0;
 
@@ -191,8 +191,7 @@ export default function SaasToolReviewPage() {
           priceCurrency: "USD",
           rating: tool.trustScore,
           reviewCount: 47,
-          featureList: tool.features?.length ? tool.features : (tool as any).keyFeatures || [],
-          image: tool.logo || tool.image,
+          featureList: tool.keyFeatures,
         }}
       />
       {/* Organization schema for brand authority */}

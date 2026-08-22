@@ -211,9 +211,15 @@ export default defineSchema({
     isBestOfMonth: v.optional(v.boolean()),
     // Growth Plan: LLM citation optimization
     llmCitationSummary: v.optional(v.string()),
+    // Functionality categorization plan (2026): every product is tagged with a
+    // primary functional role plus supporting tags so products can be browsed,
+    // filtered, and recommended by *what they do*, not just by hub/category.
+    primaryFunctionality: v.optional(v.string()), // e.g. task-management, video-conferencing, ecommerce-platform
+    functionalityTags: v.optional(v.array(v.string())),
   }).index("by_slug", ["productSlug"])
     .index("by_hub", ["hub"])
     .index("by_category", ["category"])
+    .index("by_functionality", ["primaryFunctionality"])
     .index("by_status", ["status"])
     .index("by_hub_status", ["hub", "status"])
     .index("by_category_status", ["category", "status"])

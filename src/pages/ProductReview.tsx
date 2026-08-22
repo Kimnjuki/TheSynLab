@@ -140,8 +140,8 @@ export default function ProductReview() {
                 {(product as { modelUrl3D?: string; arEnabled?: boolean }).arEnabled && (
                   <ArProductPreview
                     productName={product.productName}
-                    modelUrl={(product as { modelUrl3D?: string }).modelUrl3D}
-                    imageUrl={product.featuredImageUrl}
+                    modelUrl3D={(product as { modelUrl3D?: string }).modelUrl3D}
+                    arEnabled={(product as { arEnabled?: boolean }).arEnabled}
                   />
                 )}
                 {!((product as { arEnabled?: boolean }).arEnabled) && product.featuredImageUrl && (

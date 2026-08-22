@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Star, CheckCircle2, ArrowRight, ChevronRight, ExternalLink,
-  Trophy, Zap, DollarSign,
+  Trophy, Zap, DollarSign, Shield,
 } from "lucide-react";
 import {
   getBestOfTools,

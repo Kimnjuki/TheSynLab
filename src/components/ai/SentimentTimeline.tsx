@@ -112,7 +112,7 @@ const SentimentTimeline: React.FC<SentimentTimelineProps> = ({
       <div className="mt-4 flex items-center justify-center gap-6 text-xs text-gray-500">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-emerald-500" />
-          <span>Good (>70%)</span>
+          <span>{"Good (>70%)"}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-amber-500" />
@@ -120,7 +120,7 @@ const SentimentTimeline: React.FC<SentimentTimelineProps> = ({
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-red-500" />
-          <span>Poor (<40%)</span>
+          <span>{"Poor (<40%)"}</span>
         </div>
       </div>
     </div>

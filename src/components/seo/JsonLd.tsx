@@ -89,7 +89,7 @@ export interface OrganizationData {
 }
 
 interface JsonLdProps {
-  type: "Article" | "NewsArticle" | "Product" | "SoftwareApplication" | "WebPage" | "WebSite" | "BreadcrumbList" | "FAQPage" | "Review" | "ItemList" | "Organization" | "Person" | "HowTo";
+  type?: "Article" | "NewsArticle" | "Product" | "SoftwareApplication" | "WebPage" | "WebSite" | "BreadcrumbList" | "FAQPage" | "Review" | "ItemList" | "Organization" | "Person" | "HowTo";
   article?: ArticleData;
   product?: {
     name: string;
@@ -122,6 +122,8 @@ interface JsonLdProps {
     steps: { name: string; text: string; image?: string; url?: string }[];
   };
   custom?: Record<string, unknown>;
+  /** Fully-formed schema.org object(s) — rendered as-is. */
+  schema?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const abs = (url: string) =>
@@ -398,27 +400,38 @@ function buildHowToSchema(howTo: NonNullable<JsonLdProps["howTo"]>) {
   return schema;
 }
 
-export function JsonLd({ type, article, product, softwareApp, faq, breadcrumbs, itemList, review, person, organization, webSite, howTo, custom }: JsonLdProps) {
-  let schema: Record<string, unknown> = { "@context": "https://schema.org", "@type": type };
+export function JsonLd({ type, article, product, softwareApp, faq, breadcrumbs, itemList, review, person, organization, webSite, howTo, custom, schema }: JsonLdProps) {
+  let jsonLd: Record<string, unknown> = { "@context": "https://schema.org", "@type": type ?? "WebPage" };
 
   if ((type === "Article" || type === "NewsArticle") && article) {
-    schema = type === "NewsArticle" ? buildNewsArticleSchema(article) : buildArticleSchema(article);
-  } else if (type === "Product" && product) schema = buildProductSchema(product);
-  else if (type === "SoftwareApplication" && softwareApp) schema = buildSoftwareAppSchema(softwareApp);
-  else if (type === "FAQPage" && faq) schema = buildFaqSchema(faq);
-  else if (type === "BreadcrumbList" && breadcrumbs) schema = buildBreadcrumbSchema(breadcrumbs);
-  else if (type === "ItemList" && itemList) schema = buildItemListSchema(itemList);
-  else if (type === "Review" && review) schema = buildReviewSchema(review);
-  else if (type === "Person" && person) schema = buildPersonSchema(person);
-  else if (type === "Organization" && organization) schema = buildOrganizationSchema(organization);
-  else if (type === "WebSite" && webSite) schema = buildWebSiteSchema(webSite);
-  else if (type === "HowTo" && howTo) schema = buildHowToSchema(howTo);
+    jsonLd = type === "NewsArticle" ? buildNewsArticleSchema(article) : buildArticleSchema(article);
+  } else if (type === "Product" && product) jsonLd = buildProductSchema(product);
+  else if (type === "SoftwareApplication" && softwareApp) jsonLd = buildSoftwareAppSchema(softwareApp);
+  else if (type === "FAQPage" && faq) jsonLd = buildFaqSchema(faq);
+  else if (type === "BreadcrumbList" && breadcrumbs) jsonLd = buildBreadcrumbSchema(breadcrumbs);
+  else if (type === "ItemList" && itemList) jsonLd = buildItemListSchema(itemList);
+  else if (type === "Review" && review) jsonLd = buildReviewSchema(review);
+  else if (type === "Person" && person) jsonLd = buildPersonSchema(person);
+  else if (type === "Organization" && organization) jsonLd = buildOrganizationSchema(organization);
+  else if (type === "WebSite" && webSite) jsonLd = buildWebSiteSchema(webSite);
+  else if (type === "HowTo" && howTo) jsonLd = buildHowToSchema(howTo);
 
-  if (custom) schema = { ...schema, ...custom };
+  if (custom) jsonLd = { ...jsonLd, ...custom };
+
+  if (schema) {
+    const schemas = Array.isArray(schema) ? schema : [schema];
+    return (
+      <Helmet>
+        {schemas.map((s, i) => (
+          <script key={i} type="application/ld+json">{JSON.stringify(s)}</script>
+        ))}
+      </Helmet>
+    );
+  }
 
   return (
     <Helmet>
-      <script type="application/ld+json">{JSON.stringify(schema)}</script>
+      <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
     </Helmet>
   );
 }

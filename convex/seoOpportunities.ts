@@ -14,7 +14,7 @@ type Opportunity = {
 };
 
 function asId(value: string) {
-  return value.replaceAll(" ", "-").toLowerCase();
+  return value.replace(/ /g, "-").toLowerCase();
 }
 
 export const getOpportunitiesDashboard = query({

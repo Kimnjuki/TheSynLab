@@ -28,6 +28,7 @@ const staticRoutes = [
   "/tools",
   "/tools/compare",
   "/tools/compatibility",
+  "/tools/compatibility-checker",
   "/tools/roi-calculator",
   "/tools/stack-builder",
   "/tools/budget-calculator",
@@ -79,7 +80,14 @@ const NOINDEX_ROUTES = new Set([
 // These are kept in staticRoutes for prerendering but canonicalize to the root-level
 // version, are excluded from sitemap, and get noindex,follow.
 const CANONICAL_ALIASES: Record<string, string> = {
+  // v2.0 canonical migration: /tools/* paths that 301-redirect to root-level routes
   "/tools/compare": "/compare",
+  "/tools/stack-builder": "/stack-builder",
+  "/tools/tco-calculator": "/tco-calculator",
+  "/tools/vendor-risk-checker": "/vendor-risk-checker",
+  "/tools/workflow-blueprint": "/workflow-blueprint",
+  "/tools/stack-quiz": "/stack-quiz",
+  "/tools/compatibility-checker": "/tools/compatibility",
 };
 const productRoutes = STATIC_PRODUCTS.map((p) => `/products/${p.productSlug}`);
 const productAltRoutes = STATIC_PRODUCTS

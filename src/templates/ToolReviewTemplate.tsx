@@ -196,4 +196,141 @@ const ToolReviewTemplate: React.FC<ToolReviewTemplateProps> = ({ tool, relatedCo
         <Tabs defaultValue="overview" className="mb-12">
           <TabsList className="grid grid-cols-4 mb-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="
+            <TabsTrigger value="features">Features</TabsTrigger>
+            <TabsTrigger value="pricing">Pricing</TabsTrigger>
+            <TabsTrigger value="alternatives">Alternatives</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            <Card className="p-6">
+              <h2 className="text-2xl font-semibold mb-4">What is {tool.name}?</h2>
+              <p className="text-muted-foreground leading-relaxed">{tool.description}</p>
+            </Card>
+
+            {tool.faq.length > 0 && (
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold mb-4">Frequently Asked Questions</h2>
+                <Accordion type="single" collapsible>
+                  {tool.faq.map((item, i) => (
+                    <AccordionItem key={i} value={`faq-${i}`}>
+                      <AccordionTrigger>{item.question}</AccordionTrigger>
+                      <AccordionContent>{item.answer}</AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="features" className="space-y-6">
+            {tool.features.map((group, gi) => (
+              <Card key={gi} className="p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Star className="w-5 h-5 text-primary" />
+                  {group.category}
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {group.items.map((feature, fi) => (
+                    <div key={fi} className="flex items-start gap-3 p-3 rounded-lg border bg-card">
+                      <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium text-sm">
+                          {feature.name}
+                          {feature.isPremium && (
+                            <Badge variant="secondary" className="ml-2 text-[10px]">Premium</Badge>
+                          )}
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">{feature.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            ))}
+
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Link2 className="w-5 h-5 text-primary" />
+                Integrations
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {tool.integrations.map((integration, i) => (
+                  <Badge key={i} variant="outline">{integration}</Badge>
+                ))}
+              </div>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="pricing" className="space-y-6">
+            <div className="grid md:grid-cols-3 gap-6">
+              {tool.pricing.map((tier, i) => (
+                <Card key={i} className="p-6 flex flex-col">
+                  <h3 className="text-lg font-semibold mb-2">{tier.tier}</h3>
+                  <p className="text-3xl font-bold mb-1">
+                    {tier.currency}{tier.price}
+                    <span className="text-sm font-normal text-muted-foreground">/{tier.billingCycle}</span>
+                  </p>
+                  <ul className="mt-4 space-y-2 flex-1">
+                    {tier.features.map((feature, fi) => (
+                      <li key={fi} className="flex items-start gap-2 text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button className="mt-6 w-full gap-2">
+                    <DollarSign className="w-4 h-4" />
+                    Choose {tier.tier}
+                  </Button>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="alternatives" className="space-y-6">
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4">Top {tool.name} Alternatives</h3>
+              <div className="space-y-3">
+                {tool.alternatives.map((alt, i) => (
+                  <div key={i} className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent/50 transition-colors">
+                    <div>
+                      <p className="font-medium">{alt.name}</p>
+                      <Badge variant="outline" className="mt-1 text-xs">{alt.type}</Badge>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-semibold">{alt.score}/100</span>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {relatedComparisons.length > 0 && (
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-primary" />
+                  Related Comparisons
+                </h3>
+                <div className="space-y-2">
+                  {relatedComparisons.map((cmp, i) => (
+                    <a
+                      key={i}
+                      href={`/compare/${cmp.slug}-vs-${cmp.vsSlug}`}
+                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent/50 transition-colors"
+                    >
+                      <span className="text-sm font-medium">{cmp.name} vs {cmp.vsTool}</span>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    </a>
+                  ))}
+                </div>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
+      </div>
+    </>
+  );
+};
+
+export default ToolReviewTemplate;

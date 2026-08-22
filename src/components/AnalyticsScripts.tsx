@@ -48,12 +48,13 @@ export default function AnalyticsScripts() {
   useEffect(() => {
     const run = (consent: ConsentFlags) => {
       // Update Google Consent Mode based on user choice
-      if (typeof gtag !== 'undefined') {
-        gtag('consent', 'update', {
-          'analytics_storage': consent.analyticsCookies ? 'granted' : 'denied',
-          'ad_storage': consent.advertisingCookies ? 'granted' : 'denied',
-          'ad_user_data': consent.advertisingCookies ? 'granted' : 'denied',
-          'ad_personalization': consent.advertisingCookies ? 'granted' : 'denied',
+      const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+      if (typeof gtag === "function") {
+        gtag("consent", "update", {
+          analytics_storage: consent.analyticsCookies ? "granted" : "denied",
+          ad_storage: consent.advertisingCookies ? "granted" : "denied",
+          ad_user_data: consent.advertisingCookies ? "granted" : "denied",
+          ad_personalization: consent.advertisingCookies ? "granted" : "denied",
         });
       }
 

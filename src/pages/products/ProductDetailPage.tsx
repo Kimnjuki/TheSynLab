@@ -29,6 +29,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Bell, Layers, ExternalLink, DollarSign, Star, TrendingUp, Shield } from "lucide-react";
 import { useViewTracking, trackConversion } from "@/hooks/useViewTracking";
 import { getPurchaseUrl, buildAffiliateUrl } from "@/lib/affiliateLinks";
+import { buildDefaultGallerySlides } from "@/lib/productImages";
 import { toast } from "sonner";
 
 export default function ProductDetailPage() {
@@ -204,7 +205,13 @@ export default function ProductDetailPage() {
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr),320px]">
           <div className="space-y-8">
-            <VisualStoryGallery slides={(details.gallerySlides ?? []) as any} />
+            <VisualStoryGallery
+              slides={
+                (details.gallerySlides ?? []).length > 0
+                  ? (details.gallerySlides as any)
+                  : (buildDefaultGallerySlides(details) as any)
+              }
+            />
 
             <section className="space-y-4">
               <h2 className="text-xl font-semibold">Narrative description & use cases</h2>

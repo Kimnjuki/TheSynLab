@@ -24,7 +24,7 @@ export default function RelatedContent({ productSlug, articleSlug, hubSlug, limi
 
     // Filter products in same hub, excluding current product
     const sameHub = STATIC_PRODUCTS.filter(
-      (p) => p.hubSlug === hubSlug && p.productSlug !== productSlug
+      (p) => p.hub === hubSlug && p.productSlug !== productSlug
     );
 
     // Sort by trust score descending, take top N
@@ -33,7 +33,7 @@ export default function RelatedContent({ productSlug, articleSlug, hubSlug, limi
 
   const currentHub = useMemo(() => {
     if (!hubSlug) return null;
-    return STATIC_PRODUCTS.find((p) => p.hubSlug === hubSlug);
+    return STATIC_PRODUCTS.find((p) => p.hub === hubSlug);
   }, [hubSlug]);
 
   if (!hubSlug) return null;
@@ -89,7 +89,7 @@ export default function RelatedContent({ productSlug, articleSlug, hubSlug, limi
                   ))}
                 </div>
                 <p className="text-xs text-muted-foreground line-clamp-2 flex-1">
-                  {p.longDescription || p.shortDescription || p.description}
+                  {p.longDescription || p.description}
                 </p>
                 <div className="flex items-center gap-1 text-xs text-primary mt-2">
                   View review <ArrowRight className="h-3 w-3" />

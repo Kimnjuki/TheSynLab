@@ -31,7 +31,9 @@ export function EcosystemOverlapPanel({
 
   const { intersection, union } = useMemo(() => {
     if (lists.length === 0) return { intersection: [] as string[], union: [] as string[] };
-    const sets = lists.map((list) => new Set(list.map((x: { ecosystem: string }) => x.ecosystem)));
+    const sets = lists.map((list) =>
+      new Set((list as { ecosystem: string }[]).map((x) => x.ecosystem))
+    );
     const first = sets[0]!;
     const inter = [...first].filter((eco) => sets.every((s) => s.has(eco)));
     const uni = new Set<string>();

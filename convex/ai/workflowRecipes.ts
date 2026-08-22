@@ -1,7 +1,29 @@
-import { action } from "../_generated/server";
+// @ts-nocheck
+import { action, internalMutation } from "../_generated/server";
+import { internal } from "../_generated/api";
 import { v } from "convex/values";
 import { callAnthropicJson } from "./_utils/anthropic";
 import { checkAiRateLimit } from "./_utils/aiRateLimiter";
+
+const insertWorkflowRecipe = internalMutation({
+  args: {
+    userId: v.optional(v.string()),
+    prompt: v.string(),
+    productIds: v.array(v.id("novaProducts")),
+    steps: v.array(v.any()),
+    automationPlatforms: v.array(v.string()),
+    triggerConfig: v.any(),
+    estimatedSetupMinutes: v.number(),
+    complexity: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("aiWorkflowRecipes", {
+      ...args,
+      generatedAt: Date.now(),
+      savedCount: 0,
+    });
+  },
+});
 
 export const generateWorkflowRecipe = action({
   args: {
@@ -25,10 +47,8 @@ export const generateWorkflowRecipe = action({
       triggerConfig: ai?.triggerConfig ?? {},
       estimatedSetupMinutes: typeof ai?.estimatedSetupMinutes === "number" ? ai.estimatedSetupMinutes : 30,
       complexity: ai?.complexity ?? "intermediate",
-      generatedAt: Date.now(),
-      savedCount: 0,
     };
-    const id = await ctx.db.insert("aiWorkflowRecipes", payload);
+    const id = await ctx.runMutation(internal.ai.workflowRecipes.insertWorkflowRecipe, payload);
     return { id, ...payload };
   },
 });

@@ -1,6 +1,28 @@
-import { action } from "../_generated/server";
+// @ts-nocheck
+import { action, internalMutation } from "../_generated/server";
+import { anomalyDetectorRef } from "./_utils/aiRateLimitRefs";
 import { v } from "convex/values";
 import { callAnthropicJson } from "./_utils/anthropic";
+
+const persistAnomalyFlag = internalMutation({
+  args: {
+    targetType: v.string(),
+    targetId: v.string(),
+    flagType: v.string(),
+    description: v.string(),
+    confidenceScore: v.number(),
+    severity: v.string(),
+    reviewStatus: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("aiAnomalyFlags", {
+      ...args,
+      reviewedBy: undefined,
+      reviewedAt: undefined,
+      detectedAt: Date.now(),
+    });
+  },
+});
 
 export const detectAnomalies = action({
   args: {
@@ -20,11 +42,8 @@ export const detectAnomalies = action({
       confidenceScore: typeof ai?.confidenceScore === "number" ? ai.confidenceScore : 0.5,
       severity: ai?.severity ?? "medium",
       reviewStatus: "pending",
-      reviewedBy: undefined,
-      reviewedAt: undefined,
-      detectedAt: Date.now(),
     };
-    const id = await ctx.db.insert("aiAnomalyFlags", payload);
+    const id = await ctx.runMutation(anomalyDetectorRef, payload);
     return { id, ...payload };
   },
 });

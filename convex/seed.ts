@@ -649,7 +649,7 @@ export const seedQuiz = mutation({
     if (!existingQuestions) {
       let count = 0;
       for (const q of quizQuestionsData) {
-        await ctx.db.insert("quizQuestions", q);
+        await ctx.db.insert("quizQuestions", q as any);
         count++;
       }
       results.quizQuestions = { seeded: true, count };
@@ -781,7 +781,7 @@ export const seedAll = mutation({
     if (!existingQuestions) {
       let count = 0;
       for (const q of quizQuestionsData) {
-        await ctx.db.insert("quizQuestions", q);
+        await ctx.db.insert("quizQuestions", q as any);
         count++;
       }
       results.quizQuestions = { seeded: true, count };

@@ -22,6 +22,7 @@ import {
   ArrowDown,
   Medal,
   Star,
+  GitCompare,
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
@@ -181,7 +182,7 @@ const TrustIndexLeaderboard = () => {
                   {entries.map((entry, i) => (
                     <Link
                       key={entry.productId}
-                      to={entry.productSlug ? `/products/${entry.productSlug}` : "#"}
+                      to={entry.productId?.productSlug ? `/products/${entry.productId.productSlug}` : "#"}
                       className={`flex items-center gap-4 rounded-lg border p-4 transition-colors hover:bg-accent ${
                         i === 0 ? "border-yellow-500/30 bg-yellow-500/5" : ""
                       }`}
@@ -205,13 +206,13 @@ const TrustIndexLeaderboard = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="truncate font-medium">
-                            {entry.productName || "Unknown"}
+                            {entry.productId?.productName || "Unknown"}
                           </span>
                           <BadgeIcon badge={entry.badge} />
                           <RankDelta delta={entry.rankDelta} />
                         </div>
                         <p className="text-xs text-muted-foreground capitalize">
-                          {entry.hub}
+                          {entry.productId?.hub ?? ""}
                         </p>
                       </div>
 

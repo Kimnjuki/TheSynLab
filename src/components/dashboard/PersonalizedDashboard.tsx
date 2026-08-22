@@ -41,8 +41,10 @@ export function PersonalizedDashboard({ userId, className }: PersonalizedDashboa
         {profile ? (
           <div className="rounded-lg border p-3 text-sm space-y-1">
             {profile.workStyle && (
-              <span className="text-muted-foreground">Work style: </span>
-              <Badge variant="secondary">{profile.workStyle}</Badge>
+              <>
+                <span className="text-muted-foreground">Work style: </span>
+                <Badge variant="secondary">{profile.workStyle}</Badge>
+              </>
             )}
             {profile.budgetRange && (
               <div className="text-muted-foreground">Budget: {profile.budgetRange}</div>

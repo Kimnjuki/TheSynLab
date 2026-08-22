@@ -75,7 +75,7 @@ export const topicClusters: TopicCluster[] = [
 /**
  * Get related cluster items for a given URL
  */
-export function getClusterForUrl(url: string): ClusterItem[] | null {
+export function getClusterForUrl(url: string): (TopicCluster | ClusterItem)[] | null {
   for (const cluster of topicClusters) {
     if (cluster.pillarUrl === url) return cluster.related;
     const match = cluster.related.find((r) => r.url === url);

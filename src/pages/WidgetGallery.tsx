@@ -30,7 +30,7 @@ export default function WidgetGallery() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title="Embeddable Trust Score Scorecard Widgets | TheSynLab"
-        description="Copy and paste Trust Score, Integration Score, and TCO widgets for any product. Embed independent ratings on your website."
+        metaDescription="Copy and paste Trust Score, Integration Score, and TCO widgets for any product. Embed independent ratings on your website."
         canonicalUrl="/widgets"
       />
       <Header />
@@ -80,10 +80,10 @@ export default function WidgetGallery() {
                         <span className="text-muted-foreground">Integration</span>
                         <span className="font-bold">{p.integrationScore}/10</span>
                       </div>
-                      {p.estimatedTCO && (
+                      {p.estimatedTco != null && (
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Est. TCO</span>
-                          <span className="font-bold">{p.estimatedTCO}</span>
+                          <span className="font-bold">${p.estimatedTco}</span>
                         </div>
                       )}
                     </div>

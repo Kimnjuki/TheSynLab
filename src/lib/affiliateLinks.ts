@@ -56,3 +56,40 @@ export function getPurchaseUrl(
   
   return '';
 }
+
+/**
+ * Detect Amazon product URLs (used to swap CTA labels and apply the
+ * Amazon Associates tag).
+ */
+export function isAmazonProductUrl(url?: string | null): boolean {
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === "amazon.com" || host.endsWith(".amazon.com") || host.includes("amzn.to");
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Apply the outbound affiliate treatment to a product URL.
+ * Appends the configured Amazon Associates tag for Amazon links; other
+ * URLs pass through unchanged (buildAffiliateUrl handles tagged networks).
+ */
+export function applyAffiliateOutboundUrl(
+  url?: string | null,
+  productName?: string
+): string {
+  if (!url) return "";
+  const amazonTag = (import.meta.env.VITE_AMAZON_TAG as string | undefined)?.trim();
+  if (isAmazonProductUrl(url) && amazonTag) {
+    try {
+      const u = new URL(url);
+      u.searchParams.set("tag", amazonTag);
+      return u.toString();
+    } catch {
+      return url;
+    }
+  }
+  return buildAffiliateUrl(url) || url;
+}

@@ -1,11 +1,17 @@
-import { ActionCtx } from "../../_generated/server";
 import { api } from "../../_generated/api";
 
 const WINDOW_MS = 60 * 60 * 1000;
 const MAX_REQUESTS = 50;
 
+/** Minimal structural ctx type — avoids instantiating the full ActionCtx
+ *  generic (which trips TS2589 depth limits on very large schemas). */
+type RateLimitedCtx = {
+  runQuery: (ref: unknown, args: unknown) => Promise<any>;
+  runMutation: (ref: unknown, args: unknown) => Promise<unknown>;
+};
+
 export async function checkAiRateLimit(
-  ctx: ActionCtx,
+  ctx: RateLimitedCtx,
   identifier: string
 ): Promise<{ allowed: boolean; reason?: string }> {
   const now = Date.now();

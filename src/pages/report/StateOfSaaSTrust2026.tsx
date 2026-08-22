@@ -110,7 +110,7 @@ function ReportContent() {
                     <Badge variant={p.trustScore >= 85 ? "default" : "secondary"}>{p.trustScore}/10</Badge>
                   </td>
                   <td className="py-2">{p.integrationScore}/10</td>
-                  <td className="py-2 text-muted-foreground">{p.hubSlug.replace(/_/g, " ")}</td>
+                  <td className="py-2 text-muted-foreground">{p.hub.replace(/_/g, " ")}</td>
                 </tr>
               ))}
             </tbody>
@@ -145,7 +145,7 @@ function ReportContent() {
                       {p.trustScore < 70 ? "High" : p.trustScore < 80 ? "Medium" : "Low"}
                     </Badge>
                   </td>
-                  <td className="py-2 text-muted-foreground">{p.hubSlug.replace(/_/g, " ")}</td>
+                  <td className="py-2 text-muted-foreground">{p.hub.replace(/_/g, " ")}</td>
                 </tr>
               ))}
             </tbody>
@@ -232,7 +232,7 @@ export default function StateOfSaaSTrust2026() {
     <div className="min-h-screen bg-background">
       <SEOHead
         title={`${reportTitle} | TheSynLab Research`}
-        description={reportDesc}
+        metaDescription={reportDesc}
         canonicalUrl="/report/state-of-saas-trust-2026"
       />
       <Header />
