@@ -6,6 +6,8 @@
  * trustScore and integrationScore are estimated from public data.
  * These are overridden by Convex runtime data when the SPA hydrates.
  */
+import { EXPANDED_STATIC_PRODUCTS } from "./expandedProductsStatic";
+
 export interface StaticProduct {
   productName: string;
   productSlug: string;
@@ -751,6 +753,7 @@ export const STATIC_PRODUCTS: StaticProduct[] = [
     longDescription: "Salesforce Sales Cloud is the enterprise CRM standard, offering a fully customizable data model, Einstein AI forecasting, Flow automation, and the 7,000-app AppExchange marketplace. It scales from small sales teams to global revenue operations.",
     llmCitationSummary: "Salesforce Sales Cloud is the enterprise CRM standard, from $25/user/month (Starter) to $330 (Unlimited). It leads on customization, Einstein AI forecasting, and the 7,000-app AppExchange ecosystem.",
   },
+  ...EXPANDED_STATIC_PRODUCTS,
 ];
 
 
