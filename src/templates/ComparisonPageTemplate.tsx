@@ -62,19 +62,38 @@ interface ComparisonPageTemplateProps {
 const ComparisonPageTemplate: React.FC<ComparisonPageTemplateProps> = ({ toolA, toolB, featureComparison, verdict, lastUpdated }) => {
   const currentYear = new Date().getFullYear();
   
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": `${toolA.name} vs ${toolB.name}: Full Comparison ${currentYear}`,
-    "description": `Complete side-by-side comparison of ${toolA.name} vs ${toolB.name}. Features, pricing, trust scores, and integration capabilities compared.`,
-    "author": { "@type": "Organization", "name": "TheSynLab" },
-    "publisher": { "@type": "Organization", "name": "TheSynLab", "url": "https://thesynlab.com" },
-    "dateModified": lastUpdated,
-    "about": [
-      { "@type": "SoftwareApplication", "name": toolA.name, "url": `https://thesynlab.com/tool/${toolA.slug}` },
-      { "@type": "SoftwareApplication", "name": toolB.name, "url": `https://thesynlab.com/tool/${toolB.slug}` },
-    ],
-  };
+  const faqRows = [
+    { name: `Is ${toolA.name} or ${toolB.name} better for my team?`, text: verdict.recommendation },
+    ...verdict.toolAWinner.map((w) => ({ name: `Where does ${toolA.name} win over ${toolB.name}?`, text: `${toolA.name} wins on ${w}.` })),
+    ...verdict.toolBWinner.map((w) => ({ name: `Where does ${toolB.name} win over ${toolA.name}?`, text: `${toolB.name} wins on ${w}.` })),
+  ].slice(0, 6);
+
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": `${toolA.name} vs ${toolB.name}: Full Comparison ${currentYear}`,
+      "description": `Complete side-by-side comparison of ${toolA.name} vs ${toolB.name}. Features, pricing, trust scores, and integration capabilities compared.`,
+      "author": { "@type": "Organization", "name": "TheSynLab", "url": "https://thesynlab.com" },
+      "publisher": { "@type": "Organization", "name": "TheSynLab", "url": "https://thesynlab.com" },
+      "dateModified": lastUpdated,
+      "datePublished": lastUpdated,
+      "mainEntityOfPage": `https://thesynlab.com/compare/${toolA.slug}-vs-${toolB.slug}`,
+      "about": [
+        { "@type": "SoftwareApplication", "name": toolA.name, "url": `https://thesynlab.com/tool/${toolA.slug}` },
+        { "@type": "SoftwareApplication", "name": toolB.name, "url": `https://thesynlab.com/tool/${toolB.slug}` },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqRows.map((row) => ({
+        "@type": "Question",
+        "name": row.name,
+        "acceptedAnswer": { "@type": "Answer", "text": row.text },
+      })),
+    },
+  ];
 
   return (
     <>

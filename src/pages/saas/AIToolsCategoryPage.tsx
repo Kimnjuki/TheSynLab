@@ -55,14 +55,18 @@ export default function AIToolsCategoryPage() {
     description,
     url: canonical,
     numberOfItems: tools.length,
-    itemListElement: tools.map((t, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: t.name,
-      url: `https://thesynlab.com/tool/${t.slug}`,
-      description: t.shortDescription,
-    })),
+    itemListElement: [...tools]
+      .sort((a, b) => b.trustScore - a.trustScore)
+      .map((t, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: t.name,
+        url: `https://thesynlab.com/tool/${t.slug}`,
+        description: t.shortDescription,
+      })),
   };
+
+  const top10Ranked = [...tools].sort((a, b) => b.trustScore - a.trustScore).slice(0, 10);
 
   return (
     <div className="min-h-screen bg-background">
@@ -129,6 +133,49 @@ export default function AIToolsCategoryPage() {
               </Card>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* ── TOP 10 TABLE ─────────────────────────────────── */}
+      <section className="container mx-auto px-4 pb-10">
+        <h2 className="mb-4 text-xl font-bold">Top 10 {cat.name} Tools Compared by Trust Score</h2>
+        <div className="overflow-x-auto rounded-lg border">
+          <table className="w-full min-w-[640px] border-collapse text-sm">
+            <thead>
+              <tr className="bg-muted text-left">
+                <th className="px-4 py-3 font-semibold">Rank</th>
+                <th className="px-4 py-3 font-semibold">Tool</th>
+                <th className="px-4 py-3 font-semibold">Trust Score</th>
+                <th className="px-4 py-3 font-semibold">Integration</th>
+                <th className="px-4 py-3 font-semibold">Pricing</th>
+                <th className="px-4 py-3 font-semibold">Review</th>
+              </tr>
+            </thead>
+            <tbody>
+              {top10Ranked.map((tool, i) => (
+                <tr key={tool.slug} className="border-t hover:bg-muted/40">
+                  <td className="px-4 py-3 font-bold">{i + 1}</td>
+                  <td className="px-4 py-3">
+                    <Link to={`/tool/${tool.slug}`} className="font-medium hover:text-primary hover:underline">
+                      {tool.name}
+                    </Link>
+                  </td>
+                  <td className={`px-4 py-3 font-semibold ${SCORE_COLOR(tool.trustScore)}`}>
+                    {tool.trustScore.toFixed(1)} / 5
+                  </td>
+                  <td className="px-4 py-3">{tool.integrationScore.toFixed(1)} / 5</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {tool.pricing.hasFree ? "Free plan" : tool.pricing.startingPrice}
+                  </td>
+                  <td className="px-4 py-3">
+                    <Link to={`/tool/${tool.slug}`} className="text-primary hover:underline">
+                      Read review →
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 

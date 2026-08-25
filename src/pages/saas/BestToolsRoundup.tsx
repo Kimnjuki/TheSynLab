@@ -175,7 +175,7 @@ export default function BestToolsRoundup() {
                 <Link to={`/tool/${winner.slug}`}>
                   <Button>Read Review</Button>
                 </Link>
-                <a href={winner.officialUrl} target="_blank" rel="noopener noreferrer">
+                <a href={winner.officialUrl} target="_blank" rel="nofollow sponsored noopener">
                   <Button variant="outline">
                     <ExternalLink className="h-4 w-4" />
                   </Button>

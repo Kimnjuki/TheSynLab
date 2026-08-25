@@ -1,5 +1,6 @@
 # robots.txt for thesynlab.com
-# Last updated: 2026-05-07
+# Last updated: 2026-08-25
+# Generated & maintained in sync with vite.config.ts NOINDEX_ROUTES / CANONICAL_ALIASES.
 
 # Allow all standard crawlers full access to indexable content
 User-agent: *
@@ -7,98 +8,79 @@ Allow: /
 Allow: /blog/
 Allow: /tool/
 Allow: /hub/
+Allow: /hubs
 Allow: /products/
 Allow: /best/
-Allow: /compare/
-Allow: /stack-quiz/
-Allow: /tco-calculator/
-Allow: /vendor-risk-checker/
-Allow: /workflow-blueprint/
-Allow: /trust-index/
-Allow: /tools/
+Allow: /compare
+Allow: /stack-builder
+Allow: /stack-quiz
+Allow: /tco-calculator
+Allow: /vendor-risk-checker
+Allow: /workflow-blueprint
+Allow: /trust-index
+Allow: /my-stack
+Allow: /alternatives
+Allow: /workflows
+Allow: /decision-studio
+Allow: /scoring-hub
+Allow: /widgets
+Allow: /report/
+Allow: /glossary
+Allow: /guides
 
-# Block CMS admin and sensitive paths
+# Noindex / private / sensitive paths (mirrors NOINDEX_ROUTES)
+Disallow: /admin
+Disallow: /auth
+Disallow: /profile
+Disallow: /settings
+Disallow: /search
+Disallow: /forum
+Disallow: /community/setups
+Disallow: /community/leaderboard
+Disallow: /products/watchlist
+Disallow: /tasks
+Disallow: /tools/find
+Disallow: /tools/hub-builder
+Disallow: /tools/compatibility-leaderboard
+Disallow: /tools/automations
+# Canonical alias routes that 301 to a root-level page - skip crawling the redirect
+Disallow: /tools/stack-builder
+Disallow: /tools/stack-quiz
+Disallow: /tools/tco-calculator
+Disallow: /tools/vendor-risk-checker
+Disallow: /tools/workflow-blueprint
+Disallow: /tools/compare
+Disallow: /tools/compatibility-checker
+# Legacy CMS / infrastructure paths
 Disallow: /wp-admin/
 Disallow: /wp-login.php
-Disallow: /admin/
-Disallow: /private/
 Disallow: /api/
-Disallow: /?s=
+Disallow: /private/
 Disallow: /cart/
 Disallow: /checkout/
 Disallow: /my-account/
 
-# Googlebot specific
-User-agent: Googlebot
-Allow: /
-
-# Google AI crawler (Google-Extended) — allow all tool content
+# AI crawlers: allow indexable tool/editorial content
 User-agent: Google-Extended
 Allow: /
-Allow: /stack-quiz/
-Allow: /tco-calculator/
-Allow: /vendor-risk-checker/
-Allow: /workflow-blueprint/
-Allow: /trust-index/
-Allow: /tools/
-Allow: /blog/
-Allow: /products/
-Allow: /compare/
-Disallow: /wp-admin/
 
-# Common AI crawlers — allow tool content
 User-agent: GPTBot
 Allow: /
-Allow: /stack-quiz/
-Allow: /tco-calculator/
-Allow: /vendor-risk-checker/
-Allow: /workflow-blueprint/
-Allow: /trust-index/
-Allow: /tools/
-Allow: /blog/
-Allow: /products/
-Disallow: /wp-admin/
-Disallow: /api/
-Disallow: /admin/
 
 User-agent: CCBot
 Allow: /
-Allow: /stack-quiz/
-Allow: /tco-calculator/
-Allow: /vendor-risk-checker/
-Allow: /workflow-blueprint/
-Allow: /trust-index/
-Allow: /tools/
-Allow: /blog/
-Allow: /products/
-Disallow: /wp-admin/
-Disallow: /api/
 
 User-agent: Claude-Web
 Allow: /
-Allow: /stack-quiz/
-Allow: /tco-calculator/
-Allow: /vendor-risk-checker/
-Allow: /workflow-blueprint/
-Allow: /trust-index/
-Allow: /tools/
-Allow: /blog/
-Allow: /products/
-Disallow: /wp-admin/
-Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
 
 User-agent: PerplexityBot
 Allow: /
-Allow: /stack-quiz/
-Allow: /tco-calculator/
-Allow: /vendor-risk-checker/
-Allow: /workflow-blueprint/
-Allow: /trust-index/
-Allow: /tools/
-Allow: /blog/
-Allow: /products/
-Disallow: /wp-admin/
-Disallow: /api/
+
+User-agent: anthropic-ai
+Allow: /
 
 # Sitemap
 Sitemap: https://thesynlab.com/sitemap.xml

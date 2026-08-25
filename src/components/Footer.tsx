@@ -24,6 +24,15 @@ const footerLinks = {
     { name: "Best Screen Recorders", href: "/best/screen-recording-tools" },
     { name: "Best Dev Tools", href: "/best/developer-tools" },
   ],
+  popular: [
+    { name: "Top Comparisons", href: "/compare" },
+    { name: "ClickUp vs Todoist", href: "/vs/clickup-vs-todoist" },
+    { name: "Notion vs Confluence", href: "/vs/notion-vs-confluence" },
+    { name: "Zapier vs Make", href: "/vs/zapier-vs-make" },
+    { name: "Slack vs Discord", href: "/vs/slack-vs-discord" },
+    { name: "Tool Alternatives", href: "/alternatives" },
+    { name: "Workflow Blueprints", href: "/workflows" },
+  ],
   company: [
     { name: "About Us", href: "/about" },
     { name: "How We Make Money", href: "/how-we-make-money" },
@@ -108,7 +117,7 @@ const Footer = () => {
       </div>
 
       <div className="container py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-8 mb-12">
           <div className="col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4 group">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-secondary group-hover:shadow-lg group-hover:shadow-primary/25 transition-shadow" />
@@ -179,6 +188,19 @@ const Footer = () => {
           </div>
 
           <div>
+            <h3 className="font-semibold mb-4 text-foreground">Popular</h3>
+            <ul className="space-y-3">
+              {footerLinks.popular.map((link) => (
+                <li key={link.name}>
+                  <Link to={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
             <h3 className="font-semibold mb-4 text-foreground">Company</h3>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
@@ -211,13 +233,18 @@ const Footer = () => {
               © {currentYear} TheSynLab. All rights reserved.
             </p>
             <div className="flex flex-col items-center md:items-end gap-2">
-              <button
-                type="button"
-                className="text-xs text-primary hover:underline"
-                onClick={() => window.dispatchEvent(new Event("open-cookie-settings"))}
-              >
-                Cookie Settings
-              </button>
+              <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-1 text-xs">
+                <Link to="/blog" className="text-primary hover:underline">Blog</Link>
+                <a href="/feed.xml" className="text-primary hover:underline">RSS Feed</a>
+                <a href="/llms.txt" className="text-primary hover:underline">llms.txt</a>
+                <button
+                  type="button"
+                  className="text-xs text-primary hover:underline"
+                  onClick={() => window.dispatchEvent(new Event("open-cookie-settings"))}
+                >
+                  Cookie Settings
+                </button>
+              </div>
               <p className="text-xs text-muted-foreground max-w-lg text-center md:text-right">
                 We may earn a commission when you buy through links on our site.
                 Our recommendations are independent and based on thorough testing.

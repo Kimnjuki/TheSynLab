@@ -164,8 +164,11 @@ const BlogArticle = () => {
               key={index}
               src={imgSrc}
               alt={altText}
-              className="my-6 rounded-lg max-w-full h-auto"
+              width="1200"
+              height="675"
               loading="lazy"
+              decoding="async"
+              className="my-6 rounded-lg max-w-full h-auto"
             />
           );
         }
@@ -375,6 +378,12 @@ const BlogArticle = () => {
                 <Calendar className="h-4 w-4" />
                 {new Date(article.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               </span>
+              {article.updatedAt && article.updatedAt !== article.publishedAt && (
+                <span className="flex items-center gap-1 text-primary" title={`Last updated ${new Date(article.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`}>
+                  <Calendar className="h-4 w-4" />
+                  Updated {new Date(article.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </span>
+              )}
               <span className="flex items-center gap-1">
                 <Clock className="h-4 w-4" />
                 {article.readingTime} min read

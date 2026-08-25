@@ -15,9 +15,18 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="canonical" href="https://thesynlab.com/" />
 
+    <!-- ── Feed / LLM discovery ── -->
+    <link rel="alternate" type="application/rss+xml" title="TheSynLab Blog & Reviews" href="/feed.xml" />
+    <link rel="alternate" type="text/markdown" title="TheSynLab llms.txt" href="/llms.txt" />
+
     <!-- ── Preconnect to critical origins ── -->
     <link rel="preconnect" href="https://thesynlab.com">
     <link rel="dns-prefetch" href="https://thesynlab.com">
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
 
     <!-- ── Open Graph ── -->
     <meta property="og:type" content="website" />
@@ -72,15 +81,43 @@
           '/terms': { t: 'Terms of Service | TheSynLab', d: 'TheSynLab terms of service governing your use of our website and services.' },
           '/disclosure': { t: 'Affiliate Disclosure | TheSynLab', d: 'TheSynLab may earn commissions through affiliate links. Our editorial independence is guaranteed.' }
         };
-        var p = window.location.pathname;
-        var m = routes[p] || routes['/'];
+        var t = document.querySelector('title');
+        // Prerendered pages already have correct per-route <title>/meta baked in.
+        // Only apply fallback on the generic app-shell (default title), so we never
+        // clobber the SEO titles/canonicals that the build injected for each route.
+        var defaultTitle = 'TheSynLab \u2013 Tech Reviews, Comparisons & Tool Alternatives';
+        var isShell = !t || t.textContent === defaultTitle;
+        if (!isShell) return;
+
+        var p = window.location.pathname.replace(/\/+$/, '') || '/';
+        var m = routes[p] || null;
+        if (!m) {
+          var seg = p.split('/')[1] || '';
+          var dyn = {
+            '/blog': { t: 'Tech Reviews Blog | TheSynLab', d: 'Expert reviews and comparisons of the latest tech products, software tools, and smart home devices.' },
+            '/products': { t: 'Product Reviews & Scores | TheSynLab', d: 'Detailed product reviews with Trust & Integration Scores. Find the best tech for your workflow.' },
+            '/tool': { t: 'SaaS & Tech Tool Reviews | TheSynLab', d: 'Compare the best SaaS tools, software alternatives, and tech products with Trust Scores.' },
+            '/hub': { t: 'Product Hubs | TheSynLab', d: 'Browse TheSynLab product hubs across AI, SaaS, smart home and hybrid office.' },
+            '/hubs': { t: 'Product Hubs | TheSynLab', d: 'Browse all TheSynLab product hubs.' },
+            '/vs': { t: 'Tech Product Comparison | TheSynLab', d: 'Side-by-side tech and SaaS product comparisons with Trust, Integration and TCO scores.' },
+            '/compare': { t: 'Tech Product Comparison | TheSynLab', d: 'Side-by-side comparisons of the best tech products and SaaS tools.' },
+            '/best': { t: 'Best Tools 2026 | TheSynLab', d: 'Round-up lists of the best SaaS tools and smart home devices.' },
+            '/tools': { t: 'Tools & Calculators | TheSynLab', d: 'Interactive decision tools, ROI, and TCO calculators from TheSynLab.' },
+            '/recipes': { t: 'Integration Recipes | TheSynLab', d: 'No-code automation recipes and integration workflows.' },
+            '/report': { t: 'Reports | TheSynLab', d: 'In-depth tech research reports from TheSynLab.' },
+            '/scores': { t: 'Score Indexes | TheSynLab', d: 'Trust and Integration score indexes.' }
+          };
+          m = dyn[seg] || null;
+        }
         if (m) {
-          var t = document.querySelector('title');
-          if (t && !t.textContent.includes('|')) t.textContent = m.t;
+          if (t) t.textContent = m.t;
           var d = document.querySelector('meta[name="description"]');
-          if (d && !d.getAttribute('content').length) d.setAttribute('content', m.d);
+          if (d) d.setAttribute('content', m.d);
+          var url = 'https://thesynlab.com' + (p === '/' ? '/' : p);
           var can = document.querySelector('link[rel="canonical"]');
-          if (can && can.getAttribute('href') === 'https://thesynlab.com/') can.setAttribute('href', 'https://thesynlab.com' + p);
+          if (can) can.setAttribute('href', url);
+          var ogUrl = document.querySelector('meta[property="og:url"]');
+          if (ogUrl) ogUrl.setAttribute('content', url);
         }
       })();
     </script>

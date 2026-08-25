@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { getViewCount } from "@/hooks/useViewTracking";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { Helmet } from "react-helmet-async";
 import { blogArticles, blogCategories, blogHubs, seoKeywords } from "@/data/blogArticles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +37,10 @@ const Blog = () => {
         description="Independent product reviews you can actually trust. Lab-tested Trust Scores for SaaS, smart home devices, AI tools, and productivity software. Side-by-side comparisons with real data — updated weekly."
         canonical="/blog"
       />
+      <Helmet>
+        <link rel="alternate" type="application/rss+xml" title="TheSynLab Blog & Reviews" href="/feed.xml" />
+        <link rel="alternate" type="text/markdown" title="TheSynLab llms.txt" href="/llms.txt" />
+      </Helmet>
       <JsonLd type="BreadcrumbList" breadcrumbs={breadcrumbs} />
       {/* ItemList of all blog articles for discovery */}
       <JsonLd

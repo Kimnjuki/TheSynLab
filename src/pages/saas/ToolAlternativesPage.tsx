@@ -253,7 +253,7 @@ export default function ToolAlternativesPage() {
                         <Link to={`/tool/${alt.slug}`}>
                           <Button size="sm">Read Review</Button>
                         </Link>
-                        <a href={alt.officialUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={alt.officialUrl} target="_blank" rel="nofollow sponsored noopener" aria-label={`Visit ${alt.name}`}>
                           <Button size="sm" variant="outline">
                             <ExternalLink className="h-3.5 w-3.5" />
                           </Button>

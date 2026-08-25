@@ -56,6 +56,14 @@ const staticRoutes = [
   "/my-stack",
   "/widgets",
   "/report/state-of-saas-trust-2026",
+  // Company / information pages that should be indexable (were orphaned before)
+  "/editorial",
+  "/how-we-make-money",
+  "/ad-compliance",
+  "/vendor-program",
+  "/scores/trust-score-index",
+  "/scores/integration-score-index",
+  "/ai/stack-architect",
 ];
 
 // Pages with no server-renderable content — tell Google not to index until real content exists
@@ -162,17 +170,41 @@ const buildSitemapXml = () => {
     (r) => !NOINDEX_ROUTES.has(r) && !Object.keys(CANONICAL_ALIASES).includes(r)
   );
 
+  const today = new Date().toISOString().slice(0, 10);
   const urls = sitemapRoutes
     .map((route) => {
       const loc = `${SITE_URL}${route}`;
-      const priority =
-        route === "/" ? "1.0" :
-        route.startsWith("/blog/") || route.startsWith("/tool/") || route.startsWith("/products/") || route.startsWith("/vs/") ? "0.8" :
-        route.startsWith("/hub/") || route.startsWith("/best/") ? "0.8" :
-        route.startsWith("/report/") ? "0.9" :
-        "0.7";
-      const changefreq = route.startsWith("/blog/") || route.startsWith("/products/") || route.startsWith("/vs/") ? "weekly" : "monthly";
-      return `  <url><loc>${loc}</loc><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+      // Defaults
+      let priority = "0.7";
+      let changefreq = "monthly";
+      // Honest <lastmod>: use the real content date for articles, not an arbitrary
+      // build date, so we do not overstate freshness to crawlers.
+      let lastmod = today;
+
+      if (route === "/") {
+        priority = "1.0";
+        changefreq = "weekly";
+      } else if (route.startsWith("/blog/")) {
+        const article = blogArticles.find((a) => route === `/blog/${a.slug}`);
+        if (article) lastmod = (article.updatedAt || article.publishedAt || today).slice(0, 10);
+        priority = "0.8";
+        changefreq = "weekly";
+      } else if (
+        route.startsWith("/tool/") ||
+        route.startsWith("/products/") ||
+        route.startsWith("/vs/")
+      ) {
+        priority = "0.8";
+        changefreq = "weekly";
+      } else if (route.startsWith("/hub/") || route.startsWith("/best/")) {
+        priority = "0.8";
+      } else if (route.startsWith("/report/")) {
+        priority = "0.9";
+      } else if (route === "/compare") {
+        priority = "0.8";
+      }
+
+      return `  <url><loc>${loc}</loc><lastmod>${lastmod}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
     })
     .join("\n");
 
@@ -186,6 +218,53 @@ const escapeHtml = (value: string) =>
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+
+// ── RSS 2.0 feed (P3: fresh-content discovery) ─────────────────────────────────
+// Every top review site ships an RSS feed. Generated at build time (kept in sync
+// with blogArticles) and mirrored to public/feed.xml so it can never go stale.
+const toRfc822 = (iso: string) => {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return new Date().toUTCString();
+  return d.toUTCString();
+};
+
+const buildFeedXml = () => {
+  const items = [...blogArticles]
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .slice(0, 25)
+    .map((a) => {
+      const guid = `${SITE_URL}/blog/${a.slug}`;
+      const enclosure =
+        a.featuredImage && a.featuredImage.startsWith("http")
+          ? `<enclosure url="${escapeHtml(a.featuredImage)}" type="image/jpeg"/>`
+          : "";
+      return `  <item>
+    <title>${escapeHtml(a.title)}</title>
+    <link>${guid}</link>
+    <guid isPermaLink="true">${guid}</guid>
+    <pubDate>${toRfc822(a.publishedAt)}</pubDate>
+    <description>${escapeHtml(a.excerpt || a.metaDescription || a.title)}</description>
+    <category>${escapeHtml(a.category)}</category>
+    ${enclosure}
+    <content:encoded><![CDATA[${a.llmCitationSummary || a.excerpt || ""}]]></content:encoded>
+  </item>`;
+    })
+    .join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<channel>
+  <title>TheSynLab — Tech Reviews, Comparisons & Tool Alternatives</title>
+  <link>${SITE_URL}</link>
+  <description>Independent lab-tested tech &amp; SaaS reviews with proprietary Trust and Integration Scores.</description>
+  <language>en-us</language>
+  <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+  <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml"/>
+${items}
+</channel>
+</rss>
+`;
+};
 
 const slugToTitle = (route: string) =>
   route
@@ -278,6 +357,34 @@ const staticMetaByRoute: Record<string, { title: string; description: string }> 
     title: "Community Forum | TheSynLab",
     description: "Join the TheSynLab community to discuss setups, tools, and workflows.",
   },
+  "/editorial": {
+    title: "Editorial Policy | TheSynLab",
+    description: "TheSynLab editorial policy: independent, lab-tested reviews with transparent Trust and Integration Scores.",
+  },
+  "/how-we-make-money": {
+    title: "How We Make Money | TheSynLab",
+    description: "TheSynLab is funded by affiliate commissions and advertising. Find out how that works and why it never influences our scores.",
+  },
+  "/ad-compliance": {
+    title: "Advertising & Ad Compliance | TheSynLab",
+    description: "TheSynLab ad compliance policy: sponsored placements are clearly labelled and never affect editorial scores.",
+  },
+  "/vendor-program": {
+    title: "Vendor Program | TheSynLab",
+    description: "Showcase verified TheSynLab Trust and Integration Scores. Vendor program for SaaS and hardware companies.",
+  },
+  "/scores/trust-score-index": {
+    title: "Trust Score Index (0-100) | TheSynLab",
+    description: "Ranked Trust Scores for SaaS, AI, and smart home products based on reliability, data privacy, and vendor transparency.",
+  },
+  "/scores/integration-score-index": {
+    title: "Integration Score Index (0-100) | TheSynLab",
+    description: "Ranked Integration Scores assessing ecosystem compatibility, API quality, and workflow fit across product categories.",
+  },
+  "/ai/stack-architect": {
+    title: "AI Stack Architect | TheSynLab",
+    description: "Design a personalised software stack with TheSynLab's AI Stack Architect using Trust and Integration Scores.",
+  },
 };
 
 type StaticPageMeta = {
@@ -350,8 +457,19 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
         description: article.metaDescription || article.excerpt || article.title,
         datePublished: article.publishedAt,
         dateModified: article.updatedAt || article.publishedAt,
-        author: article.author ? { "@type": "Person", name: article.author } : undefined,
+        author: article.author
+          ? {
+              "@type": "Person",
+              name: article.author,
+              description: article.authorBio || undefined,
+              url: `${SITE_URL}/about#team`,
+              sameAs: ["https://twitter.com/thesynlab", "https://www.linkedin.com/company/thesynlab"],
+            }
+          : undefined,
         image: article.featuredImage,
+        keywords: article.tags?.length ? article.tags.join(", ") : undefined,
+        articleSection: article.category || undefined,
+        wordCount: article.wordCount || undefined,
         mainEntityOfPage: `${SITE_URL}${route}`,
         url: `${SITE_URL}${route}`,
         publisher: {
@@ -1595,6 +1713,55 @@ ${relatedHtml.slice(0, 6).join("\n")}
     }
   }
 
+  // ── Company / information & score-index pages (rooted, indexable content) ────
+  const infoPage: Record<string, { name: string; summary: string; body: string }> = {
+    "/editorial": {
+      name: "Editorial Policy",
+      summary: "How TheSynLab maintains editorial independence, testing rigor, and transparent scoring.",
+      body: "TheSynLab evaluates software and smart-home products through a structured Trust Score (reliability, privacy, transparency) and Integration Score (API quality, ecosystem fit). Every product is lab-tested by our editorial team for a minimum of 14 days before it receives a score. Editorial decisions are independent of advertiser or affiliate relationships. Our proprietary scoring methodology is published openly in the Scoring Hub.",
+    },
+    "/how-we-make-money": {
+      name: "How We Make Money",
+      summary: "TheSynLab is funded by affiliate commissions and advertising; this never influences our scores.",
+      body: "TheSynLab is funded through affiliate commissions and advertising. When you click product links and make a purchase, we may earn a commission at no additional cost to you. This never influences our scores or recommendations. Editorial independence is guaranteed by our Affiliate Disclosure and Editorial Policy.",
+    },
+    "/ad-compliance": {
+      name: "Advertising & Ad Compliance",
+      summary: "TheSynLab advertising policy: sponsored placements are clearly labelled and never affect scores.",
+      body: "TheSynLab distinguishes editorial content from advertising. Sponsored placements, partnerships, and affiliate links are clearly labelled and governed by our Affiliate Disclosure. We use industry-standard ad compliance practices, keep native advertising clearly marked, and never allow advertising to influence Trust or Integration Scores.",
+    },
+    "/vendor-program": {
+      name: "Vendor Program",
+      summary: "The Vendor Program lets vendors showcase verified Trust & Integration Scores to buyers.",
+      body: "TheSynLab\u2019s Vendor Program enables software and hardware vendors to validate their product data, surface official documentation, and display verified Trust and Integration Scores. Vendor relationships never influence our editorial scores, but they do allow us to keep pricing, API, and ecosystem data accurate and current.",
+    },
+    "/scores/trust-score-index": {
+      name: "Trust Score Index",
+      summary: "TheSynLab Trust Scores (0-100) rank products on reliability, data privacy, security, and transparent.",
+      body: "The Trust Score measures reliability, data privacy, security practices, and vendor transparency. Every score is derived from structured lab testing rather than user star ratings alone. Browse the full Trust Score Index and read individual reviews for the methodology, scoring dimensions, and time-on-test per product.",
+    },
+    "/scores/integration-score-index": {
+      name: "Integration Score Index",
+      summary: "Integration Scores (0-100) assess ecosystem compatibility, API quality, and workflow fit.",
+      body: "The Integration Score assesses ecosystem compatibility, API quality, automation depth, and overall workflow fit. Every product\u2019s integration score is produced through hands-on testing of its API, connectors, and no-code automation capabilities. Compare scores across categories in the Integration Score Index.",
+    },
+    "/ai/stack-architect": {
+      name: "AI Stack Architect",
+      summary: "Use TheSynLab\u2019s AI Stack Architect to design a software stack matched to your workflow.",
+      body: "The AI Stack Architect helps you assemble a software stack tailored to your role, team size, and budget using Trust and Integration Scores. Answer a few questions to receive a personalised stack recommendation built from TheSynLab\u2019s lab-tested product data.",
+    },
+  };
+  const info = infoPage[route];
+  if (info) {
+    return `<main style="${MAIN_STYLE}">
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › ${escapeHtml(info.name)}</nav>
+<h1>${escapeHtml(info.name)}</h1>
+<p style="line-height:1.7;font-size:1.05rem">${escapeHtml(info.summary)}</p>
+<div style="line-height:1.75;margin-top:1.5rem;max-width:38rem;padding:1.25rem;background:#f8fafc;border-radius:8px">${escapeHtml(info.body)}</div>
+<p style="margin-top:1.5rem"><a href="/about">About TheSynLab →</a> · <a href="/scoring-hub">Scoring methodology →</a> · <a href="/disclosure">Affiliate disclosure →</a></p>
+</main>`;
+  }
+
   // ── Default fallback (homepage) ────────────────────────────────────────────
   // AdSense compliance: must return 400+ words of substantive content in prerender
   return `<main style="${MAIN_STYLE}">
@@ -1697,7 +1864,16 @@ const sitemapPlugin = () => ({
   async closeBundle() {
     const distDir = path.resolve(__dirname, "dist");
     await fs.mkdir(distDir, { recursive: true });
-    await fs.writeFile(path.resolve(distDir, "sitemap.xml"), buildSitemapXml(), "utf8");
+    const xml = buildSitemapXml();
+    await fs.writeFile(path.resolve(distDir, "sitemap.xml"), xml, "utf8");
+    // Keep the committed public/sitemap.xml in sync so static/non-container deploys
+    // never serve a stale sitemap and so the repo has a single source of truth.
+    await fs.writeFile(path.resolve(__dirname, "public", "sitemap.xml"), xml, "utf8");
+    await fs.writeFile(path.resolve(distDir, "robots.txt"), await fs.readFile(path.resolve(__dirname, "public", "robots.txt"), "utf8"), "utf8");
+    // RSS feed — mirror to dist (served) and public (committed source of truth).
+    const feed = buildFeedXml();
+    await fs.writeFile(path.resolve(distDir, "feed.xml"), feed, "utf8");
+    await fs.writeFile(path.resolve(__dirname, "public", "feed.xml"), feed, "utf8");
     await generateStaticHtmlPages(distDir);
   },
 });
