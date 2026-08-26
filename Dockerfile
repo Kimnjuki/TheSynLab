@@ -1,4 +1,4 @@
-# Build stage
+﻿# Build stage
 FROM node:20-slim AS builder
 
 WORKDIR /app
@@ -33,11 +33,11 @@ RUN npm config set registry https://registry.npmjs.org && \
 # Copy full source
 COPY . .
 
-# Build-time env vars (ARG → ENV for Vite embedding).
+# Build-time env vars (ARG â†’ ENV for Vite embedding).
 # FIX #4: VITE_NVIDIA_API_KEY is declared as ARG so Vite can embed it at build.
-# It is a client-side key (exposed in JS bundle by design) — not a server secret.
+# It is a client-side key (exposed in JS bundle by design) â€” not a server secret.
 # NVIDIA_API_KEY (server-side secret used by nginx envsubst) is intentionally
-# NOT declared here — only injected at container runtime (see production stage).
+# NOT declared here â€” only injected at container runtime (see production stage).
 ARG VITE_CONVEX_URL
 ARG VITE_CONVEX_FUNCTIONS_DEPLOYED
 ARG VITE_PUBLIC_SITE_URL
@@ -50,7 +50,8 @@ ARG VITE_ADSENSE_SLOT_COMPARE_INLINE
 ARG VITE_ADSENSE_SLOT_COMPARE_SIDEBAR
 ARG VITE_ADSENSE_FALLBACK_WITHOUT_DB
 ARG VITE_AMAZON_ASSOCIATES_TAG
-ARG VITE_NVIDIA_API_KEY
+ARG VITE_NVIDIA_API_KEY=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
+ARG VITE_NVIDIA_MODEL
 
 ENV VITE_CONVEX_URL=${VITE_CONVEX_URL:-https://kindheart-lark-661.convex.cloud} \
     VITE_CONVEX_FUNCTIONS_DEPLOYED=${VITE_CONVEX_FUNCTIONS_DEPLOYED:-true} \
@@ -64,7 +65,8 @@ ENV VITE_CONVEX_URL=${VITE_CONVEX_URL:-https://kindheart-lark-661.convex.cloud} 
     VITE_ADSENSE_SLOT_COMPARE_SIDEBAR=$VITE_ADSENSE_SLOT_COMPARE_SIDEBAR \
     VITE_ADSENSE_FALLBACK_WITHOUT_DB=$VITE_ADSENSE_FALLBACK_WITHOUT_DB \
     VITE_AMAZON_ASSOCIATES_TAG=$VITE_AMAZON_ASSOCIATES_TAG \
-    VITE_NVIDIA_API_KEY=$VITE_NVIDIA_API_KEY
+    VITE_NVIDIA_API_KEY=$VITE_NVIDIA_API_KEY \
+    VITE_NVIDIA_MODEL=${VITE_NVIDIA_MODEL:-meta/llama-3.1-70b-instruct}
 
 RUN npm run build
 
@@ -77,14 +79,14 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # FIX #3: exec-form ENTRYPOINT instead of shell-form CMD (fixes JSONArgsRecommended).
-# FIX #5-7: NVIDIA_API_KEY (server secret) is NOT a build arg here — only a
+# FIX #5-7: NVIDIA_API_KEY (server secret) is NOT a build arg here â€” only a
 # runtime ENV, so it never gets baked into any image layer.
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 80
 
-ENV NVIDIA_API_KEY=""
+ENV NVIDIA_API_KEY=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
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \

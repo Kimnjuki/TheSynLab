@@ -65,7 +65,7 @@ async function nvidiaChat(
   overrides?: AIClientOptions
 ): Promise<string> {
   const apiKey = getNvidiaKey()!;
-  const model = import.meta.env.VITE_NVIDIA_MODEL ?? 'meta/llama-3.1-8b-instruct';
+  const model = import.meta.env.VITE_NVIDIA_MODEL ?? 'meta/llama-3.1-70b-instruct';
   const systemMsg = messages.find(m => m.role === 'system');
   const nonSystem = messages.filter(m => m.role !== 'system');
 
