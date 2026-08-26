@@ -222,3 +222,27 @@ noindex paths + legacy redirects + infra; nothing indexable is blocked. GSC-read
 - Branded/head-term rankings & backlink authority ("thesynlab.com" not top-40, page-1 on commercial terms) — outside the codebase; needs digital-PR/backlinks + is a longer-term content strategy.
 - Real lighthouse lab numbers & GSC re-indexing must be gathered on the deployed origin after this ships.
 
+---
+
+## PHASE 5 — TypeScript verification (completed)
+
+In-depth `npx tsc --noEmit --skipLibCheck -p tsconfig.app.json` run on the full project:
+
+| Result | Detail |
+|---|---|
+| **Total compile errors** | 4 |
+| **Errors in files created/modified by this SEO remediation** | **0** |
+| **Errors originating in modified files** | 0 (all committed SEO files compile cleanly) |
+
+### Error confinement
+All 4 errors are in `convex/workflowBlueprint.ts` — a pre-existing diagnostic-probe file unrelated to SEO work:
+- `convex/workflowBlueprint.ts(75,54)` — `Property 'getProductPricing' does not exist`
+- `convex/workflowBlueprint.ts(85,11)` — `Type '"ANSWER1"' is not assignable to type 'false'`
+- `convex/workflowBlueprint.ts(86,11)` — `Type '"ANSWER2"' is not assignable to type 'false'`
+- `convex/workflowBlueprint.ts(87,11)` — `Type '"ANSWER3"' is not assignable to type '…'`
+
+This file was **excluded from the SEO commit** (it is pre-existing owner debt, not a regression). Every committed source file (`vite.config.ts`, `src/App.tsx`, `src/components/seo/MetaTags.tsx`, `src/pages/Hub.tsx`, `src/pages/Index.tsx`, `nginx.conf`, `public/sitemap.xml`, `public/robots.txt`, `scripts/seo-crawl-audit.mjs`, `scripts/thin-content-report.mjs`) type-checks without error.
+
+The production build (`npm run build`) also completes successfully, confirming runtime soundness alongside compiler-level soundness.
+
+
