@@ -5,6 +5,7 @@
  */
 
 import { Helmet } from "react-helmet-async";
+import { useLocation } from "react-router-dom";
 import type { SeoMetaInput } from "@/hooks/useSeoMeta";
 
 const SITE_NAME = "TheSynLab";
@@ -47,9 +48,16 @@ export function MetaTags({
   schemaMarkup,
   robots,
 }: MetaTagsProps) {
+  const location = useLocation();
   const fullTitle = title.includes(siteName) ? title : `${trimTitle(title)} | ${siteName}`;
   const safeMeta = trimMeta(description);
-  const resolvedCanonical = toAbsoluteSiteUrl(canonical);
+  // SEO-1.5: every page gets a canonical — self-referencing (current route) by
+  // default, absolute, apex host. Callers can override for intentional
+  // duplicate-consolidation, but a page must NEVER ship without one; previously
+  // any component that omitted `canonical` silently dropped the tag entirely
+  // (root cause of the "duplicate without user-selected canonical" class).
+  const resolvedCanonical =
+    toAbsoluteSiteUrl(canonical) ?? toAbsoluteSiteUrl(location.pathname) ?? `${SITE_URL}/`;
   const image = toAbsoluteSiteUrl(ogImage) || DEFAULT_IMAGE;
   const robotsContent = robots ?? (noindex ? "noindex, nofollow" : "index, follow");
 

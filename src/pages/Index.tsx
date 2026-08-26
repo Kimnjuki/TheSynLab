@@ -50,8 +50,9 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <MetaTags
-        title="Independent AI & SaaS Reviews You Can Actually Trust | TheSynLab"
-        description="We test every tool for 14+ days and score it on Trust, Integration, and 3-Year TCO. Compare tools, build your stack, and choose faster with TheSynLab."
+        // SEO-1.4: keep byte-identical to HOME_TITLE in vite.config.ts and index.html
+        title="TheSynLab – Tech Reviews, Comparisons & Tool Alternatives"
+        description="In-depth tech reviews with Trust Scores. Compare the best productivity tools, smart home devices, and SaaS solutions. Expert analysis and real alternatives."
         canonical="https://thesynlab.com/"
         ogType="website"
       />

@@ -7,7 +7,7 @@ const categories = [
   {
     title: "AI & Workflow Tools",
     desc: "No-code builders, LLM platforms, and workflow orchestrators — ranked by real-world fit.",
-    href: "/hub/ai_workflow",
+    href: "/hub/ai-workflow",
     icon: Cpu,
   },
   {

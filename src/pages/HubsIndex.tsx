@@ -10,7 +10,7 @@ const HUBS = [
   {
     slug: "ai_workflow",
     label: "AI & Workflow Tools",
-    href: "/hub/ai_workflow",
+    href: "/hub/ai-workflow",
     description: "Discover the best AI productivity tools, automation platforms, and workflow engines. From LLMs to no-code builders.",
     icon: Cpu,
     color: "from-violet-500 to-purple-600",
@@ -20,7 +20,7 @@ const HUBS = [
   {
     slug: "intelligent_home",
     label: "Intelligent Home",
-    href: "/hub/intelligent_home",
+    href: "/hub/intelligent-home",
     description: "Smart home hubs, voice assistants, sensors, and automation controllers. Find the right ecosystem for your setup.",
     icon: Home,
     color: "from-blue-500 to-cyan-600",
@@ -30,7 +30,7 @@ const HUBS = [
   {
     slug: "hybrid_office",
     label: "Hybrid Office",
-    href: "/hub/hybrid_office",
+    href: "/hub/hybrid-office",
     description: "Collaboration tools, video conferencing, project management, and remote-work essentials for distributed teams.",
     icon: Briefcase,
     color: "from-emerald-500 to-teal-600",

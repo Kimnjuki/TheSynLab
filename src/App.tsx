@@ -1,9 +1,9 @@
+import { useEffect, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import { trackPageView } from "@/lib/analytics";
 import { HelmetProvider } from "react-helmet-async";
 import { ConvexClientProvider } from "./integrations/convex/ConvexClientProvider";
@@ -15,83 +15,91 @@ import { FacebookPixel } from "./components/FacebookPixel";
 import { AdSlotProvider } from "./components/ads/AdSlotProvider";
 import { ComparisonBarProvider } from "./contexts/ComparisonBarContext";
 import { ComparisonBar } from "./components/ComparisonBar";
-import Index from "./pages/Index";
-import Compare from "./pages/Compare";
-import CommunitySetups from "./pages/CommunitySetups";
-import BudgetCalculator from "./pages/BudgetCalculator";
-import CompatibilityChecker from "./pages/CompatibilityChecker";
-import ProductDetailPage from "./pages/products/ProductDetailPage";
-import ProductsHub from "./pages/ProductsHub";
-import ProductsWatchlist from "./pages/ProductsWatchlist";
-import Auth from "./pages/Auth";
-import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
-import Admin from "./pages/Admin";
-import AdminProductForm from "./pages/AdminProductForm";
-import Automations from "./pages/Automations";
-import Tasks from "./pages/Tasks";
-import AIWorkflowHub from "./pages/AIWorkflowHub";
-import IntelligentHomeHub from "./pages/IntelligentHomeHub";
-import HybridOfficeHub from "./pages/HybridOfficeHub";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfService from "./pages/TermsOfService";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import EditorialPolicy from "./pages/EditorialPolicy";
-import AffiliateDisclosure from "./pages/AffiliateDisclosure";
-import HowWeMakeMoney from "./pages/HowWeMakeMoney";
-import VendorProgram from "./pages/VendorProgram";
-import NotFound from "./pages/NotFound";
-import Blog from "./pages/Blog";
-import BlogArticle from "./pages/BlogArticle";
-import ScoringHub from "./pages/ScoringHub";
-import AdCompliance from "./pages/AdCompliance";
-import Forum from "./pages/Forum";
-import ForumCategory from "./pages/ForumCategory";
-import ForumThread from "./pages/ForumThread";
-import ForumNewThread from "./pages/ForumNewThread";
-import Hub from "./pages/Hub";
-import CommunityLeaderboard from "./pages/CommunityLeaderboard";
-import StackBuilder from "./pages/StackBuilder";
-import StackArchitect from "./pages/StackArchitect";
-import Search from "./pages/Search";
-import TrustScoreIndex from "./pages/TrustScoreIndex";
-import IntegrationScoreIndex from "./pages/IntegrationScoreIndex";
-import ToolsHub from "./pages/ToolsHub";
-import RoiCalculatorTool from "./pages/RoiCalculatorTool";
-import CompareSlug from "./pages/CompareSlug";
-import HubPost from "./pages/HubPost";
-import PillarGuide from "./pages/PillarGuide";
-import BestForEcosystem from "./pages/BestForEcosystem";
-import IntegrationRecipe from "./pages/IntegrationRecipe";
-import HubBuilderPage from "./pages/HubBuilderPage";
-import CompatibilityLeaderboardPage from "./pages/CompatibilityLeaderboardPage";
-import AIProductFinder from "./pages/AIProductFinder";
-import AdminContentQuality from "./pages/AdminContentQuality";
-import AdminModeration from "./pages/AdminModeration";
-import AdminSeoOpportunities from "./pages/AdminSeoOpportunities";
-import AIToolsHub from "./pages/saas/AIToolsHub";
-import AIToolsCategoryPage from "./pages/saas/AIToolsCategoryPage";
-import SaasToolReviewPage from "./pages/saas/SaasToolReviewPage";
-import ToolAlternativesPage from "./pages/saas/ToolAlternativesPage";
-import BestToolsRoundup from "./pages/saas/BestToolsRoundup";
-import HubsIndex from "./pages/HubsIndex";
-import DecisionStudio from "./pages/DecisionStudio";
-import WorkflowsIndex from "./pages/WorkflowsIndex";
-import StackQuiz from "./pages/tools/StackQuiz";
-import TcoCalculator from "./pages/tools/TcoCalculator";
-import VendorRiskChecker from "./pages/tools/VendorRiskChecker";
-import WorkflowBlueprint from "./pages/tools/WorkflowBlueprint";
-import TrustIndexLeaderboard from "./pages/TrustIndex";
-import MyStackDashboard from "./pages/MyStack";
-import WidgetGallery from "./pages/WidgetGallery";
-import StateOfSaaSTrust2026 from "./pages/report/StateOfSaaSTrust2026";
-import AlternativesIndex from "./pages/AlternativesIndex";
-import ProductCategoryPage from "./pages/ProductCategoryPage";
-import CategoryPage from "./pages/CategoryPage";
-import GuidesPage from "./pages/GuidesPage";
-import AdminGrowthDashboard from "./pages/AdminGrowthDashboard";
-import GlossaryPage from "./pages/GlossaryPage";
+
+// PERF-3.1 (mobile CWV): route-level code splitting. Previously ALL ~70 pages were
+// statically imported into one ~2.8 MB JS bundle executed before ANY page could
+// render — the main cause of poor mobile LCP/TBT and the depressed mobile search
+// share. Homepage (Index) + NotFound stay eager (first-paint critical / cheap);
+// every other route is a per-route chunk loaded on demand. The JSX route table is
+// untouched because each lazy constant keeps its original name.
+const Compare = lazy(() => import("./pages/Compare"));
+const CommunitySetups = lazy(() => import("./pages/CommunitySetups"));
+const BudgetCalculator = lazy(() => import("./pages/BudgetCalculator"));
+const CompatibilityChecker = lazy(() => import("./pages/CompatibilityChecker"));
+const ProductDetailPage = lazy(() => import("./pages/products/ProductDetailPage"));
+const ProductsHub = lazy(() => import("./pages/ProductsHub"));
+const ProductsWatchlist = lazy(() => import("./pages/ProductsWatchlist"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Admin = lazy(() => import("./pages/Admin"));
+const AdminProductForm = lazy(() => import("./pages/AdminProductForm"));
+const Automations = lazy(() => import("./pages/Automations"));
+const Tasks = lazy(() => import("./pages/Tasks"));
+const AIWorkflowHub = lazy(() => import("./pages/AIWorkflowHub"));
+const IntelligentHomeHub = lazy(() => import("./pages/IntelligentHomeHub"));
+const HybridOfficeHub = lazy(() => import("./pages/HybridOfficeHub"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const EditorialPolicy = lazy(() => import("./pages/EditorialPolicy"));
+const AffiliateDisclosure = lazy(() => import("./pages/AffiliateDisclosure"));
+const HowWeMakeMoney = lazy(() => import("./pages/HowWeMakeMoney"));
+const VendorProgram = lazy(() => import("./pages/VendorProgram"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogArticle = lazy(() => import("./pages/BlogArticle"));
+const ScoringHub = lazy(() => import("./pages/ScoringHub"));
+const AdCompliance = lazy(() => import("./pages/AdCompliance"));
+const Forum = lazy(() => import("./pages/Forum"));
+const ForumCategory = lazy(() => import("./pages/ForumCategory"));
+const ForumThread = lazy(() => import("./pages/ForumThread"));
+const ForumNewThread = lazy(() => import("./pages/ForumNewThread"));
+const Hub = lazy(() => import("./pages/Hub"));
+const CommunityLeaderboard = lazy(() => import("./pages/CommunityLeaderboard"));
+const StackBuilder = lazy(() => import("./pages/StackBuilder"));
+const StackArchitect = lazy(() => import("./pages/StackArchitect"));
+const Search = lazy(() => import("./pages/Search"));
+const TrustScoreIndex = lazy(() => import("./pages/TrustScoreIndex"));
+const IntegrationScoreIndex = lazy(() => import("./pages/IntegrationScoreIndex"));
+const ToolsHub = lazy(() => import("./pages/ToolsHub"));
+const RoiCalculatorTool = lazy(() => import("./pages/RoiCalculatorTool"));
+const CompareSlug = lazy(() => import("./pages/CompareSlug"));
+const HubPost = lazy(() => import("./pages/HubPost"));
+const PillarGuide = lazy(() => import("./pages/PillarGuide"));
+const BestForEcosystem = lazy(() => import("./pages/BestForEcosystem"));
+const IntegrationRecipe = lazy(() => import("./pages/IntegrationRecipe"));
+const HubBuilderPage = lazy(() => import("./pages/HubBuilderPage"));
+const CompatibilityLeaderboardPage = lazy(() => import("./pages/CompatibilityLeaderboardPage"));
+const AIProductFinder = lazy(() => import("./pages/AIProductFinder"));
+const AdminContentQuality = lazy(() => import("./pages/AdminContentQuality"));
+const AdminModeration = lazy(() => import("./pages/AdminModeration"));
+const AdminSeoOpportunities = lazy(() => import("./pages/AdminSeoOpportunities"));
+const AIToolsHub = lazy(() => import("./pages/saas/AIToolsHub"));
+const AIToolsCategoryPage = lazy(() => import("./pages/saas/AIToolsCategoryPage"));
+const SaasToolReviewPage = lazy(() => import("./pages/saas/SaasToolReviewPage"));
+const ToolAlternativesPage = lazy(() => import("./pages/saas/ToolAlternativesPage"));
+const BestToolsRoundup = lazy(() => import("./pages/saas/BestToolsRoundup"));
+const HubsIndex = lazy(() => import("./pages/HubsIndex"));
+const DecisionStudio = lazy(() => import("./pages/DecisionStudio"));
+const WorkflowsIndex = lazy(() => import("./pages/WorkflowsIndex"));
+const StackQuiz = lazy(() => import("./pages/tools/StackQuiz"));
+const TcoCalculator = lazy(() => import("./pages/tools/TcoCalculator"));
+const VendorRiskChecker = lazy(() => import("./pages/tools/VendorRiskChecker"));
+const WorkflowBlueprint = lazy(() => import("./pages/tools/WorkflowBlueprint"));
+const TrustIndexLeaderboard = lazy(() => import("./pages/TrustIndex"));
+const MyStackDashboard = lazy(() => import("./pages/MyStack"));
+const WidgetGallery = lazy(() => import("./pages/WidgetGallery"));
+const StateOfSaaSTrust2026 = lazy(() => import("./pages/report/StateOfSaaSTrust2026"));
+const AlternativesIndex = lazy(() => import("./pages/AlternativesIndex"));
+const ProductCategoryPage = lazy(() => import("./pages/ProductCategoryPage"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage"));
+const GuidesPage = lazy(() => import("./pages/GuidesPage"));
+const AdminGrowthDashboard = lazy(() => import("./pages/AdminGrowthDashboard"));
+const GlossaryPage = lazy(() => import("./pages/GlossaryPage"));
+import Index from "./pages/Index"; // PERF-3.1: homepage stays in the initial bundle for LCP
+import NotFound from "./pages/NotFound"; // cheap; must render instantly on unknown URLs
+
 
 const queryClient = new QueryClient();
 
@@ -102,6 +110,15 @@ function RouteTracker() {
     trackPageView(location.pathname + location.search);
   }, [location]);
   return null;
+}
+
+/** PERF-3.1: minimal suspense fallback for lazy route chunks. */
+function RouteFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center" role="status" aria-label="Loading page">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+    </div>
+  );
 }
 
 const App = () => (
@@ -117,6 +134,7 @@ const App = () => (
                 <RouteTracker />
                 <ComparisonBarProvider>
                 <AdSlotProvider>
+                <Suspense fallback={<RouteFallback />}>
                 <Routes>
                   {/* Core */}
                   <Route path="/" element={<Index />} />
@@ -224,6 +242,7 @@ const App = () => (
                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                    <Route path="*" element={<NotFound />} />
                 </Routes>
+                </Suspense>
                 <AnalyticsScripts />
                 <FacebookPixel />
                 <CookieBanner />

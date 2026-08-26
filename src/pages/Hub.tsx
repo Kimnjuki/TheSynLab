@@ -1,9 +1,15 @@
 /**
  * FEAT-004: Hub landing page – SEO list of products in a hub.
- * Route: /hub/:slug (e.g. /hub/ai_workflow, /hub/intelligent_home, /hub/hybrid_office)
+ * Route: /hub/:slug (e.g. /hub/productivity, /hub/collaboration, /hub/martech)
+ *
+ * SEO-1.3: URL slugs are ALWAYS hyphenated. Legacy underscore URLs
+ * (/hub/ai_workflow, /hub/intelligent_home, /hub/hybrid_office) are 301-redirected
+ * by nginx and additionally client-redirected here so no visitor or crawler ever
+ * sees two live versions of the same hub. Underscores survive only as internal
+ * data identifiers (Convex `hub` field) and are converted transparently below.
  */
 
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import NewsletterSignupBanner from "@/components/newsletter/NewsletterSignupBanner";
@@ -31,8 +37,18 @@ const HUB_LABELS: Record<string, string> = {
 };
 
 export default function Hub() {
-  const { slug } = useParams<{ slug: string }>();
-  const hubSlug = slug ?? "";
+  const params = useParams<{ slug: string }>();
+
+  // SEO-1.3: legacy underscore URLs → permanent client-side redirect to the
+  // hyphenated canonical hub URL (mirrors the nginx 301; keeps SPA nav consistent).
+  if (params.slug?.includes("_")) {
+    return <Navigate replace to={`/hub/${params.slug.replace(/_/g, "-")}`} />;
+  }
+
+  const urlSlug = params.slug ?? "";
+  // Convert back to the internal data identifier for Convex queries
+  // ("ai-workflow" → "ai_workflow"); URLs themselves are never underscored.
+  const hubSlug = urlSlug.replace(/-/g, "_");
   const { products, isLoading } = useProducts({
     hub: hubSlug,
     status: "active",
@@ -42,9 +58,9 @@ export default function Hub() {
 
   const filteredProducts = applyHubFilters(products ?? [], filters);
 
-  const title = HUB_LABELS[hubSlug] ?? hubSlug.replace(/_/g, " ");
+  const title = HUB_LABELS[hubSlug] ?? urlSlug.replace(/-/g, " ");
   const description = `Compare ${title.toLowerCase()} tools and products side by side. Trust Scores, features, pricing, and real user data — find your best fit without the marketing noise.`;
-  const canonical = `/hub/${hubSlug}`;
+  const canonical = `/hub/${urlSlug}`;
   const hubMeta = useQuery(api.hubs.getHubBySlug, { slug: hubSlug });
 
   const breadcrumbs = [

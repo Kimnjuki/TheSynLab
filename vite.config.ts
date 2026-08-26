@@ -9,9 +9,14 @@ import { HOMEPAGE_PRERENDER_HTML } from "./src/data/prerenderContent";
 import { STATIC_PRODUCTS, HUB_SLUGS, HUB_FAQS } from "./src/data/staticProductData";
 
 const SITE_URL = "https://thesynlab.com";
-const HOME_TITLE = "TheSynLab – Next-Gen Tech Reviews & Workflow Optimization";
+// SEO-1.4: ONE homepage title. This must stay byte-identical to:
+//   - index.html <title> and <og:title>/<twitter:title>
+//   - src/pages/Index.tsx MetaTags title
+// GA4 previously showed 7 competing near-homepage titles because these three
+// sources disagreed. Never A/B test the production title tag in more than one file.
+const HOME_TITLE = "TheSynLab – Tech Reviews, Comparisons & Tool Alternatives";
 const HOME_DESCRIPTION =
-  "In-depth tech reviews with unique Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware to build your perfect workflow ecosystem.";
+  "In-depth tech reviews with Trust Scores. Compare the best productivity tools, smart home devices, and SaaS solutions. Expert analysis and real alternatives.";
 
 // Routes that get pre-rendered HTML + appear in sitemap
 const staticRoutes = [
@@ -97,15 +102,34 @@ const CANONICAL_ALIASES: Record<string, string> = {
   "/tools/stack-quiz": "/stack-quiz",
   "/tools/compatibility-checker": "/tools/compatibility",
 };
-const productRoutes = STATIC_PRODUCTS.map((p) => `/products/${p.productSlug}`);
+
+// SEO-1.3: Legacy underscore URLs → hyphenated canonical counterparts.
+// These are 301-redirected by nginx (see nginx.conf) and mirrored client-side in
+// Hub.tsx via <Navigate>. They must NEVER be prerendered or appear in the sitemap.
+// URL slugs are hyphens-only site-wide (~95% convention); underscores exist only
+// as internal data identifiers (Convex `hub` field), never as URL path segments.
+const normalizeUrlSlug = (slug: string) => slug.replace(/_/g, "-");
+const LEGACY_URL_REDIRECTS: Record<string, string> = {
+  "/hub/ai_workflow": "/hub/ai-workflow",
+  "/hub/intelligent_home": "/hub/intelligent-home",
+  "/hub/hybrid_office": "/hub/hybrid-office",
+};
+// Canonical URL generation: normalize every programmatic slug to hyphens at
+// generation time so an underscored URL is structurally impossible to publish.
+const productRoutes = STATIC_PRODUCTS.map((p) => `/products/${normalizeUrlSlug(p.productSlug)}`);
 const productAltRoutes = STATIC_PRODUCTS
   .filter((p) => p.alternativeSlugs.length > 0)
-  .map((p) => `/products/${p.productSlug}/alternatives`);
+  .map((p) => `/products/${normalizeUrlSlug(p.productSlug)}/alternatives`);
 const productCompareRoutes = STATIC_PRODUCTS
-  .flatMap((p) => 
-    p.alternativeSlugs.slice(0, 3).map((a) => `/products/${p.productSlug}-vs-${a}`)
+  .flatMap((p) =>
+    p.alternativeSlugs.slice(0, 3).map((a) => `/products/${normalizeUrlSlug(p.productSlug)}-vs-${normalizeUrlSlug(a)}`)
   );
-const hubRoutes = Object.keys(HUB_SLUGS).map((slug) => `/hub/${slug}`);
+const hubRoutes = Object.keys(HUB_SLUGS)
+  // Skip legacy underscore hub slugs — those routes are canonical at their
+  // hyphenated counterpart (deduped via staticRoutes' explicit entries below and
+  // LEGACY_URL_REDIRECTS for the old URLs).
+  .filter((slug) => !LEGACY_URL_REDIRECTS[`/hub/${slug}`])
+  .map((slug) => `/hub/${normalizeUrlSlug(slug)}`);
 
 // MF-04: /vs/ comparison landing pages — all product pairs from same hub + alternatives
 const comparePairs: [string, string][] = [
@@ -164,10 +188,31 @@ const dynamicRoutes = [
 
 const prerenderRoutes = Array.from(new Set([...staticRoutes, ...dynamicRoutes]));
 
+// SEO-1.3 structural guard: fail the build if ANY generated/registered route
+// contains an underscore in its path segments. Underscores exist only as internal
+// Convex/data identifiers — never as URL paths. This makes it impossible for a new
+// underscored route (sitemap entry, prerendered page, or internal link) to ship.
+const assertHyphenOnlyRoutes = () => {
+  const offenders = Array.from(
+    new Set([...prerenderRoutes].filter((r) => r.includes("_")))
+  );
+  if (offenders.length > 0) {
+    throw new Error(
+      `[seo-guard] Underscore found in generated URL path(s) — use hyphens and/or ` +
+      `register the old URL in LEGACY_URL_REDIRECTS + nginx 301s:\n  ${offenders.join("\n  ")}`
+    );
+  }
+};
+assertHyphenOnlyRoutes();
+
 const buildSitemapXml = () => {
-  // Exclude noindex routes from sitemap
+  // Exclude noindex routes AND every route that is itself a permanent redirect
+  // (legacy alias or legacy underscore variant) from the sitemap.
   const sitemapRoutes = prerenderRoutes.filter(
-    (r) => !NOINDEX_ROUTES.has(r) && !Object.keys(CANONICAL_ALIASES).includes(r)
+    (r) =>
+      !NOINDEX_ROUTES.has(r) &&
+      !Object.keys(CANONICAL_ALIASES).includes(r) &&
+      !LEGACY_URL_REDIRECTS[r]
   );
 
   const today = new Date().toISOString().slice(0, 10);
@@ -289,13 +334,15 @@ const breadcrumbSchema = (items: { name: string; item?: string }[]) => ({
 
 const staticMetaByRoute: Record<string, { title: string; description: string }> = {
   "/": { title: HOME_TITLE, description: HOME_DESCRIPTION },
+  // SEO-1.4: these must stay byte-identical to each page component's <MetaTags>
+  // title/description so prerendered HTML and hydrated HTML always agree.
   "/blog": {
-    title: "Tech Blog & Reviews | TheSynLab",
-    description: "Latest smart home, productivity, and AI tool deep dives from TheSynLab editors.",
+    title: "TheSynLab Blog: Honest Tool Reviews, Trust Scores & Buying Guides 2026",
+    description: "Independent product reviews you can actually trust. Lab-tested Trust Scores for SaaS, smart home devices, AI tools, and productivity software. Side-by-side comparisons with real data — updated weekly.",
   },
   "/guides": {
-    title: "How-To Guides & Tutorials | TheSynLab",
-    description: "Step-by-step guides and tutorials for SaaS tools, smart home setups, privacy evaluations, and workflow optimization.",
+    title: "Buying Guides 2026: Smart Home, SaaS & Productivity Tools | TheSynLab",
+    description: "TheSynLab buying guides help you choose the right smart home devices, SaaS tools, and productivity software. Compare features, Trust Scores, and find your perfect setup with confidence.",
   },
   "/glossary": {
     title: "Tech Glossary & Definitions | TheSynLab",
@@ -334,8 +381,8 @@ const staticMetaByRoute: Record<string, { title: string; description: string }> 
     description: "Calculate the exact return on investment of any tool, including hidden onboarding and migration costs.",
   },
   "/scoring-hub": {
-    title: "Scoring & Decision Hub | TheSynLab",
-    description: "Transparent scoring methodology, ecosystem fit analysis, curated stacks, and personalized recommendations.",
+    title: "Trust Score Comparison 2026: Find the Best Software — TheSynLab Scoring Hub",
+    description: "Compare 100+ tools by Trust Score. Which email signature, design tool, or social media scheduler actually delivers? Real scores for Wisestamp, Photopea, SocialPilot, Outscraper and more — updated weekly.",
   },
   "/hubs": {
     title: "Product Hubs – AI Tools, Smart Home, SaaS & More | TheSynLab",
@@ -406,15 +453,53 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   for (const route of [...staticRoutes, ...Array.from(NOINDEX_ROUTES)]) {
     const fromMap = staticMetaByRoute[route];
     const isAlias = Object.keys(CANONICAL_ALIASES).includes(route);
+    // SEO-1.5/1.4: never fall back to the homepage description — every URL gets a
+    // route-derived description so no two URLs ship identical meta.
+    const fallbackDescription = `${slugToTitle(route)} — reviewed and scored by TheSynLab.`;
     pages.push({
       route,
       title: fromMap?.title ?? `${slugToTitle(route)} | TheSynLab`,
-      description: fromMap?.description ?? HOME_DESCRIPTION,
-      jsonLd: {
+      description: fromMap?.description ?? fallbackDescription,
+      jsonLd: route === "/"
+        ? [
+            // SEO-2.2: full Organization + WebSite/SearchAction entity pair on the
+            // homepage (E-E-A-T + sitelinks search box eligibility).
+            {
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "TheSynLab",
+              url: SITE_URL,
+              logo: `${SITE_URL}/favicon.ico`,
+              description:
+                "Independent tech review platform lab-testing tools and scoring them on Trust, Integration depth, and 3-year TCO.",
+              foundingDate: "2024",
+              sameAs: [
+                "https://twitter.com/thesynlab",
+                "https://www.linkedin.com/company/thesynlab",
+              ],
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "TheSynLab",
+              url: SITE_URL,
+              description: fromMap?.description ?? fallbackDescription,
+              publisher: { "@type": "Organization", name: "TheSynLab" },
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: `${SITE_URL}/blog?q={search_term_string}`,
+                },
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ]
+        : {
         "@context": "https://schema.org",
-        "@type": route === "/" ? "WebSite" : "WebPage",
+        "@type": "WebPage",
         name: fromMap?.title ?? `${slugToTitle(route)} | TheSynLab`,
-        description: fromMap?.description ?? HOME_DESCRIPTION,
+        description: fromMap?.description ?? fallbackDescription,
         url: `${SITE_URL}${route === "/" ? "/" : route}`,
       } as JsonLdValue,
       noindex: NOINDEX_ROUTES.has(route) || isAlias,
@@ -443,6 +528,63 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   };
   addBlogItemList("/blog");
   addBlogItemList("/guides", a => a.category === "Guides");
+
+  // SEO-2.3: CTR-first metadata for the highest-impression / worst-CTR pages
+  // (audit priority list). Keys are the dynamic route's slug.
+  // NOTE: the on-page <h1> is untouched — these only change <title>/<description>.
+  const BLOG_META_OVERRIDES: Record<string, { title?: string; description?: string }> = {
+    "choose-clickup-vs-asana": {
+      title: "ClickUp vs Asana 2026: Which Should You Choose?",
+      description:
+        "Hands-on ClickUp vs Asana comparison: real pricing math, integrations that actually work, and the one use case where each wins. Verdict included.",
+    },
+    "home-assistant-beginners-guide": {
+      title: "Home Assistant Beginner's Guide: Start Here",
+      description:
+        "New to Home Assistant? This beginner's guide covers hardware picks, first automations, and the mistakes that cost new users the most time.",
+    },
+    "alexa-vs-google-home-privacy-comparison": {
+      title: "Alexa vs Google Home Privacy: Tested Comparison",
+      description:
+        "We audited Alexa vs Google Home privacy settings side by side: data retention, mic policies, opt-outs, and which ecosystem leaks less.",
+    },
+    "password-manager-comparison": {
+      title: "Password Manager Comparison 2026: Top Picks Ranked",
+      description:
+        "Side-by-side password manager comparison on security audits, MFA, breach history, family pricing, and migration effort — ranked for 2026.",
+    },
+  };
+
+  const TOOL_META_OVERRIDES: Record<
+    string,
+    { title?: string; description?: string; altTitle?: string; altDescription?: string }
+  > = {
+    vectr: {
+      title: "Vectr Review 2026: Free Vector Editor, Real Trade-offs",
+      description:
+        "Is Vectr good enough to skip paid vector tools? We tested its editor, export quality, collaboration, and limits vs Illustrator-class apps.",
+    },
+    wisestamp: {
+      title: "WiseStamp Review 2026: Signatures That Convert",
+      description:
+        "WiseStamp tested across Gmail, Outlook & Apple Mail — template quality, Teams management, pricing traps, and whether the CTA banners pay off.",
+    },
+    mailmeteor: {
+      title: "Mailmeteor Review 2026: Gmail Mail Merge Tested",
+      description:
+        "Mailmeteor sends mail merges straight from Google Sheets in Gmail. We tested deliverability, tracking accuracy, free-tier limits, and GDPR claims.",
+    },
+    textexpander: {
+      title: "TextExpander Review 2026: Still Worth It for Teams?",
+      description:
+        "TextExpander team-snippet sharing tested on every platform — sync reliability, per-user pricing math, and how it compares to free snippet tools.",
+    },
+    superwhisper: {
+      altTitle: "Superwhisper Alternatives 2026: Top Offline & Free Options",
+      altDescription:
+        "Best Superwhisper alternatives compared by Trust Score, offline support, dictation accuracy, and price — including genuinely free options.",
+    },
+  };
 
   // Blog articles — Article schema + BreadcrumbList + FAQPage + HowTo
   for (const article of blogArticles) {
@@ -519,8 +661,13 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
 
     pages.push({
       route,
-      title: article.seoTitle || `${article.title} | TheSynLab`,
-      description: article.metaDescription || article.excerpt || article.title,
+      title:
+        BLOG_META_OVERRIDES[article.slug]?.title ??
+        article.seoTitle ??
+        `${article.title} | TheSynLab`,
+      description:
+        BLOG_META_OVERRIDES[article.slug]?.description ??
+        (article.metaDescription || article.excerpt || article.title),
       jsonLd: articleSchemas,
     });
   }
@@ -584,18 +731,23 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
     });
 
     // Alternatives page — CollectionPage + BreadcrumbList
+    // NOTE (/products vs /tool): both template families exist for some tools; the
+    // /products variant is data-catalog-driven (Trust Score + TCO deep dive) while
+    // /tool is AI-tools-hub-driven — titles/descriptions must NOT be identical or
+    // Google will treat one as a duplicate of the other (audit: 13 dup-desc pairs).
     if (product.alternativeSlugs.length > 0) {
-      const altRoute = `/products/${product.productSlug}/alternatives`;
+      const altRoute = `/products/${normalizeUrlSlug(product.productSlug)}/alternatives`;
+      const altCount = product.alternativeSlugs.length;
       pages.push({
         route: altRoute,
-        title: `Best ${product.productName} Alternatives ${year} — Trust Scores & TCO | TheSynLab`,
-        description: `Best alternatives to ${product.productName} with side-by-side trust score, integration score, and TCO analysis.`,
+        title: `Top ${altCount} ${product.productName} Alternatives ${year} — Ranked by Trust Score | TheSynLab`,
+        description: `Looking beyond ${product.productName}? Compare ${altCount} vetted alternatives by Trust Score (baseline ${product.trustScore}/10), Integration Score, and real annual TCO — with pros, cons, and best-fit verdicts.`,
         jsonLd: [
           {
             "@context": "https://schema.org",
             "@type": "CollectionPage",
             name: `Best ${product.productName} Alternatives`,
-            description: `Best alternatives to ${product.productName} with side-by-side trust score, integration score, and TCO analysis.`,
+            description: `${altCount} hand-tested ${product.productName} alternatives ranked by TheSynLab Trust Score and Integration Score with per-seat annual TCO.`,
             url: `${SITE_URL}${altRoute}`,
           },
           breadcrumbSchema([
@@ -691,8 +843,11 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   }
 
   // Hub landing pages — CollectionPage + BreadcrumbList + ItemList + FAQPage
+  // SEO-1.3: URLs are always hyphenated; the Convex hub identifier stays as-is
+  // for data joins (do NOT skip underscore identifier keys — they are the real
+  // hubs; only their URLs get normalized).
   for (const [hubSlug, hubInfo] of Object.entries(HUB_SLUGS)) {
-    const hubRoute = `/hub/${hubSlug}`;
+    const hubRoute = `/hub/${normalizeUrlSlug(hubSlug)}`;
     const hubProducts = STATIC_PRODUCTS.filter((p) => p.hub === hubSlug);
     const schemas: any[] = [
       {
@@ -757,18 +912,26 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   // SaaS tool review pages — SoftwareApplication + BreadcrumbList
   for (const tool of saasTools) {
     const toolRoute = `/tool/${tool.slug}`;
+    const o = TOOL_META_OVERRIDES[tool.slug];
+    // SEO-2.3: title must LEAD with the exact tool name (branded-query intent),
+    // with a concrete differentiator instead of a generic "Review" suffix.
+    const toolTitle = o?.title ?? `${tool.name} Review ${year}: Trust Score, Integrations & Verdict`;
     pages.push({
       route: toolRoute,
-      title: `${tool.name} Review ${new Date().getFullYear()} — Trust Score & Integration | TheSynLab`,
-      description: tool.shortDescription || tool.tagline || HOME_DESCRIPTION,
+      title: toolTitle,
+      description:
+        o?.description ??
+        (tool.shortDescription || tool.tagline || `${tool.name} reviewed and scored by TheSynLab.`),
       jsonLd: [
         {
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
           name: tool.name,
-          description: tool.shortDescription || tool.tagline || HOME_DESCRIPTION,
+          description: tool.shortDescription || tool.tagline || "",
           applicationCategory: tool.category,
           url: `${SITE_URL}${toolRoute}`,
+          // Editorial Trust Score (TheSynLab's documented scoring methodology) on
+          // the 5-point scale used across /tool pages.
           aggregateRating: {
             "@type": "AggregateRating",
             ratingValue: tool.trustScore,
@@ -789,14 +952,16 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
     const altRoute = `/tool/${tool.slug}/alternatives`;
     pages.push({
       route: altRoute,
-      title: `Best ${tool.name} Alternatives ${new Date().getFullYear()} | TheSynLab`,
-      description: `Best alternatives to ${tool.name} with side-by-side trust score, integration score, and TCO analysis.`,
+      title: o?.altTitle ?? `Best ${tool.name} Alternatives ${year} | TheSynLab`,
+      description:
+        o?.altDescription ??
+        `Best alternatives to ${tool.name} with side-by-side trust score, integration score, and TCO analysis.`,
       jsonLd: [
         {
           "@context": "https://schema.org",
           "@type": "CollectionPage",
-          name: `Best ${tool.name} Alternatives`,
-          description: `Best alternatives to ${tool.name} with side-by-side trust score, integration score, and TCO analysis.`,
+          name: o?.altTitle ?? `Best ${tool.name} Alternatives ${year}`,
+          description: o?.altDescription ?? `Best alternatives to ${tool.name} with side-by-side trust score, integration score, and TCO analysis.`,
           url: `${SITE_URL}${altRoute}`,
         },
         breadcrumbSchema([
@@ -1050,12 +1215,22 @@ const buildStaticBodyHtml = (route: string): string => {
   }
 
   // ── Glossary listing ─────────────────────────────────────────────────────
+  // SEO-soft-404 fix: this page shipped "coming soon" with ~no content (classic
+  // thin/empty-body pattern). It now surfaces real explainer content from the blog.
   if (route === "/glossary") {
+    const explainers = [...blogArticles]
+      .filter((a) => /what-is|explained|guide|how-to/.test(a.slug))
+      .slice(0, 12);
+    const entries = explainers.length
+      ? `<ul style="list-style:none;padding:0">${explainers.map((a) =>
+          `<li style="margin-bottom:.75rem"><a href="/blog/${a.slug}"><b>${escapeHtml(a.title)}</b></a> — <span style="color:#666">${escapeHtml((a.excerpt || "").slice(0, 110))}…</span></li>`).join("")}</ul>`
+      : "";
     return `<main style="${MAIN_STYLE}">
 <nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › Glossary</nav>
-<h1>Tech Glossary</h1>
-<p>Definitions and explanations of key terms in SaaS, smart home technology, privacy, and productivity — plain language, independently verified.</p>
-<p style="color:#666">Glossary entries coming soon. In the meantime, browse our <a href="/blog">blog</a> and <a href="/guides">how-to guides</a>.</p>
+<h1>Tech Glossary &amp; In-Depth Explainers</h1>
+<p>Plain-language explanations of the terms that matter when choosing SaaS tools and smart home gear — from Trust Scores to Matter protocol. Each entry links our full lab-tested explainer.</p>
+${entries}
+<p>Want a term defined? <a href="/contact">Request it</a>, or browse the <a href="/guides">buying guides</a> and the <a href="/blog">review archive</a>.</p>
 </main>`;
   }
 
@@ -1161,9 +1336,9 @@ ${widgetCards}
 <h2>Browse by Hub</h2>
 <ul>
 <li><a href="/hub/ai-tools"><b>AI &amp; SaaS Tools</b></a> — 300+ tools scored for reliability, integrations, and TCO</li>
-<li><a href="/hub/ai_workflow"><b>AI Workflow</b></a> — Automation platforms, LLMs, no-code builders</li>
-<li><a href="/hub/intelligent_home"><b>Intelligent Home</b></a> — Smart home hubs, voice assistants, sensors</li>
-<li><a href="/hub/hybrid_office"><b>Hybrid Office</b></a> — Collaboration, video conferencing, remote-work tools</li>
+<li><a href="/hub/ai-workflow"><b>AI Workflow</b></a> — Automation platforms, LLMs, no-code builders</li>
+<li><a href="/hub/intelligent-home"><b>Intelligent Home</b></a> — Smart home hubs, voice assistants, sensors</li>
+<li><a href="/hub/hybrid-office"><b>Hybrid Office</b></a> — Collaboration, video conferencing, remote-work tools</li>
 </ul>
 <p><a href="/tools/compare">Compare products side-by-side →</a> &nbsp;·&nbsp; <a href="/stack-builder">Build your stack →</a></p>
 </main>`;
@@ -1227,9 +1402,9 @@ ${widgetCards}
 <p>Every TheSynLab hub includes trust scores, integration grades, 3-year TCO analysis, and vendor risk profiles across its entire product catalog.</p>
 <ul>
 <li><a href="/hub/ai-tools"><b>AI Tools Hub</b></a> — 300+ AI writing, coding, video, and automation tools independently reviewed</li>
-<li><a href="/hub/ai_workflow"><b>AI &amp; Workflow</b></a> — Automation platforms, LLMs, no-code builders, and workflow orchestrators</li>
-<li><a href="/hub/intelligent_home"><b>Intelligent Home</b></a> — Smart home hubs, voice assistants, sensors, and IoT platforms</li>
-<li><a href="/hub/hybrid_office"><b>Hybrid Office</b></a> — Collaboration, video conferencing, and remote-work essentials</li>
+<li><a href="/hub/ai-workflow"><b>AI &amp; Workflow</b></a> — Automation platforms, LLMs, no-code builders, and workflow orchestrators</li>
+<li><a href="/hub/intelligent-home"><b>Intelligent Home</b></a> — Smart home hubs, voice assistants, sensors, and IoT platforms</li>
+<li><a href="/hub/hybrid-office"><b>Hybrid Office</b></a> — Collaboration, video conferencing, and remote-work essentials</li>
 <li><a href="/products"><b>SaaS &amp; Developer Tools</b></a> — Full product directory: CRMs, databases, infrastructure, and developer tooling</li>
 </ul>
 </main>`;
@@ -1559,48 +1734,107 @@ ${faqHtml}
   }
 
   // ── Alternatives pages (/products/:slug/alternatives) ───────────────────
+  // SEO-soft-404 fix: pages whose alternativeSlugs reference products missing
+  // from the static catalog previously rendered an (almost) empty list — e.g.
+  // 1Password, Grammarly, Stripe (~230 chars of body = classic soft 404).
+  // Now falls back to the AI-tools catalog and always ships substantial content.
   const prodAltMatch = route.match(/^\/products\/([^/]+)\/alternatives$/);
   if (prodAltMatch) {
-    const product = STATIC_PRODUCTS.find((p) => p.productSlug === prodAltMatch[1]);
+    const product = STATIC_PRODUCTS.find((p) => p.productSlug === normalizeUrlSlug(prodAltMatch[1]));
     if (product && product.alternativeSlugs.length > 0) {
-      const prodAltItems = product.alternativeSlugs.map((a) => {
-        const altProd = STATIC_PRODUCTS.find(p => p.productSlug === a);
-        if (!altProd) return "";
+      const altLinkFor = (slug: string) =>
+        STATIC_PRODUCTS.some((p) => p.productSlug === slug) ? `/products/${slug}` : `/tool/${slug}`;
+      const altNameFor = (slug: string) =>
+        STATIC_PRODUCTS.find((p) => p.productSlug === slug)?.productName ??
+        saasTools.find((t) => t.slug === slug)?.name ??
+        slug;
+      const prodAltItems = product.alternativeSlugs.map((a, i) => {
+        const altProd = STATIC_PRODUCTS.find((p) => p.productSlug === a);
+        const name = escapeHtml(altNameFor(a));
+        const scoreLine = altProd
+          ? `Trust ${altProd.trustScore}/10 · Integration ${altProd.integrationScore}/10 · $${altProd.estimatedTco}/yr · `
+          : "";
+        const blurb = escapeHtml(
+          altProd?.description ?? saasTools.find((t) => t.slug === a)?.shortDescription ?? ""
+        );
         return `<li style="margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #e5e7eb">
-<a href="/products/${altProd.productSlug}"><b>${escapeHtml(altProd.productName)}</b></a><br>
-<span style="color:#666;font-size:.9rem">Trust ${altProd.trustScore}/10 · Integration ${altProd.integrationScore}/10 · $${altProd.estimatedTco}/yr · ${escapeHtml(altProd.description)}</span>
+<b>${i + 1}. <a href="${altLinkFor(a)}">${name}</a></b><br>
+<span style="color:#666;font-size:.9rem">${scoreLine}${blurb}</span>
 </li>`;
       }).filter(Boolean).join("");
+      const proItems = product.pros.map((p) => `<li>${escapeHtml(p)}</li>`).join("");
+      const conItems = product.cons.map((c) => `<li>${escapeHtml(c)}</li>`).join("");
       return `<main style="${MAIN_STYLE}">
 <nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › <a href="/products">Products</a> › <a href="/products/${product.productSlug}">${escapeHtml(product.productName)}</a> › Alternatives</nav>
-<h1>Best ${escapeHtml(product.productName)} Alternatives ${year}</h1>
-<p>Compare Trust Scores, Integration Scores, and TCO for top alternatives to ${escapeHtml(product.productName)}.</p>
+<h1>Best ${escapeHtml(product.productName)} Alternatives (${year})</h1>
+<p>Compare Trust Scores, Integration Scores, and TCO for top alternatives to ${escapeHtml(product.productName)}. Every option below is scored with the same methodology as our full review.</p>
+<h2>Why look for a ${escapeHtml(product.productName)} alternative?</h2>
+<p>${escapeHtml(product.productName)} scores ${product.trustScore}/10 on Trust and ${product.integrationScore}/10 on Integration at roughly $${product.estimatedTco}/${product.priceModel === "year" ? "year" : product.priceModel} per seat. It remains a strong choice — but teams typically switch for pricing at scale, deeper integrations with their existing stack, or stronger privacy guarantees. Match the list below against your priorities before switching.</p>
+<h2>What ${escapeHtml(product.productName)} still does well</h2>
+<ul>${proItems}</ul>
+<h2>Where it falls short</h2>
+<ul>${conItems}</ul>
+<h2>The alternatives, ranked</h2>
 <ul style="list-style:none;padding:0">${prodAltItems}</ul>
-<p><a href="/tools/compare">Use the comparison tool →</a> to compare up to 4 products side-by-side.</p>
+<p><a href="/tools/compare">Use the comparison tool →</a> to compare up to 4 products side-by-side, or read the <a href="/products/${product.productSlug}">full ${escapeHtml(product.productName)} review</a>.</p>
 </main>`;
     }
   }
 
   // ── Comparison pages (/products/:slug-vs-:slug) ────────────────────────
+  // SEO-2.1 fix: this template previously shipped a bare spec table + one-line
+  // verdict (~400–700 chars) — the single largest thin-content class on the site
+  // (223 pages <1000 chars). Now renders the same narrative treatment as /vs/
+  // pages: intro context, pros/cons, best-fit guidance, and cross-links.
   const compareMatch = route.match(/^\/products\/([^/]+)-vs-([^/]+)$/);
   if (compareMatch) {
     const productA = STATIC_PRODUCTS.find(p => p.productSlug === compareMatch[1]);
     const productB = STATIC_PRODUCTS.find(p => p.productSlug === compareMatch[2]);
     if (productA && productB) {
+      const aName = escapeHtml(productA.productName);
+      const bName = escapeHtml(productB.productName);
+      const trustWinner = productA.trustScore >= productB.trustScore ? productA : productB;
+      const trustLoser = trustWinner === productA ? productB : productA;
+      const tcoWinner = productA.estimatedTco <= productB.estimatedTco ? productA : productB;
+      const intWinner = productA.integrationScore >= productB.integrationScore ? productA : productB;
+      const winnerName = escapeHtml(trustWinner.productName);
+      const loserName = escapeHtml(trustLoser.productName);
+      const intro = `${aName} and ${bName} both live in ${escapeHtml(productA.category)}, but they optimize for different buyers. ` +
+        `${aName} scores ${productA.trustScore}/10 on Trust and ${productA.integrationScore}/10 on Integration at $${productA.estimatedTco}/yr per seat, while ` +
+        `${bName} posts ${productB.trustScore}/10 Trust, ${productB.integrationScore}/10 Integration at $${productB.estimatedTco}/yr. `;
+      const verdict = `${winnerName} wins on overall trust (${trustWinner.trustScore}/10 vs ${trustLoser.trustScore}/10), making it the safer default for teams where reliability, privacy posture, and vendor transparency matter most. ` +
+        `${escapeHtml(intWinner.productName)} is the better pick if your priority is integration depth with an existing stack${tcoWinner !== intWinner && tcoWinner !== trustWinner ? `, while ${escapeHtml(tcoWinner.productName)} is the budget option` : ""}.`;
+      const proConsBlock = (p: typeof productA, side: "a" | "b") => {
+        const label = side === "a" ? aName : bName;
+        const pros = p.pros.map((x) => `<li>✅ ${escapeHtml(x)}</li>`).join("");
+        const cons = p.cons.map((x) => `<li>❌ ${escapeHtml(x)}</li>`).join("");
+        return `<h3>${label} — quick take</h3><div style="display:flex;gap:2rem;flex-wrap:wrap"><div style="flex:1;min-width:180px"><b>Pros</b><ul>${pros}</ul></div><div style="flex:1;min-width:180px"><b>Cons</b><ul>${cons}</ul></div></div>`;
+      };
       return `<main style="${MAIN_STYLE}">
-<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › <a href="/products">Products</a> › ${escapeHtml(productA.productName)} vs ${escapeHtml(productB.productName)}</nav>
-<h1>${escapeHtml(productA.productName)} vs ${escapeHtml(productB.productName)} (${year})</h1>
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › <a href="/products">Products</a> › ${aName} vs ${bName}</nav>
+<h1>${aName} vs ${bName} (${year}): Trust Score, Integrations &amp; TCO Compared</h1>
+<p>${intro}${verdict.split(".")[0]}.</p>
 <table style="width:100%;border-collapse:collapse;margin:1.5rem 0">
-<tr style="background:#f9fafb"><th style="padding:.75rem;text-align:left;border:1px solid #e5e7eb">Metric</th><th style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(productA.productName)}</th><th style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(productB.productName)}</th></tr>
+<tr style="background:#f9fafb"><th style="padding:.75rem;text-align:left;border:1px solid #e5e7eb">Metric</th><th style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${aName}</th><th style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${bName}</th></tr>
 <tr><td style="padding:.75rem;border:1px solid #e5e7eb">Trust Score</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${productA.trustScore}/10</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${productB.trustScore}/10</td></tr>
 <tr><td style="padding:.75rem;border:1px solid #e5e7eb">Integration Score</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${productA.integrationScore}/10</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${productB.integrationScore}/10</td></tr>
-<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Est. TCO / yr</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${productA.estimatedTco}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${productB.estimatedTco}</td></tr>
+<tr><td style="padding:.75rem;border:1px solid #e5e7eb">Est. TCO / yr per seat</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${productA.estimatedTco}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${productB.estimatedTco}</td></tr>
 <tr><td style="padding:.75rem;border:1px solid #e5e7eb">Price</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${productA.price}/${productA.priceModel}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">$${productB.price}/${productB.priceModel}</td></tr>
 <tr><td style="padding:.75rem;border:1px solid #e5e7eb">Category</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(productA.category)}</td><td style="padding:.75rem;text-align:center;border:1px solid #e5e7eb">${escapeHtml(productB.category)}</td></tr>
 </table>
-<h2>Verdict</h2>
-<p>If you prioritize ${productA.trustScore > productB.trustScore ? "trust and security" : "integrations and ecosystem"}, ${productA.trustScore > productB.trustScore ? escapeHtml(productA.productName) : escapeHtml(productB.productName)} is the stronger choice. For ${productA.integrationScore > productB.integrationScore ? "deep integration ecosystems" : "budget-conscious teams"}, ${productA.integrationScore > productB.integrationScore ? escapeHtml(productA.productName) : escapeHtml(productB.productName)} has the edge.</p>
-<p><a href="/tools/compare">Compare these tools in TheSynLab Decision Studio →</a></p>
+<h2>The Verdict</h2>
+<p>${verdict}</p>
+<h2>How Each Tool Handles Your Priorities</h2>
+<p>If uptime guarantees, data-residency options, or security certifications drive your decision, weight the Trust column hardest — that dimension aggregates breach history, privacy-policy quality, and vendor transparency from our lab testing. If instead you're replacing an existing stack piece by piece, prioritize Integration Score: it measures native connectors, API quality, and automation-platform support.</p>
+${proConsBlock(productA, "a")}
+${proConsBlock(productB, "b")}
+<h2>Choose ${aName} if…</h2>
+<ul>${productA.bestFor.slice(0, 4).map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
+<h2>Choose ${bName} if…</h2>
+<ul>${productB.bestFor.slice(0, 4).map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
+<h2>Full Reviews &amp; Next Steps</h2>
+<p><a href="/products/${productA.productSlug}">Read our full ${aName} review →</a> · <a href="/products/${productB.productSlug}">Read our full ${bName} review →</a></p>
+<p><a href="/tools/compare">Compare these tools side-by-side in TheSynLab Decision Studio →</a></p>
 </main>`;
     }
   }
@@ -1694,11 +1928,13 @@ ${relatedHtml.slice(0, 6).join("\n")}
   }
 
   // ── Hub pages (/hub/:slug) ─────────────────────────────────────────────────
+  // SEO-1.3: URL slug is hyphenated; convert back to the internal hub identifier.
   const hubMatch = route.match(/^\/hub\/([^/]+)$/);
   if (hubMatch) {
-    const hub = HUB_SLUGS[hubMatch[1]];
+    const internalHubSlug = hubMatch[1].replace(/-/g, "_");
+    const hub = HUB_SLUGS[internalHubSlug] ?? HUB_SLUGS[hubMatch[1]];
     if (hub) {
-      const hubProdcts = STATIC_PRODUCTS.filter((p) => p.hub === hubMatch[1]);
+      const hubProdcts = STATIC_PRODUCTS.filter((p) => p.hub === internalHubSlug);
       const prodList = hubProdcts
         .map((p) => `<li><a href="/products/${p.productSlug}"><b>${escapeHtml(p.productName)}</b></a> — $${p.price}/${p.priceModel} · ${escapeHtml(p.description)}</li>`)
         .join("");
@@ -1774,6 +2010,22 @@ const generateStaticHtmlPages = async (distDir: string) => {
   const indexPath = path.resolve(distDir, "index.html");
   const indexHtml = await fs.readFile(indexPath, "utf8");
   const pages = buildStaticPagesMeta();
+
+  // SEO-1.3 second-layer guard: the final page set (which is what actually gets
+  // written to disk) must also be underscore-free. This catches any code path
+  // that builds routes directly from data identifiers instead of hubRoutes etc.
+  const underscoreOffenders = Array.from(new Set(pages.map((p) => p.route).filter((r) => r.includes("_"))));
+  if (underscoreOffenders.length > 0) {
+    throw new Error(
+      `[seo-guard] Underscore route(s) reached prerender — add to LEGACY_URL_REDIRECTS and redirect in nginx:\n  ${underscoreOffenders.join("\n  ")}`
+    );
+  }
+
+  // SEO-1.3: purge stale legacy/redirect artifacts from previous builds so an
+  // underscored or aliased URL can never be served as a live duplicate page.
+  for (const legacy of [...Object.keys(LEGACY_URL_REDIRECTS), ...Object.keys(CANONICAL_ALIASES)]) {
+    await fs.rm(path.join(distDir, legacy.replace(/^\//, "")), { recursive: true, force: true });
+  }
 
   for (const page of pages) {
     const canonicalUrl = page.canonicalOverride

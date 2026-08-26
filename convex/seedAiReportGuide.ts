@@ -285,9 +285,9 @@ matters most in scholarly writing. For technical documentation, the best
 tools are those that can be connected to a knowledge base to ensure
 consistency across related documents (see our detailed post about
 writing technical documentation with AI here \\[LINK:
-https://thesynlab.com/hub/ai_workflow\\]). If you need help finding
+https://thesynlab.com/hub/ai-workflow\\]). If you need help finding
 report templates to jump-start your writing, check out this list here
-\\[LINK: <https://thesynlab.com/hub/ai_workflow>\\].
+\\[LINK: <https://thesynlab.com/hub/ai-workflow>\\].
 
 ![AI report tool dashboards for business vs academic writing](/ai-report-tools-comparison.png)
 
@@ -311,7 +311,7 @@ rather than waiting until the end -- it's much easier to retrofit a
 citation into a section than to try to add several hundred to a finished
 document. For more advice on how to use prompts effectively when working
 with long documents, see our post on prompt engineering \\[LINK:
-https://thesynlab.com/hub/ai_workflow\\].
+https://thesynlab.com/hub/ai-workflow\\].
 
 ![Turn an outline into a report using AI section-by-section drafting](/ai-report-outline-workflow.png)
 
@@ -334,7 +334,7 @@ source material, not just the summary provided by the tool. Finally,
 read the document for repetition or contradiction between paragraphs,
 the most common sign of context drift in longer documents. The SynLab
 content quality checklist walks you through this process in detail
-\\[LINK: <https://thesynlab.com/hub/ai_workflow>\\].
+\\[LINK: <https://thesynlab.com/hub/ai-workflow>\\].
 
 **What\\'s the Best Workflow for Human-in-the-Loop Report Creation?**
 

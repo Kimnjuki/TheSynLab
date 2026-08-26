@@ -25,6 +25,8 @@ export function ProductCard({ product, isSelected, onSelect, disabled }: Product
             <img 
               src={image} 
               alt={name}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover"
             />
           ) : (
