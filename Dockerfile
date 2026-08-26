@@ -10,30 +10,34 @@ WORKDIR /app
 # stable @swc/core-linux-x64-gnu binary and builds the full 3500+ module app
 # reliably.
 #
-# We also raise Node's heap limit because the build transforms 3500+ modules
+# We also raise Node heap limit because the build transforms 3500+ modules
 # and prerenders hundreds of HTML pages in closeBundle.
 ENV NODE_OPTIONS=--max-old-space-size=4096
 
 # Install dependencies.
-# - dns-result-order=ipv4first is the key fix for npm silently hanging ~100s then dying with no output inside Docker/normal build containers (IPv6 DNS black-holed by the registry).
-# - --loglevel=http streams every registry request so if the install fails we see exactly which URL hung instead of an empty log.
-# - --no-audit/--no-fund skip audit/funding network calls that sometimes cause hangs on slow egress.
+# - dns-result-order=ipv4first prevents npm hanging ~100s on IPv6 DNS blackhole.
+# - --loglevel=http streams every registry request so failures are visible.
+# - fetch-retries=5 + fetch-retry-maxtimeout=180000 + --fetch-timeout=300000
+#   survive transient ECONNRESET / registry timeouts without manual retries.
+# FIX #1: removed invalid "npm config set network-timeout" that crashed npm 10.
 COPY package.json package-lock.json* ./
 RUN npm config set registry https://registry.npmjs.org && \
-    npm config set fetch-retries 3 && \
-    npm config set fetch-retry-mintimeout 10000 && \
-    npm config set fetch-retry-maxtimeout 60000 && \
-    npm config set network-timeout 600000 && \
+    npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 180000 && \
     npm config set dns-result-order ipv4first && \
-    npm ci --no-audit --no-fund --loglevel=http || \
-    (echo "=== npm ci attempt 1 FAILED (details above). Retrying with full output ===" && npm ci --no-audit --no-fund --loglevel=info) || \
-    (echo "=== npm ci attempt 2 FAILED ===" && sleep 20 && npm ci --no-audit --no-fund --loglevel=info)
+    npm ci --no-audit --no-fund --loglevel=http --fetch-timeout=300000 || \
+    (echo "npm ci retry 1" && npm ci --no-audit --no-fund --loglevel=info --fetch-timeout=300000) || \
+    (echo "npm ci retry 2" && sleep 30 && npm ci --no-audit --no-fund --loglevel=info --fetch-timeout=300000)
 
 # Copy full source
 COPY . .
 
-# Build-time env vars — set all VITE_* vars as build args so Coolify can inject them.
-# In Coolify: Settings → Build → Build Arguments → add each var with its value.
+# Build-time env vars (ARG → ENV for Vite embedding).
+# FIX #4: VITE_NVIDIA_API_KEY is declared as ARG so Vite can embed it at build.
+# It is a client-side key (exposed in JS bundle by design) — not a server secret.
+# NVIDIA_API_KEY (server-side secret used by nginx envsubst) is intentionally
+# NOT declared here — only injected at container runtime (see production stage).
 ARG VITE_CONVEX_URL
 ARG VITE_CONVEX_FUNCTIONS_DEPLOYED
 ARG VITE_PUBLIC_SITE_URL
@@ -46,8 +50,9 @@ ARG VITE_ADSENSE_SLOT_COMPARE_INLINE
 ARG VITE_ADSENSE_SLOT_COMPARE_SIDEBAR
 ARG VITE_ADSENSE_FALLBACK_WITHOUT_DB
 ARG VITE_AMAZON_ASSOCIATES_TAG
+ARG VITE_NVIDIA_API_KEY
 
-ENV VITE_CONVEX_URL=${VITE_CONVEX_URL:-https://kindhearted-lark-661.convex.cloud} \
+ENV VITE_CONVEX_URL=${VITE_CONVEX_URL:-https://kindheart-lark-661.convex.cloud} \
     VITE_CONVEX_FUNCTIONS_DEPLOYED=${VITE_CONVEX_FUNCTIONS_DEPLOYED:-true} \
     VITE_PUBLIC_SITE_URL=$VITE_PUBLIC_SITE_URL \
     VITE_GA4_MEASUREMENT_ID=$VITE_GA4_MEASUREMENT_ID \
@@ -58,31 +63,29 @@ ENV VITE_CONVEX_URL=${VITE_CONVEX_URL:-https://kindhearted-lark-661.convex.cloud
     VITE_ADSENSE_SLOT_COMPARE_INLINE=$VITE_ADSENSE_SLOT_COMPARE_INLINE \
     VITE_ADSENSE_SLOT_COMPARE_SIDEBAR=$VITE_ADSENSE_SLOT_COMPARE_SIDEBAR \
     VITE_ADSENSE_FALLBACK_WITHOUT_DB=$VITE_ADSENSE_FALLBACK_WITHOUT_DB \
-    VITE_AMAZON_ASSOCIATES_TAG=$VITE_AMAZON_ASSOCIATES_TAG
+    VITE_AMAZON_ASSOCIATES_TAG=$VITE_AMAZON_ASSOCIATES_TAG \
+    VITE_NVIDIA_API_KEY=$VITE_NVIDIA_API_KEY
 
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
 
-# Remove default config
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy nginx.conf (uses $NVIDIA_API_KEY — envsubst with whitelist below will
-# substitute only that variable, leaving nginx's own $request_uri, $uri, etc.
-# untouched)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Copy built assets from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
+
+# FIX #3: exec-form ENTRYPOINT instead of shell-form CMD (fixes JSONArgsRecommended).
+# FIX #5-7: NVIDIA_API_KEY (server secret) is NOT a build arg here — only a
+# runtime ENV, so it never gets baked into any image layer.
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 80
 
-# Use envsubst with a whitelist to inject $NVIDIA_API_KEY at startup, then
-# launch nginx. The whitelist ('$NVIDIA_API_KEY') ensures nginx's own $variables
-# like $request_uri, $uri, etc. are NOT corrupted.
-# gettext (which provides envsubst) is pre-installed in nginx:alpine.
-CMD sh -c 'envsubst '\''$NVIDIA_API_KEY'\'' < /etc/nginx/conf.d/default.conf > /tmp/default.conf && mv /tmp/default.conf /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"'
+ENV NVIDIA_API_KEY=""
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl -f http://127.0.0.1:80/ || exit 1
