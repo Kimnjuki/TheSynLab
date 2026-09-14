@@ -1,8 +1,9 @@
-// @ts-nocheck
 /**
  * Helper to access Convex function references without triggering the
  * TS2589 "excessively deep" / TS2615 circularity errors that arise from
  * instantiating the full `internal` mapped type on very large schemas.
+ * (`internal as any` avoids deep instantiation; the per-line eslint
+ * suppressions cover the deliberate structural escape hatch.)
  */
 import { internal } from "../../_generated/api";
 

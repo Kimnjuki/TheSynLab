@@ -1,9 +1,10 @@
 import { ActionCtx } from "../../_generated/server";
 import { api } from "../../_generated/api";
+import { Id } from "../../_generated/dataModel";
 
 export async function buildScoreContext(
   ctx: ActionCtx,
-  productIds: any[]
+  productIds: Id<"novaProducts">[]
 ): Promise<string> {
   const rows = await ctx.runQuery(api.aiData.getProductScoreRows, { productIds });
   return rows

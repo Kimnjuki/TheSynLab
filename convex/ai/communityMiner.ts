@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { action, internalMutation } from "../_generated/server";
 import { internal } from "../_generated/api";
 import { v } from "convex/values";
@@ -34,12 +33,21 @@ export const mineForumPatterns = action({
     minMentionCount: v.number(),
   },
   handler: async (ctx, args) => {
-    const ai = await callAnthropicJson<any[]>(
+    interface MinedInsight {
+      type?: string;
+      title?: string;
+      summary?: string;
+      mentionCount?: number;
+      patternStrength?: number;
+    }
+    const ai = await callAnthropicJson<MinedInsight[]>(
       `Mine forum patterns for hub ${args.hubSlug ?? "all"} in last ${args.lookbackDays} days. Return JSON array of insights.`,
       1000
     );
     const insights = Array.isArray(ai) ? ai : [];
-    const kept = insights.filter((i: any) => (i?.mentionCount ?? 0) >= args.minMentionCount);
+    const kept = insights.filter(
+      (i: MinedInsight) => (i?.mentionCount ?? 0) >= args.minMentionCount
+    );
     let created = 0;
     for (const i of kept) {
       await ctx.runMutation(internal.ai.communityMiner.insertCommunityInsight, {

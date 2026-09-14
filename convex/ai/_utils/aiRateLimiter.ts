@@ -3,10 +3,20 @@ import { api } from "../../_generated/api";
 const WINDOW_MS = 60 * 60 * 1000;
 const MAX_REQUESTS = 50;
 
+/** Row shape of the aiRateLimit table as read here. */
+type RateLimitRow = {
+  isBlocked?: boolean;
+  blockedUntil?: number;
+  firstRequestAt: number;
+  requestCount?: number;
+  identifierType?: string;
+  endpoint?: string;
+};
+
 /** Minimal structural ctx type — avoids instantiating the full ActionCtx
  *  generic (which trips TS2589 depth limits on very large schemas). */
 type RateLimitedCtx = {
-  runQuery: (ref: unknown, args: unknown) => Promise<any>;
+  runQuery: (ref: unknown, args: unknown) => Promise<RateLimitRow | null>;
   runMutation: (ref: unknown, args: unknown) => Promise<unknown>;
 };
 

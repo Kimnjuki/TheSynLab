@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { action, internalMutation } from "../_generated/server";
 import { anomalyDetectorRef } from "./_utils/aiRateLimitRefs";
 import { v } from "convex/values";
@@ -30,7 +29,12 @@ export const detectAnomalies = action({
     targetId: v.string(),
   },
   handler: async (ctx, args) => {
-    const ai = await callAnthropicJson<any>(
+    const ai = await callAnthropicJson<{
+      flagType?: string;
+      description?: string;
+      confidenceScore?: number;
+      severity?: string;
+    }>(
       `Detect anomaly for ${args.targetType}:${args.targetId}. Return JSON {flagType,description,confidenceScore,severity}.`,
       1000
     );
