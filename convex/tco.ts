@@ -209,7 +209,7 @@ export const calculateTco = action({
       }, 0);
 
       const addOnOneTimeCost = activeAddOns.reduce(
-        (sum: number, addon: { oneTimeCost: any; }) => sum + (addon.oneTimeCost ?? 0),
+        (sum: number, addon: { oneTimeCost?: number }) => sum + (addon.oneTimeCost ?? 0),
         0
       );
 

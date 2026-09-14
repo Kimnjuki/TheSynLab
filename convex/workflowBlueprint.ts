@@ -1,6 +1,19 @@
 import { v } from "convex/values";
 import { query, mutation, action } from "./_generated/server";
 import { api } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
+
+// Matches the workflowBlueprints.steps schema in convex/schema.ts
+type BlueprintStep = {
+  stepNumber: number;
+  title: string;
+  description: string;
+  toolProductId?: Id<"novaProducts">;
+  toolName: string;
+  toolRole: string;
+  automationPlatform?: string;
+  estimatedMinutes?: number;
+};
 
 // Get a published blueprint by slug
 export const getBlueprintBySlug = query({
@@ -71,7 +84,7 @@ export const generateCustomBlueprint = action({
       const stackSet = new Set(args.selectedStack.map((id) => id.toString()));
       const reorderedSteps = blueprint.steps
         .slice()
-        .sort((a: any, b: any) => {
+        .sort((a: BlueprintStep, b: BlueprintStep) => {
           const aInStack = a.toolProductId && stackSet.has(a.toolProductId.toString()) ? -1 : 0;
           const bInStack = b.toolProductId && stackSet.has(b.toolProductId.toString()) ? -1 : 0;
           return aInStack - bInStack;
@@ -84,9 +97,9 @@ export const generateCustomBlueprint = action({
     // tco.getProductPricing without the tco module api-typing clash)
     let estimatedCost = 0;
     if (blueprint) {
-      const stackIds = blueprint.stackProductIds || [];
+      const stackIds = blueprint.stackProductIds ?? [];
       const prices = await Promise.all(
-        stackIds.map(async (id: any) => {
+        stackIds.map(async (id: Id<"novaProducts">) => {
           const pricing = await ctx.runQuery(
             api.workflowBlueprint.getProductPricingParams,
             { productId: id }
@@ -94,7 +107,7 @@ export const generateCustomBlueprint = action({
           return pricing;
         })
       );
-      estimatedCost = prices.reduce((sum: number, p: any) => {
+      estimatedCost = prices.reduce((sum: number, p: { basePriceMonthly?: number } | null) => {
         return sum + (p?.basePriceMonthly || 0);
       }, 0);
     }
