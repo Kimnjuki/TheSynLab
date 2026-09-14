@@ -46,6 +46,8 @@ export const getTcoAlternatives = query({
 
     const allTcoScores = await ctx.db
       .query("productTcoScores")
+      // Full-table scan with a post-filter: the by_current index is
+      // (productId, isCurrent) so it can't serve a global isCurrent query.
       .filter((q) =>
         q.and(
           q.eq(q.field("isCurrent"), true),
@@ -233,7 +235,9 @@ export const calculateTco = action({
       const year2Cost = year2License + addOnAnnualCost;
       const year3Cost = year3License + addOnAnnualCost;
 
-      const totalYears = Math.min(Math.floor(contractLengthYears), 3);
+      // Clamp to 1–3 whole years: a sub-year term (floor → 0) must not fall
+      // through to the 3-year sum, and fractions don't pro-rate here.
+      const totalYears = Math.max(1, Math.min(Math.floor(contractLengthYears), 3));
       const totalTco =
         totalYears === 1
           ? year1Cost
