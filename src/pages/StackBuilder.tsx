@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { stackBuilderStarted, stackBuilderCompleted } from "@/lib/growthEvents";
 
 interface StackProduct {
   _id: Id<"novaProducts">;
@@ -64,6 +65,11 @@ export default function StackBuilder() {
 
   const allProducts = useQuery(api.products.list, { status: "active" }) ?? [];
   const saveConfig = useMutation(api.userWorkflowConfigs.save);
+
+  // Growth funnel (audit §6): Stack Builder adoption metrics.
+  useEffect(() => {
+    stackBuilderStarted();
+  }, []);
 
   const filtered = search.length >= 2
     ? allProducts
@@ -114,6 +120,7 @@ export default function StackBuilder() {
         workflowNodes: canvas.map((p) => ({ id: p._id, type: "product", data: p })),
         workflowConnections: [],
       });
+      stackBuilderCompleted(canvas.length);
       toast.success("Stack saved!");
     } catch {
       toast.error("Failed to save stack");

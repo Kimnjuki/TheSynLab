@@ -245,4 +245,86 @@ This file was **excluded from the SEO commit** (it is pre-existing owner debt, n
 
 The production build (`npm run build`) also completes successfully, confirming runtime soundness alongside compiler-level soundness.
 
+---
+
+## PHASE 6 — Growth audit implementation: methodology page, growth events & remediation (completed)
+
+Implements the final items from the SEO, CTR & Growth Audit not yet covered in Phases 1–5.
+
+### 1. Permanent `/methodology` page (audit §1, E-E-A-T priority action)
+
+- **New:** `src/pages/MethodologyPage.tsx` — full React page: weighted score formulas (Trust / Integration / TCO / Vendor Risk / Ecosystem Fit), 14-day testing protocol checklist, score-band table (4.3–5.0 Highly Recommended → <3.7 Use with Caution), score-combination interpretation patterns (High Trust·low Integration etc.), "which score for your need" recommendation matrix with links into `/tco-calculator`, `/stack-builder`, `/scores/*`, independence/corrections/right-of-reply policy cards, and methodology FAQ.
+- Schema: `WebPage` + `BreadcrumbList` + `FAQPage` (all questions visibly rendered on the page), article-type OG tags.
+- **New:** `src/App.tsx` route `/methodology` (lazy-loaded).
+- **Prerender:** dedicated static-body branch in `vite.config.ts` `buildStaticBodyHtml()` so crawlers receive the full prose HTML for `/methodology`; verified present in `dist/methodology/index.html` with correct title/meta/JSON-LD.
+- **Sitemap:** `/methodology` in both the generated sitemap (verified `dist/sitemap.xml`) and `public/sitemap.xml`, priority 0.7.
+- **Footer link:** "How We Test & Score" → `/methodology` in the legal/policy column, linked site-wide from every page.
+
+### 2. Growth-funnel analytics library (audit §6 GA4 events)
+
+- **New:** `src/lib/growthEvents.ts` — typed event helpers (scorecardViewed, comparisonStarted, toolFilterUsed, affiliateClick, stackBuilderStarted/Completed, emailSignup, searchUsed, downloadStarted) with site-wide de-duplication; pushes to `window.dataLayer` (GTM/GA4) with a console fallback in dev.
+- **New:** `src/hooks/useScrollDepth.ts` — fires `scroll_75_percent` once per page (passive listener, cleaned up on unmount).
+
+### 3. Event instrumentation wired
+
+| Page | Events |
+|---|---|
+| `src/pages/saas/SaasToolReviewPage.tsx` | `scorecard_viewed` (per tool + score), `scroll_75_percent`, `affiliate_click` (verdict CTA — replaced inline dataLayer push with the shared helper) |
+| `src/pages/Compare.tsx` | `comparison_started` (≥2 tools selected), `tool_filter_used` (filter panel), `scroll_75_percent` |
+| `src/pages/StackBuilder.tsx` | `stack_builder_started` (page view), `stack_builder_completed` (with product count) |
+| `src/pages/Search.tsx` | `search_used` (query + result count) |
+| `src/components/home/NewsletterCapture.tsx` | `email_signup` |
+
+### 4. Fixed pre-existing compile errors in `convex/workflowBlueprint.ts`
+
+- The blueprint generator action referenced `api.tco.getProductPricing`, which failed to typecheck due to a generated-API typing clash between `convex/tco.ts` and the `convex/tco/` directory. Fixed by adding a `getProductPricingParams` query in `workflowBlueprint.ts` itself (identical DB access pattern) and referencing it — removing the fragile cross-module api reference. **The project now type-checks with 0 errors** (`npx tsc --noEmit -p tsconfig.app.json` clean).
+
+### 5. Verification
+
+- `npx tsc --noEmit -p tsconfig.app.json` → **0 errors** (whole project).
+- `npm run build` → **success** (14.2s), `/methodology` prerendered, sitemap regenerated.
+- Confirmed in `dist/`: `methodology/index.html` with per-route title/meta/JSON-LD, `/methodology` sitemap entry dated.
+
+### Remaining owner actions (unchanged from Phase 5)
+
+- Connect GA4/GTM to consume the new dataLayer events; create GA4 funnel exploration (scorecard_viewed → affiliate_click) per audit §9 KPI framework.
+- Rendered crawl + GSC reconciliation on the deployed origin; rewrite high-impression/low-CTR titles with real GSC data.
+
+---
+
+## PHASE 7 — On-page E-E-A-T & trust signals (completed)
+
+Implements audit §1 (first-hand testing signals, score explainability), §2 (category page optimization), §4 (on-page CTR levers), and §5 (task-oriented homepage).
+
+### 1. Methodology link from every scorecard (audit §1: "linked from every scorecard")
+
+- **`src/components/ai/TrustScoreBreakdown.tsx`** — appended a footer link *"How we calculate Trust Scores & what the bands mean →"* to `/methodology` (converted to react-router `Link` for SPA nav).
+- **`src/components/ai/IntegrationScoreBreakdown.tsx`** — appended *"How integration scores are calculated →"* to `/methodology`.
+- These two components render on every review/comparison page scorecard (ToolReviewTemplate, ComparisonPageTemplate), so every score now points to the full method.
+
+### 2. Visible testing evidence on tool reviews (audit §1 example header)
+
+**`src/pages/saas/SaasToolReviewPage.tsx`** (route `/tool/:slug`):
+- Added a **testing-evidence strip** directly under the review lead: *"⚡ Tested 14+ days hands-on · $ Plan tested · By TheSynLab Editorial · How we test & score →"*.
+- Added a native-`<details>` **"Why trust this review?"** block after Pros/Cons (works without JS) covering: Independence (→ /how-we-make-money), Method (→ /methodology), Freshness (→ /editorial). This is the audit's "Why trust this review?" expandable section.
+
+### 3. Category hub pages: decision resources + how-we-test links (audit §2)
+
+**`src/pages/Hub.tsx`**:
+- Added a **"Start here:"** quick-links row under the hub header: How we test & score (→ /methodology), Compare tools (→ /tools/compare), 3-year cost calculator (→ /tco-calculator), Build your stack (→ /stack-builder), and a best-of link — mapped only to real `/best/:useCase` lists via a new `HUB_BEST_URL` map (ai_workflow/hybrid_office → /best/productivity-tools), avoiding "List Not Found" pages for hubs without a list.
+
+### 4. Task-oriented homepage hero (audit §5)
+
+**`src/components/home/Hero.tsx`** — replaced the two generic CTAs with the audit's three immediate paths:
+- Primary: **"Find the right tool"** → `/hub/ai-tools`
+- **"Compare tools"** → `/scoring-hub`
+- **"Build my stack"** → `/decision-studio`
+
+### 5. Verification
+
+- `npx tsc --noEmit -p tsconfig.app.json` → **0 errors**.
+- `npm run build` → **success** (14.2s); all prerendered routes intact (`dist/hub/*`, `dist/best/*`, `dist/methodology/index.html` verified).
+- JSX nesting of new blocks verified by read-back; imports (Zap/Users/Shield/ChevronRight/DollarSign/Link) confirmed already present or added.
+
+
 

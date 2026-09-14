@@ -46,6 +46,7 @@ const footerLinks = {
     { name: "Affiliate Disclosure", href: "/disclosure" },
     { name: "Editorial Policy", href: "/editorial" },
     { name: "Scoring Methodology", href: "/scoring-hub" },
+    { name: "How We Test & Score", href: "/methodology" },
     { name: "Advertise With Us", href: "/contact#advertise" },
     { name: "Ad Compliance", href: "/ad-compliance" },
   ],

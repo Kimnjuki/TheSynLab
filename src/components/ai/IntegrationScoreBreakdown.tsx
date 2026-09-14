@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Plug, Globe, Cpu, Bot, Users, Info } from 'lucide-react';
 
@@ -98,6 +99,13 @@ const IntegrationScoreBreakdown: React.FC<IntegrationScoreBreakdownProps> = ({
         TheSynLab rates integration depth from API quality, native connector counts,
         ecosystem coverage, and automation-platform compatibility.
       </p>
+
+      <Link
+        to="/methodology"
+        className="mt-3 inline-block text-xs font-medium text-primary underline underline-offset-2"
+      >
+        How integration scores are calculated →
+      </Link>
     </div>
   );
 };

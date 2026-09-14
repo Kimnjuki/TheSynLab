@@ -41,13 +41,18 @@ const Hero = () => {
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-10">
               <Button size="lg" asChild className="bg-tsl-cta-primary-bg text-tsl-cta-primary-text hover:bg-tsl-cta-primary-bg/90 text-base px-8 font-semibold">
+                <Link to="/hub/ai-tools">
+                  Find the right tool <ArrowRight className="h-5 w-5" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="border-tsl-cta-secondary-border text-tsl-text hover:bg-tsl-surface text-base px-8 font-semibold">
                 <Link to="/scoring-hub">
-                  Compare Tools <ArrowRight className="h-5 w-5" />
+                  Compare tools
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="border-tsl-cta-secondary-border text-tsl-text hover:bg-tsl-surface text-base px-8 font-semibold">
                 <Link to="/decision-studio">
-                  Build Your Stack
+                  Build my stack
                 </Link>
               </Button>
             </div>

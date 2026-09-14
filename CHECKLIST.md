@@ -56,3 +56,20 @@
 - [ ] Run build to verify prerendering works
 - [ ] Validate sitemap.xml is correct
 - [ ] Cross-check routes between App.tsx, vite.config.ts, and sitemap
+
+### Phase 9 - Growth audit: methodology page + GA4 funnel events (completed)
+- [x] Permanent /methodology page (React route + prerendered static body + FAQPage/BreadcrumbList schema)
+- [x] /methodology added to sitemap (generated + public) and linked site-wide in footer
+- [x] src/lib/growthEvents.ts typed GA4/dataLayer event library (scorecard_viewed, comparison_started, tool_filter_used, affiliate_click, stack_builder_started/completed, email_signup, search_used, download_started)
+- [x] useScrollDepth hook firing scroll_75_percent once per page
+- [x] Instrumented SaasToolReviewPage, Compare, StackBuilder, Search, NewsletterCapture
+- [x] Fixed convex/workflowBlueprint.ts compile errors (api.tco.getProductPricing clash) - project type-checks with 0 errors
+- [x] Verified: tsc clean, production build success, dist/methodology/index.html prerendered, sitemap entry present
+
+### Phase 10 - On-page E-E-A-T & trust signals (completed)
+- [x] Scorecards (Trust/Integration breakdowns) link to /methodology on every review/comparison page
+- [x] /tool/:slug testing-evidence strip: Tested 14+ days, plan tested, By TheSynLab Editorial, methodology link
+- [x] 'Why trust this review?' expandable (no-JS <details>) with independence/method/freshness policy links
+- [x] Hub pages: 'Start here' row (methodology, compare, TCO, stack builder, best-of) mapped only to real lists
+- [x] Homepage hero: three task paths - Find the right tool / Compare tools / Build my stack
+- [x] Verified: tsc 0 errors, production build success, prerendered routes intact

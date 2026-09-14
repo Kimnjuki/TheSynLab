@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Shield, Lock, FileText, Brain, Award, AlertTriangle, Info } from 'lucide-react';
 
@@ -136,6 +137,15 @@ const TrustScoreBreakdown: React.FC<TrustScoreBreakdownProps> = ({
           </div>
         </div>
       )}
+
+      <div className="mt-4 pt-3 border-t border-gray-800">
+        <Link
+          to="/methodology"
+          className="text-xs text-gray-400 hover:text-white underline underline-offset-2"
+        >
+          How we calculate Trust Scores &amp; what the bands mean →
+        </Link>
+      </div>
     </div>
   );
 };

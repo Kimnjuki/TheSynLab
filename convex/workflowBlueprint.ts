@@ -35,6 +35,20 @@ export const getBlueprintsByRole = query({
   },
 });
 
+// Pricing lookup used by the blueprint generator action (mirrors
+// tco.getProductPricing; kept here so the action's ctx.runQuery reference
+// stays within a module whose generated api typing is stable).
+export const getProductPricingParams = query({
+  args: { productId: v.id("novaProducts") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("productPricingParams")
+      .withIndex("by_product", (q) => q.eq("productId", args.productId))
+      .order("desc")
+      .first();
+  },
+});
+
 // Generate a custom blueprint based on selection
 export const generateCustomBlueprint = action({
   args: {
@@ -66,13 +80,17 @@ export const generateCustomBlueprint = action({
       blueprint = { ...blueprint, steps: reorderedSteps };
     }
 
-    // Estimate cost from pricing
+    // Estimate cost from pricing (via this module's pricing query — mirrors
+    // tco.getProductPricing without the tco module api-typing clash)
     let estimatedCost = 0;
     if (blueprint) {
       const stackIds = blueprint.stackProductIds || [];
       const prices = await Promise.all(
         stackIds.map(async (id: any) => {
-          const pricing = await ctx.runQuery(api.tco.getProductPricing, { productId: id });
+          const pricing = await ctx.runQuery(
+            api.workflowBlueprint.getProductPricingParams,
+            { productId: id }
+          );
           return pricing;
         })
       );

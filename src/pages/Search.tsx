@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { searchUsed } from "@/lib/growthEvents";
 import { useSearchParams } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -89,6 +90,7 @@ export default function Search() {
   const handleSearch = () => {
     if (query.trim()) {
       setSearchParams({ q: query });
+      searchUsed(query, results.length);
       logSearch({ query, resultsCount: results.length }).catch(() => {});
     }
   };

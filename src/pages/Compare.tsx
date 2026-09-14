@@ -29,6 +29,8 @@ import { Bot, Share2, Twitter, Linkedin, Code2, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { MAX_COMPARE_PRODUCTS } from "@/lib/compareConstants";
+import { comparisonStarted, toolFilterUsed } from "@/lib/growthEvents";
+import { useScrollDepth } from "@/hooks/useScrollDepth";
 
 export default function Compare() {
   const { slugs, setProducts, shareUrl, shareOnTwitter, shareOnLinkedIn, generateEmbedCode } =
@@ -43,6 +45,18 @@ export default function Compare() {
   const [showAI, setShowAI] = useState(false);
   const [embedDialogOpen, setEmbedDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+
+  // Growth funnel (audit §6): engagement depth + comparison session events.
+  useScrollDepth();
+  useEffect(() => {
+    if (slugs.length >= 2) comparisonStarted(slugs.length);
+  }, [slugs.length]);
+
+  /** Wraps setFilters so every filter interaction is measured. */
+  const updateFilters = (next: typeof filters) => {
+    setFilters(next);
+    toolFilterUsed("filters", "updated");
+  };
 
   const { products, isLoading, error } = useProducts(filters);
 
@@ -316,7 +330,7 @@ export default function Compare() {
               <div className="sticky top-24">
                 <ComparisonFilters
                   filters={filters}
-                  onFiltersChange={setFilters}
+                  onFiltersChange={updateFilters}
                 />
               </div>
             </aside>

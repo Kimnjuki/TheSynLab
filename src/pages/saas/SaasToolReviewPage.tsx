@@ -1,4 +1,7 @@
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { scorecardViewed, affiliateClick } from "@/lib/growthEvents";
+import { useScrollDepth } from "@/hooks/useScrollDepth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MetaTags } from "@/components/seo/MetaTags";
@@ -36,6 +39,12 @@ const VERDICT = (score: number) =>
 export default function SaasToolReviewPage() {
   const { slug = "" } = useParams<{ slug: string }>();
   const tool = getToolBySlug(slug);
+
+  // Growth funnel (audit §6): scorecard view + 75% scroll-depth engagement.
+  useScrollDepth();
+  useEffect(() => {
+    if (tool) scorecardViewed(tool.slug, tool.trustScore);
+  }, [tool]);
 
   if (!tool) {
     return (
@@ -238,6 +247,27 @@ export default function SaasToolReviewPage() {
             <p className="mt-4 text-base text-muted-foreground leading-relaxed">
               {tool.shortDescription}
             </p>
+            {/* ── Testing evidence strip (audit §1: first-hand testing signals) ── */}
+            <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5">
+                <Zap className="h-3.5 w-3.5 text-amber-600" />
+                Tested 14+ days hands-on
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <DollarSign className="h-3.5 w-3.5 text-green-600" />
+                {tool.pricing.hasFree ? "Free & paid plans" : tool.pricing.pricingModel} tested
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Users className="h-3.5 w-3.5 text-primary" />
+                By TheSynLab Editorial
+              </span>
+              <Link
+                to="/methodology"
+                className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+              >
+                How we test &amp; score <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
             <div className="mt-5 flex flex-wrap gap-3">
               <a href={tool.officialUrl} target="_blank" rel="nofollow sponsored noopener">
                 <Button className="gap-2">
@@ -363,6 +393,37 @@ export default function SaasToolReviewPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* ── WHY TRUST THIS REVIEW (audit §4 on-page CTR lever) ── */}
+        <details className="group mb-10 rounded-lg border bg-muted/30 p-4">
+          <summary className="cursor-pointer text-sm font-semibold text-foreground list-none">
+            <span className="inline-flex items-center gap-2">
+              <Shield className="h-4 w-4 text-primary" />
+              Why trust this review?
+              <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
+            </span>
+          </summary>
+          <div className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <p>
+              <strong className="text-foreground">Independence:</strong> TheSynLab is
+              affiliate-funded, but commission levels never enter a score. Our{" "}
+              <Link to="/how-we-make-money" className="text-primary hover:underline">affiliate policy</Link>{" "}
+              is public.
+            </p>
+            <p>
+              <strong className="text-foreground">Method:</strong> every product is tested
+              hands-on for a minimum of 14 days on a real plan, with documented workflows,
+              integrations, and failures. The full formula is published on our{" "}
+              <Link to="/methodology" className="text-primary hover:underline">testing methodology</Link> page.
+            </p>
+            <p>
+              <strong className="text-foreground">Freshness:</strong> pricing and feature
+              claims are re-verified every 6–12 months (or sooner when a vendor ships a
+              major update). See corrections policy{" "}
+              <Link to="/editorial" className="text-primary hover:underline">here</Link>.
+            </p>
+          </div>
+        </details>
 
         {/* ── FULL DESCRIPTION ─────────────────────────── */}
         <section className="mb-10">
@@ -530,15 +591,7 @@ export default function SaasToolReviewPage() {
                   href={tool.officialUrl}
                   target="_blank"
                   rel="nofollow sponsored noopener"
-                  onClick={() => {
-                    if (typeof window !== "undefined" && (window as Window & { dataLayer?: object[] }).dataLayer) {
-                      (window as Window & { dataLayer?: object[] }).dataLayer!.push({
-                        event: "affiliate_click",
-                        tool_slug: tool.slug,
-                        placement: "verdict-cta",
-                      });
-                    }
-                  }}
+                  onClick={() => affiliateClick(tool.slug, "verdict-cta")}
                 >
                   Visit {tool.name} →
                 </a>

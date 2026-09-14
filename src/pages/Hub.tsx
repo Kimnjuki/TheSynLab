@@ -36,6 +36,12 @@ const HUB_LABELS: Record<string, string> = {
   hybrid_office: "Hybrid Office",
 };
 
+// Hub → existing /best/:useCase list (only render the link when a real list exists).
+const HUB_BEST_URL: Record<string, string> = {
+  ai_workflow: "/best/productivity-tools",
+  hybrid_office: "/best/productivity-tools",
+};
+
 export default function Hub() {
   const params = useParams<{ slug: string }>();
 
@@ -112,6 +118,28 @@ export default function Hub() {
           iabFormat="728x90"
           position="hero_below"
         />
+
+        {/* ── Decision resources & how-we-test (audit §2 category page optimization) ── */}
+        <div className="mb-6 flex flex-wrap items-center gap-2 text-sm">
+          <span className="font-medium text-muted-foreground">Start here:</span>
+          <Button asChild size="sm" variant="outline">
+            <Link to="/methodology">How we test &amp; score</Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link to="/tools/compare">Compare tools</Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link to="/tco-calculator">3-year cost calculator</Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link to="/stack-builder">Build your stack</Link>
+          </Button>
+          {HUB_BEST_URL[hubSlug] && (
+            <Button asChild size="sm" variant="outline">
+              <Link to={HUB_BEST_URL[hubSlug]}>Best {title.toLowerCase()} picks</Link>
+            </Button>
+          )}
+        </div>
 
         <HubFacetedFilters
           filters={filters}

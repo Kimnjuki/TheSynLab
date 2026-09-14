@@ -63,6 +63,7 @@ const staticRoutes = [
   "/report/state-of-saas-trust-2026",
   // Company / information pages that should be indexable (were orphaned before)
   "/editorial",
+  "/methodology",
   "/how-we-make-money",
   "/ad-compliance",
   "/vendor-program",
@@ -407,6 +408,10 @@ const staticMetaByRoute: Record<string, { title: string; description: string }> 
   "/editorial": {
     title: "Editorial Policy | TheSynLab",
     description: "TheSynLab editorial policy: independent, lab-tested reviews with transparent Trust and Integration Scores.",
+  },
+  "/methodology": {
+    title: "How We Test & Score Tools: Methodology 2026 | TheSynLab",
+    description: "How TheSynLab calculates Trust Score, Integration Score, 3-year TCO, and vendor-risk profiles: the 14-day testing protocol, score weights, interpretation guide, and independence policies.",
   },
   "/how-we-make-money": {
     title: "How We Make Money | TheSynLab",
@@ -1947,6 +1952,43 @@ ${relatedHtml.slice(0, 6).join("\n")}
 <p><a href="/products">Browse all products →</a> · <a href="/tools/compare">Compare products →</a></p>
 </main>`;
     }
+  }
+
+  // ── Testing methodology (audit item #1: permanent /methodology page) ────────
+  if (route === "/methodology") {
+    return `<main style="${MAIN_STYLE}">
+<nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › Testing Methodology</nav>
+<h1>How We Test &amp; Score: The TheSynLab Methodology</h1>
+<p style="line-height:1.7;font-size:1.05rem">TheSynLab is the independent technology decision lab for comparing tools by trust, integration, total cost, and real-world performance. This page explains exactly what each score measures, how it is calculated, what evidence goes into it, and how you should interpret it. Every product is tested hands-on for a minimum of 14 days and re-verified every 6–12 months. Scores are never influenced by affiliate income.</p>
+<h2>What each score measures</h2>
+<ul style="line-height:1.75">
+<li><b>Trust Score</b> — Can I depend on this vendor with my data and my business? Weighted: data-privacy practices 30%, encryption standards 20%, terms-of-service transparency 20%, ethical-AI practices 20%, independent security audits 10%.</li>
+<li><b>Integration Score</b> — How easily does this tool connect to the rest of my stack? Weighted: API availability &amp; quality 30%, cross-platform support 30%, protocol support (Matter/Zigbee/HomeKit) 20%, automation-tool support (Zapier/Make/n8n/webhooks) 10%, developer community 10%.</li>
+<li><b>3-Year TCO</b> — What does this really cost over three years? Subscription cost × seats, usage overages, required add-ons, implementation and migration cost, and lock-in/exit cost. Model it yourself in the <a href="/tco-calculator">TCO calculator</a>.</li>
+<li><b>Vendor Risk Profile</b> — How risky is depending on this company? Lock-in and data portability, GDPR readiness, SLA track record, and financial stability, rated Low / Medium / High.</li>
+<li><b>Ecosystem Fit</b> — How well does this work with the tools you already run? Assessed relative to your declared stack in the <a href="/stack-builder">Stack Builder</a>.</li>
+</ul>
+<h2>How we test</h2>
+<p style="line-height:1.7">Every review records: the exact plan tested, test duration (minimum 14 days), documented workflows completed (always including one integration setup and one export/migration), devices and integrations used, evidence collected (screenshots, benchmark tables, timing measurements, test logs), what failed, the last-verified date, and a named reviewer with category testing experience.</p>
+<h2>What the score ranges mean</h2>
+<ul style="line-height:1.75">
+<li><b>4.3–5.0 · Highly Recommended</b> — dependable on this dimension with no significant caveats found in testing.</li>
+<li><b>4.0–4.2 · Recommended</b> — strong performance with minor caveats most users can work around.</li>
+<li><b>3.7–3.9 · Good with Caveats</b> — genuinely useful, but one or more limitations matter for specific users; read the Cons section.</li>
+<li><b>Below 3.7 · Use with Caution</b> — significant weaknesses, unverified claims, or elevated vendor risk; choose an alternative unless the trade-off suits you.</li>
+</ul>
+<p style="line-height:1.7">Scores are category-adjusted: a consumer smart-home device is not measured against enterprise procurement criteria. Within a category, the bands mean the same thing everywhere on the site.</p>
+<h2>Reading scores together</h2>
+<ul style="line-height:1.75">
+<li><b>High Trust · low Integration</b> — dependable and safe, but hard to connect; expect manual exports, thin APIs, or middleware work.</li>
+<li><b>High Integration · low Trust</b> — powerful ecosystem fit with governance concerns; verify data handling before connecting it to customer data.</li>
+<li><b>Low TCO · high lock-in</b> — inexpensive now, potentially costly later; model the exit cost before you standardise on it.</li>
+<li><b>High Ecosystem Fit</b> — best for your declared stack, not necessarily best overall; fit is contextual, not absolute.</li>
+</ul>
+<h2>Independence, updates &amp; corrections</h2>
+<p style="line-height:1.7">TheSynLab is affiliate-funded and never score-influenced: commission levels per vendor are not part of any formula. Factual errors are corrected and dated. Vendors have a right-of-reply before publication of material claims. See our <a href="/how-we-make-money">How We Make Money</a>, <a href="/editorial">Editorial Policy</a>, and <a href="/disclosure">Affiliate Disclosure</a> for the full policies.</p>
+<p style="margin-top:1.5rem"><a href="/scoring-hub">Open the Scoring Hub →</a> · <a href="/scores/trust-score-index">Trust Score Index →</a> · <a href="/scores/integration-score-index">Integration Score Index →</a></p>
+</main>`;
   }
 
   // ── Company / information & score-index pages (rooted, indexable content) ────

@@ -50,6 +50,7 @@ const VendorProgram = lazy(() => import("./pages/VendorProgram"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const ScoringHub = lazy(() => import("./pages/ScoringHub"));
+const MethodologyPage = lazy(() => import("./pages/MethodologyPage"));
 const AdCompliance = lazy(() => import("./pages/AdCompliance"));
 const Forum = lazy(() => import("./pages/Forum"));
 const ForumCategory = lazy(() => import("./pages/ForumCategory"));
@@ -215,6 +216,7 @@ const App = () => (
                   <Route path="/guides" element={<GuidesPage />} />
                   <Route path="/glossary" element={<GlossaryPage />} />
                   <Route path="/scoring-hub" element={<ScoringHub />} />
+<Route path="/methodology" element={<MethodologyPage />} />
                   <Route path="/ad-compliance" element={<AdCompliance />} />
 
                   {/* Canonical root-level routes (v2.0) — old /tools/* versions 301-redirected by nginx */}

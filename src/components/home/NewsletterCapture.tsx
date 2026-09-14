@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { emailSignup } from "@/lib/growthEvents";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail } from "lucide-react";
@@ -14,6 +15,7 @@ const NewsletterCapture = () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsSubmitting(false);
     setEmail("");
+    emailSignup("homepage-newsletter");
     alert("Thanks for subscribing!");
   };
 
