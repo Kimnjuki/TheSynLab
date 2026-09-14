@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation, action } from "./_generated/server";
 import { api } from "./_generated/api";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 
 // Get pricing params for a product
 export const getProductPricing = query({
@@ -54,20 +54,20 @@ export const getTcoAlternatives = query({
       )
       .collect();
 
-    // Filter to same hub and exclude current product
-    const alternatives = allTcoScores
-      .filter((score) => score.productId !== productId)
-      .slice(0, 3);
+    // Keep only same-hub alternatives, exclude the current product, cap at 3
+    const alternatives: {
+      product: Doc<"novaProducts">;
+      tcoScore: Doc<"productTcoScores">;
+    }[] = [];
+    for (const score of allTcoScores) {
+      if (score.productId === productId) continue;
+      const alt = await ctx.db.get(score.productId);
+      if (!alt || alt.hub !== product.hub) continue;
+      alternatives.push({ product: alt, tcoScore: score });
+      if (alternatives.length >= 3) break;
+    }
 
-    // Fetch product details for each alternative
-    const enriched = await Promise.all(
-      alternatives.map(async (score) => {
-        const alt = await ctx.db.get(score.productId);
-        return alt ? { product: alt, tcoScore: score } : null;
-      })
-    );
-
-    return enriched.filter(Boolean);
+    return alternatives;
   },
 });
 
@@ -166,7 +166,7 @@ export const calculateTco = action({
       productIds,
     });
 
-    const results = pricingData.map(({ productId, pricing }: { productId: string; pricing: (typeof pricingData)[number]["pricing"] }) => {
+    const results = pricingData.map(({ productId, pricing }: { productId: Id<"novaProducts">; pricing: (typeof pricingData)[number]["pricing"] }) => {
       if (!pricing) {
         return {
           productId,
@@ -257,13 +257,20 @@ export const calculateTco = action({
     });
 
     // Find cheapest result to suggest alternatives
-    const minTco = Math.min(...results.map((r: { totalTco: number; }) => r.totalTco).filter((t: number) => t > 0));
-    const alternatives = productIds.length > 0
-      ? await ctx.runQuery(api.tco.getTcoAlternatives, {
-          productId: productIds[0],
-          maxTco: minTco * 0.9, // 10% cheaper
-        })
-      : [];
+    const positiveCosts = results
+      .map((r: { totalTco: number }) => r.totalTco)
+      .filter((t: number) => t > 0);
+    const minTco = positiveCosts.length > 0 ? Math.min(...positiveCosts) : 0;
+
+    // Only request alternatives when a real positive baseline exists — passing
+    // Infinity (Math.min of an empty list) is an invalid Convex value.
+    const alternatives =
+      productIds.length > 0 && minTco > 0
+        ? await ctx.runQuery(api.tco.getTcoAlternatives, {
+            productId: productIds[0],
+            maxTco: minTco * 0.9, // 10% cheaper
+          })
+        : [];
 
     // Save calculation
     await ctx.runMutation(api.tco.saveTcoCalculation, {
@@ -275,9 +282,7 @@ export const calculateTco = action({
       selectedAddOnIds,
       includeHiddenCosts,
       results,
-      recommendedAlternativeIds: (alternatives as Array<{ product: { _id: Id<"novaProducts"> } } | null>)
-        .filter((a): a is { product: { _id: Id<"novaProducts"> } } => a !== null)
-        .map((a) => a.product._id),
+      recommendedAlternativeIds: alternatives.map((a) => a.product._id),
     });
 
     return { results, alternatives };
@@ -322,9 +327,26 @@ export const upsertProductPricing = mutation({
     sourceUrl: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("productPricingParams", {
+    // True upsert: patch an existing pricing param row for this product,
+    // otherwise insert a new one (a bare insert would throw on duplicates).
+    const existing = await ctx.db
+      .query("productPricingParams")
+      .withIndex("by_product", (q) => q.eq("productId", args.productId))
+      .order("desc")
+      .first();
+
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        ...args,
+        lastVerifiedAt: Date.now(),
+      });
+      return { id: existing._id, updated: true };
+    }
+
+    const id = await ctx.db.insert("productPricingParams", {
       ...args,
       lastVerifiedAt: Date.now(),
     });
+    return { id, updated: false };
   },
 });
