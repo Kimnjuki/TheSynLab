@@ -90,4 +90,4 @@ ENV NVIDIA_API_KEY=nvapi-esXswgdVeiLj_X0g7tEItfg7SZCNE4X9SdhQMQt8YrkMhHt2f9id9Cx
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -f http://127.0.0.1:80/ || exit 1
+  CMD curl -f -H "Host: thesynlab.com" http://127.0.0.1:80/robots.txt || exit 1
