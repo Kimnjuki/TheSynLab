@@ -2,18 +2,16 @@ import { createRoot } from "react-dom/client";
 import { Component, type ReactNode } from "react";
 import App from "./App.tsx";
 import { initGA } from "@/lib/analytics";
+import { installConsoleGuard } from "@/lib/consoleGuard";
 import "./index.css";
 
 // Initialise Google Analytics 4 (ID from VITE_GA4_MEASUREMENT_ID in .env)
 initGA();
 
-// Suppress console noise from Convex placeholder (no functions deployed)
-const origError = console.error;
-console.error = function (...args: unknown[]) {
-  const msg = String(args[0] || "");
-  if (msg.includes("Could not find public function") || msg.includes("[CONVEX Q(")) return;
-  origError.apply(console, args);
-};
+// Central, idempotent console hygiene (replaces the ad-hoc console.error
+// monkey-patch that used to live here). Only the documented benign Convex
+// signatures are suppressed — see src/lib/consoleGuard.ts.
+installConsoleGuard();
 
 // Error boundary that silently recovers from missing Convex functions
 class RootBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {

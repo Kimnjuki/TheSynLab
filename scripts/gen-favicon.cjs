@@ -23,9 +23,9 @@ function transparentPng(size) {
 const imgs = [transparentPng(16), transparentPng(32)];
 const sizes = [16, 32];
 const header = Buffer.alloc(6);
-header.writeUInt16LE(0, 0);            // 0 = ICO
-header.writeUInt16LE(imgs.length, 2); // 2 entries
-header.writeUInt16LE(1, 4);           // 1 byte per entry... (reserved)
+header.writeUInt16LE(0, 0);            // reserved (must be 0)
+header.writeUInt16LE(1, 2);            // type: 1 = ICO (2 would mean CUR/cursor)
+header.writeUInt16LE(imgs.length, 4); // number of images in the file
 
 const entries = Buffer.alloc(imgs.length * 16);
 let offset = 6 + imgs.length * 16;

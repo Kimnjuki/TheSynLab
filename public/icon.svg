@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Background Container with Modern Rounded Corners -->
+  <rect width="32" height="32" rx="7" fill="#0B0F19"/>
+  
+  <!-- Interlocking Data/Trust Node Geometry representing "The Syn Lab" -->
+  <path d="M16 6L24 10.5V21.5L16 26L8 21.5V10.5L16 6Z" fill="none" stroke="url(#synGrad)" stroke-width="2" stroke-linejoin="round"/>
+  
+  <!-- Central Innovation / Core Trust Point -->
+  <circle cx="16" cy="16" r="3.5" fill="#00F0FF"/>
+
+  <!-- High-End Gradient Definitions (Cyan to Deep Violet) -->
+  <defs>
+    <linearGradient id="synGrad" x1="8" y1="6" x2="24" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00F0FF"/>
+      <stop offset="100%" stop-color="#7000FF"/>
+    </linearGradient>
+  </defs>
+</svg>

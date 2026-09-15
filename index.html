@@ -15,6 +15,15 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="canonical" href="https://thesynlab.com/" />
 
+    <!-- Modern SVG favicon (crisp on retina; the ?v=2 query busts browser cache on updates) -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg?v=2">
+
+    <!-- Legacy fallback for systems that expect a classic .ico -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+
+    <!-- Apple-touch icon used when bookmarking to home screen on iOS/macOS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon.svg?v=2">
+
     <!-- ── Feed / LLM discovery ── -->
     <link rel="alternate" type="application/rss+xml" title="TheSynLab Blog & Reviews" href="/feed.xml" />
     <link rel="alternate" type="text/markdown" title="TheSynLab llms.txt" href="/llms.txt" />
