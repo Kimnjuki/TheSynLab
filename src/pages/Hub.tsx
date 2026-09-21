@@ -45,29 +45,31 @@ const HUB_BEST_URL: Record<string, string> = {
 export default function Hub() {
   const params = useParams<{ slug: string }>();
 
-  // SEO-1.3: legacy underscore URLs → permanent client-side redirect to the
-  // hyphenated canonical hub URL (mirrors the nginx 301; keeps SPA nav consistent).
-  if (params.slug?.includes("_")) {
-    return <Navigate replace to={`/hub/${params.slug.replace(/_/g, "-")}`} />;
-  }
-
   const urlSlug = params.slug ?? "";
   // Convert back to the internal data identifier for Convex queries
   // ("ai-workflow" → "ai_workflow"); URLs themselves are never underscored.
   const hubSlug = urlSlug.replace(/-/g, "_");
+  // All hooks must run unconditionally before any early return
+  // (react-hooks/rules-of-hooks): the redirect below is evaluated after them.
   const { products, isLoading } = useProducts({
     hub: hubSlug,
     status: "active",
   });
   const { filters, setFilters } = useHubFilters();
   const { toggle: toggleCompare, isSelected: isCompareSelected, canAdd: canAddCompare } = useAddToComparison();
+  const hubMeta = useQuery(api.hubs.getHubBySlug, { slug: hubSlug });
+
+  // SEO-1.3: legacy underscore URLs → permanent client-side redirect to the
+  // hyphenated canonical hub URL (mirrors the nginx 301; keeps SPA nav consistent).
+  if (params.slug?.includes("_")) {
+    return <Navigate replace to={`/hub/${params.slug.replace(/_/g, "-")}`} />;
+  }
 
   const filteredProducts = applyHubFilters(products ?? [], filters);
 
   const title = HUB_LABELS[hubSlug] ?? urlSlug.replace(/-/g, " ");
   const description = `Compare ${title.toLowerCase()} tools and products side by side. Trust Scores, features, pricing, and real user data — find your best fit without the marketing noise.`;
   const canonical = `/hub/${urlSlug}`;
-  const hubMeta = useQuery(api.hubs.getHubBySlug, { slug: hubSlug });
 
   const breadcrumbs = [
     { name: "Home", url: "/" },

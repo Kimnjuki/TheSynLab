@@ -1,6 +1,7 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
+import { v } from "convex/values";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   LineChart,
@@ -22,11 +23,10 @@ interface PriceHistoryChartProps {
 }
 
 export function PriceHistoryChart({ products }: PriceHistoryChartProps) {
-  const histories = products.map((p) => ({
-    product: p,
-    history:
-      useQuery(api.products.getPriceHistory, { productId: p._id }) ?? [],
-  }));
+  const productIdList: Array<Id<"novaProducts">> = products.map((p) => p._id);
+  const histories = useQuery(api.products.getPriceHistories, {
+    productIds: productIdList,
+  }) ?? [];
 
   const hasData = histories.some((h) => h.history.length > 0);
 

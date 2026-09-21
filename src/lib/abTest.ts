@@ -6,6 +6,8 @@
  *   // variant → 'control' | 'variant-a' | 'variant-b'
  */
 
+import { trackEvent } from '@/lib/analytics';
+
 const STORAGE_KEY = 'synlab_ab_tests';
 
 const defaultExperiments: Record<string, { variants: string[]; weights?: number[] }> = {
@@ -75,7 +77,8 @@ export function getAbVariant(experimentName: string): string {
 
 /**
  * Track A/B test impression + conversion events.
- * Integrates with existing analytics system.
+ * Routes through the single GA4 helper (one property, bot/localhost gated) instead
+ * of tagging `window.gtag` directly with an `any` cast.
  */
 export function trackAbEvent(
   experimentName: string,
@@ -83,15 +86,17 @@ export function trackAbEvent(
   eventType: 'impression' | 'conversion',
   metadata?: Record<string, string>
 ): void {
-  if (typeof window === 'undefined' || !(window as any).gtag) return;
-
-  (window as any).gtag('event', 'ab_test', {
-    experiment_name: experimentName,
-    variant,
-    event_type: eventType,
-    ...metadata,
-  });
+  trackEvent('experiment', 'ab_test', `${experimentName}:${variant}:${eventType}`, undefined);
+  pushExperimentContext({ experiment_name: experimentName, variant, event_type: eventType, ...metadata });
 }
+
+/** Push experiment context onto the GTM dataLayer when present (no-op otherwise). */
+function pushExperimentContext(payload: Record<string, unknown>): void {
+  if (typeof window === 'undefined') return;
+  const dl = window.dataLayer;
+  if (Array.isArray(dl)) dl.push({ event: 'ab_test', ...payload });
+}
+
 
 /**
  * React hook for A/B test variants.

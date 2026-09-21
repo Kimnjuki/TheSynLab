@@ -91,7 +91,7 @@ export const getProductsHubData = query({
     );
 
     const teamRange = parseTeamSizeFit(args.teamSizeFit);
-    let filtered = enriched.filter((item) => {
+    const filtered = enriched.filter((item) => {
       const card = item.decisionCard;
 
       if (args.lockInRisk && card && card.lockInRisk !== args.lockInRisk) return false;

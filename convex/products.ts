@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import type { Id } from "./_generated/dataModel";
 import { resolveProductImage, resolveProductGallery } from "./productImageMap";
 
 // Get all active products with optional filters
@@ -311,8 +312,34 @@ export const getHubSuggestions = query({
   },
 });
 
-// Get priceHistory for all affiliate links of a product
-export const getPriceHistory = query({
+// Get price history across multiple products at once
+export const getPriceHistories = query({
+  args: { productIds: v.array(v.id("novaProducts")) },
+  handler: async (ctx, args) => {
+    const results: { product: { _id: Id<"novaProducts">; productName: string }; history: { price: number; fetchedAt: number; linkId: Id<"novaAffiliateLinks"> }[] }[] = [];
+    for (const productId of args.productIds) {
+      const product = await ctx.db.get(productId);
+      if (!product) continue;
+      const links = await ctx.db
+        .query("novaAffiliateLinks")
+        .withIndex("by_product", (q) => q.eq("productId", productId))
+        .collect();
+      const history = links
+        .filter((l) => l.priceHistory && Array.isArray(l.priceHistory))
+        .flatMap((l) =>
+          (l.priceHistory as { price: number; fetchedAt: number }[]).map((h) => ({
+            price: h.price,
+            fetchedAt: h.fetchedAt,
+            linkId: l._id,
+          }))
+        )
+        .sort((a, b) => a.fetchedAt - b.fetchedAt);
+      results.push({ product: { _id: productId, productName: product.productName ?? "" }, history });
+    }
+    return results;
+  },
+});
+export const getPriceHistoryForProduct = query({
   args: { productId: v.id("novaProducts") },
   handler: async (ctx, args) => {
     const links = await ctx.db

@@ -61,10 +61,11 @@ export const ListView = ({
       case "status":
         comparison = a.status.localeCompare(b.status);
         break;
-      case "priority":
+      case "priority": {
         const priorityOrder = { urgent: 0, high: 1, medium: 2, low: 3 };
         comparison = priorityOrder[a.priority] - priorityOrder[b.priority];
         break;
+      }
       case "due_date":
         comparison = (a.due_date ?? "").localeCompare(b.due_date ?? "");
         break;

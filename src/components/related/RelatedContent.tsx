@@ -36,13 +36,10 @@ export default function RelatedContent({ productSlug, articleSlug, hubSlug, limi
     return STATIC_PRODUCTS.find((p) => p.hub === hubSlug);
   }, [hubSlug]);
 
-  if (!hubSlug) return null;
-
-  // Build vs comparison links for the current product
   const vsPairs = useMemo(() => {
     if (!productSlug) return [];
 
-    const pairs = [];
+    const pairs: { slug: string; name: string }[] = [];
     for (const peer of relatedProducts) {
       // Order alphabetically for consistent slug
       const sorted = [productSlug, peer.productSlug].sort();
@@ -53,6 +50,8 @@ export default function RelatedContent({ productSlug, articleSlug, hubSlug, limi
     }
     return pairs;
   }, [productSlug, relatedProducts]);
+
+  if (!hubSlug) return null;
 
   return (
     <div className="mt-10">

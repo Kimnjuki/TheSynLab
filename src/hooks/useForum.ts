@@ -62,34 +62,22 @@ export function useForumSearch(query: string) {
 
 export function useForumActions() {
   const { user } = useAuth();
-  
-  let createThread: any, createReply: any, toggleLike: any, markSolved: any,
-    markSolution: any, likeReply: any, incrementView: any, seedForum: any, reportThread: any, reportReply: any;
 
-  try {
-    createThread = useMutation(api.forum.createThread);
-    createReply = useMutation(api.forum.createReply);
-    toggleLike = useMutation(api.forum.toggleThreadLike);
-    markSolved = useMutation(api.forum.markThreadSolved);
-    markSolution = useMutation(api.forum.markReplyAsSolution);
-    likeReply = useMutation(api.forum.likeReply);
-    incrementView = useMutation(api.forum.incrementThreadView);
-    seedForum = useMutation(api.forum.seedForum);
-    reportThread = useMutation(api.forumModeration.reportThread);
-    reportReply = useMutation(api.forumModeration.reportReply);
-  } catch {
-    const noop = async () => { throw new Error("Forum functions not deployed. Run `npx convex deploy`."); };
-    createThread = noop;
-    createReply = noop;
-    toggleLike = noop;
-    markSolved = noop;
-    markSolution = noop;
-    likeReply = noop;
-    incrementView = noop;
-    seedForum = noop;
-    reportThread = noop;
-    reportReply = noop;
-  }
+  // react-hooks/rules-of-hooks: hooks must run unconditionally at the top of the
+  // hook body. The previous try/catch around useMutation() was a hook-order
+  // violation that could crash the app (React error #300) and never actually
+  // fired — Convex mutations only throw at invocation time, not at hook time,
+  // so invocation errors are surfaced by the returned wrappers below.
+  const createThread = useMutation(api.forum.createThread);
+  const createReply = useMutation(api.forum.createReply);
+  const toggleLike = useMutation(api.forum.toggleThreadLike);
+  const markSolved = useMutation(api.forum.markThreadSolved);
+  const markSolution = useMutation(api.forum.markReplyAsSolution);
+  const likeReply = useMutation(api.forum.likeReply);
+  const incrementView = useMutation(api.forum.incrementThreadView);
+  const seedForum = useMutation(api.forum.seedForum);
+  const reportThread = useMutation(api.forumModeration.reportThread);
+  const reportReply = useMutation(api.forumModeration.reportReply);
 
   return {
     createThread: async (data: {

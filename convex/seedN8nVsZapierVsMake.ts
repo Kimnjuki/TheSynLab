@@ -288,7 +288,7 @@ Reviewed by Nicholas Jackson, senior engineer who has operated these systems at 
     }
 
     // ─── 1. Link taxonomy for "gaming" hub ────────────────────────────────
-    let taxonomy = await ctx.db
+    const taxonomy = await ctx.db
       .query("novaTaxonomies")
       .withIndex("by_slug", (q) => q.eq("taxonomySlug", "gaming"))
       .first();
@@ -507,7 +507,7 @@ Reviewed by Nicholas Jackson, senior engineer who has operated these systems at 
       });
     }
 
-    let sitemapCreated = existingSitemap ? 0 : 1;
+    const sitemapCreated = existingSitemap ? 0 : 1;
 
     return {
       seeded: true,

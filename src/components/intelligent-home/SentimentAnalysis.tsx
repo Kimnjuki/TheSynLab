@@ -104,11 +104,11 @@ const SentimentAnalysis = ({ devices }: SentimentAnalysisProps) => {
       return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
+      const trendOrder = { improving: 0, stable: 1, declining: 2 };
       switch (sortBy) {
         case "score": return b.birdieScore - a.birdieScore;
         case "reviews": return b.reviewCount - a.reviewCount;
-        case "trend": 
-          const trendOrder = { improving: 0, stable: 1, declining: 2 };
+        case "trend":
           return trendOrder[a.sentimentTrend] - trendOrder[b.sentimentTrend];
         default: return 0;
       }

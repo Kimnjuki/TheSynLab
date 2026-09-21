@@ -33,7 +33,7 @@ const ForumThread = () => {
 
   useEffect(() => {
     if (thread && !hasViewed) {
-      try { incrementView(thread._id); } catch {}
+      try { incrementView(thread._id); } catch { /* view tracking is best-effort */ }
       setHasViewed(true);
     }
   }, [thread?._id]);
