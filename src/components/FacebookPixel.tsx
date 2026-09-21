@@ -12,8 +12,8 @@ export function FacebookPixel() {
 
     // Initialize pixel
     const fbe = window as any;
-    fbe.fbq = fbe.fbq || function() {
-      (fbe.fbq.q = fbe.fbq.q || []).push(arguments);
+    fbe.fbq = fbe.fbq || function (...args: unknown[]) {
+      (fbe.fbq.q = fbe.fbq.q || []).push(args);
     };
     fbe._fbq = fbe._fbq || fbe.fbq;
     fbe.fbq('init', FB_PIXEL_ID);

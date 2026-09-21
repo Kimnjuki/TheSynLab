@@ -2,8 +2,14 @@
  * View tracking hook — counts page views per content and sends to GA4.
  * Falls back to localStorage when Convex is unavailable.
  * Used for measuring the 10x traffic growth target.
+ *
+ * AN-3: events must NOT carry a hand-written `engagement_time_msec`. GA4 computes
+ * engagement time from the gap between events; sending `engagement_time_msec: 1`
+ * (the previous implementation) overrode that calculation for every content view
+ * and collapsed "Average engagement time" to ~0.17s site-wide.
  */
 import { useEffect, useState } from 'react';
+import { isAnalyticsEnabled, trackEvent } from '@/lib/analytics';
 
 const VIEW_STORAGE_KEY = 'synlab_view_counts';
 const SESSION_KEY = 'synlab_session_views';
@@ -44,54 +50,58 @@ export function useViewTracking(contentType: 'article' | 'product' | 'tool' | 'h
   const contentKey = `${contentType}:${slug}`;
 
   useEffect(() => {
+    if (!slug) return;
+
     // Increment local view counter
     const newCount = incrementView(contentKey);
     setTotalViews(newCount);
 
     // Track session views (unique per session)
-    const sessionViews = JSON.parse(sessionStorage.getItem(SESSION_KEY) || '[]');
+    const sessionViews: string[] = JSON.parse(sessionStorage.getItem(SESSION_KEY) || '[]');
     if (!sessionViews.includes(contentKey)) {
       sessionViews.push(contentKey);
       sessionStorage.setItem(SESSION_KEY, JSON.stringify(sessionViews));
-      
-      // Send to GA4
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'content_view', {
-          content_type: contentType,
-          content_slug: slug,
-          view_count: newCount,
-          engagement_time_msec: 1
-        });
+
+      // Send to GA4 (no-op for bots / localhost / unconsented clients — see lib/analytics)
+      if (isAnalyticsEnabled()) {
+        trackEvent('engagement', 'content_view', contentKey, newCount);
       }
     }
-  }, [contentKey]);
+  }, [contentKey, contentType, slug]);
 
   return { totalViews, contentKey };
 }
 
 export function trackConversion(contentType: string, slug: string, conversionType: 'affiliate_click' | 'newsletter' | 'signup' | 'tool_use') {
   const contentKey = `${contentType}:${slug}:${conversionType}`;
-  
+
   // Track in storage
-  const stored = JSON.parse(localStorage.getItem('synlab_conversions') || '[]');
-  stored.push({ contentKey, timestamp: Date.now() });
-  localStorage.setItem('synlab_conversions', JSON.stringify(stored));
+  try {
+    const stored: { contentKey: string; timestamp: number }[] = JSON.parse(
+      localStorage.getItem('synlab_conversions') || '[]'
+    );
+    stored.push({ contentKey, timestamp: Date.now() });
+    localStorage.setItem('synlab_conversions', JSON.stringify(stored));
+  } catch {
+    // storage unavailable — still send the analytics event below
+  }
 
   // Send to GA4
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('event', conversionType, {
-      content_type: contentType,
-      content_slug: slug,
-      engagement_time_msec: 1
-    });
+  if (isAnalyticsEnabled()) {
+    trackEvent('commerce', conversionType, `${contentType}:${slug}`);
   }
 }
 
 export function getConversionMetrics() {
-  const stored = JSON.parse(localStorage.getItem('synlab_conversions') || '[]');
-  const totals: Record<string, number> = {};
-  for (const item of stored as { contentKey: string }[]) {
-    totals[item.contentKey] = (totals[item.contentKey] || 0) + 1;
+  try {
+    const stored = JSON.parse(localStorage.getItem('synlab_conversions') || '[]');
+    const totals: Record<string, number> = {};
+    for (const item of stored as { contentKey: string }[]) {
+      totals[item.contentKey] = (totals[item.contentKey] || 0) + 1;
+    }
+    return totals;
+  } catch {
+    return {} as Record<string, number>;
   }
-  return totals;
 }
+

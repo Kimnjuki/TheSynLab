@@ -61,14 +61,50 @@
       #root { min-height: 100vh; }
     </style>
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NC8K7M5LRX"></script>
+        <!-- GA4 tag — injected at build time via injectGa4Plugin in vite.config.ts
+         AN-1: ONE measurement ID only. AN-2: bots/localhost gated. AN-3: Consent Mode v2 defaults. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+      (function () {
+        var ua = navigator.userAgent || '';
+        var host = location.hostname || '';
+        var BOT_UA = /bot|crawl|spider|slurp|headless|puppet|playwright|selenium|phantom|lighthouse|pagespeed|gtmetrix|screaming|semrush|ahrefs|dataprovider|scrapy|python-requests|python-urllib|aiohttp|httpx|curl\/|go-http-client|java\/|okhttp/i;
+        var isAutomated = navigator.webdriver === true || BOT_UA.test(ua);
+        var isLocalHost = host === '' || host === 'localhost' || host === '127.0.0.1' || host === '[::1]' ||
+          host.indexOf('.local') > -1 || /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(host);
+        var gaId = '%VITE_GA4_MEASUREMENT_ID%';
+        var hasRealId = /^G-[A-Z0-9]{6,}$/i.test(gaId);
+        window.__tslGaActive = !isAutomated && !isLocalHost && hasRealId;
 
-      gtag('config', 'G-NC8K7M5LRX');
+        // Consent Mode v2 — EEA/UK/CH default to denied, rest of world gets analytics_storage.
+        gtag('consent', 'default', {
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          analytics_storage: 'denied',
+          functionality_storage: 'granted',
+          security_storage: 'granted',
+          region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH'],
+          wait_for_update: 500
+        });
+        gtag('consent', 'default', {
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          analytics_storage: 'granted'
+        });
+
+        if (!window.__tslGaActive) return;
+
+        gtag('js', new Date());
+        gtag('config', gaId, { send_page_view: true });
+
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(gaId);
+        document.head.appendChild(s);
+      })();
     </script>
 
     <!-- ── Route-specific meta injection (crawler-friendly before JS) ── -->

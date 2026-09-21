@@ -5,7 +5,7 @@
  * (§6 Product events, §10 Comparison-page tracking). Every helper fans out to
  * BOTH transport channels:
  *
- *   1. GA4 via the existing `trackEvent` wrapper (react-ga4).
+  *   1. GA4 via the existing `trackEvent` wrapper (gtag, loaded once in index.html).
  *   2. GTM `dataLayer.push` (used by GTM triggers + server-side tagging),
  *      guarded so it is a no-op when dataLayer is absent.
  *

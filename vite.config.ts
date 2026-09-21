@@ -596,7 +596,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
     const route = `/blog/${article.slug}`;
     const faqs = extractFaqFromMd(article.content, article.title);
     const howToSteps = extractHowToSteps(article.content);
-    const articleSchemas: any[] = [
+    const articleSchemas: Record<string, unknown>[] = [
       {
         "@context": "https://schema.org",
         "@type": "Article",
@@ -684,7 +684,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
     // Map trust score (0-10) to 5-star rating for aggregateRating
     // Map trustScore (0-10) to 1-5 star scale
     const starRating = (Math.round(product.trustScore) / 2).toFixed(1); // e.g. 7.8 -> 3.9
-    const schemas: any[] = [
+    const schemas: Record<string, unknown>[] = [
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
@@ -854,7 +854,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   for (const [hubSlug, hubInfo] of Object.entries(HUB_SLUGS)) {
     const hubRoute = `/hub/${normalizeUrlSlug(hubSlug)}`;
     const hubProducts = STATIC_PRODUCTS.filter((p) => p.hub === hubSlug);
-    const schemas: any[] = [
+    const schemas: Record<string, unknown>[] = [
       {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
@@ -1119,7 +1119,7 @@ const extractHowToSteps = (md: string): { name: string; text: string }[] => {
   const steps: { name: string; text: string }[] = [];
   const lines = md.split("\n");
   for (let i = 0; i < lines.length; i++) {
-    const stepMatch = lines[i].trim().match(/^###?\s*Step\s+(\d+)[:\-]?\s+(.*)/i);
+    const stepMatch = lines[i].trim().match(/^###?\s*Step\s+(\d+)[:-]?\s+(.*)/i);
     if (stepMatch) {
       const name = `Step ${stepMatch[1]}: ${stepMatch[2].replace(/\*\*/g, "").trim()}`;
       // Collect description from next few lines
@@ -2172,10 +2172,26 @@ const sitemapPlugin = () => ({
   },
 });
 
+const GA4_FALLBACK_ID = "G-NC8K7M5LRX";
+
 const injectGa4Plugin = () => ({
   name: "inject-ga4-id",
+  enforce: "pre" as const,
   transformIndexHtml(html: string) {
-    const id = process.env.VITE_GA4_MEASUREMENT_ID || "G-TJ1VXE91NE";
+    const id = (process.env.VITE_GA4_MEASUREMENT_ID || GA4_FALLBACK_ID).trim();
+    if (!/^G-[A-Z0-9]{6,}$/i.test(id)) {
+      throw new Error(
+        `[ga4-guard] VITE_GA4_MEASUREMENT_ID is not a valid GA4 measurement ID: "${id}"`
+      );
+    }
+    const hasPlaceholder = html.includes("%VITE_GA4_MEASUREMENT_ID%");
+    const hasId = new RegExp(id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i").test(html);
+    if (!hasPlaceholder && !hasId) {
+      throw new Error(
+        "[ga4-guard] index.html does not contain %VITE_GA4_MEASUREMENT_ID% or the resolved ID — " +
+          "re-add the placeholder so the measurement ID keeps a single source of truth."
+      );
+    }
     return html.replace(/%VITE_GA4_MEASUREMENT_ID%/g, id);
   },
 });

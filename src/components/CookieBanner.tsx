@@ -17,6 +17,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { emitConsentUpdated, type ConsentFlags as CanonicalConsent } from "@/lib/consent";
 
 export interface ConsentFlags {
   analytics: boolean;
@@ -54,8 +55,28 @@ function storeConsent(flags: ConsentFlags) {
   }
 }
 
+/**
+ * Publish the choice to the canonical consent bus (`@/lib/consent`).
+ *
+ * AN-5: before this, the mounted banner only wrote its own localStorage key and
+ * talked to `window.gtag` directly, while `AnalyticsScripts`, `AdSlotProvider`
+ * and the footer "Cookie Settings" button all listened on the *other* bus
+ * (`emitConsentUpdated`) which nothing ever fired. Result: Ahrefs/GTM never
+ * loaded, `canLoadAds` stayed false so every ad unit rendered a placeholder,
+ * and the footer button did nothing.
+ */
+function publishConsent(flags: ConsentFlags): void {
+  const canonical: CanonicalConsent = {
+    necessaryCookies: true,
+    analyticsCookies: flags.analytics,
+    advertisingCookies: flags.marketing,
+    functionalCookies: flags.preferences || flags.improvement,
+  };
+  emitConsentUpdated(canonical);
+}
+
 function applyConsent(flags: ConsentFlags) {
-  // GA4 consent update
+  // GA4 consent update (Consent Mode v2 — defaults live in index.html)
   if (typeof window !== "undefined" && typeof window.gtag === "function") {
     window.gtag("consent", "update", {
       analytics_storage: flags.analytics ? "granted" : "denied",
@@ -64,6 +85,7 @@ function applyConsent(flags: ConsentFlags) {
       ad_personalization: flags.marketing ? "granted" : "denied",
     });
   }
+  publishConsent(flags);
 }
 
 export default function CookieBanner() {
@@ -78,9 +100,24 @@ export default function CookieBanner() {
       setConsent(stored);
       applyConsent(stored);
     } else {
-      // No stored consent — show the banner
+      // No stored consent — publish the denied default so downstream consumers
+      // (AdSlotProvider, AnalyticsScripts) have an explicit state to act on.
+      applyConsent(defaultConsent);
+      // Show the banner
       setOpen(true);
     }
+  }, []);
+
+  // Footer "Cookie Settings" button → open the preferences sheet.
+  useEffect(() => {
+    const handleOpenSettings = () => {
+      const stored = getStoredConsent();
+      if (stored) setConsent(stored);
+      setPreferencesOpen(true);
+      setOpen(true);
+    };
+    window.addEventListener("open-cookie-settings", handleOpenSettings);
+    return () => window.removeEventListener("open-cookie-settings", handleOpenSettings);
   }, []);
 
   const handleAcceptAll = () => {
@@ -196,9 +233,3 @@ export default function CookieBanner() {
   );
 }
 
-// Extend Window for gtag
-declare global {
-  interface Window {
-    gtag: (...args: unknown[]) => void;
-  }
-}
