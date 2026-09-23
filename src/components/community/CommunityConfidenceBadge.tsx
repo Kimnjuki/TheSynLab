@@ -20,9 +20,9 @@ const CommunityConfidenceBadge = ({
   size = "md",
 }: Props) => {
   const hasCommunityData = totalReviews > 0;
-  const combinedScore = labScore && hasCommunityData 
-    ? Math.round((labScore * 0.6 + (communityScore || 0) * 0.4) * 10) / 10
-    : labScore || communityScore || 0;
+  const combinedScore = labScore && hasCommunityData
+    ? Math.round((labScore * 2 * 0.6 + (communityScore || 0) * 2 * 0.4) * 10) / 10
+    : labScore ? labScore * 2 : communityScore ? communityScore * 2 : 0;
 
   const sizeClasses = size === "sm" ? "text-xs p-3" : size === "lg" ? "text-base p-6" : "text-sm p-4";
   const dotSize = size === "sm" ? "h-2 w-2" : size === "lg" ? "h-4 w-4" : "h-3 w-3";
@@ -35,7 +35,7 @@ const CommunityConfidenceBadge = ({
             <div className="flex items-center gap-2">
               <Users className={`${size === "sm" ? "h-3 w-3" : "h-4 w-4"} text-primary`} />
               <span className="font-semibold">{combinedScore.toFixed(1)}</span>
-              <span className="text-muted-foreground">/5</span>
+              <span className="text-muted-foreground">/10</span>
               {hasCommunityData && (
                 <div className="flex items-center gap-1 ml-1">
                   <div className={`${dotSize} rounded-full ${totalReviews > 10 ? "bg-green-500" : totalReviews > 3 ? "bg-yellow-500" : "bg-muted"}`} />
@@ -50,14 +50,14 @@ const CommunityConfidenceBadge = ({
             {labScore !== undefined && (
               <div className="flex justify-between gap-4">
                 <span className="flex items-center gap-1"><Award className="h-3 w-3" /> Lab Score</span>
-                <span className="font-medium">{labScore}/5</span>
+                <span className="font-medium">{(labScore * 2).toFixed(1)}/10</span>
               </div>
             )}
             {hasCommunityData && (
               <>
                 <div className="flex justify-between gap-4">
                   <span className="flex items-center gap-1"><Users className="h-3 w-3" /> Community Score</span>
-                  <span className="font-medium">{communityScore?.toFixed(1) || "—"}/5</span>
+                  <span className="font-medium">{(communityScore ? (communityScore * 2).toFixed(1) : "—")}/10</span>
                 </div>
                 <div className="flex justify-between gap-4">
                   <span className="flex items-center gap-1"><ThumbsUp className="h-3 w-3" /> Helpful votes</span>

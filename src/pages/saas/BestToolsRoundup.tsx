@@ -17,7 +17,7 @@ import {
 } from "@/data/saasTools";
 
 const SCORE_COLOR = (s: number) =>
-  s >= 4.2 ? "text-green-600" : s >= 3.8 ? "text-amber-600" : "text-red-500";
+  s >= 8.4 ? "text-green-600" : s >= 7.6 ? "text-amber-600" : "text-red-500";
 
 const MEDAL = ["🥇", "🥈", "🥉"];
 
@@ -80,7 +80,7 @@ export default function BestToolsRoundup() {
         name: `What is the best ${listMeta.title.replace("Best ", "").toLowerCase()} in ${year}?`,
         acceptedAnswer: {
           "@type": "Answer",
-          text: `Based on TheSynLab's independent benchmarking, ${winner.name} is the top-rated option with a Trust Score of ${winner.trustScore}/5. ${winner.shortDescription}`,
+          text: `Based on TheSynLab's independent benchmarking, ${winner.name} is the top-rated option with a Trust Score of ${(winner.trustScore * 2).toFixed(1)}/10. ${winner.shortDescription}`,
         },
       },
       {
@@ -162,9 +162,9 @@ export default function BestToolsRoundup() {
                 <h2 className="text-xl font-extrabold">{winner.name}</h2>
                 <p className="text-sm text-muted-foreground mt-1">{winner.shortDescription}</p>
                 <div className="mt-2 flex flex-wrap gap-3 text-sm">
-                  <span className={`flex items-center gap-1 font-bold ${SCORE_COLOR(winner.trustScore)}`}>
+                  <span className={`flex items-center gap-1 font-bold ${SCORE_COLOR(winner.trustScore * 2)}`}>
                     <Star className="h-4 w-4 fill-current" />
-                    {winner.trustScore}/5 Trust Score
+                    {(winner.trustScore * 2).toFixed(1)}/10 Trust Score
                   </span>
                   <span className="text-muted-foreground">
                     {winner.pricing.hasFree ? "Free plan available" : `From ${winner.pricing.startingPrice}`}
@@ -199,8 +199,8 @@ export default function BestToolsRoundup() {
                         {i < 3 ? MEDAL[i] : `#${i + 1}`}
                       </span>
                       <div className="text-center">
-                        <p className={`text-2xl font-extrabold ${SCORE_COLOR(tool.trustScore)}`}>
-                          {tool.trustScore.toFixed(1)}
+                        <p className={`text-2xl font-extrabold ${SCORE_COLOR(tool.trustScore * 2)}`}>
+                          {(tool.trustScore * 2).toFixed(1)}
                         </p>
                         <p className="text-xs text-muted-foreground">/ 5</p>
                       </div>
@@ -319,7 +319,7 @@ export default function BestToolsRoundup() {
             {[
               {
                 q: `What is the best ${listMeta.title.replace("Best ", "").toLowerCase()} in ${year}?`,
-                a: `${winner.name} is TheSynLab's #1 pick with a ${winner.trustScore}/5 Trust Score. ${winner.shortDescription}`,
+                a: `${winner.name} is TheSynLab's #1 pick with a ${(winner.trustScore * 2).toFixed(1)}/10 Trust Score. ${winner.shortDescription}`,
               },
               {
                 q: `Which options offer a free plan?`,

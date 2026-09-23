@@ -14,7 +14,7 @@ import {
 } from "@/data/saasTools";
 
 const SCORE_COLOR = (score: number) =>
-  score >= 4.2 ? "text-green-600" : score >= 3.8 ? "text-amber-600" : "text-red-500";
+  score >= 8.4 ? "text-green-600" : score >= 7.6 ? "text-amber-600" : "text-red-500";
 
 export default function AIToolsCategoryPage() {
   const { category } = useParams<{ category: string }>();
@@ -121,9 +121,9 @@ export default function AIToolsCategoryPage() {
                     {tool.shortDescription}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className={`flex items-center gap-1 font-semibold ${SCORE_COLOR(tool.trustScore)}`}>
+                    <span className={`flex items-center gap-1 font-semibold ${SCORE_COLOR(tool.trustScore * 2)}`}>
                       <Star className="h-4 w-4 fill-current" />
-                      {tool.trustScore.toFixed(1)} / 5
+                      {(tool.trustScore * 2).toFixed(1)} / 10
                     </span>
                     <Badge variant={tool.pricing.hasFree ? "secondary" : "outline"} className="text-xs">
                       {tool.pricing.hasFree ? "Free plan" : tool.pricing.startingPrice}
@@ -160,10 +160,10 @@ export default function AIToolsCategoryPage() {
                       {tool.name}
                     </Link>
                   </td>
-                  <td className={`px-4 py-3 font-semibold ${SCORE_COLOR(tool.trustScore)}`}>
-                    {tool.trustScore.toFixed(1)} / 5
+                  <td className={`px-4 py-3 font-semibold ${SCORE_COLOR(tool.trustScore * 2)}`}>
+                    {(tool.trustScore * 2).toFixed(1)} / 10
                   </td>
-                  <td className="px-4 py-3">{tool.integrationScore.toFixed(1)} / 5</td>
+                  <td className="px-4 py-3">{(tool.integrationScore * 2).toFixed(1)} / 10</td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {tool.pricing.hasFree ? "Free plan" : tool.pricing.startingPrice}
                   </td>
@@ -218,14 +218,14 @@ export default function AIToolsCategoryPage() {
                     </div>
                     <div className="flex items-center gap-4 shrink-0">
                       <div className="text-center">
-                        <p className={`text-lg font-bold ${SCORE_COLOR(tool.trustScore)}`}>
-                          {tool.trustScore.toFixed(1)}
+                        <p className={`text-lg font-bold ${SCORE_COLOR(tool.trustScore * 2)}`}>
+                          {(tool.trustScore * 2).toFixed(1)}
                         </p>
                         <p className="text-xs text-muted-foreground">Trust</p>
                       </div>
                       <div className="text-center">
                         <p className="text-lg font-bold text-foreground">
-                          {tool.integrationScore.toFixed(1)}
+                          {(tool.integrationScore * 2).toFixed(1)}
                         </p>
                         <p className="text-xs text-muted-foreground">Integration</p>
                       </div>

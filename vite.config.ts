@@ -1114,6 +1114,17 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
         ]),
       ],
     });
+
+    // Embed scorecard page — lightweight iframe page for third-party embedding
+    // Gap 3.15: Widget/Embed program. No SEO meta needed — loaded in iframes.
+    const widgetRoute = `/widget/tool/${tool.slug}`;
+    pages.push({
+      route: widgetRoute,
+      title: `${tool.name} Trust Score ${tool.trustScore * 2}/10 | TheSynLab`,
+      description: `${tool.name} review: Trust Score ${(tool.trustScore * 2).toFixed(1)}/10 — TheSynLab editorial score. ${tool.shortDescription?.substring(0, 100)}...`,
+      jsonLd: [],
+      noindex: true,
+    });
   }
 
   // AI Tools category hub pages — CollectionPage + BreadcrumbList

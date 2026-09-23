@@ -130,7 +130,7 @@ export default function SaasToolReviewPage() {
     ? `${tool.name} review: ${tool.tagline}. Tested on PSD, RAW, AI file handling — see real performance, export quality, and how it compares to Photoshop, GIMP & Pixlr in ${year}.`
     : tool.tagline?.toLowerCase().includes('email') || tool.tagline?.toLowerCase().includes('signature')
     ? `${tool.name} review: ${tool.tagline}. Compare templates, integrations, pricing from ${tool.pricing.startingPrice}, and top alternatives for professional email branding in ${year}.`
-    : `TheSynLab's independent ${tool.name} review: ${tool.tagline}. Trust Score ${tool.trustScore}/5, ${seoPros || 'honest pros & cons'}, pricing from ${tool.pricing.startingPrice}, and best alternatives. Updated ${year}.`;
+    : `TheSynLab's independent ${tool.name} review: ${tool.tagline}. Trust Score ${(tool.trustScore * 2).toFixed(1)}/10, ${seoPros || 'honest pros & cons'}, pricing from ${tool.pricing.startingPrice}, and best alternatives. Updated ${year}.`;
 
   const breadcrumbs = [
     { name: "Home", url: "https://thesynlab.com" },

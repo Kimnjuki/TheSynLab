@@ -38,7 +38,7 @@ const CATEGORY_COLORS: Record<ToolCategory, string> = {
 };
 
 const SCORE_COLOR = (score: number) =>
-  score >= 4.2 ? "text-green-600" : score >= 3.8 ? "text-amber-600" : "text-red-500";
+  score >= 8.4 ? "text-green-600" : score >= 7.6 ? "text-amber-600" : "text-red-500";
 
 export default function AIToolsHub() {
   const featured = saasTools.filter((t) => t.kd <= 65 && t.volume >= 4400).slice(0, 8);
@@ -177,8 +177,8 @@ export default function AIToolsHub() {
                     <div className="mt-3 flex items-center gap-3">
                       <span className="flex items-center gap-1 text-xs font-medium">
                         <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                        <span className={SCORE_COLOR(tool.trustScore)}>
-                          {tool.trustScore.toFixed(1)}
+                        <span className={SCORE_COLOR(tool.trustScore * 2)}>
+                          {(tool.trustScore * 2).toFixed(1)}
                         </span>
                       </span>
                       <span className="text-xs text-muted-foreground">
