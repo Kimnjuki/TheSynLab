@@ -50,8 +50,9 @@ const AlternativesPageTemplate: React.FC<ToolAlternativesTemplateProps> = ({ pri
       "name": alt.name,
       "aggregateRating": {
         "@type": "AggregateRating",
-        "ratingValue": alt.overallScore,
-        "bestRating": 100
+        ratingValue: alt.overallScore.toFixed(1),
+        "bestRating": 10,
+        "worstRating": 1
       }
     }))
   };
