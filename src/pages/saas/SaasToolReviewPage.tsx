@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Star, CheckCircle2, XCircle, ExternalLink, ChevronRight,
-  ArrowRight, Zap, DollarSign, Users, Shield, GitMerge,
+  ArrowRight, Zap, DollarSign, Users, Shield, GitMerge, Code,
 } from "lucide-react";
 import {
   getToolBySlug,
@@ -19,20 +19,21 @@ import {
   TOOL_CATEGORIES,
   type SaasTool,
 } from "@/data/saasTools";
+import NewsletterSignupBanner from "@/components/newsletter/NewsletterSignupBanner";
 
 const SCORE_BAR = (score: number) => {
-  const pct = (score / 5) * 100;
+  const pct = (score / 10) * 100;
   const color =
-    score >= 4.2 ? "bg-green-500" : score >= 3.8 ? "bg-amber-500" : "bg-red-500";
+    score >= 9 ? "bg-green-500" : score >= 7 ? "bg-amber-500" : "bg-red-500";
   return { pct, color };
 };
 
 const VERDICT = (score: number) =>
-  score >= 4.3
+  score >= 8.6
     ? { label: "Highly Recommended", color: "text-green-600 bg-green-50 border-green-200" }
-    : score >= 4.0
+    : score >= 8.0
     ? { label: "Recommended", color: "text-emerald-600 bg-emerald-50 border-emerald-200" }
-    : score >= 3.7
+    : score >= 7.4
     ? { label: "Good with Caveats", color: "text-amber-600 bg-amber-50 border-amber-200" }
     : { label: "Use with Caution", color: "text-red-600 bg-red-50 border-red-200" };
 
@@ -66,7 +67,9 @@ export default function SaasToolReviewPage() {
 
   const alternatives = getAlternatives(tool);
   const category = TOOL_CATEGORIES[tool.category];
-  const verdict = VERDICT(tool.trustScore);
+  const toolTrustScore = tool.trustScore * 2; // /5 → /10
+  const toolIntegrationScore = tool.integrationScore * 2;
+  const verdict = VERDICT(toolTrustScore);
   const year = new Date().getFullYear();
 
   const canonical = `https://thesynlab.com/tool/${tool.slug}`;
@@ -145,7 +148,7 @@ export default function SaasToolReviewPage() {
         name: `Is ${tool.name} worth it in ${year}?`,
         acceptedAnswer: {
           "@type": "Answer",
-          text: `${tool.name} receives a TheSynLab Trust Score of ${tool.trustScore}/5. ${verdict.label}. It is best for: ${tool.bestFor.join(", ")}. ${tool.pros[0]}.`,
+          text: `${tool.name} earns a TheSynLab Trust Score of ${toolTrustScore.toFixed(1)}/10 — ${verdict.label}. ${tool.pros[0]}. Best suited for: ${tool.bestFor.join(", ")}.`,
         },
       },
       {
@@ -198,8 +201,7 @@ export default function SaasToolReviewPage() {
           operatingSystem: "Web",
           price: priceNum,
           priceCurrency: "USD",
-          rating: tool.trustScore,
-          reviewCount: 47,
+          rating: toolTrustScore,
           featureList: tool.keyFeatures,
         }}
       />
@@ -302,12 +304,12 @@ export default function SaasToolReviewPage() {
                     <span className="flex items-center gap-1 font-medium">
                       <Shield className="h-3.5 w-3.5" /> Trust Score
                     </span>
-                    <span className="font-bold">{tool.trustScore}/5</span>
+                    <span className="font-bold">{toolTrustScore.toFixed(1)}/10</span>
                   </div>
                   <div className="h-2 rounded-full bg-muted overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${SCORE_BAR(tool.trustScore).color}`}
-                      style={{ width: `${SCORE_BAR(tool.trustScore).pct}%` }}
+                      className={`h-full rounded-full ${SCORE_BAR(toolTrustScore).color}`}
+                      style={{ width: `${SCORE_BAR(toolTrustScore).pct}%` }}
                     />
                   </div>
                 </div>
@@ -317,12 +319,12 @@ export default function SaasToolReviewPage() {
                     <span className="flex items-center gap-1 font-medium">
                       <GitMerge className="h-3.5 w-3.5" /> Integration Score
                     </span>
-                    <span className="font-bold">{tool.integrationScore}/5</span>
+                    <span className="font-bold">{toolIntegrationScore.toFixed(1)}/10</span>
                   </div>
                   <div className="h-2 rounded-full bg-muted overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${SCORE_BAR(tool.integrationScore).color}`}
-                      style={{ width: `${SCORE_BAR(tool.integrationScore).pct}%` }}
+                      className={`h-full rounded-full ${SCORE_BAR(toolIntegrationScore).color}`}
+                      style={{ width: `${SCORE_BAR(toolIntegrationScore).pct}%` }}
                     />
                   </div>
                 </div>
@@ -467,7 +469,7 @@ export default function SaasToolReviewPage() {
             ))}
           </div>
           <div className="mt-4 rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground">
-            <strong className="text-foreground">Integration Score: {tool.integrationScore}/5</strong>
+            <strong className="text-foreground">Integration Score: {toolIntegrationScore.toFixed(1)}/10</strong>
             {" "}— TheSynLab rates {tool.name}'s ecosystem depth based on number of native integrations,
             API quality, and third-party compatibility.
           </div>
@@ -528,7 +530,7 @@ export default function SaasToolReviewPage() {
                       <div className="flex items-center justify-between">
                         <span className="flex items-center gap-1 text-xs font-medium">
                           <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                          {alt.trustScore.toFixed(1)}
+                          {(alt.trustScore * 2).toFixed(1)}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {alt.pricing.hasFree ? "Free plan" : alt.pricing.startingPrice}
@@ -549,7 +551,7 @@ export default function SaasToolReviewPage() {
             {[
               {
                 q: `Is ${tool.name} worth it in ${year}?`,
-                a: `${tool.name} earns a TheSynLab Trust Score of ${tool.trustScore}/5 — ${verdict.label}. ${tool.pros[0]}. Best suited for: ${tool.bestFor.join(", ")}.`,
+                a: `${tool.name} earns a TheSynLab Trust Score of ${toolTrustScore.toFixed(1)}/10 — ${verdict.label}. ${tool.pros[0]}. Best suited for: ${tool.bestFor.join(", ")}.`,
               },
               {
                 q: `Is ${tool.name} free?`,
@@ -616,6 +618,40 @@ export default function SaasToolReviewPage() {
             </span>
           ))}
         </div>
+
+        {/* ── EMBED SCORECARD (Gap 3.15) ────────────────── */}
+        <section className="mb-12">
+          <Card className="border-dashed">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Code className="h-5 w-5 text-primary" />
+                Embed This Scorecard
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Add TheSynLab's {tool.name} Trust Score ({toolTrustScore.toFixed(1)}/10) to your site with our free embed.
+              </p>
+              <div className="relative">
+                <pre className="bg-muted rounded-md p-3 text-xs overflow-x-auto border"><code>{`<iframe src="https://thesynlab.com/tool/${tool.slug}/embed" width="100%" height="240" frameborder="0"></iframe>`}</code></pre>
+                <Button
+                  size="sm"
+                  className="mt-2"
+                  onClick={() => navigator.clipboard.writeText(`<iframe src="https://thesynlab.com/tool/${tool.slug}/embed" width="100%" height="240" frameborder="0"></iframe>`)}
+                >
+                  Copy Embed Code
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* ── NEWSLETTER (Gap 3.13) ─────────────────────── */}
+        <NewsletterSignupBanner
+          variant="inline"
+          source="tool_review"
+          headline="Get the SynLab Scorecard — weekly re-scores"
+        />
 
         {/* ── FOOTER NAV ───────────────────────────────── */}
         <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-6">

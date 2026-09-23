@@ -517,6 +517,13 @@ const BlogArticle = () => {
               </div>
             </section>
           )}
+
+          {/* Newsletter signup — end of article conversion point (Gap 3.13) */}
+          <NewsletterSignupBanner
+            variant="card"
+            source="blog_end"
+            headline="Get the SynLab Scorecard"
+          />
         </article>
       </main>
       <Footer />

@@ -523,6 +523,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
     index.jsonLd = [index.jsonLd, {
       "@context": "https://schema.org",
       "@type": "ItemList",
+      itemListOrder: "https://schema.org/ItemListOrderDescending",
       itemListElement: items.slice(0, 20).map((a, i) => ({
         "@type": "ListItem",
         position: i + 1,
@@ -614,6 +615,66 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
       altTitle: "Superwhisper Alternatives 2026: Top Offline & Free Options",
       altDescription:
         "Best Superwhisper alternatives compared by Trust Score, offline support, dictation accuracy, and price — including genuinely free options.",
+    },
+    "blaze-ai": {
+      title: "Blaze AI Review 2026: Does Its Design AI Actually Work?",
+      description:
+        "Blaze AI promises AI-powered web design. We tested its AI image gen, layout engine, and client editor against Framer, Webflow, and pure Figma.",
+    },
+    "syllaby": {
+      title: "Syllaby Review 2026: AI Video That Doesn't Look AI-Generated?",
+      description:
+        "Syllaby's AI actors and scenes tested against Synthesia, Pictory, and InVideo — trust score, watermark-free exports, and real-world use cases.",
+    },
+    airops: {
+      title: "AIPRM vs Aidoc: Which AI Research Assistant Is Worth It?",
+      description:
+        "AIPRM for Claude vs Aidoc for research — we tested prompt libraries, citation accuracy, and workflow fit for academic and professional work.",
+    },
+    "play-ht": {
+      title: "Play.ht Review 2026: Voice AI That Sounds Human?",
+      description:
+        "Play.ht's AI voice cloning tested against ElevenLabs, Murf, and RealTime — voice quality, watermarking, and commercial licensing.",
+    },
+    "murf-ai": {
+      title: "Murf AI Review 2026: The Voice Generator That Actually Converts",
+      description:
+        "Murf's AI voiceovers tested for e-learning, ads, and YouTube — compare voice quality, SSML control, and pricing against ElevenLabs.",
+    },
+    "opus-clip": {
+      title: "OpusClip Review 2026: Auto-Shorts That Actually Convert",
+      description:
+        "OpusClip's AI video clipping tested against Runway, CapCut, and InVideo — auto-caption accuracy, format optimization, and thumbnail quality.",
+    },
+    "lalal-ai": {
+      title: "LALAL.AI Review 2026: Clean Vocals Without the Artifacts?",
+      description:
+        "LALAL.AI's AI vocal extraction tested against Moises, Splitter, and Adobe Podcast — audio quality, stem separation, and batch processing.",
+    },
+    "remove-bg": {
+      title: "Remove.bg Review 2026: Free AI Background Remover Worth It?",
+      description:
+        "Remove.bg's AI background removal tested against Adobe Express, Canva, and Cleanup.pictures — accuracy, hair detail, and bulk processing.",
+    },
+    photopea: {
+      title: "Photopea Review 2026: Browser Photoshop Without the Subscription?",
+      description:
+        "Photopea tested against Photoshop, GIMP, and Canva — PSD compatibility, layer support, and whether the ads make it unusable.",
+    },
+    "screen-pal": {
+      title: "ScreenPal Review 2026: The Honest Screencasting App",
+      description:
+        "ScreenPal's screen recorder tested against Loom, Screencastify, and OBS — recording quality, editing tools, and sharing workflow.",
+    },
+    bigvu: {
+      title: "Bigvu Review 2026: Professional Video Creation on Your Phone",
+      description:
+        "Bigvu's video creator tested for sales teams — teleprompter accuracy, studio lighting simulation, and brand template controls.",
+    },
+    focusee: {
+      title: "Focusee Review 2026: Screen Recording That Actually Looks Good",
+      description:
+        "Focusee's automated screen recording tested against Loom and CloudApp — auto-zoom, click highlighting, and MP4 export quality.",
     },
   };
 
@@ -734,6 +795,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
         review: {
           "@type": "Review",
           reviewBody: product.longDescription.slice(0, 500),
+          datePublished: "2026-01-01",
           reviewRating: {
             "@type": "Rating",
             ratingValue: starRating.toString(),
@@ -925,6 +987,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
         "@context": "https://schema.org",
         "@type": "ItemList",
         name: `Best ${hubInfo.name} Tools ${new Date().getFullYear()}`,
+        itemListOrder: "https://schema.org/ItemListOrderDescending",
         description: hubInfo.description,
         url: `${SITE_URL}${hubRoute}`,
         numberOfItems: hubProducts.length,
@@ -999,6 +1062,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
           review: {
             "@type": "Review",
             reviewBody: tool.shortDescription || tool.tagline || "Independent lab-tested review by TheSynLab Editorial.",
+            datePublished: "2026-01-01",
             reviewRating: {
               "@type": "Rating",
               ratingValue: tool.trustScore.toFixed(1),

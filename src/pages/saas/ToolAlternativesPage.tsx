@@ -18,7 +18,7 @@ import {
 } from "@/data/saasTools";
 
 const SCORE_COLOR = (s: number) =>
-  s >= 4.2 ? "text-green-600" : s >= 3.8 ? "text-amber-600" : "text-red-500";
+  s >= 8.4 ? "text-green-600" : s >= 7.6 ? "text-amber-600" : "text-red-500";
 
 export default function ToolAlternativesPage() {
   const { slug = "" } = useParams<{ slug: string }>();
@@ -60,7 +60,7 @@ export default function ToolAlternativesPage() {
     ? `Best ${tool.name} Alternatives in ${year}: ${bestAlt.name}, & More`
     : `Best ${tool.name} Alternatives in ${year} — Ranked by TheSynLab`;
   const description = bestAlt
-    ? `Looking for ${tool.name} alternatives? We compared ${allAlts.length}+ options by Trust Score & pricing. Top pick: ${bestAlt.name} (Trust Score ${bestAlt.trustScore}/5). Updated ${year}.`
+    ? `Looking for ${tool.name} alternatives? We compared ${allAlts.length}+ options by Trust Score & pricing. Top pick: ${bestAlt.name} (Trust Score ${(bestAlt.trustScore * 2).toFixed(1)}/10). Updated ${year}.`
     : `Looking for ${tool.name} alternatives? We compared ${allAlts.length}+ options on Trust Score, pricing, and features so you don't have to. Updated ${year}.`;
 
   const breadcrumbs = [
@@ -97,7 +97,7 @@ export default function ToolAlternativesPage() {
         acceptedAnswer: {
           "@type": "Answer",
           text: directAlts[0]
-            ? `${directAlts[0].name} is TheSynLab's top-rated alternative to ${tool.name} with a Trust Score of ${directAlts[0].trustScore}/5. ${directAlts[0].shortDescription}`
+            ? `${directAlts[0].name} is TheSynLab's top-rated alternative to ${tool.name} with a Trust Score of ${(directAlts[0].trustScore * 2).toFixed(1)}/10. ${directAlts[0].shortDescription}`
             : `Browse our full list of ${tool.name} alternatives at thesynlab.com/tool/${tool.slug}/alternatives.`,
         },
       },
@@ -174,10 +174,10 @@ export default function ToolAlternativesPage() {
                       <Badge variant="secondary" className="text-xs">Current</Badge>
                     </span>
                   </td>
-                  <td className={`px-4 py-3 text-center font-bold ${SCORE_COLOR(tool.trustScore)}`}>
-                    {tool.trustScore.toFixed(1)}
+                  <td className={`px-4 py-3 text-center font-bold ${SCORE_COLOR(tool.trustScore * 2)}`}>
+                    {(tool.trustScore * 2).toFixed(1)}
                   </td>
-                  <td className="px-4 py-3 text-center">{tool.integrationScore.toFixed(1)}</td>
+                  <td className="px-4 py-3 text-center">{(tool.integrationScore * 2).toFixed(1)}</td>
                   <td className="px-4 py-3">{tool.pricing.startingPrice}</td>
                   <td className="px-4 py-3 text-muted-foreground">{tool.bestFor[0]}</td>
                   <td className="px-4 py-3">
@@ -194,10 +194,10 @@ export default function ToolAlternativesPage() {
                         {alt.name}
                       </Link>
                     </td>
-                    <td className={`px-4 py-3 text-center font-bold ${SCORE_COLOR(alt.trustScore)}`}>
-                      {alt.trustScore.toFixed(1)}
+                    <td className={`px-4 py-3 text-center font-bold ${SCORE_COLOR(alt.trustScore * 2)}`}>
+                      {(alt.trustScore * 2).toFixed(1)}
                     </td>
-                    <td className="px-4 py-3 text-center">{alt.integrationScore.toFixed(1)}</td>
+                    <td className="px-4 py-3 text-center">{(alt.integrationScore * 2).toFixed(1)}</td>
                     <td className="px-4 py-3">
                       {alt.pricing.hasFree ? (
                         <span className="text-green-700 font-medium">Free plan</span>
@@ -244,8 +244,8 @@ export default function ToolAlternativesPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-center">
-                        <p className={`text-xl font-extrabold ${SCORE_COLOR(alt.trustScore)}`}>
-                          {alt.trustScore.toFixed(1)}
+                        <p className={`text-xl font-extrabold ${SCORE_COLOR(alt.trustScore * 2)}`}>
+                          {(alt.trustScore * 2).toFixed(1)}
                         </p>
                         <p className="text-xs text-muted-foreground">Trust</p>
                       </div>
@@ -356,7 +356,7 @@ export default function ToolAlternativesPage() {
               {
                 q: `What is the best alternative to ${tool.name}?`,
                 a: directAlts[0]
-                  ? `${directAlts[0].name} is our top pick with a Trust Score of ${directAlts[0].trustScore}/5. ${directAlts[0].shortDescription}`
+                  ? `${directAlts[0].name} is our top pick with a Trust Score of ${(directAlts[0].trustScore * 2).toFixed(1)}/10. ${directAlts[0].shortDescription}`
                   : `See the full list above for ranked alternatives.`,
               },
               {
@@ -373,7 +373,7 @@ export default function ToolAlternativesPage() {
                 a: (() => {
                   const best = [...allAlts].sort((a, b) => b.integrationScore - a.integrationScore)[0];
                   return best
-                    ? `${best.name} scores highest on integrations with a ${best.integrationScore}/5 Integration Score.`
+                    ? `${best.name} scores highest on integrations with a ${(best.integrationScore * 2).toFixed(1)}/10 Integration Score.`
                     : `See the comparison table above for integration scores.`;
                 })(),
               },
