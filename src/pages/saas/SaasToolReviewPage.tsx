@@ -633,11 +633,11 @@ export default function SaasToolReviewPage() {
                 Add TheSynLab's {tool.name} Trust Score ({toolTrustScore.toFixed(1)}/10) to your site with our free embed.
               </p>
               <div className="relative">
-                <pre className="bg-muted rounded-md p-3 text-xs overflow-x-auto border"><code>{`<iframe src="https://thesynlab.com/tool/${tool.slug}/embed" width="100%" height="240" frameborder="0"></iframe>`}</code></pre>
+                <pre className="bg-muted rounded-md p-3 text-xs overflow-x-auto border"><code>{`<iframe src="https://thesynlab.com/widget/tool/${tool.slug}" width="100%" height="240" frameborder="0"></iframe>`}</code></pre>
                 <Button
                   size="sm"
                   className="mt-2"
-                  onClick={() => navigator.clipboard.writeText(`<iframe src="https://thesynlab.com/tool/${tool.slug}/embed" width="100%" height="240" frameborder="0"></iframe>`)}
+                  onClick={() => navigator.clipboard.writeText(`<iframe src="https://thesynlab.com/widget/tool/${tool.slug}" width="100%" height="240" frameborder="0"></iframe>`)}
                 >
                   Copy Embed Code
                 </Button>

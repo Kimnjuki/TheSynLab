@@ -92,3 +92,22 @@
 - [x] P1: Added homepage comparison table schema (Table/TableRow/TableCell) to Index.tsx
 - [x] P1: Added CTR-optimized title/description overrides for 5 more blog articles (best-smart-home-hubs, best-ai-productivity-tools, matter-protocol-explained, n8n-vs-zapier-vs-make, best-robot-vacuum)
 - [x] P1: Added ogImage to blog articles (from featuredImage), product pages, comparison pages, vs pages, hub pages, and alternatives pages
+
+### Phase 13 - CTR, E-E-A-T & structured data completion (Gap 3.4-3.20)
+- [x] Gap 3.4: Added 15 TOOL_META_OVERRIDES with CTR-optimized titles (question-led, benefit-first) for blaze-ai, syllaby, airops, play-ht, murf-ai, opus-clip, lalal-ai, remove-bg, photopea, screen-pal, bigvu, focusee
+- [x] Gap 3.5: All TOOL_META_OVERRIDES include outcome-driven descriptions with CTAs and comparative framing
+- [x] Gap 3.6: Added datePublished to Review schema on tool + product pages; removed fake reviewCount:47
+- [x] Gap 3.7: Per-route og:image — DONE in Phase 12
+- [x] Gap 3.8: Verified breadcrumbSchema uses full URLs for `item` property (correct)
+- [x] Gap 3.9: GSC data loop — BLOCKED (requires live GSC API credentials)
+- [x] Gap 3.10: Fixed score scale in SaasToolReviewPage.tsx (/5→/10 conversion, VERDICT/SCORE_BAR thresholds) and ToolAlternativesPage.tsx (SCORE_COLOR thresholds, /5→/10 displays)
+- [x] Gap 3.11: Original research reports — FLAGGED (requires writer/research content)
+- [x] Gap 3.12: Competitor comparison content — FLAGGED (requires editorial content)
+- [x] Gap 3.13: Added NewsletterSignupBanner at end of BlogArticle + tool review page
+- [x] Gap 3.14: Lead magnet — FLAGGED (user-owned task per preferences)
+- [x] Gap 3.15: Added 'Embed this scorecard' CTA on tool pages; created ToolEmbedPage at /widget/tool/:slug; added route + nginx frame-ancestors override
+- [x] Gap 3.16: llms.txt expanded to 5000+ chars — DONE in Phase 12
+- [x] Gap 3.17: Homepage comparison Table schema — DONE in Phase 12
+- [x] Gap 3.18: Added itemListOrder="ItemListOrderDescending" to hub ItemList + blog ItemList schemas
+- [x] Gap 3.19: GSC monitoring — BLOCKED (requires credentials)
+- [x] Gap 3.20: Added /widget/ location block with frame-ancestors * CSP override

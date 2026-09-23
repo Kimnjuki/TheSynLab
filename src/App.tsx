@@ -91,6 +91,7 @@ const WorkflowBlueprint = lazy(() => import("./pages/tools/WorkflowBlueprint"));
 const TrustIndexLeaderboard = lazy(() => import("./pages/TrustIndex"));
 const MyStackDashboard = lazy(() => import("./pages/MyStack"));
 const WidgetGallery = lazy(() => import("./pages/WidgetGallery"));
+const ToolEmbedPage = lazy(() => import("./pages/widgets/ToolEmbedPage"));
 const StateOfSaaSTrust2026 = lazy(() => import("./pages/report/StateOfSaaSTrust2026"));
 const AlternativesIndex = lazy(() => import("./pages/AlternativesIndex"));
 const ProductCategoryPage = lazy(() => import("./pages/ProductCategoryPage"));
@@ -235,6 +236,7 @@ const App = () => (
                   <Route path="/trust-index" element={<TrustIndexLeaderboard />} />
                   <Route path="/my-stack" element={<MyStackDashboard />} />
                   <Route path="/widgets" element={<WidgetGallery />} />
+                  <Route path="/widget/tool/:slug" element={<ToolEmbedPage />} />
                   <Route path="/report/state-of-saas-trust-2026" element={<StateOfSaaSTrust2026 />} />
                   <Route path="/recipes/:slug" element={<IntegrationRecipe />} />
 
