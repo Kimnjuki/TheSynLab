@@ -100,7 +100,7 @@
 - [x] Gap 3.7: Per-route og:image — DONE in Phase 12
 - [x] Gap 3.8: Verified breadcrumbSchema uses full URLs for `item` property (correct)
 - [x] Gap 3.9: GSC data loop — BLOCKED (requires live GSC API credentials)
-- [x] Gap 3.10: Fixed score scale in SaasToolReviewPage.tsx (/5→/10 conversion, VERDICT/SCORE_BAR thresholds) and ToolAlternativesPage.tsx (SCORE_COLOR thresholds, /5→/10 displays)
+| - [x] Gap 3.10: Fixed score scale across ALL components: SaasToolReviewPage.tsx (/5→/10, VERDICT/SCORE_BAR thresholds), ToolAlternativesPage.tsx (SCORE_COLOR, /5→/10), BestToolsRoundup.tsx (SCORE_COLOR, /5→/10), AIToolsCategoryPage.tsx (SCORE_COLOR thresholds 4.2/3.8→8.4/7.6), AIToolsHub.tsx (SCORE_COLOR, /5→/10), CommunityConfidenceBadge.tsx (SCORE_COLOR, combinedScore calc, /5→/10). Confirmed eco.rating and setupComplexity remain /5 (different metrics, not trust scores). |
 - [x] Gap 3.11: Original research reports — FLAGGED (requires writer/research content)
 - [x] Gap 3.12: Competitor comparison content — FLAGGED (requires editorial content)
 - [x] Gap 3.13: Added NewsletterSignupBanner at end of BlogArticle + tool review page
