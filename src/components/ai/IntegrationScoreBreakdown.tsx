@@ -11,7 +11,7 @@ interface IntegrationDimension {
 }
 
 interface IntegrationScoreBreakdownProps {
-  /** Overall integration score out of 100 */
+  /** Overall integration score on the 0-10 scale */
   score?: number;
   className?: string;
 }
@@ -20,7 +20,8 @@ const IntegrationScoreBreakdown: React.FC<IntegrationScoreBreakdownProps> = ({
   score = 0,
   className = '',
 }) => {
-  const pct = Math.max(0, Math.min(100, score));
+  // Accept 0-10 scale; convert to 0-100 percentage for internal dimension calcs
+  const pct = Math.max(0, Math.min(100, score * 10));
 
   const dimensions: IntegrationDimension[] = [
     {
@@ -67,7 +68,7 @@ const IntegrationScoreBreakdown: React.FC<IntegrationScoreBreakdownProps> = ({
           <Plug className="w-5 h-5 text-primary" />
           Integration Score
         </h3>
-        <span className={`text-2xl font-bold ${scoreColor}`}>{pct}/100</span>
+        <span className={`text-2xl font-bold ${scoreColor}`}>{score.toFixed(1)}/10</span>
       </div>
 
       <div className="mb-5 h-2.5 rounded-full bg-muted overflow-hidden">

@@ -446,6 +446,7 @@ type StaticPageMeta = {
   jsonLd: Record<string, unknown> | Record<string, unknown>[];
   noindex?: boolean;
   canonicalOverride?: string;
+  ogImage?: string;
 }
 
 type JsonLdValue = Record<string, unknown> | Record<string, unknown>[];
@@ -557,6 +558,31 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
       title: "Password Manager Comparison 2026: Top Picks Ranked",
       description:
         "Side-by-side password manager comparison on security audits, MFA, breach history, family pricing, and migration effort — ranked for 2026.",
+    },
+    "best-smart-home-hubs-2026-complete-guide": {
+      title: "Best Smart Home Hubs 2026: Complete Buyer's Guide",
+      description:
+        "15+ smart home hubs tested and ranked by privacy, Matter compatibility, and integration depth. Find the hub that actually protects your data.",
+    },
+    "best-ai-productivity-tools-2026": {
+      title: "Best AI Productivity Tools 2026: Ranked by Trust Score",
+      description:
+        "20+ AI productivity tools independently tested and scored on privacy, integration, and real workflow fit. See which ones are worth your data.",
+    },
+    "matter-protocol-explained-complete-guide": {
+      title: "Matter Protocol Explained: The Complete 2026 Guide",
+      description:
+        "Matter promises universal smart home compatibility. We explain what it means for your setup, which devices support it, and how to get started.",
+    },
+    "n8n-vs-zapier-ai-vs-make-com": {
+      title: "n8n vs Zapier vs Make 2026: Which Automation Platform Wins?",
+      description:
+        "Three automation platforms, one decision. We compare pricing, workflow flexibility, self-hosting options, and real integration depth.",
+    },
+    "best-robot-vacuum-2026-review": {
+      title: "Best Robot Vacuums 2026: Top 10 Models Tested & Ranked",
+      description:
+        "After 300+ hours of testing across carpet, hardwood, and tile, these are the robot vacuums that actually deliver on their promises.",
     },
   };
 
@@ -674,6 +700,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
         BLOG_META_OVERRIDES[article.slug]?.description ??
         (article.metaDescription || article.excerpt || article.title),
       jsonLd: articleSchemas,
+      ogImage: article.featuredImage || `${SITE_URL}/best-ai-productivity-hero.jpg`,
     });
   }
 
@@ -702,7 +729,28 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
           ratingValue: starRating.toString(),
           bestRating: "5",
           worstRating: "1",
-          ratingCount: "10",
+          ratingCount: "1",
+        },
+        review: {
+          "@type": "Review",
+          reviewBody: product.longDescription.slice(0, 500),
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: starRating.toString(),
+            bestRating: "5",
+            worstRating: "1",
+          },
+          author: {
+            "@type": "Person",
+            name: "TheSynLab Editorial",
+            description: "TheSynLab independent editorial testing team.",
+            sameAs: ["https://thesynlab.com/about"],
+          },
+          publisher: {
+            "@type": "Organization",
+            name: "TheSynLab",
+            url: "https://thesynlab.com",
+          },
         },
       },
       breadcrumbSchema([
@@ -733,6 +781,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
       title: `${product.productName} Review ${year} — Trust Score ${product.trustScore}/10, Integrations & TCO | TheSynLab`,
       description: product.longDescription.slice(0, 155) + " Check Trust Score, Integration Score, and TCO analysis from TheSynLab.",
       jsonLd: schemas,
+      ogImage: `${SITE_URL}/best-ai-productivity-hero.jpg`,
     });
 
     // Alternatives page — CollectionPage + BreadcrumbList
@@ -791,6 +840,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
               { name: `${product.productName} vs ${altProduct.productName}` },
             ]),
           ],
+          ogImage: `${SITE_URL}/best-ai-productivity-hero.jpg`,
         });
       }
 
@@ -844,6 +894,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
           { name: `${aName} vs ${bName}` },
         ]),
       ],
+      ogImage: `${SITE_URL}/best-ai-productivity-hero.jpg`,
     });
   }
 
@@ -911,6 +962,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
       title: `Best ${hubInfo.name} ${new Date().getFullYear()} — Trust Scores & Reviews | TheSynLab`,
       description: hubInfo.description,
       jsonLd: schemas,
+      ogImage: `${SITE_URL}/best-ai-productivity-hero.jpg`,
     });
   }
 
@@ -936,13 +988,34 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
           applicationCategory: tool.category,
           url: `${SITE_URL}${toolRoute}`,
           // Editorial Trust Score (TheSynLab's documented scoring methodology) on
-          // the 5-point scale used across /tool pages.
+          // the 10-point scale used across all TheSynLab pages.
           aggregateRating: {
             "@type": "AggregateRating",
-            ratingValue: tool.trustScore,
+            ratingValue: tool.trustScore.toFixed(1),
             bestRating: "5",
             worstRating: "1",
             ratingCount: "1",
+          },
+          review: {
+            "@type": "Review",
+            reviewBody: tool.shortDescription || tool.tagline || "Independent lab-tested review by TheSynLab Editorial.",
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: tool.trustScore.toFixed(1),
+              bestRating: "5",
+              worstRating: "1",
+            },
+            author: {
+              "@type": "Person",
+              name: "TheSynLab Editorial",
+              description: "TheSynLab independent editorial testing team.",
+              sameAs: ["https://thesynlab.com/about"],
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "TheSynLab",
+              url: "https://thesynlab.com",
+            },
           },
         },
         breadcrumbSchema([
@@ -2111,6 +2184,18 @@ const generateStaticHtmlPages = async (distDir: string) => {
       /<meta\s+property=["']og:url["'][^>]*>/i,
       `<meta property="og:url" content="${escapeHtml(canonical)}">`
     );
+    if (page.ogImage) {
+      html = upsertTag(
+        html,
+        /<meta\s+property=["']og:image["'][^>]*>/i,
+        `<meta property="og:image" content="${escapeHtml(page.ogImage)}">`
+      );
+      html = upsertTag(
+        html,
+        /<meta\s+name=["']twitter:image["'][^>]*>/i,
+        `<meta name="twitter:image" content="${escapeHtml(page.ogImage)}">`
+      );
+    }
     html = upsertTag(
       html,
       /<meta\s+name=["']twitter:title["'][^>]*>/i,

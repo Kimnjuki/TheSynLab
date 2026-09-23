@@ -18,8 +18,8 @@ type CatalogItem = {
 const allTools: CatalogItem[] = [
   ...saasTools.slice(0, 20).map((t) => ({
     name: t.name,
-    trustScore: t.trustScore,
-    integrationScore: t.integrationScore,
+    trustScore: t.trustScore * 2, // Convert /5 scale to /10 to match STATIC_PRODUCTS
+    integrationScore: t.integrationScore * 2, // Convert /5 scale to /10
     tco: `$${Math.round(50 + Math.random() * 200)}/mo`,
     href: `/tool/${t.slug}`,
   })),
@@ -42,8 +42,8 @@ const ComparisonSandbox = () => {
   const toolB = uniqueTools.find((t) => t.name === b);
 
   const scoreColor = (score: number) => {
-    if (score >= 85) return "text-tsl-trust-high";
-    if (score >= 70) return "text-tsl-trust-mid";
+    if (score >= 7) return "text-tsl-trust-high";
+    if (score >= 5) return "text-tsl-trust-mid";
     return "text-tsl-trust-low";
   };
 
@@ -111,13 +111,13 @@ const ComparisonSandbox = () => {
                   <tbody className="divide-y divide-tsl-border">
                     <tr>
                       <td className="py-3 text-tsl-text-secondary">Trust Score</td>
-                      <td className={`py-3 font-semibold ${scoreColor(toolA.trustScore)}`}>{toolA.trustScore}/100</td>
-                      <td className={`py-3 font-semibold ${scoreColor(toolB.trustScore)}`}>{toolB.trustScore}/100</td>
+                      <td className={`py-3 font-semibold ${scoreColor(toolA.trustScore)}`}>{toolA.trustScore.toFixed(1)}/10</td>
+                      <td className={`py-3 font-semibold ${scoreColor(toolB.trustScore)}`}>{toolB.trustScore.toFixed(1)}/10</td>
                     </tr>
                     <tr>
                       <td className="py-3 text-tsl-text-secondary">Integration Score</td>
-                      <td className={`py-3 font-semibold ${scoreColor(toolA.integrationScore)}`}>{toolA.integrationScore}/100</td>
-                      <td className={`py-3 font-semibold ${scoreColor(toolB.integrationScore)}`}>{toolB.integrationScore}/100</td>
+                      <td className={`py-3 font-semibold ${scoreColor(toolA.integrationScore)}`}>{toolA.integrationScore.toFixed(1)}/10</td>
+                      <td className={`py-3 font-semibold ${scoreColor(toolB.integrationScore)}`}>{toolB.integrationScore.toFixed(1)}/10</td>
                     </tr>
                     <tr>
                       <td className="py-3 text-tsl-text-secondary">3-Year TCO</td>

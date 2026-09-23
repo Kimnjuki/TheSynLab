@@ -164,15 +164,15 @@ const ComparisonPageTemplate: React.FC<ComparisonPageTemplateProps> = ({ toolA, 
               <div className="space-y-4 mb-6">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2"><Star className="w-4 h-4" /> Overall Score</span>
-                  <span className="font-bold text-lg">{toolA.overallScore}/100</span>
+                  <span className="font-bold text-lg">{toolA.overallScore}/10</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2"><Shield className="w-4 h-4" /> Trust Score</span>
-                  <span className="font-semibold">{toolA.trustScore}</span>
+                  <span className="font-semibold">{(toolA.trustScore * 2).toFixed(1)}/10</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2"><Zap className="w-4 h-4" /> Integration Score</span>
-                  <span className="font-semibold">{toolA.integrationScore}</span>
+                  <span className="font-semibold">{(toolA.integrationScore * 2).toFixed(1)}/10</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2"><DollarSign className="w-4 h-4" /> Starting Price</span>
@@ -180,7 +180,7 @@ const ComparisonPageTemplate: React.FC<ComparisonPageTemplateProps> = ({ toolA, 
                 </div>
               </div>
 
-              <TrustScoreBreakdown score={toolA.trustScore} />
+              <TrustScoreBreakdown score={toolA.trustScore * 2} />
               <Button className="w-full mt-4 gap-2">
                 Full {toolA.name} Review <ChevronRight className="w-4 h-4" />
               </Button>
@@ -201,15 +201,15 @@ const ComparisonPageTemplate: React.FC<ComparisonPageTemplateProps> = ({ toolA, 
               <div className="space-y-4 mb-6">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2"><Star className="w-4 h-4" /> Overall Score</span>
-                  <span className="font-bold text-lg">{toolB.overallScore}/100</span>
+                  <span className="font-bold text-lg">{toolB.overallScore}/10</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2"><Shield className="w-4 h-4" /> Trust Score</span>
-                  <span className="font-semibold">{toolB.trustScore}</span>
+                  <span className="font-semibold">{(toolB.trustScore * 2).toFixed(1)}/10</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2"><Zap className="w-4 h-4" /> Integration Score</span>
-                  <span className="font-semibold">{toolB.integrationScore}</span>
+                  <span className="font-semibold">{(toolB.integrationScore * 2).toFixed(1)}/10</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2"><DollarSign className="w-4 h-4" /> Starting Price</span>
@@ -217,7 +217,7 @@ const ComparisonPageTemplate: React.FC<ComparisonPageTemplateProps> = ({ toolA, 
                 </div>
               </div>
 
-              <IntegrationScoreBreakdown score={toolB.integrationScore} />
+              <IntegrationScoreBreakdown score={toolB.integrationScore * 2} />
               <Button className="w-full mt-4 gap-2">
                 Full {toolB.name} Review <ChevronRight className="w-4 h-4" />
               </Button>

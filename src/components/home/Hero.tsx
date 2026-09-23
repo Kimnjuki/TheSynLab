@@ -10,9 +10,9 @@ const proofPoints = [
 ];
 
 const sampleTools = [
-  { name: "Notion", score: 92 },
-  { name: "Airtable", score: 88 },
-  { name: "ClickUp", score: 85 },
+  { name: "Notion", score: 9.2 },
+  { name: "Airtable", score: 8.8 },
+  { name: "ClickUp", score: 8.5 },
 ];
 
 const Hero = () => {
@@ -85,7 +85,7 @@ const Hero = () => {
                   <div className="flex items-center gap-3">
                     <div className="text-right">
                       <p className="text-xs text-tsl-text-secondary">Trust Score</p>
-                      <p className="text-2xl font-bold text-tsl-trust-high">{tool.score}</p>
+                      <p className="text-2xl font-bold text-tsl-trust-high">{tool.score.toFixed(1)}/10</p>
                     </div>
                     <div className="h-12 w-12 rounded-full border-4 border-tsl-trust-high flex items-center justify-center">
                       <span className="text-xs font-bold text-tsl-trust-high">A+</span>

@@ -73,10 +73,10 @@ const ToolReviewTemplate: React.FC<ToolReviewTemplateProps> = ({ tool, relatedCo
     "name": `${tool.name} Review: Is It Worth Using in ${currentYear}?`,
     "reviewBody": tool.description,
     "reviewRating": {
-      "@type": "Rating",
-      "ratingValue": tool.overallScore,
-      "bestRating": 100,
-      "worstRating": 0
+    "@type": "Rating",
+    "ratingValue": tool.overallScore,
+    "bestRating": 10,
+    "worstRating": 1
     },
     "author": {
       "@type": "Organization",
@@ -100,7 +100,7 @@ const ToolReviewTemplate: React.FC<ToolReviewTemplateProps> = ({ tool, relatedCo
     <>
       <Helmet>
         <title>{tool.name} Review: Is It Worth Using in {currentYear}? | TheSynLab</title>
-        <meta name="description" content={`Comprehensive review of ${tool.name}. Trust score: ${tool.overallScore}/100. Full features, pricing, integrations, and honest alternatives.`} />
+        <meta name="description" content={`Comprehensive review of ${tool.name}. Trust score: ${tool.overallScore}/10. Full features, pricing, integrations, and honest alternatives.`} />
         <script type="application/ld+json">
           {JSON.stringify(jsonLd)}
         </script>
@@ -129,7 +129,7 @@ const ToolReviewTemplate: React.FC<ToolReviewTemplateProps> = ({ tool, relatedCo
                     <div className="flex items-center gap-2 mb-2">
                       <Badge variant="secondary" className="text-sm">
                         <Award className="w-4 h-4 mr-1" />
-                        Overall Score: {tool.overallScore}/100
+                        Overall Score: {tool.overallScore}/10
                       </Badge>
                     </div>
                   </div>
@@ -186,8 +186,8 @@ const ToolReviewTemplate: React.FC<ToolReviewTemplateProps> = ({ tool, relatedCo
             </div>
 
             <div className="space-y-6">
-              <TrustScoreBreakdown score={tool.trustScore} />
-              <IntegrationScoreBreakdown score={tool.integrationScore} />
+              <TrustScoreBreakdown score={tool.trustScore * 2} />
+              <IntegrationScoreBreakdown score={tool.integrationScore * 2} />
             </div>
           </div>
         </section>
@@ -298,7 +298,7 @@ const ToolReviewTemplate: React.FC<ToolReviewTemplateProps> = ({ tool, relatedCo
                       <Badge variant="outline" className="mt-1 text-xs">{alt.type}</Badge>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-sm font-semibold">{alt.score}/100</span>
+                      <span className="text-sm font-semibold">{alt.score}/10</span>
                       <ChevronRight className="w-4 h-4 text-muted-foreground" />
                     </div>
                   </div>

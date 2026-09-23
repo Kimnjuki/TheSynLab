@@ -100,7 +100,7 @@ const AlternativesPageTemplate: React.FC<ToolAlternativesTemplateProps> = ({ pri
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <Star className="w-4 h-4 text-yellow-500" />
-                          <span className="font-medium">{alt.overallScore}/100</span>
+                          <span className="font-medium">{alt.overallScore.toFixed(1)}/10</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-muted-foreground">{alt.bestFor}</td>
@@ -134,12 +134,12 @@ const AlternativesPageTemplate: React.FC<ToolAlternativesTemplateProps> = ({ pri
                     <div>
                       <h3 className="text-xl font-semibold mb-2">{i + 1}. {alt.name}</h3>
                       <div className="flex items-center gap-3 mb-2">
-                        <Badge variant="secondary">Overall: {alt.overallScore}/100</Badge>
+                        <Badge variant="secondary">Overall: {alt.overallScore.toFixed(1)}/10</Badge>
                         <Badge variant="outline" className="flex items-center gap-1">
-                          <Shield className="w-3 h-3" /> Trust: {alt.trustScore}
+                          <Shield className="w-3 h-3" /> Trust: {alt.trustScore.toFixed(1)}/10
                         </Badge>
                         <Badge variant="outline" className="flex items-center gap-1">
-                          <Zap className="w-3 h-3" /> Integration: {alt.integrationScore}
+                          <Zap className="w-3 h-3" /> Integration: {alt.integrationScore.toFixed(1)}/10
                         </Badge>
                       </div>
                     </div>

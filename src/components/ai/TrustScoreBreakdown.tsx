@@ -12,7 +12,7 @@ interface TrustDimension {
 }
 
 interface TrustScoreBreakdownProps {
-  /** Simple overall score (0-100) when dimension data is unavailable */
+  /** Overall score on the 0-10 scale */
   score?: number;
   dimensions?: {
     dataPrivacyPractices?: number;
@@ -69,6 +69,7 @@ const TrustScoreBreakdown: React.FC<TrustScoreBreakdownProps> = ({
     },
   ];
 
+  // Dimension scores are 0-100 percentages
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'bg-emerald-500';
     if (score >= 60) return 'bg-amber-500';
@@ -82,6 +83,11 @@ const TrustScoreBreakdown: React.FC<TrustScoreBreakdownProps> = ({
     return 'Poor';
   };
 
+  // Overall score is 0-10; convert to percentage for color/threshold logic
+  const overallPct = resolvedOverall !== undefined ? resolvedOverall * 10 : 0;
+  const overallColor = getScoreColor(overallPct).replace('bg-', 'text-');
+  const overallLabel = getScoreLabel(overallPct);
+
   return (
     <div className={`bg-gray-900 rounded-xl p-6 border border-gray-800 ${className}`}>
       <div className="flex items-center justify-between mb-6">
@@ -89,8 +95,8 @@ const TrustScoreBreakdown: React.FC<TrustScoreBreakdownProps> = ({
         {resolvedOverall !== undefined && (
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-400">Overall</span>
-            <span className={`text-lg font-bold ${getScoreColor(resolvedOverall).replace('bg-', 'text-')}`}>
-              {resolvedOverall}
+            <span className={`text-lg font-bold ${overallColor}`}>
+              {resolvedOverall.toFixed(1)}/10
             </span>
           </div>
         )}

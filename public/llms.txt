@@ -1,36 +1,269 @@
 # TheSynLab - Tech Reviews, Comparisons & Tool Alternatives
 
-> In-depth tech reviews with Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware.
+> In-depth tech reviews with Trust & Integration Scores. Expert analysis of productivity tools, smart home devices, and office hardware to build your perfect workflow ecosystem.
 
-## Notable URLs
+## Site Overview
 
-- https://thesynlab.com/ — Homepage: Tech reviews hub
-- https://thesynlab.com/blog — Latest reviews and comparisons
-- https://thesynlab.com/tools — Interactive decision tools
-- https://thesynlab.com/products — Product review directory
-- https://thesynlab.com/compare — Side-by-side product comparisons
-- https://thesynlab.com/scoring-hub — Trust Score methodology explained
-- https://thesynlab.com/stack-builder — Build your ideal tech stack
-- https://thesynlab.com/decision-studio — ROI calculator and TCO analysis
-- https://thesynlab.com/alternatives — Find software alternatives
-- https://thesynlab.com/hub/ai-tools — AI tools and SaaS reviews
-- https://thesynlab.com/hub/smart-home — Smart home device reviews
-- https://thesynlab.com/hub/hybrid-office — Hybrid office and remote work tools
-- https://thesynlab.com/trust-index — Trust Score methodology and data
-- https://thesynlab.com/guides — How-to guides and tutorials
-- https://thesynlab.com/about — About TheSynLab
-- https://thesynlab.com/report/state-of-saas-trust-2026 — 2026 State of SaaS Trust report
+TheSynLab (https://thesynlab.com) is an independent technology review platform that evaluates SaaS tools, AI products, smart home devices, and productivity software using proprietary Trust Scores, Integration Scores, and 3-Year TCO analysis. Every tool is tested hands-on for a minimum of 14 days before scoring. The platform is affiliate-funded with a strict editorial independence policy — scores are never influenced by commercial relationships.
+
+**Key differentiators:**
+- Independent lab-tested reviews (not user-generated ratings)
+- Proprietary Trust Score (0-10): privacy, security, transparency, vendor reputation
+- Proprietary Integration Score (0-10): API quality, ecosystem fit, automation support
+- 3-Year Total Cost of Ownership analysis including hidden costs
+- Vendor Risk Profile: lock-in risk, data portability, GDPR readiness
+- 0 pay-for-placement scores policy
+- 300+ tools reviewed across 20+ categories
 
 ## Trust Score Methodology
-All products on TheSynLab are scored using a weighted 6-dimension model: privacy transparency (25%), data security (20%), vendor lock-in risk (15%), integration openness (15%), pricing transparency (13%), and customer support (12%). Scores range 0-100/10.
 
-## Tool Categories Reviewed
-- AI writing & content generation
-- AI image & video generation
-- Productivity software
-- Smart home devices
-- SaaS collaboration tools
-- Developer tools & infrastructure
-- Privacy & security tools
-- CRM & sales tools
-- Email marketing platforms
+Trust Scores are calculated using a weighted 6-dimension model:
+- Privacy transparency (25%)
+- Data security practices (20%)
+- Vendor lock-in risk (15%)
+- Integration openness (15%)
+- Pricing transparency (13%)
+- Customer support quality (12%)
+
+Score bands:
+- 4.3-5.0 / 5.0 = Highly Recommended
+- 4.0-4.2 / 5.0 = Recommended
+- 3.7-3.9 / 5.0 = Good with Caveats
+- Below 3.7 / 5.0 = Use with Caution
+
+## Integration Score Methodology
+
+Integration Scores assess:
+- API availability & quality (30%)
+- Cross-platform support (30%)
+- Protocol support (Matter/Zigbee/HomeKit) (20%)
+- Automation tool support (Zapier/Make/n8n/webhooks) (10%)
+- Developer community (10%)
+
+## Scoring Hub
+
+https://thesynlab.com/scoring-hub — Full scoring methodology, Trust Score index, Integration Score index, and decision tools.
+
+## Decision Tools
+
+- **Compare Tools** (https://thesynlab.com/compare): Side-by-side comparison of any two tools on Trust Score, Integration Score, and 3-Year TCO
+- **Stack Builder** (https://thesynlab.com/stack-builder): Assemble your ideal tech stack with compatibility analysis
+- **Decision Studio** (https://thesynlab.com/decision-studio): ROI calculator, TCO modeler, vendor risk scoring, what-if simulations
+- **Stack Quiz** (https://thesynlab.com/stack-quiz): 2-minute quiz to find tools matched to your needs
+- **TCO Calculator** (https://thesynlab.com/tco-calculator): Model 3-year total cost of ownership
+- **Vendor Risk Checker** (https://thesynlab.com/vendor-risk-checker): Evaluate vendor lock-in and data portability risk
+
+## Tool Categories
+
+### AI Content & Writing Tools
+Reviewed tools include Writesonic, Blaze AI, Syllaby, AirOps, and others. Category covers AI copywriting, SEO content generation, brand voice training, and bulk content pipelines.
+
+### Video & Audio AI Tools
+Reviewed tools include Murf AI, Play.ht, Mubert, LALAL.AI, Opus Clip, BigVU, ScreenRec, Screen Pal, Focusee, Topview AI, Videvo, and Uppbeat. Category covers AI voiceovers, text-to-speech, music generation, video repurposing, screen recording, and stock media.
+
+### Design & Creative Tools
+Reviewed tools include Playground AI, Pebblely, Beautiful.AI, Photopea, Remove.bg, Snappa, Vectr, and Relume. Category covers AI image generation, product photography, presentation design, photo editing, background removal, vector graphics, and web design components.
+
+### Social Media & Marketing Tools
+Reviewed tools include Publer, SocialPilot, Sprout Social, WiseStamp, Mailmeteor, GMass, Radaar, HypeAuditor, PhantomBuster, and Outscraper. Category covers social scheduling, email signatures, mail merge, cold email, brand monitoring, influencer analytics, and data extraction.
+
+### Developer Tools & Infrastructure
+Reviewed tools include Appwrite, LambdaTest, Mintlify, WorkOS, Cal.com, GitKraken, RevenueCat, Bolt.new, and OpenSign. Category covers backend-as-a-service, cross-browser testing, developer documentation, enterprise SSO/authentication, scheduling infrastructure, Git GUIs, mobile subscription management, AI app builders, and e-signature.
+
+### Productivity & Collaboration Tools
+Reviewed tools include RemNote, Tactiq, Taskade, Slite, Magical AI, TextExpander, Wispr Flow, SuperWhisper, and Beacons. Category covers note-taking with spaced repetition, meeting transcription, AI-powered workspaces, team wikis, text expansion, voice dictation, and creator monetization platforms.
+
+### Sales & Support Tools
+Reviewed tools include Help Scout, Productboard, and EnhanceCV. Category covers customer support platforms, product management, and AI resume builders.
+
+## Product Hubs
+
+### AI Tools Hub
+https://thesynlab.com/hub/ai-tools — Browse all AI writing, coding, video, and automation tools independently reviewed. Includes category pages for AI Content & Writing, Video & Audio, Design & Creative, Social & Marketing, Dev & Infrastructure, Productivity, and Sales & Support.
+
+### AI Workflow Hub
+https://thesynlab.com/hub/ai-workflow — Automation platforms, LLMs, no-code builders, and workflow orchestrators ranked by real-world fit.
+
+### Intelligent Home Hub
+https://thesynlab.com/hub/intelligent-home — Smart home hubs, voice assistants, sensors, and IoT platforms tested for reliability and Matter compatibility.
+
+### Hybrid Office Hub
+https://thesynlab.com/hub/hybrid-office — Collaboration, video conferencing, and remote-work essentials.
+
+## Best-of Lists
+
+- Best AI Writing Tools — writesonic, blaze-ai, syllaby, airops
+- Best AI Voiceover Tools — murf-ai, play-ht, mubert, lalal-ai
+- Best Screen Recording Tools — screenrec, screen-pal, focusee, bigvu
+- Best Social Media Schedulers — publer, socialpilot, sproutsocial, radaar
+- Best Online Design Tools — playground-ai, pebblely, beautiful-ai, photopea, snappa, vectr
+- Best Developer Tools & Infra — appwrite, lambdatest, mintlify, workos, cal-com, gitkraken
+- Best Productivity & Note-Taking Tools — remnote, tactiq, taskade, slite, magical-ai, textexpander
+- Best AI Video Editing Tools — opus-clip, bigvu, topview, videvo
+
+## Featured Comparisons
+
+- ClickUp vs Asana 2026
+- Home Assistant vs HomeKit 2026
+- Matter Protocol Explained: Complete 2026 Guide
+- Best AI Productivity Tools 2026
+- Ergonomic Home Office Setup Guide
+- Best Robot Vacuums 2026
+- Notion vs Obsidian Productivity Comparison
+- ChatGPT vs Claude Productivity Comparison
+- N8n vs Zapier vs Make Comparison
+- Granola vs Otter vs Fireflies Comparison
+
+## Latest Blog Posts
+
+- Best Smart Home Hubs 2026: Complete Buyer's Guide with Trust Scores (Jan 14, 2026)
+- Home Assistant vs HomeKit 2026: Which Privacy-Focused Platform Wins? (Jan 11, 2026)
+- Matter Protocol Explained: The Complete 2026 Guide (Jan 9, 2026)
+- Best AI Productivity Tools 2026: Trust Scores for Enterprise and Personal Use (Jan 13, 2026)
+- Ergonomic Home Office Setup: Complete Guide with Product Recommendations (Jan 10, 2026)
+- Best Robot Vacuums 2026: Top 10 Models Tested & Ranked (Mar 9, 2026)
+- Best Mechanical Keyboard 2026 Review (Mar 5, 2026)
+- Best Air Purifier 2026 Review HEPA (Feb 28, 2026)
+- Best Gaming Laptop Under $1000 2026 (Feb 20, 2026)
+- Best Smart Thermostat 2026: Energy Savings (Feb 15, 2026)
+- Best Home Security Camera System 2026 (Feb 10, 2026)
+- Best Ergonomic Mouse 2026: Wrist Pain (Feb 5, 2026)
+- Best Smart Plugs 2026: Matter & HomeKit (Jan 28, 2026)
+- Best Productivity Tools 2026: Remote Work (Jan 22, 2026)
+- Best Smart Home Devices 2026: Beginners (Jan 18, 2026)
+- Best Project Management Tools 2026 (Apr 15, 2026)
+- Best SaaS Tools for Startups 2026 (Apr 12, 2026)
+- Best CRM Software Small Business 2026 (Apr 18, 2026)
+- Best AI Video Generator Tools Like Syllaby (Apr 20, 2026)
+- Best SocialPilot Alternatives 2026 (Apr 22, 2026)
+- Evaluate Privacy Risk SaaS (May 13, 2026)
+- Total Cost Ownership SaaS (May 13, 2026)
+- What Is Trust Score (May 13, 2026)
+- Privacy-First SaaS Stack (May 13, 2026)
+- Matter Protocol Explained (May 13, 2026)
+- Ultimate Guide: AI Tools for Writing Long Reports (Aug 3, 2026)
+- Choose ClickUp vs Asana (May 13, 2026)
+- N8n vs Zapier AI vs Make.com (Aug 6, 2026)
+- Granola vs Otter vs Fireflies Comparison (Aug 8, 2026)
+
+## Editorial Policies
+
+- **Editorial Policy** (https://thesynlab.com/editorial): Independent, data-driven, accurate technology reviews. Editorial team operates with full editorial independence.
+- **Affiliate Disclosure** (https://thesynlab.com/disclosure): TheSynLab participates in affiliate programs (Amazon Associates, Impact, ShareASale, individual vendor programs). Commissions never influence scores.
+- **How We Make Money** (https://thesynlab.com/how-we-make-money): Funded by affiliate commissions and advertising. Editorial independence is absolute.
+- **Advertising & Ad Compliance** (https://thesynlab.com/ad-compliance): Sponsored placements are clearly labelled and never affect editorial scores.
+- **Vendor Program** (https://thesynlab.com/vendor-program): Vendors can showcase verified Trust & Integration Scores.
+
+## About TheSynLab
+
+https://thesynlab.com/about — Founded in 2025, TheSynLab has reviewed over 300 software tools across 20 categories. Every review is written by an editor who has personally deployed and used the tool in a real-world workflow for a minimum of 14 days. No paid placements. No sponsored ratings. No affiliate influence on scores.
+
+The platform serves SaaS founders evaluating their tool stack, IT managers making procurement decisions, startup operators looking for budget-friendly alternatives, and technology enthusiasts comparing the latest AI and smart home products.
+
+## Contact
+
+https://thesynlab.com/contact — For press inquiries, partnership opportunities, or feedback. TheSynLab accepts guest pitches from qualified researchers, engineers, and industry analysts. No sponsored content or paid reviews.
+
+## RSS Feed
+
+https://thesynlab.com/feed.xml — Subscribe to get weekly tool drops, comparisons, and stack ideas.
+
+## Score Indices
+
+- **Trust Score Index** (https://thesynlab.com/scores/trust-score-index): Ranked Trust Scores for SaaS, AI, and smart home products based on reliability, data privacy, and vendor transparency.
+- **Integration Score Index** (https://thesynlab.com/scores/integration-score-index): Ranked Integration Scores assessing ecosystem compatibility, API quality, and workflow fit across product categories.
+
+## Research Reports
+
+- **2026 State of SaaS Trust & Integrations** (https://thesynlab.com/report/state-of-saas-trust-2026): 15+ pages of data covering average Trust Scores by category, top 10 most-trusted tools, bottom 10 highest-risk vendors, integration cluster analysis, year-over-year score changes, and the privacy policy change tracker. Analyses 300+ products across 6 categories using a weighted 6-dimension methodology.
+
+## Key Product Trust Scores (0-10 scale)
+
+| Product | Trust Score | Integration Score | Category |
+|---------|-------------|-------------------|----------|
+| Notion | 9.2 | 8.8 | Productivity |
+| Airtable | 8.8 | 8.5 | Productivity |
+| ClickUp | 8.5 | 8.2 | Productivity |
+| WorkOS | 4.5 | 4.6 | Dev & Infrastructure |
+| Sprout Social | 4.4 | 4.6 | Social Marketing |
+| Remove.bg | 4.4 | 4.1 | Design |
+| Mintlify | 4.4 | 4.3 | Dev & Infrastructure |
+| RevenueCat | 4.4 | 4.4 | Dev & Infrastructure |
+| Help Scout | 4.3 | 4.2 | Sales & Support |
+| LALAL.AI | 4.3 | 3.2 | Video & Audio |
+| Relume | 4.3 | 4.5 | Design |
+| Cal.com | 4.3 | 4.5 | Dev & Infrastructure |
+| SuperWhisper | 4.3 | 2.9 | Productivity |
+| HypeAuditor | 4.3 | 3.5 | Social Marketing |
+| OpenSign | 4.0 | 3.7 | Dev & Infrastructure |
+| Bolt.new | 4.0 | 3.8 | Dev & Infrastructure |
+| TextExpander | 4.0 | 3.5 | Productivity |
+| GMass | 4.0 | 3.7 | Social Marketing |
+| AirOps | 4.0 | 4.3 | Content AI |
+| Mubert | 4.0 | 3.9 | Video & Audio |
+| Play.ht | 4.1 | 4.2 | Video & Audio |
+| Writesonic | 4.1 | 4.0 | Content AI |
+| Appwrite | 4.2 | 4.4 | Dev & Infrastructure |
+| LambdaTest | 4.1 | 4.5 | Dev & Infrastructure |
+| Murf AI | 4.2 | 3.8 | Video & Audio |
+| Tactiq | 4.2 | 4.3 | Productivity |
+| Mailmeteor | 4.2 | 3.9 | Social Marketing |
+| Wispr Flow | 4.2 | 3.3 | Productivity |
+| GitKraken | 4.2 | 4.3 | Dev & Infrastructure |
+| Productboard | 4.2 | 4.3 | Sales & Support |
+| RemNote | 4.1 | 3.2 | Productivity |
+| Magical AI | 4.1 | 3.7 | Productivity |
+| Publer | 4.0 | 4.1 | Social Marketing |
+| Taskade | 3.9 | 3.8 | Productivity |
+| Slite | 4.0 | 3.9 | Productivity |
+| Blaze AI | 3.9 | 3.7 | Content AI |
+| Beautiful.AI | 3.9 | 3.3 | Design |
+| SocialPilot | 3.9 | 3.8 | Social Marketing |
+| WiseStamp | 3.9 | 3.4 | Social Marketing |
+| Beacons | 3.9 | 3.5 | Productivity |
+| Syllaby | 3.7 | 3.2 | Content AI |
+| Snappa | 3.7 | 3.1 | Design |
+| Focusee | 4.2 | 2.8 | Video & Audio |
+| ScreenRec | 3.9 | 3.0 | Video & Audio |
+| Screen Pal | 3.8 | 3.7 | Video & Audio |
+| BigVU | 3.8 | 3.6 | Video & Audio |
+| Playground AI | 3.8 | 2.9 | Design |
+| Topview AI | 3.7 | 3.4 | Video & Audio |
+| Videvo | 3.6 | 3.1 | Video & Audio |
+| Radaar | 3.7 | 3.6 | Social Marketing |
+| Outscraper | 3.5 | 3.8 | Social Marketing |
+| PhantomBuster | 3.6 | 4.0 | Social Marketing |
+| EnhanceCV | 3.7 | 3.0 | Sales & Support |
+| Vectr | 3.5 | 2.7 | Design |
+
+## Internal Linking Structure
+
+- Homepage → CategoryGrid (hub links), FeaturedComparisons, DecisionToolsStrip, NewsletterCapture
+- Hub pages → Product listings with Trust/Integration scores, "Start here" row linking to methodology, compare, TCO calculator, stack builder
+- Tool review pages → Pros/Cons, Best For, Integrations, Alternatives link, "Why trust this review?" expandable section
+- Product pages → Trust Score/Integration Score/TCO cards, Features, Pros/Cons, Alternatives, Full review links
+- Comparison pages → Side-by-side score table, Feature comparison, Best For tags, Verdict, Related comparisons
+- Blog articles → Quick Answer box, Table of Contents, FAQ section, Author byline with bio
+- Footer → Popular Comparisons, Top Alternatives, Workflows, About, Legal links, RSS/llms.txt
+
+## Technical Implementation
+
+- **Stack**: Vite + React 18 + TypeScript + shadcn/ui + Tailwind CSS
+- **Backend**: Convex (serverless database + serverless functions)
+- **Deployment**: Docker + nginx (gzip, HSTS, CSP, 301 redirects)
+- **SEO**: Build-time prerendering (662+ static HTML pages), per-route JSON-LD (Organization, WebSite, Article, SoftwareApplication, Review, FAQPage, HowTo, BreadcrumbList, ItemList, CollectionPage), sitemap.xml, robots.txt, RSS feed, llms.txt
+- **Analytics**: GA4 with Consent Mode v2, dataLayer events for scorecard_viewed, comparison_started, tool_filter_used, affiliate_click, stack_builder_started/completed, email_signup, search_used
+- **Ad Tech**: Google AdSense, Google Tag Manager
+- **Auth**: Clerk
+
+## Content Guidelines for Contributors
+
+TheSynLab accepts guest pitches from qualified researchers, engineers, and industry analysts. Reviews must be:
+- Independent (no vendor influence)
+- Based on hands-on testing (minimum 14 days)
+- Transparent about methodology
+- Free of paid placement influence
+- Include pros, cons, and clear verdicts
+- Compare against relevant alternatives
+
+Reviews should cover: Trust Score (privacy, security, transparency), Integration Score (APIs, ecosystem), 3-Year TCO, vendor risk, and ecosystem fit.
