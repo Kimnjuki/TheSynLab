@@ -320,13 +320,32 @@ const BlogArticle = () => {
             </div>
             <p className="text-xl text-muted-foreground mb-6 leading-relaxed">{article.excerpt}</p>
 
+            {/* TL;DR — LLM-optimized summary for AI citation pickup */}
+            {article.llmCitationSummary && (
+              <details className="mb-6 p-4 bg-muted/30 rounded-lg border border-border/50 group cursor-pointer">
+                <summary className="flex items-center gap-2 font-medium text-sm cursor-pointer list-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary shrink-0">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  <span>TL;DR</span>
+                  <span className="text-muted-foreground font-normal"> — AI-optimized summary ({article.readingTime} min read)</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-auto text-muted-foreground group-open:rotate-180 transition-transform">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </summary>
+                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{article.llmCitationSummary}</p>
+              </details>
+            )}
+
             {/* Editor Rating - PCMag Style */}
             {article.editorRating && (
               <div className="mb-6 p-4 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
                 <div className="flex items-center gap-4">
                   <div className="text-center">
-                    <div className="text-4xl font-bold text-primary">{article.editorRating}</div>
-                    <div className="text-xs text-muted-foreground">/ 10</div>
+                    <div className="text-4xl font-bold text-primary">{article.editorRating.toFixed(1)}/10</div>
+                    <div className="text-xs text-muted-foreground">Editor Rating</div>
                   </div>
                   <div className="flex-1">
                     <div className="font-semibold text-foreground">Editor Rating</div>
