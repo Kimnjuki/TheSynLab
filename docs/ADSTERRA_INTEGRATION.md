@@ -8,10 +8,10 @@ Everything about it lives in one place:
 | Keys, srcs, unit resolution, tag mounting | `src/lib/adsterra.ts` |
 | Shared policy (route guard, popunder arbitration) | `src/lib/adNetworks.ts` |
 | Site-wide popunder tag (consent-gated) | `src/components/ads/AdsterraScript.tsx` |
-| In-slot Native Banner (routing, lazy load, viewability) | `src/components/ads/AdSlot.tsx` |
+| In-slot units — Native Banner *and* Display Banner (routing, lazy load, viewability) | `src/components/ads/AdSlot.tsx` |
 | One unit per key per pageview | `src/hooks/useAdUnitClaim.ts` |
 
-## 1. The two tags
+## 1. The three tags
 
 ### Native Banner (in-slot)
 
@@ -28,6 +28,28 @@ Two consequences of that contract, both handled in code:
    rather than letting the network inject one. Only one slot may own a given key — see §3.
 2. **`data-cfasync="false"` is mandatory.** Without it Cloudflare Rocket Loader rewrites the
    tag and the unit never fills. It is set on every tag this module creates.
+
+### Display Banner (in-slot, sandboxed iframe)
+
+```html
+<script type="text/javascript">
+  atOptions = { 'key' : '31489400', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+</script>
+<script type="text/javascript"
+        src="https://www.highperformanceformat.com/31489400/invoke.js"></script>
+```
+
+Live units (from the dashboard): `31489400` (300×250) and `31489635` (728×90).
+
+Unlike the Native Banner there is **no container div** — the loader reads the global
+`atOptions`, which collides when two units share one React SPA pageview. `AdSlot`
+therefore never injects this tag into the main document: `buildAdsterraBannerSrcDoc()`
+renders the exact dashboard snippet (`atOptions` + `invoke.js`, with
+`data-cfasync="false"`) into an **isolated `srcdoc` iframe, one per slot**, sandboxed
+(`allow-scripts allow-popups allow-popups-to-escape-sandbox`, no `allow-same-origin`).
+Which format a slot renders is decided by size match + `VITE_ADSTERRA_SLOT_*_PREFER`
+(see §2): a 300×250 slot gets the `31489400` banner, a 728×90 slot the `31489635`
+leaderboard, anything else keeps the Native Banner div.
 
 ### Popunder (site-wide)
 

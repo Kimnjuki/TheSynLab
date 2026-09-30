@@ -8,9 +8,13 @@ import { useAdUnitClaim } from "@/hooks/useAdUnitClaim";
 import { type AdNetwork } from "@/lib/adNetworks";
 import { getAdniumZoneForSlot, mountAdniumZone, type AdniumZone } from "@/lib/adnium";
 import {
+  buildAdsterraBannerSrcDoc,
   buildAdsterraContainerId,
+  getAdsterraBannerUnit,
   getAdsterraNativeUnit,
+  getAdsterraSlotPreference,
   mountAdsterraNativeUnit,
+  type AdsterraBannerUnit,
   type AdsterraNativeUnit,
 } from "@/lib/adsterra";
 
@@ -82,6 +86,28 @@ export function AdSlot({
   const [config, setConfig] = useState<AdSlotConfig[]>([]);
   const logImpression = useMutation(api.adSlots.logAdSlotImpression);
 
+  const dims = formatDimensions[iabFormat];
+
+  // Banner + native candidates are resolved independently; the preference chooses
+  // which format this slot renders, and each format is claimed separately so e.g. two
+  // 300x250 slots share neither the same banner tag nor the same native key.
+  const bannerUnit: AdsterraBannerUnit | null = useMemo(
+    () => getAdsterraBannerUnit(slotName, iabFormat),
+    [slotName, iabFormat]
+  );
+  const bannerPreference = useMemo(() => getAdsterraSlotPreference(slotName), [slotName]);
+  const bannerSizeMatches =
+    bannerUnit !== null &&
+    (bannerUnit.width === dims.width ||
+      (dims.width === 728 && bannerUnit.width <= dims.width));
+  const preferBanner =
+    bannerPreference === "banner" ||
+    (bannerPreference === "auto" && bannerSizeMatches);
+  const nativeUnit: AdsterraNativeUnit | null = useMemo(
+    () => (bannerPreference === "banner" ? null : getAdsterraNativeUnit(slotName)),
+    [slotName, bannerPreference]
+  );
+
   // Rules 4 + 5: one observer drives lazy loading, a second confirms viewability.
   const { ref: setVisibilityRef, inView, confirmed } = useElementInView<HTMLElement>({
     rootMargin: "300px 0px",
@@ -123,15 +149,10 @@ export function AdSlot({
     Boolean(adsenseClient && envSlotId) &&
     (!hasDbRow ? fallbackWithoutDb : Boolean(slotConfig?.isActive));
 
-  const dims = formatDimensions[iabFormat];
   const hasEnoughContent =
     !minContentLength || document.body.innerText.split(/\s+/).length >= minContentLength;
 
   const adniumZone: AdniumZone | null = useMemo(() => getAdniumZoneForSlot(slotName), [slotName]);
-  const adsterraUnit: AdsterraNativeUnit | null = useMemo(
-    () => getAdsterraNativeUnit(slotName),
-    [slotName]
-  );
 
   // Rule 6: routing. `adNetworkTag` (Convex) can pin a network; the default candidate order
   // is AdSense → Adsterra → Adnium (highest RPM first, deepest backfill last).
@@ -143,8 +164,12 @@ export function AdSlot({
   const wantsAdsterra =
     pinned === "" || pinned === "adsense" || pinned === "adsterra" || pinned === "native";
   const wantsAdnium = pinned === "" || pinned === "adsense" || pinned === "adnium";
-  const adsterraClaimed = useAdUnitClaim("adsterra", adsterraUnit?.key, wantsAdsterra, owner);
+  // Banner + native are separate claimable units; only the preferred format claims.
+  const adsterraClaimUnit = preferBanner ? bannerUnit?.key : nativeUnit?.key;
+  const adsterraClaimNetwork = preferBanner ? "adsterra-banner" : "adsterra";
+  const adsterraClaimed = useAdUnitClaim(adsterraClaimNetwork, adsterraClaimUnit, wantsAdsterra, owner);
   const adniumClaimed = useAdUnitClaim("adnium", adniumZone?.id, wantsAdnium, owner);
+  const adsterraUnit = preferBanner ? bannerUnit : nativeUnit;
 
   const network: AdNetwork = useMemo(() => {
     const candidates: AdNetwork[] =
@@ -182,12 +207,14 @@ export function AdSlot({
     mountAdniumZone(adniumRef.current, adniumZone);
   }, [network, inView, adniumZone]);
 
-  // Adsterra: load the Native Banner loader once the `#container-<key>` element exists
-  // and the slot is approaching the viewport.
+  // Adsterra native: load the loader once the `#container-<key>` element exists
+  // and the slot is approaching the viewport. Banners need no loader — the srcdoc
+  // iframe below carries the dashboard tag, so there is nothing to inject.
   useEffect(() => {
-    if (network !== "adsterra" || !inView || !adsterraRef.current || !adsterraUnit) return;
-    mountAdsterraNativeUnit(adsterraUnit);
-  }, [network, inView, adsterraUnit]);
+    if (network !== "adsterra" || preferBanner || !inView || !adsterraRef.current) return;
+    if (!nativeUnit) return;
+    mountAdsterraNativeUnit(nativeUnit);
+  }, [network, preferBanner, inView, nativeUnit]);
 
   // Rule 5: one impression per slot, logged only once it is measurably viewable.
   useEffect(() => {
@@ -202,6 +229,7 @@ export function AdSlot({
         network,
         adniumZone: adniumZone?.id,
         adsterraKey: adsterraUnit?.key,
+        adsterraFormat: network === "adsterra" ? (preferBanner ? "banner" : "native") : undefined,
         viewable: true,
       },
     }).catch(() => {
@@ -261,11 +289,33 @@ export function AdSlot({
           data-ad-format="auto"
           data-full-width-responsive="true"
         />
-      ) : network === "adsterra" ? (
-        // Adsterra resolves its target by `#container-<key>` lookup, so the element id is
-        // part of the contract, not styling. Exactly one slot may hold a given key (claim).
+      ) : network === "adsterra" && preferBanner && bannerUnit ? (
+        // Display Banner: the dashboard snippet runs inside an isolated srcdoc frame
+        // (atOptions + invoke.js), one per slot, so two units never collide on the
+        // global `atOptions`. `sandbox` omits `allow-same-origin` — the frame can serve
+        // the creative + outbound click but cannot touch the parent document.
+        <iframe
+          title={`Advertisement ${slotName}`}
+          srcDoc={buildAdsterraBannerSrcDoc(bannerUnit)}
+          width={bannerUnit.width}
+          height={bannerUnit.height}
+          scrolling="no"
+          sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+          style={{
+            border: 0,
+            margin: "0 auto",
+            display: "block",
+            width: bannerUnit.width,
+            height: bannerUnit.height,
+            maxWidth: "100%",
+          }}
+        />
+      ) : network === "adsterra" && nativeUnit ? (
+        // Native Banner: Adsterra resolves its target by `#container-<key>` lookup, so
+        // the element id is part of the contract, not styling. Exactly one slot may
+        // hold a given key (claim).
         <div
-          id={adsterraUnit ? buildAdsterraContainerId(adsterraUnit.key) : undefined}
+          id={buildAdsterraContainerId(nativeUnit.key)}
           ref={adsterraRef}
           className="mx-auto"
           style={{
