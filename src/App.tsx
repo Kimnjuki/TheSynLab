@@ -13,6 +13,7 @@ import CookieBanner from "./components/CookieBanner";
 import AnalyticsScripts from "./components/AnalyticsScripts";
 import { FacebookPixel } from "./components/FacebookPixel";
 import { AdSlotProvider } from "./components/ads/AdSlotProvider";
+import { AdniumScript } from "./components/ads/AdniumScript";
 import { ComparisonBarProvider } from "./contexts/ComparisonBarContext";
 import { ComparisonBar } from "./components/ComparisonBar";
 
@@ -136,6 +137,7 @@ const App = () => (
                 <RouteTracker />
                 <ComparisonBarProvider>
                 <AdSlotProvider>
+                <AdniumScript />
                 <Suspense fallback={<RouteFallback />}>
                 <Routes>
                   {/* Core */}

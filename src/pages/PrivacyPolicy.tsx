@@ -6,7 +6,7 @@ import { Shield, Cookie, Database, Eye, Lock, Mail, Globe, Settings } from "luci
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const PrivacyPolicy = () => {
-  const lastUpdated = "January 12, 2026";
+  const lastUpdated = "September 30, 2026";
   
   const sections = [
     {
@@ -23,12 +23,16 @@ We also automatically collect certain information when you visit our site, inclu
     },
     {
       icon: Cookie,
-      title: "2. Google AdSense & Cookies",
+      title: "2. Advertising Networks & Cookies",
       content: `We use Google AdSense to display advertisements. Google uses cookies to serve ads based on your prior visits to our website or other websites. Google's use of advertising cookies enables it and its partners to serve ads based on your visit to our sites and/or other sites on the Internet.
 
 You may opt out of personalized advertising by visiting Google Ads Settings at https://www.google.com/settings/ads.
 
+We also work with Adnium, a third-party advertising network, to monetize reserved ad placements. Adnium may set cookies, local storage and similar identifiers to measure impressions and limit how often you see the same advertisement.
+
 Third-party vendors and ad networks may also serve ads on our site. These companies may use cookies, web beacons, and similar technologies to collect information about your visits to this and other websites.
+
+Advertising tags are loaded only after you accept advertising cookies in our consent banner, and ad impressions are counted only when a placement is actually visible on screen.
 
 We use the following types of cookies:
 • Essential Cookies: Required for site functionality

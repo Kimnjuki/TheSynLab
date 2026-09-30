@@ -45,6 +45,23 @@ Configure in Convex: **Settings → Environment Variables**.
 
 ---
 
+## Passive revenue: ad networks
+
+| Tier | Variable | Description |
+|------|----------|-------------|
+| FREE | `VITE_ADSENSE_CLIENT` + `VITE_ADSENSE_SLOT_*` | Google AdSense publisher client and per-slot ad-unit ids. |
+| FREE | `VITE_ADNIUM_SITE_KEY` | Adnium publisher key (`ADN55c88d9c53ef4`). Public; also emitted as a verification meta tag. |
+| FREE | `VITE_ADNIUM_ZONE_ID` / `_PID` / `_SID` / `_TYPE` / `_SLOT_TYPE` | Site-wide Adnium zone and in-slot zone type. Empty zone id ⇒ no tag is injected. |
+| FREE | `VITE_ADNIUM_SLOT_*` | Per-slot Adnium zones that backfill unfilled AdSense slots. |
+| FREE | `VITE_ADNIUM_TRIGGER_CLASSES` | Non-navigation CSS classes allowed to fire a popunder (keeps the tag AdSense-compliant). |
+| FREE | `VITE_ADNIUM_TAG_URL` | Verbatim Adnium tag URL override (`{id} {pid} {sid} {type} {width} {height} {key} {random}`). |
+| FREE | `VITE_AD_UNITS_PER_PAGE` | Ad frequency cap per pageview (default 4). |
+| FREE | `VITE_ADNIUM_ENABLED=0` / `VITE_ADNIUM_POPUNDER=0` | Kill switches for the whole network / for the popunder only. |
+
+Full setup, routing and placement rules: [`docs/ADNIUM_INTEGRATION.md`](./ADNIUM_INTEGRATION.md).
+
+---
+
 ## Cron Jobs
 
 | Job | Schedule | Purpose |
