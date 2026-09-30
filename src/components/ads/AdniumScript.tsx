@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getLastConsent, onConsentUpdated } from "@/lib/consent";
+import { isPopunderAllowed, shouldRunAdScriptsOnPath } from "@/lib/adNetworks";
 import {
   buildAdniumUrl,
   getAdniumPopunderZone,
   getAdniumTriggerClasses,
   isAdniumPopunderEnabled,
-  shouldRunAdniumOnPath,
 } from "@/lib/adnium";
 
 const SCRIPT_ID = "adnium-popunder-script";
@@ -23,8 +23,9 @@ const CONTAINER_ID = "adnium-popunder-container";
  *    how Adnium expects to be installed — a popunder session is per page load, not per
  *    SPA route change.
  *  • The tag is only injected while the visitor is on a content route, so landing on
- *    `/admin`, `/auth`, `/profile`, `/settings` or `/tasks` never arms it; a later
- *    navigation to a content route does.
+ *    `/admin`, `/auth`, `/profile`, `/settings` or `/tasks` never arms it.
+ *  • `VITE_POPUNDER_NETWORK` decides whether Adsterra or Adnium owns the popunder slot;
+ *    running both would fire two pop-unders on the same click (see `src/lib/adNetworks.ts`).
  *  • The tag is mounted inside a hidden container because Adnium resolves its zone from
  *    its own parent element.
  *  • Only clicks on `VITE_ADNIUM_TRIGGER_CLASSES` (non-navigation elements) may open a
@@ -48,7 +49,8 @@ export function AdniumScript() {
   useEffect(() => {
     if (!advertisingAccepted) return;
     if (!isAdniumPopunderEnabled()) return;
-    if (!shouldRunAdniumOnPath(pathname)) return;
+    if (!isPopunderAllowed("adnium")) return;
+    if (!shouldRunAdScriptsOnPath(pathname)) return;
     if (document.getElementById(CONTAINER_ID) || document.getElementById(SCRIPT_ID)) return;
 
     const zone = getAdniumPopunderZone();

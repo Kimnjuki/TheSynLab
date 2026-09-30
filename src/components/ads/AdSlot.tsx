@@ -4,12 +4,15 @@ import { api } from "../../../convex/_generated/api";
 import { useAdConsent } from "./AdSlotProvider";
 import { useElementInView } from "@/hooks/useElementInView";
 import { useAdSlotBudget } from "@/hooks/useAdSlotBudget";
+import { useAdUnitClaim } from "@/hooks/useAdUnitClaim";
+import { type AdNetwork } from "@/lib/adNetworks";
+import { getAdniumZoneForSlot, mountAdniumZone, type AdniumZone } from "@/lib/adnium";
 import {
-  getAdniumZoneForSlot,
-  mountAdniumZone,
-  type AdNetwork,
-  type AdniumZone,
-} from "@/lib/adnium";
+  buildAdsterraContainerId,
+  getAdsterraNativeUnit,
+  mountAdsterraNativeUnit,
+  type AdsterraNativeUnit,
+} from "@/lib/adsterra";
 
 type AdFormat = "300x250" | "728x90" | "300x600" | "in_article";
 
@@ -49,8 +52,10 @@ type AdSlotConfig = {
  *  4. Lazy load — the unit is only requested once it is within 300 px of the viewport.
  *  5. Viewability — the impression is logged only after 50 % of the unit has been
  *     visible for 1 s (IAB), so reported impressions match what advertisers bought.
- *  6. Network routing — Convex `adNetworkTag` pins AdSense or Adnium; an unfilled
- *     AdSense-backed slot is backfilled by Adnium instead of collapsing to an empty box.
+ *  6. Network routing — `adNetworkTag` pins a network; otherwise the candidate order is
+ *     AdSense → Adsterra → Adnium, so an unfilled AdSense slot is backfilled instead of
+ *     collapsing to an empty box. A candidate whose unit is unavailable (or already
+ *     claimed by another slot on this pageview) is skipped, not replaced by a hole.
  *  7. Layout stability — the slot keeps its IAB height while loading (no CLS).
  */
 
@@ -72,6 +77,7 @@ export function AdSlot({
   const logged = useRef(false);
   const insRef = useRef<HTMLModElement | null>(null);
   const adniumRef = useRef<HTMLDivElement | null>(null);
+  const adsterraRef = useRef<HTMLDivElement | null>(null);
   const adsensePushDone = useRef(false);
   const [config, setConfig] = useState<AdSlotConfig[]>([]);
   const logImpression = useMutation(api.adSlots.logAdSlotImpression);
@@ -122,16 +128,38 @@ export function AdSlot({
     !minContentLength || document.body.innerText.split(/\s+/).length >= minContentLength;
 
   const adniumZone: AdniumZone | null = useMemo(() => getAdniumZoneForSlot(slotName), [slotName]);
+  const adsterraUnit: AdsterraNativeUnit | null = useMemo(
+    () => getAdsterraNativeUnit(slotName),
+    [slotName]
+  );
 
-  // Rule 6: routing. `adNetworkTag` (Convex) is an explicit pin; otherwise AdSense has
-  // priority and Adnium backfills whatever AdSense cannot serve.
+  // Rule 6: routing. `adNetworkTag` (Convex) can pin a network; the default candidate order
+  // is AdSense → Adsterra → Adnium (highest RPM first, deepest backfill last).
+  const pinned = (slotConfig?.adNetworkTag ?? "").trim().toLowerCase();
+  const owner = `${slotName}:${position}`;
+
+  // In-slot units own a named element (Adsterra `#container-<key>`, Adnium `#adn-<zoneId>`),
+  // so only the first slot to claim a unit may render it; the others fall through.
+  const wantsAdsterra =
+    pinned === "" || pinned === "adsense" || pinned === "adsterra" || pinned === "native";
+  const wantsAdnium = pinned === "" || pinned === "adsense" || pinned === "adnium";
+  const adsterraClaimed = useAdUnitClaim("adsterra", adsterraUnit?.key, wantsAdsterra, owner);
+  const adniumClaimed = useAdUnitClaim("adnium", adniumZone?.id, wantsAdnium, owner);
+
   const network: AdNetwork = useMemo(() => {
-    const tag = (slotConfig?.adNetworkTag ?? "").trim().toLowerCase();
-    if (tag === "adnium") return adniumZone ? "adnium" : "none";
-    if (tag === "adsense") return adsenseReady ? "adsense" : adniumZone ? "adnium" : "none";
-    if (adsenseReady) return "adsense";
-    return adniumZone ? "adnium" : "none";
-  }, [slotConfig?.adNetworkTag, adsenseReady, adniumZone]);
+    const candidates: AdNetwork[] =
+      pinned === "adnium"
+        ? ["adnium"]
+        : pinned === "adsterra" || pinned === "native"
+          ? ["adsterra"]
+          : ["adsense", "adsterra", "adnium"];
+    for (const candidate of candidates) {
+      if (candidate === "adsense" && adsenseReady) return "adsense";
+      if (candidate === "adsterra" && adsterraUnit && adsterraClaimed) return "adsterra";
+      if (candidate === "adnium" && adniumZone && adniumClaimed) return "adnium";
+    }
+    return "none";
+  }, [pinned, adsenseReady, adsterraUnit, adsterraClaimed, adniumZone, adniumClaimed]);
 
   const active = canLoadAds && hasEnoughContent && inBudget && network !== "none";
 
@@ -154,6 +182,13 @@ export function AdSlot({
     mountAdniumZone(adniumRef.current, adniumZone);
   }, [network, inView, adniumZone]);
 
+  // Adsterra: load the Native Banner loader once the `#container-<key>` element exists
+  // and the slot is approaching the viewport.
+  useEffect(() => {
+    if (network !== "adsterra" || !inView || !adsterraRef.current || !adsterraUnit) return;
+    mountAdsterraNativeUnit(adsterraUnit);
+  }, [network, inView, adsterraUnit]);
+
   // Rule 5: one impression per slot, logged only once it is measurably viewable.
   useEffect(() => {
     if (!active || !confirmed || logged.current) return;
@@ -166,6 +201,7 @@ export function AdSlot({
         position,
         network,
         adniumZone: adniumZone?.id,
+        adsterraKey: adsterraUnit?.key,
         viewable: true,
       },
     }).catch(() => {
@@ -180,6 +216,7 @@ export function AdSlot({
     position,
     network,
     adniumZone?.id,
+    adsterraUnit?.key,
     logImpression,
   ]);
 
@@ -223,6 +260,19 @@ export function AdSlot({
           data-ad-slot={envSlotId}
           data-ad-format="auto"
           data-full-width-responsive="true"
+        />
+      ) : network === "adsterra" ? (
+        // Adsterra resolves its target by `#container-<key>` lookup, so the element id is
+        // part of the contract, not styling. Exactly one slot may hold a given key (claim).
+        <div
+          id={adsterraUnit ? buildAdsterraContainerId(adsterraUnit.key) : undefined}
+          ref={adsterraRef}
+          className="mx-auto"
+          style={{
+            minHeight: dims.height,
+            width: Math.min(dims.width, 728),
+            maxWidth: "100%",
+          }}
         />
       ) : (
         <div

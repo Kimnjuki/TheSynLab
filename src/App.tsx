@@ -14,6 +14,7 @@ import AnalyticsScripts from "./components/AnalyticsScripts";
 import { FacebookPixel } from "./components/FacebookPixel";
 import { AdSlotProvider } from "./components/ads/AdSlotProvider";
 import { AdniumScript } from "./components/ads/AdniumScript";
+import { AdsterraScript } from "./components/ads/AdsterraScript";
 import { ComparisonBarProvider } from "./contexts/ComparisonBarContext";
 import { ComparisonBar } from "./components/ComparisonBar";
 
@@ -138,6 +139,7 @@ const App = () => (
                 <ComparisonBarProvider>
                 <AdSlotProvider>
                 <AdniumScript />
+                <AdsterraScript />
                 <Suspense fallback={<RouteFallback />}>
                 <Routes>
                   {/* Core */}

@@ -58,7 +58,12 @@ Configure in Convex: **Settings → Environment Variables**.
 | FREE | `VITE_AD_UNITS_PER_PAGE` | Ad frequency cap per pageview (default 4). |
 | FREE | `VITE_ADNIUM_ENABLED=0` / `VITE_ADNIUM_POPUNDER=0` | Kill switches for the whole network / for the popunder only. |
 
-Full setup, routing and placement rules: [`docs/ADNIUM_INTEGRATION.md`](./ADNIUM_INTEGRATION.md).
+Full setup, routing and placement rules: [`docs/ADNIUM_INTEGRATION.md`](./ADNIUM_INTEGRATION.md)
+and [`docs/ADSTERRA_INTEGRATION.md`](./ADSTERRA_INTEGRATION.md).
+
+The two popunder tags are mutually exclusive: `VITE_POPUNDER_NETWORK`
+(`adsterra` · `adnium` · `both` · `none`, default `adsterra`) decides which one runs, so a
+single click can never open two windows. In-slot units from all three networks coexist.
 
 ---
 

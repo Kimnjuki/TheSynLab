@@ -100,6 +100,10 @@ It now matches by prefix and reuses the tag shipped in `index.html`.
 
 ## 5. Infrastructure touch-points
 
+The Adsterra integration (`docs/ADSTERRA_INTEGRATION.md`) reuses this module's patterns and
+shares `src/lib/adNetworks.ts` with it. Two popunder tags are never live at once — see §4
+there and `VITE_POPUNDER_NETWORK` below.
+
 - **`nginx.conf`** — CSP `script-src`, `connect-src` and an explicit `frame-src` now
   allow `pagead2.googlesyndication.com`, `tpc.googlesyndication.com`,
   `googleads.g.doubleclick.net` and `a.adnium.com`. Without `frame-src` the policy fell

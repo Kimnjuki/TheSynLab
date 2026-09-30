@@ -1,10 +1,13 @@
+import { readAdEnv as read } from "./adNetworks";
+
 /**
  * Adnium ad-network integration — single source of truth.
  *
- * Adnium is the second demand source next to Google AdSense. It is wired the same
- * way the AdSense slots already are: build-time `VITE_*` env vars, advertising-cookie
- * consent gating (`@/lib/consent`) and Convex `adSlotConfigs` rows for per-template
- * routing (`adNetworkTag`).
+ * Adnium is one of three demand sources (AdSense · Adsterra · Adnium); cross-network
+ * rules live in `src/lib/adNetworks.ts`. It is wired the same way the AdSense slots
+ * already are: build-time `VITE_*` env vars, advertising-cookie consent gating
+ * (`@/lib/consent`) and Convex `adSlotConfigs` rows for per-template routing
+ * (`adNetworkTag`).
  *
  * Publisher key: `ADN55c88d9c53ef4` (from adn_verify.txt). Override with
  * `VITE_ADNIUM_SITE_KEY` if the key in the Adnium dashboard changes.
@@ -39,23 +42,6 @@ export type AdniumZone = {
   height: string;
 };
 
-/** Panel/private routes never carry an ad tag. */
-const ADNIUM_EXCLUDED_PREFIXES = ["/admin", "/auth", "/profile", "/settings", "/tasks"];
-
-export type AdNetwork = "adsense" | "adnium" | "none";
-
-/**
- * `import.meta.env` is typed with explicit keys in `src/vite-env.d.ts`; ad-network
- * config is optionally-present, so read it through a narrow record view instead of
- * sprinkling casts through the module.
- */
-const env = import.meta.env as unknown as Record<string, string | undefined>;
-
-function read(key: string): string | undefined {
-  const value = env[key];
-  return typeof value === "string" && value.trim() !== "" ? value.trim() : undefined;
-}
-
 /** Adnium publisher key — env override wins, committed fallback otherwise. */
 export function getAdniumSiteKey(): string {
   return read("VITE_ADNIUM_SITE_KEY") ?? ADNIUM_KEY_FALLBACK;
@@ -84,12 +70,12 @@ export function getAdniumTriggerClasses(): string[] {
 
 /** Zone id per AdSlot `slotName` (mirrors the AdSense `VITE_ADSENSE_SLOT_*` map). */
 const ADNIUM_ENV_SLOTS: Record<string, string | undefined> = {
-  review_sidebar: env.VITE_ADNIUM_SLOT_REVIEW_SIDEBAR,
-  home_leaderboard: env.VITE_ADNIUM_SLOT_HOME_LEADERBOARD,
-  compare_inline: env.VITE_ADNIUM_SLOT_COMPARE_INLINE,
-  comparison_sidebar: env.VITE_ADNIUM_SLOT_COMPARE_SIDEBAR,
-  hub_hero_below: env.VITE_ADNIUM_SLOT_HUB_HERO_BELOW,
-  forum_in_article_1: env.VITE_ADNIUM_SLOT_FORUM_IN_ARTICLE_1,
+  review_sidebar: import.meta.env.VITE_ADNIUM_SLOT_REVIEW_SIDEBAR,
+  home_leaderboard: import.meta.env.VITE_ADNIUM_SLOT_HOME_LEADERBOARD,
+  compare_inline: import.meta.env.VITE_ADNIUM_SLOT_COMPARE_INLINE,
+  comparison_sidebar: import.meta.env.VITE_ADNIUM_SLOT_COMPARE_SIDEBAR,
+  hub_hero_below: import.meta.env.VITE_ADNIUM_SLOT_HUB_HERO_BELOW,
+  forum_in_article_1: import.meta.env.VITE_ADNIUM_SLOT_FORUM_IN_ARTICLE_1,
 };
 
 function zoneFromParts(zoneId: string, type: string): AdniumZone {
@@ -192,9 +178,3 @@ export function mountAdniumZone(container: HTMLElement, zone: AdniumZone): HTMLS
   return script;
 }
 
-/** Route guard shared by the site-wide popunder tag. */
-export function shouldRunAdniumOnPath(pathname: string): boolean {
-  return !ADNIUM_EXCLUDED_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
-  );
-}
