@@ -9,8 +9,11 @@ import { readAdEnv as read } from "./adNetworks";
  * (`@/lib/consent`) and Convex `adSlotConfigs` rows for per-template routing
  * (`adNetworkTag`).
  *
- * Publisher key: `ADN55c88d9c53ef4` (from adn_verify.txt). Override with
- * `VITE_ADNIUM_SITE_KEY` if the key in the Adnium dashboard changes.
+ * Publisher key: `ADN55c88d9c53ef4`. Adnium's verifier fetches `/adn_verify.txt` from
+ * the domain root and compares it to the key it issued, so that file MUST be deployed
+ * (`public/adn_verify.txt`, copied to dist/ by Vite) — the meta tag in index.html alone
+ * is not what it reads. Override the runtime value with `VITE_ADNIUM_SITE_KEY` if the
+ * key in the Adnium dashboard changes; update public/adn_verify.txt with it.
  *
  * Official popunder tag (Adnium Help Center "Popunder code trigger class solution"):
  *   //a.adnium.com/popunder?fpt=1&ctu=1&tu=1&r=<rand>&id=<zone>&pid=<pid>&sid=<sid>&tid=<type>&w=<w>&h=<h>

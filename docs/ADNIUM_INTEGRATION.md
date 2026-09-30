@@ -14,18 +14,31 @@ integration lives in one place:
 ## 1. Publisher key
 
 ```
-ADN55c88d9c53ef4        (adn_verify.txt)
+ADN55c88d9c53ef4
 ```
 
-Used in two places, both public:
+Three places, all public:
 
-1. `index.html` → `<meta name="adnium-site-verification" content="ADN55c88d9c53ef4">`
-   (present in the prerendered HTML so the verification crawler sees it without JS).
-2. `VITE_ADNIUM_SITE_KEY` → appended as `key=` on every Adnium tag
+1. **`public/adn_verify.txt`** → served at `https://thesynlab.com/adn_verify.txt`.
+   **This is what Adnium's verifier actually reads** — it fetches the file at the domain
+   root and compares the body against the key it issued. The file must be exactly the 16
+   bytes `ADN55c88d9c53ef4`: no BOM, no trailing newline. Vite copies `public/` to `dist/`
+   verbatim, so the file ships with every build.
+2. `index.html` → `<meta name="adnium-site-verification" content="ADN55c88d9c53ef4">`
+   (present in the prerendered HTML; belt-and-braces for the crawler).
+3. `VITE_ADNIUM_SITE_KEY` → appended as `key=` on every Adnium tag
    (`src/lib/adnium.ts`, fallback constant `ADNIUM_KEY_FALLBACK`).
 
-If Adnium issues a replacement key, change **`VITE_ADNIUM_SITE_KEY` + the meta tag +
-`.env.example`** together. Never hardcode it a second time in a component.
+> **Failure mode worth knowing (this actually broke verification once):**
+> without step 1, `https://thesynlab.com/adn_verify.txt` fell through to the SPA fallback
+> and returned **HTTP 200 with `Content-Type: text/html`** — the homepage. A status-only
+> check looks like success, so the submission silently failed. `nginx.conf` therefore has
+> an exact-match `location = /adn_verify.txt` that sets `default_type text/plain` and
+> `try_files $uri =404`, so a missing file is a *real* 404 instead of a masked one.
+
+If Adnium issues a replacement key, change **`public/adn_verify.txt` +
+`VITE_ADNIUM_SITE_KEY` + the meta tag + `.env.example`** together, keeping the file
+BOM-free and newline-free. Never hardcode it a second time in a component.
 
 ## 2. Where the tag goes
 
@@ -119,6 +132,12 @@ there and `VITE_POPUNDER_NETWORK` below.
 
 ```bash
 npm run build            # must stay green
+
+# THE decisive check — must be 200, text/plain, and exactly "ADN55c88d9c53ef4":
+curl -i https://thesynlab.com/adn_verify.txt
+#   NOT "text/html" → the SPA fallback is masking a missing file; re-check public/
+#   NOT 404 → public/adn_verify.txt is missing from the image; rebuild
+
 # then, with advertising cookies accepted:
 #   • DevTools → Network: one a.adnium.com request per page, only after consent
 #   • DevTools → Elements: <meta name="adnium-site-verification" content="ADN55c88d9c53ef4">
