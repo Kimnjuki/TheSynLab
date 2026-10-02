@@ -96,8 +96,10 @@ adNetworkTag = "adsense"                       →  AdSense, then the normal bac
 
 Adsterra is the deepest backfill candidate because its configured format *is* an in-slot
 format (native banner or display banner). Pin `adNetworkTag` per template in Convex to
-override that for any slot. A tag naming a network that no longer exists is ignored and
-the slot keeps the default order rather than rendering nothing.
+override that for any slot. A tag naming a network this build does not serve is ignored
+and the slot keeps the default order rather than rendering nothing — so a leftover
+`adNetworkTag` in Convex from a decommissioned network degrades to AdSense → Adsterra
+instead of blanking the slot. Consider clearing such rows in `adSlotConfigs` anyway.
 
 **One unit per key per pageview.** `useAdUnitClaim` records which slot owns
 `adsterra:<key>` (or `adsterra-banner:<key>` for display banners) for the current

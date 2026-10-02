@@ -155,8 +155,9 @@ export function AdSlot({
 
   // Rule 6: routing. `adNetworkTag` (Convex) can pin a network; the default candidate order
   // is AdSense → Adsterra (highest RPM first, deepest backfill last).
-  // A value naming a network this build no longer knows (e.g. a stale "adnium" row) is
-  // treated as "no pin", so an out-of-date Convex row can never blank a slot.
+  // A tag naming a network this build does not serve (e.g. a leftover row from a
+  // decommissioned network) is ignored as "no pin", so an out-of-date Convex row can
+  // never blank a slot.
   const rawPin = (slotConfig?.adNetworkTag ?? "").trim().toLowerCase();
   const pinned = KNOWN_AD_NETWORK_PINS.has(rawPin) ? rawPin : "";
   const owner = `${slotName}:${position}`;
