@@ -28,7 +28,7 @@ We also automatically collect certain information when you visit our site, inclu
 
 You may opt out of personalized advertising by visiting Google Ads Settings at https://www.google.com/settings/ads.
 
-We also work with Adnium and Adsterra, third-party advertising networks, to monetize reserved ad placements. These networks may set cookies, local storage and similar identifiers to measure impressions and limit how often you see the same advertisement. Only one pop-under tag is enabled at a time so that a single click cannot open more than one window.
+We also work with Adsterra, a third-party advertising network, to monetize reserved ad placements. It may set cookies, local storage and similar identifiers to measure impressions and limit how often you see the same advertisement.
 
 Third-party vendors and ad networks may also serve ads on our site. These companies may use cookies, web beacons, and similar technologies to collect information about your visits to this and other websites.
 

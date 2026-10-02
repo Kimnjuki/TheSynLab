@@ -50,20 +50,17 @@ Configure in Convex: **Settings → Environment Variables**.
 | Tier | Variable | Description |
 |------|----------|-------------|
 | FREE | `VITE_ADSENSE_CLIENT` + `VITE_ADSENSE_SLOT_*` | Google AdSense publisher client and per-slot ad-unit ids. |
-| FREE | `VITE_ADNIUM_SITE_KEY` | Adnium publisher key (`ADN55c88d9c53ef4`). Public; also emitted as a verification meta tag. |
-| FREE | `VITE_ADNIUM_ZONE_ID` / `_PID` / `_SID` / `_TYPE` / `_SLOT_TYPE` | Site-wide Adnium zone and in-slot zone type. Empty zone id ⇒ no tag is injected. |
-| FREE | `VITE_ADNIUM_SLOT_*` | Per-slot Adnium zones that backfill unfilled AdSense slots. |
-| FREE | `VITE_ADNIUM_TRIGGER_CLASSES` | Non-navigation CSS classes allowed to fire a popunder (keeps the tag AdSense-compliant). |
-| FREE | `VITE_ADNIUM_TAG_URL` | Verbatim Adnium tag URL override (`{id} {pid} {sid} {type} {width} {height} {key} {random}`). |
+| FREE | `VITE_ADSTERRA_NATIVE_KEY` / `_SRC` | Adsterra Native Banner key and loader URL (in-slot). |
+| FREE | `VITE_ADSTERRA_BANNER_300X250_KEY` / `_728X90_KEY` | Adsterra Display Banner keys (`atOptions` + `invoke.js`, sandboxed per slot). |
+| FREE | `VITE_ADSTERRA_SLOT_*` / `VITE_ADSTERRA_BANNER_SLOT_*` | Per-slot Native/Display Banner overrides (key, width, height, src). |
+| FREE | `VITE_ADSTERRA_POPUNDER` / `VITE_ADSTERRA_POPUNDER_SRC` | Site-wide popunder tag (one per document load, content routes only). |
+| FREE | `VITE_ADSTERRA_ENABLED=0` | Kill switch for the whole Adsterra network. |
 | FREE | `VITE_AD_UNITS_PER_PAGE` | Ad frequency cap per pageview (default 4). |
-| FREE | `VITE_ADNIUM_ENABLED=0` / `VITE_ADNIUM_POPUNDER=0` | Kill switches for the whole network / for the popunder only. |
 
-Full setup, routing and placement rules: [`docs/ADNIUM_INTEGRATION.md`](./ADNIUM_INTEGRATION.md)
-and [`docs/ADSTERRA_INTEGRATION.md`](./ADSTERRA_INTEGRATION.md).
+Full setup, routing and placement rules: [`docs/ADSTERRA_INTEGRATION.md`](./ADSTERRA_INTEGRATION.md).
 
-The two popunder tags are mutually exclusive: `VITE_POPUNDER_NETWORK`
-(`adsterra` · `adnium` · `both` · `none`, default `adsterra`) decides which one runs, so a
-single click can never open two windows. In-slot units from all three networks coexist.
+There is exactly one popunder tag (`VITE_ADSTERRA_POPUNDER`), so a single click can never
+open two windows. In-slot units from AdSense and Adsterra coexist.
 
 ---
 

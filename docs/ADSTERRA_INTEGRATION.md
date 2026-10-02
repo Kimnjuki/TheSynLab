@@ -1,12 +1,12 @@
 # Adsterra ad platform — integration & placement rules
 
-Adsterra is the third demand source in the ad stack (after Google AdSense and Adnium).
+Adsterra is the second demand source in the ad stack (after Google AdSense).
 Everything about it lives in one place:
 
 | Concern | File |
 |---|---|
 | Keys, srcs, unit resolution, tag mounting | `src/lib/adsterra.ts` |
-| Shared policy (route guard, popunder arbitration) | `src/lib/adNetworks.ts` |
+| Shared policy (route guard, consent gating) | `src/lib/adNetworks.ts` |
 | Site-wide popunder tag (consent-gated) | `src/components/ads/AdsterraScript.tsx` |
 | In-slot units — Native Banner *and* Display Banner (routing, lazy load, viewability) | `src/components/ads/AdSlot.tsx` |
 | One unit per key per pageview | `src/hooks/useAdUnitClaim.ts` |
@@ -57,8 +57,8 @@ leaderboard, anything else keeps the Native Banner div.
 <script src="https://pl31589899.profitableratecpmnetwork.com/43/2b/19/432b19cb46f5e384280a7ece2773593a.js"></script>
 ```
 
-Mounted by `AdsterraScript`: after advertising-cookie consent, once per document load, only
-on content routes, and only when `VITE_POPUNDER_NETWORK` says Adsterra owns the popunder.
+Mounted by `AdsterraScript`: after advertising-cookie consent, once per document load, and
+only on content routes.
 
 ## 2. Configuration
 
@@ -71,9 +71,8 @@ on content routes, and only when `VITE_POPUNDER_NETWORK` says Adsterra owns the 
 | `VITE_ADSTERRA_POPUNDER_SRC` | the popunder URL above | Popunder tag. |
 | `VITE_ADSTERRA_SLOT_<SLOTNAME>` | — | Native Banner key for one slot, when the account has several banners. |
 | `VITE_ADSTERRA_SLOT_<SLOTNAME>_SRC` | derived | Only when that banner lives on a different `pl<id>` host. |
-| `VITE_POPUNDER_NETWORK` | `adsterra` | Which popunder tag may run: `adsterra` · `adnium` · `both` · `none`. |
 
-Slot names (`SLOTNAME`) mirror the AdSense/Adnium maps: `REVIEW_SIDEBAR`,
+Slot names (`SLOTNAME`) mirror the AdSense slot map: `REVIEW_SIDEBAR`,
 `HOME_LEADERBOARD`, `COMPARE_INLINE`, `COMPARE_SIDEBAR`, `HUB_HERO_BELOW`,
 `FORUM_IN_ARTICLE_1`.
 
@@ -90,43 +89,37 @@ threshold → lazy load → viewability → routing → layout stability); Adste
 candidate in the routing order:
 
 ```
-VITE_ADSTERRA_SLOT_* set?  →  AdSense (if configured)  →  Adsterra Native Banner  →  Adnium
+VITE_ADSTERRA_SLOT_* set?  →  AdSense (if configured)  →  Adsterra Native/Display Banner
 adNetworkTag = "adsterra" / "native" (Convex)  →  Adsterra only
-adNetworkTag = "adnium"                        →  Adnium only
 adNetworkTag = "adsense"                       →  AdSense, then the normal backfill order
 ```
 
-Adsterra sits ahead of Adnium in the default order because its configured format *is* an
-in-slot format (native banner), while Adnium's in-slot zones are optional extras. Pin
-`adNetworkTag` per template in Convex to override that for any slot.
+Adsterra is the deepest backfill candidate because its configured format *is* an in-slot
+format (native banner or display banner). Pin `adNetworkTag` per template in Convex to
+override that for any slot. A tag naming a network that no longer exists is ignored and
+the slot keeps the default order rather than rendering nothing.
 
 **One unit per key per pageview.** `useAdUnitClaim` records which slot owns
-`adsterra:<key>` (or `adnium:<zoneId>`) for the current pageview. Claims are keyed by
-`unit → owning slot`, so the same slot re-claiming its own unit always succeeds
-(StrictMode double-invocation, re-mounts) while a *different* slot is refused and falls
-through to the next candidate network. Without that, two slots sharing a key would emit
-duplicate element ids and Adsterra would fill one and double-count the other.
+`adsterra:<key>` (or `adsterra-banner:<key>` for display banners) for the current
+pageview. Claims are keyed by `unit → owning slot`, so the same slot re-claiming its own
+unit always succeeds (StrictMode double-invocation, re-mounts) while a *different* slot is
+refused and falls through to the next candidate network. Without that, two slots sharing a
+key would emit duplicate element ids and Adsterra would fill one and double-count the other.
 
-**Impression telemetry** in `adComplianceAuditLog` now carries
-`{ iabFormat, position, network, adsterraKey?, adniumZone?, viewable: true }`, so fill
+**Impression telemetry** in `adComplianceAuditLog` carries
+`{ iabFormat, position, network, adsterraKey?, adsterraFormat?, viewable: true }`, so fill
 share per network per template is measurable without touching the network dashboards.
 
-## 4. Popunder arbitration (shared with Adnium)
+## 4. Popunder
 
-`src/lib/adNetworks.ts` owns `VITE_POPUNDER_NETWORK`. A popunder tag hijacks the first
-qualifying click in the document, so two live tags mean **one click opens two windows** —
-the classic cause of browser pop-up blocks and of AdSense policy violations. Exactly one
-network therefore owns the popunder unless a deployment deliberately sets `both`:
+A popunder tag hijacks the first qualifying click in the document. Running two of them on
+one property means a single click opens two windows — the classic cause of browser pop-up
+blocks and of AdSense policy violations — so the stack deliberately keeps exactly one.
 
-| Value | Effect |
-|---|---|
-| `adsterra` (default) | Adsterra popunder only; Adnium keeps its in-slot zones. |
-| `adnium` | Adnium popunder only; Adsterra keeps its Native Banners. |
-| `both` | Both tags load — only if you knowingly want two pop-unders per click. |
-| `none` | No popunder at all; every in-slot unit still serves. |
-
-Each network also keeps its own hard kill switch (`VITE_ADSTERRA_POPUNDER=0`,
-`VITE_ADNIUM_POPUNDER=0`).
+Adsterra is now the only ad network besides AdSense, so there is nothing to arbitrate and
+no cross-network switch: `VITE_ADSTERRA_POPUNDER=0` is the kill switch, and `AdsterraScript`
+additionally waits for advertising consent and stays off `/admin`, `/auth`, `/profile`,
+`/settings` and `/tasks`.
 
 ## 5. Infrastructure touch-points
 
@@ -135,9 +128,9 @@ Each network also keeps its own hard kill switch (`VITE_ADSTERRA_POPUNDER=0`,
   silently: the ad simply never appears and no build error is raised.
 - **`index.html`** — `preconnect` to the Native Banner host and `dns-prefetch` to both
   Adsterra hosts, so the handshake overlaps first paint.
-- **`Dockerfile`** — every `VITE_ADSTERRA_*` and `VITE_POPUNDER_NETWORK` var is an
-  `ARG` → `ENV`; the native key and both popunder/arbitration defaults are committed, so a
-  build with no Coolify args still serves Adsterra.
+- **`Dockerfile`** — every `VITE_ADSTERRA_*` var is an `ARG` → `ENV`; the native key and
+  the popunder/display-banner defaults are committed, so a build with no Coolify args
+  still serves Adsterra.
 - **`src/vite-env.d.ts`** — typed env surface (no `any`).
 
 ## 6. Verification

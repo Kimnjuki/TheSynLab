@@ -6,7 +6,6 @@ import { useElementInView } from "@/hooks/useElementInView";
 import { useAdSlotBudget } from "@/hooks/useAdSlotBudget";
 import { useAdUnitClaim } from "@/hooks/useAdUnitClaim";
 import { type AdNetwork } from "@/lib/adNetworks";
-import { getAdniumZoneForSlot, mountAdniumZone, type AdniumZone } from "@/lib/adnium";
 import {
   buildAdsterraBannerSrcDoc,
   buildAdsterraContainerId,
@@ -37,6 +36,9 @@ const ADSENSE_ENV_SLOTS: Record<string, string | undefined> = {
   forum_in_article_1: import.meta.env.VITE_ADSENSE_SLOT_FORUM_IN_ARTICLE_1,
 };
 
+/** `adNetworkTag` values this build understands; anything else is ignored as "no pin". */
+const KNOWN_AD_NETWORK_PINS = new Set(["adsense", "adsterra", "native"]);
+
 /** Subset of a Convex `adSlotConfigs` row that this component needs. */
 type AdSlotConfig = {
   slotName: string;
@@ -49,7 +51,7 @@ type AdSlotConfig = {
 /**
  * Reserved ad unit.
  *
- * Placement/efficiency rules enforced here (see docs/ADNIUM_INTEGRATION.md):
+ * Placement/efficiency rules enforced here (see docs/ADSTERRA_INTEGRATION.md):
  *  1. Consent first — nothing is requested before advertising cookies are accepted.
  *  2. Per-pageview budget — never more units than `VITE_AD_UNITS_PER_PAGE` per page.
  *  3. Content threshold — never next to thin content (`minContentLength`).
@@ -57,7 +59,7 @@ type AdSlotConfig = {
  *  5. Viewability — the impression is logged only after 50 % of the unit has been
  *     visible for 1 s (IAB), so reported impressions match what advertisers bought.
  *  6. Network routing — `adNetworkTag` pins a network; otherwise the candidate order is
- *     AdSense → Adsterra → Adnium, so an unfilled AdSense slot is backfilled instead of
+ *     AdSense → Adsterra, so an unfilled AdSense slot is backfilled instead of
  *     collapsing to an empty box. A candidate whose unit is unavailable (or already
  *     claimed by another slot on this pageview) is skipped, not replaced by a hole.
  *  7. Layout stability — the slot keeps its IAB height while loading (no CLS).
@@ -80,7 +82,6 @@ export function AdSlot({
   const { canLoadAds } = useAdConsent();
   const logged = useRef(false);
   const insRef = useRef<HTMLModElement | null>(null);
-  const adniumRef = useRef<HTMLDivElement | null>(null);
   const adsterraRef = useRef<HTMLDivElement | null>(null);
   const adsensePushDone = useRef(false);
   const [config, setConfig] = useState<AdSlotConfig[]>([]);
@@ -152,39 +153,35 @@ export function AdSlot({
   const hasEnoughContent =
     !minContentLength || document.body.innerText.split(/\s+/).length >= minContentLength;
 
-  const adniumZone: AdniumZone | null = useMemo(() => getAdniumZoneForSlot(slotName), [slotName]);
-
   // Rule 6: routing. `adNetworkTag` (Convex) can pin a network; the default candidate order
-  // is AdSense → Adsterra → Adnium (highest RPM first, deepest backfill last).
-  const pinned = (slotConfig?.adNetworkTag ?? "").trim().toLowerCase();
+  // is AdSense → Adsterra (highest RPM first, deepest backfill last).
+  // A value naming a network this build no longer knows (e.g. a stale "adnium" row) is
+  // treated as "no pin", so an out-of-date Convex row can never blank a slot.
+  const rawPin = (slotConfig?.adNetworkTag ?? "").trim().toLowerCase();
+  const pinned = KNOWN_AD_NETWORK_PINS.has(rawPin) ? rawPin : "";
   const owner = `${slotName}:${position}`;
 
-  // In-slot units own a named element (Adsterra `#container-<key>`, Adnium `#adn-<zoneId>`),
-  // so only the first slot to claim a unit may render it; the others fall through.
-  const wantsAdsterra =
-    pinned === "" || pinned === "adsense" || pinned === "adsterra" || pinned === "native";
-  const wantsAdnium = pinned === "" || pinned === "adsense" || pinned === "adnium";
+  // In-slot units own a named element (Adsterra `#container-<key>`; display banners use an
+  // isolated `srcdoc` iframe), so only the first slot to claim a unit may render it; the
+  // others fall through to the next candidate. Adsterra is the only backfill network left,
+  // so every slot is a candidate for it.
   // Banner + native are separate claimable units; only the preferred format claims.
   const adsterraClaimUnit = preferBanner ? bannerUnit?.key : nativeUnit?.key;
   const adsterraClaimNetwork = preferBanner ? "adsterra-banner" : "adsterra";
-  const adsterraClaimed = useAdUnitClaim(adsterraClaimNetwork, adsterraClaimUnit, wantsAdsterra, owner);
-  const adniumClaimed = useAdUnitClaim("adnium", adniumZone?.id, wantsAdnium, owner);
+  const adsterraClaimed = useAdUnitClaim(adsterraClaimNetwork, adsterraClaimUnit, true, owner);
   const adsterraUnit = preferBanner ? bannerUnit : nativeUnit;
 
   const network: AdNetwork = useMemo(() => {
+    // A stale `adNetworkTag` from a removed network falls through to the default order
+    // instead of pinning the slot to a network that no longer exists.
     const candidates: AdNetwork[] =
-      pinned === "adnium"
-        ? ["adnium"]
-        : pinned === "adsterra" || pinned === "native"
-          ? ["adsterra"]
-          : ["adsense", "adsterra", "adnium"];
+      pinned === "adsterra" || pinned === "native" ? ["adsterra"] : ["adsense", "adsterra"];
     for (const candidate of candidates) {
       if (candidate === "adsense" && adsenseReady) return "adsense";
       if (candidate === "adsterra" && adsterraUnit && adsterraClaimed) return "adsterra";
-      if (candidate === "adnium" && adniumZone && adniumClaimed) return "adnium";
     }
     return "none";
-  }, [pinned, adsenseReady, adsterraUnit, adsterraClaimed, adniumZone, adniumClaimed]);
+  }, [pinned, adsenseReady, adsterraUnit, adsterraClaimed]);
 
   const active = canLoadAds && hasEnoughContent && inBudget && network !== "none";
 
@@ -200,12 +197,6 @@ export function AdSlot({
       adsensePushDone.current = false;
     }
   }, [network, inView]);
-
-  // Adnium: mount the zone tag inside the slot container with the same lazy trigger.
-  useEffect(() => {
-    if (network !== "adnium" || !inView || !adniumRef.current || !adniumZone) return;
-    mountAdniumZone(adniumRef.current, adniumZone);
-  }, [network, inView, adniumZone]);
 
   // Adsterra native: load the loader once the `#container-<key>` element exists
   // and the slot is approaching the viewport. Banners need no loader — the srcdoc
@@ -227,7 +218,6 @@ export function AdSlot({
         iabFormat,
         position,
         network,
-        adniumZone: adniumZone?.id,
         adsterraKey: adsterraUnit?.key,
         adsterraFormat: network === "adsterra" ? (preferBanner ? "banner" : "native") : undefined,
         viewable: true,
@@ -243,7 +233,7 @@ export function AdSlot({
     iabFormat,
     position,
     network,
-    adniumZone?.id,
+    preferBanner,
     adsterraUnit?.key,
     logImpression,
   ]);
@@ -325,9 +315,9 @@ export function AdSlot({
           }}
         />
       ) : (
+        // Terminal fallback: a reserved box with no network binding, so an unexpected
+        // state renders an empty slot instead of collapsing the layout.
         <div
-          id={adniumZone ? `adn-${adniumZone.id}` : undefined}
-          ref={adniumRef}
           className="mx-auto"
           style={{
             minHeight: dims.height,

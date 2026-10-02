@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
  *
  * Both non-AdSense networks render into a *named element that the page must own*:
  *   • Adsterra Native Banner → `<div id="container-<key>">`
- *   • Adnium in-slot zone    → `<div id="adn-<zoneId>">`
+ *   • Adsterra Display Banner → an isolated `srcdoc` iframe (no shared global)
  *
  * Two slots sharing a key would emit duplicate element ids: the network fills the first
  * and double- or zero-counts the second, and the second slot renders an empty hole. Slots
@@ -40,7 +40,7 @@ export function resetAdUnitClaims(): void {
 }
 
 /**
- * @param network  e.g. `"adsterra"` or `"adnium"`
+ * @param network  e.g. `"adsterra"` or `"adsterra-banner"`
  * @param unitId   the network's unit identity (native key, zone id); null when unset
  * @param active   whether this network is a candidate for the slot at all. Inactive
  *                 networks never consume a claim, so they cannot block another slot.

@@ -80,7 +80,7 @@ export type AdsterraBannerUnit = {
 /** Display Banner slot preference: "banner" forces the iframe unit, "native" the div unit. */
 export type AdsterraSlotPreference = "auto" | "banner" | "native";
 
-/** Slot name → env suffix, mirroring the AdSense/Adnium slot maps. */
+/** Slot name → env suffix, mirroring the AdSense slot map. */
 const ADSTERRA_SLOT_SUFFIXES: Record<string, string> = {
   review_sidebar: "REVIEW_SIDEBAR",
   home_leaderboard: "HOME_LEADERBOARD",

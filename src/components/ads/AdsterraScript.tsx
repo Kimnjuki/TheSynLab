@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getLastConsent, onConsentUpdated } from "@/lib/consent";
-import { isPopunderAllowed, shouldRunAdScriptsOnPath } from "@/lib/adNetworks";
-import { getAdsterraPopunderSrc, isAdsterraPopunderEnabled } from "@/lib/adsterra";
+import { isAdsterraPopunderEnabled, getAdsterraPopunderSrc } from "@/lib/adsterra";
+import { shouldRunAdScriptsOnPath } from "@/lib/adNetworks";
 
 const SCRIPT_ID = "adsterra-popunder-script";
 
 /**
  * Injects Adsterra's popunder tag once the visitor has accepted advertising cookies.
  *
- * Same contract as `AdniumScript` / `AnalyticsScripts`: consent bus in, one idempotent
- * DOM injection out, `null` render.
+ * Same contract as `AnalyticsScripts`: consent bus in, one idempotent DOM injection
+ * out, `null` render.
  *
  *  • At most **one tag per document load** (guarded by the script id) — a popunder session
  *    is per page load, not per SPA route change.
  *  • Only injected while the visitor is on a content route, so landing on `/admin`,
  *    `/auth`, `/profile`, `/settings` or `/tasks` never arms it.
- *  • `VITE_POPUNDER_NETWORK` decides whether Adsterra or Adnium owns the popunder slot;
- *    running both would fire two pop-unders on the same click (see `src/lib/adNetworks.ts`).
+ *  • Adsterra is the only popunder network configured, so there is nothing to arbitrate;
+ *    `VITE_ADSTERRA_POPUNDER=0` is the kill switch (see `src/lib/adNetworks.ts`).
  */
 export function AdsterraScript() {
   const { pathname } = useLocation();
@@ -36,7 +36,6 @@ export function AdsterraScript() {
   useEffect(() => {
     if (!advertisingAccepted) return;
     if (!isAdsterraPopunderEnabled()) return;
-    if (!isPopunderAllowed("adsterra")) return;
     if (!shouldRunAdScriptsOnPath(pathname)) return;
     if (document.getElementById(SCRIPT_ID)) return;
 
