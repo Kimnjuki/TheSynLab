@@ -2,6 +2,7 @@ import { Component, ErrorInfo, ReactNode } from "react";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { STALE_CHUNK_RE } from "@/lib/lazyWithRetry";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -21,12 +22,10 @@ interface ErrorBoundaryState {
  * build this still-open page was loaded from. Vite rewrites every chunk name
  * per build and the previous files are deleted with the old container image,
  * so the old tab's import map can never resolve again — only a reload helps.
- * Browser spellings: Chrome "Failed to fetch dynamically imported module",
- * Firefox "error loading dynamically imported module", Safari
- * "Importing a module script failed", webpack legacy "Loading chunk … failed".
+ * matches is shared with src/lib/lazyWithRetry.ts so the UI classification
+ * stays identical to the pre-boundary reload decision.
  */
-const STALE_CHUNK_ERROR_RE =
-  /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed|Loading chunk [\w-]+ failed|ChunkLoadError/i;
+const STALE_CHUNK_ERROR_RE = STALE_CHUNK_RE;
 
 const CHUNK_RELOAD_KEY = "tsl-stale-chunk-reload-at";
 /** Cooldown between automatic reloads so a genuinely missing chunk can't loop. */
@@ -71,7 +70,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.props.onError?.(error, errorInfo);
     // Stale route chunk after a deploy → reload once for the fresh HTML/chunk
     // map. Skipped while offline (a reload couldn't fetch anything either).
-    if (this.state.isStaleChunk && navigator.onLine !== false) {
+    // NOTE: classify from `error` directly, NOT this.state — setState from
+    // getDerivedStateFromError is not guaranteed flushed before this runs.
+    if (isStaleChunkError(error) && navigator.onLine !== false) {
       tryReloadStaleChunk();
     }
   }

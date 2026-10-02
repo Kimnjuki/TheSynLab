@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
+import { lazyWithRetry } from "@/lib/lazyWithRetry";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
 import Hero from "@/components/home/Hero";
@@ -13,7 +14,7 @@ import NewsletterCapture from "@/components/home/NewsletterCapture";
 import FinalCTA from "@/components/home/FinalCTA";
 import Footer from "@/components/layout/Footer";
 
-const ComparisonSandbox = lazy(() =>
+const ComparisonSandbox = lazyWithRetry(() =>
   import("@/components/home/ComparisonSandbox").then((m) => ({
     default: m.default,
   }))
