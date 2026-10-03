@@ -24,8 +24,22 @@ function adsenseLoaderPresent(): boolean {
   return Boolean(document.querySelector(`script[src^="${ADSENSE_SRC_PREFIX}"]`));
 }
 
+/**
+ * Debug override: `?ads=1` forces `canLoadAds` true (consent gate bypass) so ad
+ * rendering can be verified without clicking through the cookie banner.
+ * Always false in production unless the query param is present.
+ */
+function adsDebugOverride(): boolean {
+  try {
+    return new URLSearchParams(window.location.search).get("ads") === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function AdSlotProvider({ children }: { children: React.ReactNode }) {
   const [consent, setConsent] = useState<ConsentFlags>(defaultConsent);
+  const [adsForced] = useState<boolean>(() => adsDebugOverride());
 
   useEffect(() => {
     const unsubscribe = onConsentUpdated((next) => setConsent(next));
@@ -51,9 +65,9 @@ export function AdSlotProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo(
     () => ({
       consent,
-      canLoadAds: consent.advertisingCookies,
+      canLoadAds: consent.advertisingCookies || adsForced,
     }),
-    [consent]
+    [consent, adsForced]
   );
 
   return <AdSlotContext.Provider value={value}>{children}</AdSlotContext.Provider>;

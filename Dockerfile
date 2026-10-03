@@ -55,10 +55,10 @@ ARG VITE_AMAZON_ASSOCIATES_TAG
 ARG VITE_AD_UNITS_PER_PAGE=4
 ARG VITE_ADS_DEBUG_PLACEHOLDERS
 # Adsterra (native banner + display banners + popunder).
-# ADSTERRA_BUILD_REV=2 — bump to force Coolify to rebuild (it skips the build step
+# ADSTERRA_BUILD_REV=3 — bump to force Coolify to rebuild (it skips the build step
 # when the image tag for a commit SHA already exists, which can leave a stale
 # bundle with old ad keys behind).
-ARG ADSTERRA_BUILD_REV=2
+ARG ADSTERRA_BUILD_REV=3
 ARG VITE_ADSTERRA_ENABLED=1
 ARG VITE_ADSTERRA_POPUNDER=1
 ARG VITE_ADSTERRA_NATIVE_KEY=6c361a6751ca12f38bc29d1189826773
