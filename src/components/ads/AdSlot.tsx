@@ -84,6 +84,9 @@ export function AdSlot({
   const insRef = useRef<HTMLModElement | null>(null);
   const adsterraRef = useRef<HTMLDivElement | null>(null);
   const adsensePushDone = useRef(false);
+  // Tick flipped by the container callback-ref below so the native-loader effect
+  // re-runs when `#container-<key>` actually mounts (fixes empty slot on SPA nav).
+  const [adsterraContainerTick, setAdsterraContainerTick] = useState(0);
   const [config, setConfig] = useState<AdSlotConfig[]>([]);
   const logImpression = useMutation(api.adSlots.logAdSlotImpression);
 
@@ -206,7 +209,8 @@ export function AdSlot({
     if (network !== "adsterra" || preferBanner || !inView || !adsterraRef.current) return;
     if (!nativeUnit) return;
     mountAdsterraNativeUnit(nativeUnit);
-  }, [network, preferBanner, inView, nativeUnit]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [network, preferBanner, inView, nativeUnit?.key, nativeUnit?.src, adsterraContainerTick]);
 
   // Rule 5: one impression per slot, logged only once it is measurably viewable.
   useEffect(() => {
@@ -304,10 +308,15 @@ export function AdSlot({
       ) : network === "adsterra" && nativeUnit ? (
         // Native Banner: Adsterra resolves its target by `#container-<key>` lookup, so
         // the element id is part of the contract, not styling. Exactly one slot may
-        // hold a given key (claim).
+        // hold a given key (claim). The callback ref bumps a tick so the loader effect
+        // above re-runs once the container is in the DOM (SPA navigations).
         <div
           id={buildAdsterraContainerId(nativeUnit.key)}
-          ref={adsterraRef}
+          ref={(node) => {
+            adsterraRef.current = node;
+            if (node) setAdsterraContainerTick((t) => t + 1);
+            return undefined;
+          }}
           className="mx-auto"
           style={{
             minHeight: dims.height,

@@ -49,17 +49,29 @@ export const ADSTERRA_CONTAINER_PREFIX = "container-";
 export const ADSTERRA_BANNER_HOST_FALLBACK = "https://www.highperformanceformat.com";
 
 /**
- * Display Banner unit defaults — the two ids supplied from the Adsterra dashboard.
+ * Display Banner unit defaults — DISABLED by default.
  *
- * Id → creative size is fixed by the dashboard, **not** by this mapping: verify each
- * key's dimensions in Adsterra → Websites → your site → the banner row, and correct
- * the width/height below (or via env) if they differ. A wrong size here clips the
- * creative (slot too small) or leaves a gap — it never breaks the tag.
+ * NOTE (2026-10-03 reinstall): the Adsterra account currently only has TWO live
+ * tags (see module header):
+ *   • Native Banner  (key 6c361a67… — renders into #container-<KEY>)
+ *   • Popunder       (pl31589899…/43/2b/19/….js — site-wide, via AdsterraScript)
+ *
+ * The numeric ids `31489400` / `31489635` are the Adsterra dashboard ids for the
+ * Native Banner + Popunder units above — they are NOT `atOptions` Display Banner
+ * keys. Wiring them as Display Banners made `review_sidebar` (300x250) and
+ * `hub_hero_below` (728x90) render sandboxed `highperformanceformat.com` iframes
+ * with keys that never fill → blank "Advertisement" boxes.
+ *
+ * So: no committed banner fallback. `getAdsterraBannerUnit()` returns a unit ONLY
+ * when an explicit env key is set (per-slot `VITE_ADSTERRA_BANNER_SLOT_*` or sized
+ * `VITE_ADSTERRA_BANNER_300X250_KEY` / `VITE_ADSTERRA_BANNER_728X90_KEY`). Until a
+ * real Display Banner snippet is pasted from Adsterra → Websites → Banner code,
+ * every slot falls through to the Native Banner div, which is the verified tag.
  */
-export const ADSTERRA_BANNER_MEDIUM_RECTANGLE_KEY_FALLBACK = "31489400";
+export const ADSTERRA_BANNER_MEDIUM_RECTANGLE_KEY_FALLBACK = "";
 export const ADSTERRA_BANNER_MEDIUM_RECTANGLE_WIDTH_FALLBACK = 300;
 export const ADSTERRA_BANNER_MEDIUM_RECTANGLE_HEIGHT_FALLBACK = 250;
-export const ADSTERRA_BANNER_LEADERBOARD_KEY_FALLBACK = "31489635";
+export const ADSTERRA_BANNER_LEADERBOARD_KEY_FALLBACK = "";
 export const ADSTERRA_BANNER_LEADERBOARD_WIDTH_FALLBACK = 728;
 export const ADSTERRA_BANNER_LEADERBOARD_HEIGHT_FALLBACK = 90;
 
@@ -299,18 +311,32 @@ export function buildAdsterraBannerSrcDoc(unit: AdsterraBannerUnit): string {
 }
 
 /**
- * Injects an Adsterra Native Banner loader once for the given unit.
+ * Injects an Adsterra Native Banner loader for the given unit.
  *
  * The tag is appended to `<body>` (not to the container element) because Adsterra
  * resolves its target by `#container-<KEY>` lookup, and appended only after the slot is
  * near the viewport — Adsterra scripts are heavy and must not compete with first paint.
+ *
+ * SPA note: the loader fills `#container-<KEY>` exactly once per script execution.
+ * In a React SPA the `<body>` script from a previous route survives navigation while
+ * the old container div is unmounted, so naively reusing the existing tag leaves the
+ * NEW page's container permanently empty ("some ads not visible"). Every mount whose
+ * container is still empty therefore removes a stale tag and re-injects a fresh one —
+ * the Adsterra CDN is cacheable, so the reload is a cheap 304 + a fill.
  */
 export function mountAdsterraNativeUnit(unit: AdsterraNativeUnit): HTMLScriptElement | null {
   if (!isAdsterraEnabled() || !isPlausibleKey(unit.key)) return null;
 
   const selector = `script[data-adsterra-native="${unit.key}"]`;
   const existing = document.querySelector<HTMLScriptElement>(selector);
-  if (existing) return existing;
+  const container = document.getElementById(buildAdsterraContainerId(unit.key));
+  const containerFilled = Boolean(container && container.childElementCount > 0);
+
+  // Container already filled by a previous execution for THIS mount — nothing to do.
+  if (existing && containerFilled) return existing;
+  // Stale tag from a previous route / unmounted container — drop it so the fresh
+  // tag below executes and fills the current container.
+  if (existing) existing.remove();
 
   const script = document.createElement("script");
   script.async = true;

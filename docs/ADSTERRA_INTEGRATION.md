@@ -29,17 +29,27 @@ Two consequences of that contract, both handled in code:
 2. **`data-cfasync="false"` is mandatory.** Without it Cloudflare Rocket Loader rewrites the
    tag and the unit never fills. It is set on every tag this module creates.
 
-### Display Banner (in-slot, sandboxed iframe)
+### Display Banner (in-slot, sandboxed iframe) — CURRENTLY DISABLED
 
-```html
-<script type="text/javascript">
-  atOptions = { 'key' : '31489400', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
-</script>
-<script type="text/javascript"
-        src="https://www.highperformanceformat.com/31489400/invoke.js"></script>
-```
-
-Live units (from the dashboard): `31489400` (300×250) and `31489635` (728×90).
+> 2026-10-03 reinstall: the account only has the Native Banner + Popunder tags
+> above. The numeric ids `31489400` / `31489635` are those units' dashboard ids —
+> **not** `atOptions` Display Banner keys. They were previously wired as banner
+> fallbacks, which made `review_sidebar` and `hub_hero_below` render
+> `highperformanceformat.com` iframes with keys that never fill (blank boxes). The
+> banner path is kept in code but has **no committed key**: it activates only when
+> an explicit env key is set (`VITE_ADSTERRA_BANNER_SLOT_*` or sized
+> `VITE_ADSTERRA_BANNER_300X250_KEY` / `VITE_ADSTERRA_BANNER_728X90_KEY`). To
+> re-enable, paste the real snippet from Adsterra → Websites → Banner code:
+>
+> ```html
+> <script type="text/javascript">
+>   atOptions = { 'key' : '<BANNER_KEY>', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+> </script>
+> <script type="text/javascript"
+>         src="https://www.highperformanceformat.com/<BANNER_KEY>/invoke.js"></script>
+> ```
+>
+> Until then every slot falls through to the Native Banner div above.
 
 Unlike the Native Banner there is **no container div** — the loader reads the global
 `atOptions`, which collides when two units share one React SPA pageview. `AdSlot`
@@ -131,8 +141,9 @@ additionally waits for advertising consent and stays off `/admin`, `/auth`, `/pr
 - **`index.html`** — `preconnect` to the Native Banner host and `dns-prefetch` to both
   Adsterra hosts, so the handshake overlaps first paint.
 - **`Dockerfile`** — every `VITE_ADSTERRA_*` var is an `ARG` → `ENV`; the native key and
-  the popunder/display-banner defaults are committed, so a build with no Coolify args
-  still serves Adsterra.
+  the popunder defaults are committed, so a build with no Coolify args
+  still serves Adsterra. Display Banner keys have NO committed default (see §1) —
+  set them in Coolify only when a real Banner snippet exists.
 - **`src/vite-env.d.ts`** — typed env surface (no `any`).
 
 ## 6. Verification
@@ -153,10 +164,10 @@ npm run build            # must stay green
   aggressive monetization. Watch the AdSense policy centre, the Core Web Vitals report
   (Adsterra creatives are heavy) and session-bounce rate; `VITE_ADSTERRA_ENABLED=0`
   reverts instantly, no code change.
-- **Display banner format not implemented.** Adsterra's classic display banner uses an
-  `atOptions` object instead of the container div. There is no banner unit in the account
-  yet, so only the two formats you supplied are wired; adding one is a small extension to
-  `src/lib/adsterra.ts`.
+- **Display banner disabled (2026-10-03).** The account has no Banner-code unit yet,
+  so the banner path carries no key and every slot renders the Native Banner div.
+  To add one, paste the `atOptions` snippet from Adsterra → Websites → Banner code
+  into `VITE_ADSTERRA_BANNER_*` (or per-slot `_PREFER=banner`).
 - **`public/ads.txt`** — add a line only if the Adsterra dashboard states one for this
   site; a wrong line can invalidate the file for every other network too.
 - **`TheSynLab-deploy/`** is a separate git submodule; changes are not mirrored there.
