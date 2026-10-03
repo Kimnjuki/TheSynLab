@@ -13,6 +13,7 @@ import TrustDisclosure from "@/components/home/TrustDisclosure";
 import NewsletterCapture from "@/components/home/NewsletterCapture";
 import FinalCTA from "@/components/home/FinalCTA";
 import Footer from "@/components/layout/Footer";
+import { AdSlot } from "@/components/ads/AdSlot";
 
 const ComparisonSandbox = lazyWithRetry(() =>
   import("@/components/home/ComparisonSandbox").then((m) => ({
@@ -105,6 +106,12 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
+        <AdSlot
+          slotName="home_leaderboard"
+          pageTemplate="home_page"
+          iabFormat="728x90"
+          position="hero_below"
+        />
         <DecisionToolsStrip />
         <CategoryGrid />
         <FeaturedComparisons />

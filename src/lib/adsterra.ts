@@ -75,6 +75,16 @@ export const ADSTERRA_BANNER_LEADERBOARD_KEY_FALLBACK = "";
 export const ADSTERRA_BANNER_LEADERBOARD_WIDTH_FALLBACK = 728;
 export const ADSTERRA_BANNER_LEADERBOARD_HEIGHT_FALLBACK = 90;
 
+/**
+ * Blocklist for the 2026-10-03 misconfiguration (see above): `31489400` /
+ * `31489635` are Native/Popunder dashboard ids, never Display Banner keys. They are
+ * rejected even when supplied via env — e.g. a stale Coolify build arg still
+ * injecting the old values after the Dockerfile defaults were dropped — so the
+ * affected slot falls through to the Native Banner div instead of rendering a
+ * blank banner iframe.
+ */
+const LEGACY_NON_BANNER_KEYS = new Set(["31489400", "31489635"]);
+
 export type AdsterraNativeUnit = {
   key: string;
   src: string;
@@ -190,13 +200,16 @@ export function getAdsterraNativeUnit(slotName: string): AdsterraNativeUnit | nu
  * banner unit for it.
  *
  * Two ways to configure, per slot:
- *   1. Explicit key — `VITE_ADSTERRA_BANNER_SLOT_<SLOTNAME>=31489400` (+ optional
+ *   1. Explicit key — `VITE_ADSTERRA_BANNER_SLOT_<SLOTNAME>=<BANNER_KEY>` (+ optional
  *      `_WIDTH` / `_HEIGHT` / `_SRC`). Verbatim `_SRC` wins; otherwise the loader is
- *      `<default-banner-host>/<key>/invoke.js`.
+ *      `<default-banner-host>/<key>/invoke.js`. The legacy ids `31489400` /
+ *      `31489635` are rejected (Native/Popunder dashboard ids, never banner keys).
  *   2. Size default — when no explicit key is set, a slot whose IAB format matches a
  *      known banner size (`300x250` → medium rectangle, `728x90` → leaderboard)
  *      reuses that size's unit (`VITE_ADSTERRA_BANNER_300X250_KEY` /
- *      `VITE_ADSTERRA_BANNER_728X90_KEY`, defaulting to the two committed ids).
+ *      `VITE_ADSTERRA_BANNER_728X90_KEY`). There is no committed key — until a real
+ *      Banner-code key is configured this path returns null and the slot renders
+ *      the Native Banner div instead.
  *
  * A per-slot `_PREFER=banner|native` override pins the format; without it the slot
  * resolves both candidates and `AdSlot` prefers the banner whose size matches the
@@ -211,7 +224,7 @@ export function getAdsterraBannerUnit(
   const suffix = ADSTERRA_SLOT_SUFFIXES[slotName];
   const explicitKey = suffix ? readAdEnv(`VITE_ADSTERRA_BANNER_SLOT_${suffix}`) : undefined;
   if (explicitKey) {
-    if (!isPlausibleBannerKey(explicitKey)) return null;
+    if (!isPlausibleBannerKey(explicitKey) || LEGACY_NON_BANNER_KEYS.has(explicitKey)) return null;
     const width = suffix
       ? readPositiveInt(`VITE_ADSTERRA_BANNER_SLOT_${suffix}_WIDTH`, 0)
       : 0;
@@ -242,7 +255,7 @@ export function getAdsterraBannerUnit(
   if (size === "300x250") {
     const key =
       readAdEnv(`VITE_ADSTERRA_BANNER_${compact}_KEY`) ?? ADSTERRA_BANNER_MEDIUM_RECTANGLE_KEY_FALLBACK;
-    if (!isPlausibleBannerKey(key)) return null;
+    if (!isPlausibleBannerKey(key) || LEGACY_NON_BANNER_KEYS.has(key)) return null;
     const host = bannerHostFromSrc(
       readAdEnv(`VITE_ADSTERRA_BANNER_${compact}_SRC`) ??
         readAdEnv("VITE_ADSTERRA_BANNER_SRC") ??
@@ -265,7 +278,7 @@ export function getAdsterraBannerUnit(
 
   const key =
     readAdEnv(`VITE_ADSTERRA_BANNER_${compact}_KEY`) ?? ADSTERRA_BANNER_LEADERBOARD_KEY_FALLBACK;
-  if (!isPlausibleBannerKey(key)) return null;
+  if (!isPlausibleBannerKey(key) || LEGACY_NON_BANNER_KEYS.has(key)) return null;
   const host = bannerHostFromSrc(
     readAdEnv(`VITE_ADSTERRA_BANNER_${compact}_SRC`) ??
       readAdEnv("VITE_ADSTERRA_BANNER_SRC") ??

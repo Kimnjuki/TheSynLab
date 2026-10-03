@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useConvex, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useAdConsent } from "./AdSlotProvider";
@@ -84,9 +84,15 @@ export function AdSlot({
   const insRef = useRef<HTMLModElement | null>(null);
   const adsterraRef = useRef<HTMLDivElement | null>(null);
   const adsensePushDone = useRef(false);
-  // Tick flipped by the container callback-ref below so the native-loader effect
-  // re-runs when `#container-<key>` actually mounts (fixes empty slot on SPA nav).
+  // Stable callback ref for `#container-<key>`: bumps a tick when the container
+  // mounts so the native-loader effect re-runs (fixes empty slot on SPA nav).
+  // A STABLE ref is required — an inline arrow ref would detach/attach on every
+  // render, bump the tick in a loop, and retrigger the loader endlessly.
   const [adsterraContainerTick, setAdsterraContainerTick] = useState(0);
+  const setAdsterraContainerRef = useCallback((node: HTMLDivElement | null) => {
+    adsterraRef.current = node;
+    if (node) setAdsterraContainerTick((t) => t + 1);
+  }, []);
   const [config, setConfig] = useState<AdSlotConfig[]>([]);
   const logImpression = useMutation(api.adSlots.logAdSlotImpression);
 
@@ -308,15 +314,10 @@ export function AdSlot({
       ) : network === "adsterra" && nativeUnit ? (
         // Native Banner: Adsterra resolves its target by `#container-<key>` lookup, so
         // the element id is part of the contract, not styling. Exactly one slot may
-        // hold a given key (claim). The callback ref bumps a tick so the loader effect
-        // above re-runs once the container is in the DOM (SPA navigations).
+        // hold a given key (claim).
         <div
           id={buildAdsterraContainerId(nativeUnit.key)}
-          ref={(node) => {
-            adsterraRef.current = node;
-            if (node) setAdsterraContainerTick((t) => t + 1);
-            return undefined;
-          }}
+          ref={setAdsterraContainerRef}
           className="mx-auto"
           style={{
             minHeight: dims.height,
