@@ -18,7 +18,7 @@ import {
 } from "@/data/saasTools";
 
 const SCORE_COLOR = (s: number) =>
-  s >= 8.4 ? "text-green-600" : s >= 7.6 ? "text-amber-600" : "text-red-500";
+  s >= 8.4 ? "text-green-600" : s >= 7.0 ? "text-amber-600" : "text-red-500";
 
 export default function ToolAlternativesPage() {
   const { slug = "" } = useParams<{ slug: string }>();

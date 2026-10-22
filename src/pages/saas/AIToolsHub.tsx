@@ -38,7 +38,7 @@ const CATEGORY_COLORS: Record<ToolCategory, string> = {
 };
 
 const SCORE_COLOR = (score: number) =>
-  score >= 8.4 ? "text-green-600" : score >= 7.6 ? "text-amber-600" : "text-red-500";
+  score >= 8.4 ? "text-green-600" : score >= 7.0 ? "text-amber-600" : "text-red-500";
 
 export default function AIToolsHub() {
   const featured = saasTools.filter((t) => t.kd <= 65 && t.volume >= 4400).slice(0, 8);

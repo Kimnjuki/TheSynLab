@@ -14,7 +14,23 @@ import {
 } from "@/data/saasTools";
 
 const SCORE_COLOR = (score: number) =>
-  score >= 8.4 ? "text-green-600" : score >= 7.6 ? "text-amber-600" : "text-red-500";
+  score >= 8.4 ? "text-green-600" : score >= 7.0 ? "text-amber-600" : "text-red-500";
+
+// SEO-2.4: CTR overrides for category pages that rank well but earn few clicks.
+// dev-infra sits at GSC avg position ~9.1 with 0 clicks — the generic
+// "{category} — N Tools Reviewed" title under-sells intent. Keyed by category
+// slug; falls back to the generated title/description when absent.
+const CATEGORY_META_OVERRIDES: Record<
+  string,
+  { title?: string; description?: string }
+> = {
+  "dev-infra": {
+    title: "Best Dev & Infra Tools 2026: Tested & Trust-Scored",
+    description:
+      "We tested backend, testing, auth, and API tools on reliability, DX, and integration depth. See which developer tools are worth your stack — and which to skip.",
+  },
+};
+
 
 export default function AIToolsCategoryPage() {
   const { category } = useParams<{ category: string }>();
@@ -37,8 +53,13 @@ export default function AIToolsCategoryPage() {
   }
 
   const canonical = `https://thesynlab.com/hub/ai-tools/${category}`;
-  const title = `${cat.name} — ${tools.length} Tools Reviewed & Compared | TheSynLab`;
-  const description = `Independent reviews of ${tools.length} ${cat.name.toLowerCase()} tools. Trust Scores, pricing breakdowns, and curated alternatives — updated ${new Date().getFullYear()}.`;
+  const override = CATEGORY_META_OVERRIDES[category as string];
+  const title =
+    override?.title ??
+    `${cat.name} — ${tools.length} Tools Reviewed & Compared | TheSynLab`;
+  const description =
+    override?.description ??
+    `Independent reviews of ${tools.length} ${cat.name.toLowerCase()} tools. Trust Scores, pricing breakdowns, and curated alternatives — updated ${new Date().getFullYear()}.`;
 
   const topTools = [...tools].sort((a, b) => b.trustScore - a.trustScore).slice(0, 3);
 

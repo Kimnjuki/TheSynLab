@@ -48,8 +48,9 @@ const HUB_SLUGS = [
 ];
 
 const trustScoreColor = (score: number) => {
-  if (score >= 85) return "text-green-500";
-  if (score >= 70) return "text-amber-500";
+  // Score is on /10 scale (consistent with rest of codebase)
+  if (score >= 8.5) return "text-green-500";
+  if (score >= 7.0) return "text-amber-500";
   return "text-red-500";
 };
 
