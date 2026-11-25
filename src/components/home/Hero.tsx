@@ -1,19 +1,38 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Shield, CheckCircle2, Clock, Sparkles } from "lucide-react";
+import { STATIC_PRODUCTS } from "@/data/staticProductData";
+
+/** Featured cards must use the same catalog snapshot as /products/:slug — never hard-coded sample scores. */
+const FEATURED_SLUGS = ["notion", "airtable", "clickup"] as const;
+
+const featuredTools = FEATURED_SLUGS.map((slug) => {
+  const product = STATIC_PRODUCTS.find((p) => p.productSlug === slug);
+  if (!product) return null;
+  return {
+    name: product.productName,
+    slug: product.productSlug,
+    trustScore: product.trustScore,
+    href: `/products/${product.productSlug}`,
+  };
+}).filter(Boolean) as Array<{
+  name: string;
+  slug: string;
+  trustScore: number;
+  href: string;
+}>;
 
 const proofPoints = [
-  { label: "300+ tools reviewed", icon: CheckCircle2 },
-  { label: "14+ days hands-on testing", icon: Clock },
+  { label: `${STATIC_PRODUCTS.length} products in catalog`, icon: CheckCircle2 },
+  { label: "14+ day testing protocol", icon: Clock },
   { label: "0 pay-for-placement scores", icon: Shield },
 ];
 
-const sampleTools = [
-  { name: "Notion", score: 9.2 },
-  { name: "Airtable", score: 8.8 },
-  { name: "ClickUp", score: 8.5 },
-];
+const scoreBand = (score: number) => {
+  if (score >= 8.4) return { label: "Strong", className: "border-tsl-trust-high text-tsl-trust-high" };
+  if (score >= 7.0) return { label: "Mixed", className: "border-tsl-trust-mid text-tsl-trust-mid" };
+  return { label: "Caution", className: "border-tsl-trust-low text-tsl-trust-low" };
+};
 
 const Hero = () => {
   return (
@@ -28,7 +47,7 @@ const Hero = () => {
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-tsl-border bg-tsl-surface text-tsl-text text-sm font-medium mb-6">
               <Sparkles className="h-4 w-4 text-tsl-accent" />
-              Independent · Lab-Tested · No Vendor Influence
+              Independent · Evidence-led · No pay-for-placement
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-tsl-text mb-6">
@@ -36,7 +55,7 @@ const Hero = () => {
             </h1>
 
             <p className="text-lg md:text-xl text-tsl-text-secondary mb-8 max-w-xl">
-              We test every tool for 14+ days and score it on Trust, Integration, and 3-Year TCO — so you choose faster and avoid lock-in.
+              We score tools on Trust, Integration, and ownership cost with a published methodology — so you choose faster and avoid lock-in.
             </p>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-10">
@@ -72,27 +91,39 @@ const Hero = () => {
 
           <div className="hidden lg:block">
             <div className="grid gap-4">
-              {sampleTools.map((tool, idx) => (
-                <div
-                  key={tool.name}
-                  className="flex items-center justify-between p-5 rounded-2xl border border-tsl-border bg-tsl-surface shadow-lg"
-                  style={{ animationDelay: `${idx * 120}ms` }}
-                >
-                  <div>
-                    <p className="text-sm text-tsl-text-secondary mb-1">Sample Tool</p>
-                    <p className="text-xl font-bold text-tsl-text">{tool.name}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className="text-xs text-tsl-text-secondary">Trust Score</p>
-                      <p className="text-2xl font-bold text-tsl-trust-high">{tool.score.toFixed(1)}/10</p>
+              {featuredTools.map((tool, idx) => {
+                const band = scoreBand(tool.trustScore);
+                const scoreColor =
+                  tool.trustScore >= 8.4
+                    ? "text-tsl-trust-high"
+                    : tool.trustScore >= 7.0
+                      ? "text-tsl-trust-mid"
+                      : "text-tsl-trust-low";
+                return (
+                  <Link
+                    key={tool.slug}
+                    to={tool.href}
+                    className="flex items-center justify-between p-5 rounded-2xl border border-tsl-border bg-tsl-surface shadow-lg hover:border-tsl-accent/40 transition-colors"
+                    style={{ animationDelay: `${idx * 120}ms` }}
+                  >
+                    <div>
+                      <p className="text-sm text-tsl-text-secondary mb-1">Catalog score</p>
+                      <p className="text-xl font-bold text-tsl-text">{tool.name}</p>
                     </div>
-                    <div className="h-12 w-12 rounded-full border-4 border-tsl-trust-high flex items-center justify-center">
-                      <span className="text-xs font-bold text-tsl-trust-high">A+</span>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-xs text-tsl-text-secondary">Trust Score</p>
+                        <p className={`text-2xl font-bold ${scoreColor}`}>{tool.trustScore.toFixed(1)}/10</p>
+                      </div>
+                      <div className={`h-12 w-12 rounded-full border-4 flex items-center justify-center ${band.className}`}>
+                        <span className={`text-[10px] font-bold leading-tight text-center px-1 ${band.className.split(" ")[1]}`}>
+                          {band.label}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { trackPageView } from "@/lib/analytics";
 import { HelmetProvider } from "react-helmet-async";
 import { ConvexClientProvider } from "./integrations/convex/ConvexClientProvider";
@@ -230,6 +230,8 @@ const App = () => (
                   <Route path="/vendor-risk-checker" element={<VendorRiskChecker />} />
                   <Route path="/workflow-blueprint" element={<WorkflowBlueprint />} />
                   <Route path="/stack-quiz" element={<StackQuiz />} />
+                  <Route path="/tools/quiz" element={<Navigate to="/stack-quiz" replace />} />
+                  <Route path="/tools/stack-quiz" element={<Navigate to="/stack-quiz" replace />} />
                   <Route path="/search" element={<Search />} />
                   <Route path="/scores/trust-score-index" element={<TrustScoreIndex />} />
                   <Route path="/scores/integration-score-index" element={<IntegrationScoreIndex />} />

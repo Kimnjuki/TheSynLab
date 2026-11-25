@@ -74,7 +74,7 @@ const About = () => {
     {
       icon: BookOpen,
       title: "Continuous Updates",
-      description: "Products are re-tested quarterly. Scores update as features, pricing, and security postures change."
+      description: "Scores are re-verified on a published cadence (typically 6–12 months, sooner after major product, pricing, or security changes). Each review shows when it was last checked."
     },
   ];
 
@@ -145,7 +145,7 @@ const About = () => {
                 { step: "2", title: "Hands-On Testing", desc: "Each product is used in production-like environments for a minimum of 40 hours. We test setup, daily use, integration, reliability, and support quality." },
                 { step: "3", title: "Score Calculation", desc: "Our Trust Score evaluates 25+ factors across privacy, security, transparency, and vendor track record. The Integration Score measures API quality, ecosystem compatibility, and automation capabilities." },
                 { step: "4", title: "Peer Review & Publishing", desc: "Scores are reviewed by at least two team members. We publish the full methodology alongside each review so you can verify our conclusions." },
-                { step: "5", title: "Continuous Updates", desc: "Products are re-tested quarterly or when major updates ship. Scores are date-stamped — you'll always know how current our assessment is." },
+                { step: "5", title: "Continuous Updates", desc: "Scores are re-verified on a 6–12 month cadence, or sooner when major updates, pricing changes, or security incidents ship. Reviews are date-stamped so you can see how current the assessment is." },
               ].map((s) => (
                 <div key={s.step} className="flex gap-4 items-start">
                   <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold shrink-0">

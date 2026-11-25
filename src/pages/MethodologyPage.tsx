@@ -22,7 +22,7 @@ const SCORES = [
   {
     icon: Shield,
     name: "Trust Score",
-    scale: "0–100 (shown as x.x/5 on tool reviews)",
+    scale: "0–10 on product pages (canonical public scale)",
     question: "Can I depend on this vendor with my data and my business?",
     measures: [
       "Data privacy practices (30%) — what is collected, retention, resale, training use",
@@ -35,23 +35,23 @@ const SCORES = [
   {
     icon: GitMerge,
     name: "Integration Score",
-    scale: "0–100 (shown as x.x/5 on tool reviews)",
+    scale: "0–10 on product pages (canonical public scale)",
     question: "How easily does this tool connect to the rest of my stack?",
     measures: [
       "API availability & quality (30%) — public REST/SDK, rate limits, docs",
       "Cross-platform support (30%) — web, desktop, mobile, ecosystem parity",
-      "Smart-home / protocol support (20%) — Matter, Zigbee, HomeKit where relevant",
+      "Smart-home / protocol support (20% only when the category rubric applies Matter/Zigbee/HomeKit; not scored for SaaS)",
       "Automation-tool support (10%) — Zapier, Make, n8n, webhooks",
       "Developer community (10%) — open-source adapters, community recipes",
     ],
   },
   {
     icon: DollarSign,
-    name: "TCO Score",
-    scale: "3-year cost model (USD)",
+    name: "Ownership cost",
+    scale: "Typed USD quotes + optional 36-month TCO scenarios",
     question: "What does this really cost over three years?",
     measures: [
-      "Subscription cost × seats",
+      "Annual or monthly subscription quote (labeled separately from TCO)",
       "Usage overages (credits, exports, API calls)",
       "Required add-ons and plan upgrades",
       "Implementation and migration cost",
@@ -84,10 +84,10 @@ const SCORES = [
 ];
 
 const SCORE_BANDS = [
-  { range: "4.3 – 5.0", label: "Highly Recommended", color: "text-green-700", meaning: "Dependable on this dimension with no significant caveats found in testing." },
-  { range: "4.0 – 4.2", label: "Recommended", color: "text-emerald-700", meaning: "Strong performance with minor caveats that most users can work around." },
-  { range: "3.7 – 3.9", label: "Good with Caveats", color: "text-amber-700", meaning: "Genuinely useful, but one or more limitations matter for specific users — read the Cons section." },
-  { range: "Below 3.7", label: "Use with Caution", color: "text-red-600", meaning: "Significant weaknesses, unverified claims, or elevated vendor risk. Choose an alternative unless the trade-off suits you." },
+  { range: "8.6 – 10.0", label: "Highly Recommended", color: "text-green-700", meaning: "Dependable on this dimension with no significant caveats found in testing." },
+  { range: "8.0 – 8.4", label: "Recommended", color: "text-emerald-700", meaning: "Strong performance with minor caveats that most users can work around." },
+  { range: "7.4 – 7.8", label: "Good with Caveats", color: "text-amber-700", meaning: "Genuinely useful, but one or more limitations matter for specific users — read the Cons section." },
+  { range: "Below 7.4", label: "Use with Caution", color: "text-red-600", meaning: "Significant weaknesses, unverified claims, or elevated vendor risk. Choose an alternative unless the trade-off suits you." },
 ];
 
 const INTERPRETATION_PATTERNS = [

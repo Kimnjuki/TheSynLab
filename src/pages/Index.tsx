@@ -49,46 +49,8 @@ const Index = () => {
     ],
   };
 
-  const comparisonTableSchema = {
-    "@context": "https://schema.org",
-    "@type": "Table",
-    name: "Sample Tool Trust Score Comparison",
-    description: "Comparison of Trust Scores for sample tools reviewed by TheSynLab.",
-    table: [
-      {
-        "@type": "TableRow",
-        row: [
-          { "@type": "TableCell", text: "Tool" },
-          { "@type": "TableCell", text: "Trust Score (/10)" },
-          { "@type": "TableCell", text: "Rating" },
-        ],
-      },
-      {
-        "@type": "TableRow",
-        row: [
-          { "@type": "TableCell", text: "Notion" },
-          { "@type": "TableCell", text: "9.2/10" },
-          { "@type": "TableCell", text: "A+ Highly Recommended" },
-        ],
-      },
-      {
-        "@type": "TableRow",
-        row: [
-          { "@type": "TableCell", text: "Airtable" },
-          { "@type": "TableCell", text: "8.8/10" },
-          { "@type": "TableCell", text: "A+ Highly Recommended" },
-        ],
-      },
-      {
-        "@type": "TableRow",
-        row: [
-          { "@type": "TableCell", text: "ClickUp" },
-          { "@type": "TableCell", text: "8.5/10" },
-          { "@type": "TableCell", text: "A+ Highly Recommended" },
-        ],
-      },
-    ],
-  };
+  // Intentionally no homepage score Table schema: hard-coded sample scores
+  // previously disagreed with the product catalog (see docs/T01_T02_DISCOVERY_REPORT.md).
 
   return (
     <div className="min-h-screen">
@@ -101,7 +63,6 @@ const Index = () => {
       />
       <JsonLd type="WebSite" custom={websiteSchema} />
       <JsonLd type="Organization" custom={orgSchema} />
-      <JsonLd schema={[comparisonTableSchema]} />
 
       <Header />
       <main>

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { saasTools } from "@/data/saasTools";
 import { STATIC_PRODUCTS } from "@/data/staticProductData";
 import { Shield, ArrowRight, ChevronDown } from "lucide-react";
@@ -11,25 +10,42 @@ type CatalogItem = {
   name: string;
   trustScore: number;
   integrationScore: number;
-  tco: string;
+  /** Honest cost label — never invent 36-month TCO from a seat quote. */
+  costLabel: string;
+  costNote: string;
   href: string;
+};
+
+const formatAnnualSeatQuote = (amount: number | undefined) => {
+  if (amount == null || Number.isNaN(amount)) {
+    return { costLabel: "Not modeled", costNote: "No verified annual seat quote in catalog" };
+  }
+  return {
+    costLabel: `$${amount}/yr per seat`,
+    costNote: "Annual subscription quote (not 36-month TCO)",
+  };
 };
 
 const allTools: CatalogItem[] = [
   ...saasTools.slice(0, 20).map((t) => ({
     name: t.name,
     trustScore: t.trustScore * 2, // Convert /5 scale to /10 to match STATIC_PRODUCTS
-    integrationScore: t.integrationScore * 2, // Convert /5 scale to /10
-    tco: `$${Math.round(50 + Math.random() * 200)}/mo`,
+    integrationScore: t.integrationScore * 2,
+    costLabel: "Not modeled",
+    costNote: "Use the TCO calculator for a full scenario",
     href: `/tool/${t.slug}`,
   })),
-  ...STATIC_PRODUCTS.slice(0, 15).map((p) => ({
-    name: p.productName,
-    trustScore: p.trustScore,
-    integrationScore: p.integrationScore,
-    tco: `$${p.estimatedTco || "—"}`,
-    href: `/products/${p.productSlug}`,
-  })),
+  ...STATIC_PRODUCTS.slice(0, 15).map((p) => {
+    const cost = formatAnnualSeatQuote(p.estimatedTco);
+    return {
+      name: p.productName,
+      trustScore: p.trustScore,
+      integrationScore: p.integrationScore,
+      costLabel: cost.costLabel,
+      costNote: cost.costNote,
+      href: `/products/${p.productSlug}`,
+    };
+  }),
 ];
 
 const uniqueTools = Array.from(new Map(allTools.map((t) => [t.name.toLowerCase(), t])).values()).slice(0, 40);
@@ -55,7 +71,7 @@ const ComparisonSandbox = () => {
             Try the Comparison Sandbox
           </h2>
           <p className="text-tsl-text-secondary max-w-xl mx-auto">
-            Pick any two tools and see how they stack up on Trust, Integration, and TCO.
+            Pick any two tools and see catalog Trust Scores, Integration Scores, and verified annual seat quotes.
           </p>
         </div>
 
@@ -120,9 +136,20 @@ const ComparisonSandbox = () => {
                       <td className={`py-3 font-semibold ${scoreColor(toolB.integrationScore)}`}>{toolB.integrationScore.toFixed(1)}/10</td>
                     </tr>
                     <tr>
-                      <td className="py-3 text-tsl-text-secondary">3-Year TCO</td>
-                      <td className="py-3 font-semibold text-tsl-text">{toolA.tco}</td>
-                      <td className="py-3 font-semibold text-tsl-text">{toolB.tco}</td>
+                      <td className="py-3 text-tsl-text-secondary">
+                        Annual seat quote
+                        <span className="block text-xs font-normal text-tsl-text-secondary mt-1">
+                          Not a 36-month TCO — open the calculator for full scenarios
+                        </span>
+                      </td>
+                      <td className="py-3 font-semibold text-tsl-text">
+                        {toolA.costLabel}
+                        <span className="block text-xs font-normal text-tsl-text-secondary mt-1">{toolA.costNote}</span>
+                      </td>
+                      <td className="py-3 font-semibold text-tsl-text">
+                        {toolB.costLabel}
+                        <span className="block text-xs font-normal text-tsl-text-secondary mt-1">{toolB.costNote}</span>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -131,14 +158,14 @@ const ComparisonSandbox = () => {
 
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
               <Button asChild className="bg-tsl-cta-primary-bg text-tsl-cta-primary-text hover:bg-tsl-cta-primary-bg/90 font-semibold">
-                <Link to="/scoring-hub">
+                <Link to="/compare">
                   <Shield className="h-4 w-4 mr-2" />
-                  View full comparison
+                  Open full comparison
                 </Link>
               </Button>
               <Button variant="outline" asChild className="border-tsl-cta-secondary-border text-tsl-text hover:bg-tsl-surface">
-                <Link to="/compare">
-                  Compare more tools <ArrowRight className="h-4 w-4 ml-2" />
+                <Link to="/tco-calculator">
+                  Model 36-month TCO <ArrowRight className="h-4 w-4 ml-2" />
                 </Link>
               </Button>
             </div>

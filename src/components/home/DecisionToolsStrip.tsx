@@ -19,13 +19,13 @@ const tools = [
     title: "Stack Builder",
     desc: "Assemble your ideal stack with AI notes",
     icon: Layers,
-    href: "/decision-studio#stack-builder",
+    href: "/stack-builder",
   },
   {
     title: "Stack Quiz",
     desc: "Not sure where to start? 2-minute quiz",
     icon: Sparkles,
-    href: "/tools/quiz",
+    href: "/stack-quiz",
   },
 ];
 
