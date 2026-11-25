@@ -12,6 +12,7 @@ import {
   TOOL_META_OVERRIDES as SHARED_TOOL_META_OVERRIDES,
   CATEGORY_META_OVERRIDES,
 } from "./src/data/seoMetaOverrides";
+import { prefersToolCanonical } from "./src/data/catalogCanonical";
 
 const SITE_URL = "https://thesynlab.com";
 // SEO-1.4: ONE homepage title. This must stay byte-identical to:
@@ -124,11 +125,16 @@ const LEGACY_URL_REDIRECTS: Record<string, string> = {
 };
 // Canonical URL generation: normalize every programmatic slug to hyphens at
 // generation time so an underscored URL is structurally impossible to publish.
-const productRoutes = STATIC_PRODUCTS.map((p) => `/products/${normalizeUrlSlug(p.productSlug)}`);
-const productAltRoutes = STATIC_PRODUCTS
+// Dual-catalog: omit /products/:slug (and its alt/vs children) when /tool/:slug
+// is the preferred indexable URL — prevents Google "chose different canonical".
+const indexableProducts = STATIC_PRODUCTS.filter(
+  (p) => !prefersToolCanonical(normalizeUrlSlug(p.productSlug))
+);
+const productRoutes = indexableProducts.map((p) => `/products/${normalizeUrlSlug(p.productSlug)}`);
+const productAltRoutes = indexableProducts
   .filter((p) => p.alternativeSlugs.length > 0)
   .map((p) => `/products/${normalizeUrlSlug(p.productSlug)}/alternatives`);
-const productCompareRoutes = STATIC_PRODUCTS
+const productCompareRoutes = indexableProducts
   .flatMap((p) =>
     p.alternativeSlugs.slice(0, 3).map((a) => `/products/${normalizeUrlSlug(p.productSlug)}-vs-${normalizeUrlSlug(a)}`)
   );
@@ -726,6 +732,8 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
 
   // Product detail pages (/products/:slug) from static product data — SoftwareApplication + BreadcrumbList + FAQPage
   for (const product of STATIC_PRODUCTS) {
+    // Skip dual-catalog overlaps — /tool/:slug is the indexable canonical.
+    if (prefersToolCanonical(normalizeUrlSlug(product.productSlug))) continue;
     const productRoute = `/products/${product.productSlug}`;
     const year = new Date().getFullYear();
     // Map trust score (0-10) to 5-star rating for aggregateRating
@@ -2266,17 +2274,29 @@ const generateStaticHtmlPages = async (distDir: string) => {
       html = html.replace("</head>", `    ${jsonLdScripts}\n  </head>`);
     }
 
-    // Inject noindex for thin/dynamic pages
-    if (page.noindex) {
+    // Explicit robots on every prerendered page (indexable vs noindex).
+    // Missing robots meta previously left crawlers guessing on shell pages.
+    const robotsMeta = page.noindex ? "noindex,follow" : "index,follow";
+    if (/<meta\s+name=["']robots["'][^>]*>/i.test(html)) {
+      html = html.replace(
+        /<meta\s+name=["']robots["'][^>]*>/i,
+        `<meta name="robots" content="${robotsMeta}">`
+      );
+    } else {
       html = html.replace(
         "</head>",
-        `    <meta name="robots" content="noindex,follow">\n  </head>`
+        `    <meta name="robots" content="${robotsMeta}">\n  </head>`
       );
     }
 
-    // Inject pre-rendered body so crawlers see real content
+    // Inject pre-rendered body so crawlers see real content.
+    // Match through the closing </div> that belongs to #root (not nested children)
+    // by consuming until the script tag that follows in index.html.
     const staticBody = buildStaticBodyHtml(page.route);
-    html = html.replace(/<div id="root">[\s\S]*?<\/div>/, `<div id="root">\n${staticBody}\n</div>`);
+    html = html.replace(
+      /<div id="root">[\s\S]*?<\/div>\s*(?=<script)/i,
+      `<div id="root">\n${staticBody}\n    </div>\n    `
+    );
 
     const outputPath =
       page.route === "/"

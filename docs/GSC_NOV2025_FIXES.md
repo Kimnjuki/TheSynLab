@@ -1,38 +1,34 @@
-# GSC Nov 2025 — fixes shipped on `feat/gsc-seo-nov2026`
+# GSC Nov 2025 — fixes on feat/gsc-seo-nov2026
 
-**Sources:** Coverage + Performance exports dated 2026-11-25 (last 7 days for performance).
+Sources: Coverage + Performance exports dated 2026-11-25.
 
-## Diagnosis (evidence)
+## Diagnosis
 
 | Signal | Observation |
 |---|---|
 | Indexed vs not | ~187 indexed / ~321 not indexed |
 | Critical coverage | 76 noindex, 52 hard 404, 45 soft 404, 64 crawled-not-indexed, 37 wrong canonical |
-| Performance | ~60k query impressions, **2 clicks**; desktop CTR ≈ 0% |
-| Top miss | Pages ranking pos 5–10 (thermostat, password manager, keyboard, vacuum, air purifier) with 0 CTR |
-| Query mismatch | Brand+year queries (e.g. “philips smart thermostat review 2026”) ranking roundup pages that do **not** review those brands |
+| Performance | ~60k query impressions, 2 clicks; desktop CTR ~0% |
 
-## What we implemented
+## Indexing blockers → fixes
 
-1. **CTR meta (shared SPA + prerender)** — `src/data/seoMetaOverrides.ts`  
-   Benefit-led titles/descriptions naming brands actually covered (Ecobee/Nest, Roborock, Keychron, etc.). Wired into `BlogArticle`, tool review/alternatives, AI category pages, and `vite.config.ts` prerender.
-2. **Synced `blogArticles` seoTitle/metaDescription** for the 20 GSC-priority slugs.
-3. **Soft 404 reduction** — nginx `try_files … =404` for `/blog/`, `/hub/`, `/tool/` so missing slugs are real 404s, not SPA shells.
-4. **404 → 301 equity** — legacy `/products/{category}` CMS paths redirect to live roundups; `/category/*`, `/hub/general`, `/hub/smart-home`, `/hub/collaboration`, `/hub/productivity` → canonical hubs.
-5. **Internal links** — `CategoryGrid` points at hubs directly (no client-only `/category/*` hop).
-6. **Crawl budget** — `robots.txt` + `NOINDEX_ROUTES`: disallow `/my-stack`, `/widgets`, `/widget/`, `/category/`; keep high-value Allow list.
-7. **Homepage title/description** aligned across `index.html`, `Index.tsx`, `vite.config.ts`.
-8. **Missing-entity pages** — article/tool 404 UIs emit `noindex`.
+| GSC reason | Root cause | Fix |
+|---|---|---|
+| Soft 404 | Unknown URLs served homepage index.html (200) | nginx try_files =404 for /, /blog/, /hub/, /tool/; 404.html + X-Robots-Tag |
+| Not found (52) | Dead CMS category URLs | 301 to live roundups/hubs |
+| Excluded by noindex | Sitemap listed noindex URLs | Sitemap scrub; NOINDEX_ROUTES; X-Robots-Tag on my-stack/widgets/search/tools/compare/widget |
+| Google chose different canonical | 17 dual /products + /tool overlaps | Prefer /tool; nginx 301; skip product prerender/sitemap; SPA Navigate |
+| Duplicate without user canonical | Empty canonical fell back to self on 404 | MetaTags omits canonical when canonical="" + noindex |
+| Crawled – not indexed | Soft 404 + thin loading shells + duplicates | Hard 404s + loading noindex + dual-catalog cleanup |
+| Server error 5xx | /api/ai upstream failures | proxy_intercept_errors → JSON 503 + noindex |
+| Blocked by robots (5) | Intentional (/api/, /admin, …) | Left blocked |
 
-## Not invented
+## CTR / opportunity work (prior commit)
 
-- No fabricated Philips/LG/HP/Sony thermostat or vacuum reviews.
-- No fake social-proof counters or score changes.
-- Cloudflare-managed robots Content-Signals remain in front of app `robots.txt` on production.
+Shared SPA+prerender meta in src/data/seoMetaOverrides.ts for top-impression blogs/tools; CategoryGrid → hubs; homepage title alignment.
 
-## After deploy (owner)
+## After deploy
 
-1. Coolify deploy this branch / merge to main.
-2. In GSC: request indexing for top 10 impression URLs; validate Coverage (soft 404 / 404) drop over 2–4 weeks.
-3. Re-export Performance in ~14 days — expect CTR lift on named-brand titles before position changes.
-4. Optional follow-up: dedicated FAQ blocks on thermostat/password pages for “is it worth it 2026” queries (content already partially present).
+1. Deploy this branch (nginx + sitemap require production deploy).
+2. GSC: resubmit https://thesynlab.com/sitemap.xml; request indexing for top impression URLs.
+3. Watch Coverage soft-404 / wrong-canonical counts for 2–4 weeks.

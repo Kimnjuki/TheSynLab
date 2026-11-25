@@ -1,10 +1,11 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { prefersToolCanonical, toolCanonicalPath } from "@/data/catalogCanonical";
 import { ProductHero } from "@/components/pdp/ProductHero";
 import { QuickStatsBar } from "@/components/pdp/QuickStatsBar";
 import { VisualStoryGallery } from "@/components/pdp/VisualStoryGallery";
@@ -41,11 +42,26 @@ export default function ProductDetailPage() {
 
   const { totalViews } = useViewTracking('product', slug);
 
+  // Dual-catalog: prefer /tool/:slug when both catalogs share this slug.
+  if (slug && prefersToolCanonical(slug)) {
+    return <Navigate to={toolCanonicalPath(slug)} replace />;
+  }
+
   if (details === undefined) {
-    return <div className="min-h-screen"><Header /><main className="container py-10">Loading...</main><Footer /></div>;
+    return (
+      <div className="min-h-screen">
+        <MetaTags title="Loading product… | TheSynLab" description="Loading product details." canonical="" noindex />
+        <Header /><main className="container py-10">Loading...</main><Footer />
+      </div>
+    );
   }
   if (!details) {
-    return <div className="min-h-screen"><Header /><main className="container py-10">Product not found.</main><Footer /></div>;
+    return (
+      <div className="min-h-screen">
+        <MetaTags title="Product Not Found | TheSynLab" description="This product page does not exist." canonical="" noindex />
+        <Header /><main className="container py-10">Product not found.</main><Footer />
+      </div>
+    );
   }
 
   const onAddToStack = async () => {
@@ -95,7 +111,7 @@ export default function ProductDetailPage() {
           ...(details.meta?.avoidIfTags?.length ? [{ question: `Who should avoid ${details.productName}?`, answer: details.meta.whoShouldAvoid || details.meta.avoidIfTags.join(", ") }] : []),
         ]}
       />
-      <JsonLd type="BreadcrumbList" breadcrumbs={[{ name: "Home", url: "/" }, { name: "Products", url: "/tools/compare" }, { name: details.productName, url: `/products/${details.productSlug}` }]} />
+      <JsonLd type="BreadcrumbList" breadcrumbs={[{ name: "Home", url: "/" }, { name: "Products", url: "/products" }, { name: details.productName, url: `/products/${details.productSlug}` }]} />
       <Header />
 
       <main className="container mx-auto px-4 py-8">

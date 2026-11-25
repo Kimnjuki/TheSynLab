@@ -100,7 +100,8 @@ export default function Search() {
       <MetaTags
         title={`Search: ${query || "All Products"}`}
         description="Search TheSynLab's product database with advanced filters."
-        canonical="/search"
+        canonical=""
+        noindex
       />
       <Header />
 

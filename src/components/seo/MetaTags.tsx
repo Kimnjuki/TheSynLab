@@ -51,15 +51,16 @@ export function MetaTags({
   const location = useLocation();
   const fullTitle = title.includes(siteName) ? title : `${trimTitle(title)} | ${siteName}`;
   const safeMeta = trimMeta(description);
-  // SEO-1.5: every page gets a canonical — self-referencing (current route) by
-  // default, absolute, apex host. Callers can override for intentional
-  // duplicate-consolidation, but a page must NEVER ship without one; previously
-  // any component that omitted `canonical` silently dropped the tag entirely
-  // (root cause of the "duplicate without user-selected canonical" class).
-  const resolvedCanonical =
-    toAbsoluteSiteUrl(canonical) ?? toAbsoluteSiteUrl(location.pathname) ?? `${SITE_URL}/`;
+  // SEO-1.5: every *indexable* page gets a canonical — self-referencing by
+  // default, absolute, apex host. Empty string + noindex means "omit canonical"
+  // so 404/soft-404 shells do not claim themselves as the preferred URL.
+  const omitCanonical = canonical === "" && noindex;
+  const resolvedCanonical = omitCanonical
+    ? undefined
+    : toAbsoluteSiteUrl(canonical) ?? toAbsoluteSiteUrl(location.pathname) ?? `${SITE_URL}/`;
   const image = toAbsoluteSiteUrl(ogImage) || DEFAULT_IMAGE;
-  const robotsContent = robots ?? (noindex ? "noindex, nofollow" : "index, follow");
+  // Prefer noindex,follow so equity can still flow; callers may override via `robots`.
+  const robotsContent = robots ?? (noindex ? "noindex, follow" : "index, follow");
 
   return (
     <Helmet>
