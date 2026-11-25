@@ -1,0 +1,58 @@
+{
+  "counts": {
+    "staticProducts": 25,
+    "expanded": 71,
+    "saasTools": 55
+  },
+  "notion": {
+    "static": [
+      {
+        "name": "Notion",
+        "slug": "notion",
+        "trust": 6.8,
+        "integ": 5.5,
+        "tco": 120
+      }
+    ],
+    "expanded": [],
+    "saas": [],
+    "heroSample": "Notion\", score: 9.2",
+    "indexJsonLd": "Notion\" },\n          { \"@type\": \"TableCell\", text: \"9.2/10",
+    "faqTco": "Notion at $120/year",
+    "seedHasProductNoScore": true,
+    "blogHitsSample": [
+      "Notion AI - Trust Score: 8.0",
+      "Notion | Obsidian |\\n|--------|--------|----------|\\n| Trust Score | 7.5",
+      "Notion** (Trust Score: 8.5",
+      "Notion | Docs + light PM | 7.5"
+    ]
+  },
+  "scales": {
+    "heroSlash10": true,
+    "methodology0100As5": true,
+    "methodologyBands5": true,
+    "prerender0100": true,
+    "aboutQuarterly": true,
+    "methodology612": true,
+    "scoringWeekly": true,
+    "smartHomeWeight": true,
+    "scoreColorDoc": true
+  },
+  "cost": {
+    "sandboxRandomTco": true,
+    "sandboxLabel3YearTco": true,
+    "notionAnnualFaq": "Notion at $120/year"
+  },
+  "claims": {
+    "threeHundred": true,
+    "fourteenDays": true,
+    "testimonials": [
+      "name: \"Sarah Chen\"",
+      "name: \"David Okafor\"",
+      "name: \"Elena Rossi\""
+    ]
+  },
+  "scaleMismatchExamples": {
+    "viteReportObsidian9210": true
+  }
+}
