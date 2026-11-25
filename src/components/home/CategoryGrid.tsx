@@ -12,20 +12,20 @@ const categories = [
   },
   {
     title: "SaaS & Developer Tools",
-    desc: "CRMs, databases, and infrastructure scored on privacy, APIs, and TCO.",
-    href: "/category/saas-dev",
+    desc: "CRMs, databases, and infrastructure scored on privacy, APIs, and ownership cost.",
+    href: "/hub/ai-tools",
     icon: Shield,
   },
   {
     title: "Intelligent Home",
     desc: "Smart hubs, sensors, and voice assistants tested for reliability and Matter compatibility.",
-    href: "/category/smart-home",
+    href: "/hub/intelligent-home",
     icon: Home,
   },
   {
     title: "Hybrid Office",
     desc: "Collaboration, video, and remote-work essentials.",
-    href: "/category/hybrid-office",
+    href: "/hub/hybrid-office",
     icon: Briefcase,
   },
   {
@@ -45,7 +45,7 @@ const CategoryGrid = () => {
             Our Categories
           </h2>
           <p className="text-tsl-text-secondary max-w-2xl mx-auto">
-            Browse curated hubs of lab-tested tools. Each category is ranked by Trust Score, Integration Score, and 3-year TCO.
+            Browse curated hubs of lab-tested tools. Each category is ranked by Trust Score, Integration Score, and ownership cost.
           </p>
         </div>
 

@@ -16,6 +16,7 @@ import {
   saasTools,
   TOOL_CATEGORIES,
 } from "@/data/saasTools";
+import { TOOL_META_OVERRIDES } from "@/data/seoMetaOverrides";
 
 const SCORE_COLOR = (s: number) =>
   s >= 8.4 ? "text-green-600" : s >= 7.0 ? "text-amber-600" : "text-red-500";
@@ -27,6 +28,7 @@ export default function ToolAlternativesPage() {
   if (!tool) {
     return (
       <div className="min-h-screen flex flex-col">
+        <MetaTags title="Tool Not Found | TheSynLab" description="This alternatives page does not exist." canonical="" noindex />
         <Header />
         <main className="container mx-auto px-4 py-12 flex-1">
           <h1 className="text-2xl font-bold mb-4">Tool Not Found</h1>
@@ -56,12 +58,17 @@ export default function ToolAlternativesPage() {
 
   const canonical = `https://thesynlab.com/tool/${tool.slug}/alternatives`;
   const bestAlt = allAlts[0];
-  const title = bestAlt
-    ? `Best ${tool.name} Alternatives in ${year}: ${bestAlt.name}, & More`
-    : `Best ${tool.name} Alternatives in ${year} — Ranked by TheSynLab`;
-  const description = bestAlt
-    ? `Looking for ${tool.name} alternatives? We compared ${allAlts.length}+ options by Trust Score & pricing. Top pick: ${bestAlt.name} (Trust Score ${(bestAlt.trustScore * 2).toFixed(1)}/10). Updated ${year}.`
-    : `Looking for ${tool.name} alternatives? We compared ${allAlts.length}+ options on Trust Score, pricing, and features so you don't have to. Updated ${year}.`;
+  const o = TOOL_META_OVERRIDES[tool.slug];
+  const title =
+    o?.altTitle ??
+    (bestAlt
+      ? `Best ${tool.name} Alternatives in ${year}: ${bestAlt.name}, & More`
+      : `Best ${tool.name} Alternatives in ${year} — Ranked by TheSynLab`);
+  const description =
+    o?.altDescription ??
+    (bestAlt
+      ? `Looking for ${tool.name} alternatives? We compared ${allAlts.length}+ options by Trust Score & pricing. Top pick: ${bestAlt.name} (Trust Score ${(bestAlt.trustScore * 2).toFixed(1)}/10). Updated ${year}.`
+      : `Looking for ${tool.name} alternatives? We compared ${allAlts.length}+ options on Trust Score, pricing, and features so you don't have to. Updated ${year}.`);
 
   const breadcrumbs = [
     { name: "Home", url: "https://thesynlab.com" },

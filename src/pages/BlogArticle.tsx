@@ -5,6 +5,7 @@ import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FAQSection } from "@/components/seo/FAQSection";
 import { blogArticles, seoKeywords, competitorFeatures } from "@/data/blogArticles";
+import { resolveBlogMeta } from "@/data/seoMetaOverrides";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,6 +28,7 @@ const BlogArticle = () => {
   if (!article) {
     return (
       <div className="min-h-screen bg-background">
+        <MetaTags title="Article Not Found | TheSynLab" description="This article does not exist." canonical="" noindex />
         <Header />
         <main className="container py-16 text-center">
           <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
@@ -41,6 +43,10 @@ const BlogArticle = () => {
 
   const relatedArticles = blogArticles.filter(a => article.relatedArticles.includes(a.id));
   const articleUrl = `https://thesynlab.com/blog/${article.slug}`;
+  const blogMeta = resolveBlogMeta(article.slug, {
+    title: article.seoTitle || article.title,
+    description: article.metaDescription || article.excerpt || article.title,
+  });
 
   // Parse content into structured sections
   const renderContent = (content: string) => {
@@ -198,8 +204,8 @@ const BlogArticle = () => {
   return (
     <div className="min-h-screen bg-background">
       <MetaTags
-        title={article.seoTitle || article.title}
-        description={article.metaDescription || article.excerpt || article.title}
+        title={blogMeta.title}
+        description={blogMeta.description}
         canonical={articleUrl}
         ogImage={article.featuredImage}
         ogType="article"
@@ -208,8 +214,8 @@ const BlogArticle = () => {
       <JsonLd
         type="NewsArticle"
         article={{
-          title: article.seoTitle || article.title,
-          description: article.metaDescription || article.excerpt || article.title,
+          title: blogMeta.title,
+          description: blogMeta.description,
           image: article.featuredImage,
           url: articleUrl,
           publishedTime: article.publishedAt,

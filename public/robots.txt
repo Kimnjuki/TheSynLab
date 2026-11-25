@@ -1,8 +1,7 @@
 # robots.txt for thesynlab.com
-# Last updated: 2026-08-25
-# Generated & maintained in sync with vite.config.ts NOINDEX_ROUTES / CANONICAL_ALIASES.
+# Last updated: 2026-11-25
+# Synced with vite.config.ts NOINDEX_ROUTES / CANONICAL_ALIASES + GSC coverage export.
 
-# Allow all standard crawlers full access to indexable content
 User-agent: *
 Allow: /
 Allow: /blog/
@@ -18,17 +17,15 @@ Allow: /tco-calculator
 Allow: /vendor-risk-checker
 Allow: /workflow-blueprint
 Allow: /trust-index
-Allow: /my-stack
 Allow: /alternatives
 Allow: /workflows
 Allow: /decision-studio
 Allow: /scoring-hub
-Allow: /widgets
 Allow: /report/
 Allow: /glossary
 Allow: /guides
 
-# Noindex / private / sensitive paths (mirrors NOINDEX_ROUTES)
+# Private / noindex / thin surfaces (do not waste crawl budget)
 Disallow: /admin
 Disallow: /auth
 Disallow: /profile
@@ -39,11 +36,13 @@ Disallow: /community/setups
 Disallow: /community/leaderboard
 Disallow: /products/watchlist
 Disallow: /tasks
+Disallow: /my-stack
+Disallow: /widgets
+Disallow: /widget/
 Disallow: /tools/find
 Disallow: /tools/hub-builder
 Disallow: /tools/compatibility-leaderboard
 Disallow: /tools/automations
-# Canonical alias routes that 301 to a root-level page - skip crawling the redirect
 Disallow: /tools/stack-builder
 Disallow: /tools/stack-quiz
 Disallow: /tools/tco-calculator
@@ -51,7 +50,7 @@ Disallow: /tools/vendor-risk-checker
 Disallow: /tools/workflow-blueprint
 Disallow: /tools/compare
 Disallow: /tools/compatibility-checker
-# Legacy CMS / infrastructure paths
+Disallow: /category/
 Disallow: /wp-admin/
 Disallow: /wp-login.php
 Disallow: /api/
@@ -60,7 +59,8 @@ Disallow: /cart/
 Disallow: /checkout/
 Disallow: /my-account/
 
-# AI crawlers: allow indexable tool/editorial content
+# AI crawlers: allow indexable editorial content (Cloudflare may add stricter
+# Content-Signal rules in front; this file remains the app-owned baseline).
 User-agent: Google-Extended
 Allow: /
 
@@ -82,5 +82,4 @@ Allow: /
 User-agent: anthropic-ai
 Allow: /
 
-# Sitemap
 Sitemap: https://thesynlab.com/sitemap.xml

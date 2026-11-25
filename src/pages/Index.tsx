@@ -56,8 +56,8 @@ const Index = () => {
     <div className="min-h-screen">
       <MetaTags
         // SEO-1.4: keep byte-identical to HOME_TITLE in vite.config.ts and index.html
-        title="TheSynLab – Tech Reviews, Comparisons & Tool Alternatives"
-        description="In-depth tech reviews with Trust Scores. Compare the best productivity tools, smart home devices, and SaaS solutions. Expert analysis and real alternatives."
+        title="TheSynLab – Independent Tech Reviews, Comparisons & Alternatives"
+        description="Independent tech reviews with Trust Scores (0–10). Compare productivity tools, smart home devices, and SaaS — side-by-side scores, ownership cost, and real alternatives."
         canonical="https://thesynlab.com/"
         ogType="website"
       />

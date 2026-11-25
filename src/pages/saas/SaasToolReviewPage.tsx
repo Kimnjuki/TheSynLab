@@ -19,6 +19,7 @@ import {
   TOOL_CATEGORIES,
   type SaasTool,
 } from "@/data/saasTools";
+import { resolveToolMeta } from "@/data/seoMetaOverrides";
 import NewsletterSignupBanner from "@/components/newsletter/NewsletterSignupBanner";
 
 const SCORE_BAR = (score: number) => {
@@ -50,6 +51,7 @@ export default function SaasToolReviewPage() {
   if (!tool) {
     return (
       <div className="min-h-screen flex flex-col">
+        <MetaTags title="Tool Not Found | TheSynLab" description="This tool review does not exist." canonical="" noindex />
         <Header />
         <main className="container mx-auto px-4 py-12 flex-1">
           <h1 className="text-2xl font-bold mb-4">Tool Not Found</h1>
@@ -119,18 +121,16 @@ export default function SaasToolReviewPage() {
     'bolt-new': `Bolt.new review 2026: AI full-stack web app builder tested. Compare Bolt vs Lovable vs Replit Agent vs Cursor for code generation, GitHub integration, pricing, and the best AI coding tool in 2026.`,
   };
 
-  const title = `${tool.tagline} | ${tool.name} Review ${year} — Pricing, Pros & Cons | TheSynLab`;
-  const description = CTR_DESCRIPTIONS[tool.slug] || tool.tagline?.toLowerCase().includes('social media')
-    ? `${tool.name} review: ${tool.tagline}. Tested on ${tool.keyFeatures.length || 15} features — see real pros, cons, pricing from ${tool.pricing.startingPrice}, and how it compares to Hootsuite, Buffer, and Later in ${year}.`
-    : tool.tagline?.toLowerCase().includes('api') || tool.tagline?.toLowerCase().includes('scrape')
-    ? `${tool.name} review: ${tool.tagline}. Compare features, API pricing from ${tool.pricing.startingPrice}, rate limits, and top alternatives for web scraping & data extraction in ${year}.`
-    : tool.tagline?.toLowerCase().includes('music') || tool.tagline?.toLowerCase().includes('royalty')
-    ? `${tool.name} review: ${tool.tagline}. Test audio quality, pricing from ${tool.pricing.startingPrice}, YouTube-safe licensing, and how it compares to Soundraw, Boomy & Suno in ${year}.`
-    : tool.tagline?.toLowerCase().includes('photo') || tool.tagline?.toLowerCase().includes('edit')
-    ? `${tool.name} review: ${tool.tagline}. Tested on PSD, RAW, AI file handling — see real performance, export quality, and how it compares to Photoshop, GIMP & Pixlr in ${year}.`
-    : tool.tagline?.toLowerCase().includes('email') || tool.tagline?.toLowerCase().includes('signature')
-    ? `${tool.name} review: ${tool.tagline}. Compare templates, integrations, pricing from ${tool.pricing.startingPrice}, and top alternatives for professional email branding in ${year}.`
-    : `TheSynLab's independent ${tool.name} review: ${tool.tagline}. Trust Score ${(tool.trustScore * 2).toFixed(1)}/10, ${seoPros || 'honest pros & cons'}, pricing from ${tool.pricing.startingPrice}, and best alternatives. Updated ${year}.`;
+  const fallbackTitle = `${tool.name} Review ${year}: Pricing, Pros & Cons | TheSynLab`;
+  const fallbackDescription =
+    CTR_DESCRIPTIONS[tool.slug] ??
+    (tool.tagline?.toLowerCase().includes("social media")
+      ? `${tool.name} review: ${tool.tagline}. Tested on ${tool.keyFeatures.length || 15} features — see real pros, cons, pricing from ${tool.pricing.startingPrice}, and how it compares to Hootsuite, Buffer, and Later in ${year}.`
+      : `TheSynLab's independent ${tool.name} review: ${tool.tagline}. Trust Score ${(tool.trustScore * 2).toFixed(1)}/10, ${seoPros || "honest pros & cons"}, pricing from ${tool.pricing.startingPrice}, and best alternatives. Updated ${year}.`);
+  const { title, description } = resolveToolMeta(tool.slug, {
+    title: fallbackTitle,
+    description: fallbackDescription,
+  });
 
   const breadcrumbs = [
     { name: "Home", url: "https://thesynlab.com" },

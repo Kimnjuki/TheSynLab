@@ -7,6 +7,11 @@ import { blogArticles } from "./src/data/blogArticles";
 import { saasTools, BEST_OF_LISTS, TOOL_CATEGORIES } from "./src/data/saasTools";
 import { HOMEPAGE_PRERENDER_HTML } from "./src/data/prerenderContent";
 import { STATIC_PRODUCTS, HUB_SLUGS, HUB_FAQS } from "./src/data/staticProductData";
+import {
+  BLOG_META_OVERRIDES,
+  TOOL_META_OVERRIDES as SHARED_TOOL_META_OVERRIDES,
+  CATEGORY_META_OVERRIDES,
+} from "./src/data/seoMetaOverrides";
 
 const SITE_URL = "https://thesynlab.com";
 // SEO-1.4: ONE homepage title. This must stay byte-identical to:
@@ -14,9 +19,9 @@ const SITE_URL = "https://thesynlab.com";
 //   - src/pages/Index.tsx MetaTags title
 // GA4 previously showed 7 competing near-homepage titles because these three
 // sources disagreed. Never A/B test the production title tag in more than one file.
-const HOME_TITLE = "TheSynLab – Tech Reviews, Comparisons & Tool Alternatives";
+const HOME_TITLE = "TheSynLab – Independent Tech Reviews, Comparisons & Alternatives";
 const HOME_DESCRIPTION =
-  "In-depth tech reviews with Trust Scores. Compare the best productivity tools, smart home devices, and SaaS solutions. Expert analysis and real alternatives.";
+  "Independent tech reviews with Trust Scores (0–10). Compare productivity tools, smart home devices, and SaaS — side-by-side scores, ownership cost, and real alternatives.";
 
 // Routes that get pre-rendered HTML + appear in sitemap
 const staticRoutes = [
@@ -80,6 +85,8 @@ const NOINDEX_ROUTES = new Set([
   "/products/watchlist",
   "/search",
   "/tasks",
+  "/my-stack",
+  "/widgets",
   "/tools/find",
   "/tools/hub-builder",
   "/tools/compatibility-leaderboard",
@@ -536,57 +543,8 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   addBlogItemList("/blog");
   addBlogItemList("/guides", a => a.category === "Guides");
 
-  // SEO-2.3: CTR-first metadata for the highest-impression / worst-CTR pages
-  // (audit priority list). Keys are the dynamic route's slug.
-  // NOTE: the on-page <h1> is untouched — these only change <title>/<description>.
-  const BLOG_META_OVERRIDES: Record<string, { title?: string; description?: string }> = {
-    "choose-clickup-vs-asana": {
-      title: "ClickUp vs Asana 2026: Which Should You Choose?",
-      description:
-        "Hands-on ClickUp vs Asana comparison: real pricing math, integrations that actually work, and the one use case where each wins. Verdict included.",
-    },
-    "home-assistant-beginners-guide": {
-      title: "Home Assistant Beginner's Guide: Start Here",
-      description:
-        "New to Home Assistant? This beginner's guide covers hardware picks, first automations, and the mistakes that cost new users the most time.",
-    },
-    "alexa-vs-google-home-privacy-comparison": {
-      title: "Alexa vs Google Home Privacy: Tested Comparison",
-      description:
-        "We audited Alexa vs Google Home privacy settings side by side: data retention, mic policies, opt-outs, and which ecosystem leaks less.",
-    },
-    "password-manager-comparison": {
-      title: "Password Manager Comparison 2026: Top Picks Ranked",
-      description:
-        "Side-by-side password manager comparison on security audits, MFA, breach history, family pricing, and migration effort — ranked for 2026.",
-    },
-    "best-smart-home-hubs-2026-complete-guide": {
-      title: "Best Smart Home Hubs 2026: Complete Buyer's Guide",
-      description:
-        "15+ smart home hubs tested and ranked by privacy, Matter compatibility, and integration depth. Find the hub that actually protects your data.",
-    },
-    "best-ai-productivity-tools-2026": {
-      title: "Best AI Productivity Tools 2026: Ranked by Trust Score",
-      description:
-        "20+ AI productivity tools independently tested and scored on privacy, integration, and real workflow fit. See which ones are worth your data.",
-    },
-    "matter-protocol-explained-complete-guide": {
-      title: "Matter Protocol Explained: The Complete 2026 Guide",
-      description:
-        "Matter promises universal smart home compatibility. We explain what it means for your setup, which devices support it, and how to get started.",
-    },
-    "n8n-vs-zapier-ai-vs-make-com": {
-      title: "n8n vs Zapier vs Make 2026: Which Automation Platform Wins?",
-      description:
-        "Three automation platforms, one decision. We compare pricing, workflow flexibility, self-hosting options, and real integration depth.",
-    },
-    "best-robot-vacuum-2026-review": {
-      title: "Best Robot Vacuums 2026: Top 10 Models Tested & Ranked",
-      description:
-        "After 300+ hours of testing across carpet, hardwood, and tile, these are the robot vacuums that actually deliver on their promises.",
-    },
-  };
-
+  // CTR meta: shared with SPA via src/data/seoMetaOverrides.ts (GSC Nov 2025).
+  // Local tool extras below merge under shared keys (shared wins for GSC priorities).
   const TOOL_META_OVERRIDES: Record<
     string,
     { title?: string; description?: string; altTitle?: string; altDescription?: string }
@@ -676,6 +634,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
       description:
         "Focusee's automated screen recording tested against Loom and CloudApp — auto-zoom, click highlighting, and MP4 export quality.",
     },
+    ...SHARED_TOOL_META_OVERRIDES,
   };
 
   // Blog articles — Article schema + BreadcrumbList + FAQPage + HowTo
@@ -1130,17 +1089,32 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   // AI Tools category hub pages — CollectionPage + BreadcrumbList
   for (const [category, details] of Object.entries(TOOL_CATEGORIES)) {
     const catRoute = `/hub/ai-tools/${category}`;
+    const catOverride = CATEGORY_META_OVERRIDES[category];
+    const catTitle =
+      catOverride?.title ?? `Best ${details.name} Tools ${new Date().getFullYear()} | TheSynLab`;
+    const catDescription = catOverride?.description ?? (details.description || HOME_DESCRIPTION);
+    const catTools = saasTools.filter((t) => t.category === category);
     pages.push({
       route: catRoute,
-      title: `Best ${details.name} Tools ${new Date().getFullYear()} | TheSynLab`,
-      description: details.description || HOME_DESCRIPTION,
+      title: catTitle,
+      description: catDescription,
       jsonLd: [
         {
           "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          name: `Best ${details.name} Tools`,
-          description: details.description || HOME_DESCRIPTION,
+          "@type": "ItemList",
+          name: catTitle,
+          description: catDescription,
           url: `${SITE_URL}${catRoute}`,
+          numberOfItems: catTools.length,
+          itemListElement: [...catTools]
+            .sort((a, b) => b.trustScore - a.trustScore)
+            .map((t, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              name: t.name,
+              url: `${SITE_URL}/tool/${t.slug}`,
+              description: t.shortDescription,
+            })),
         },
         breadcrumbSchema([
           { name: "TheSynLab", item: `${SITE_URL}/` },
