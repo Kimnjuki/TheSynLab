@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { calculateTco36 } from "@/lib/tco/calculateTco36";
 import {
   Calculator,
   TrendingUp,
@@ -35,9 +36,9 @@ const FEATURES = [
   },
   {
     icon: DollarSign,
-    title: "3-Year TCO Analysis",
+    title: "36-Month TCO Analysis",
     description: "Compare true total cost of ownership across competing products, including seat pricing, add-ons, API overages, and lock-in penalties.",
-    href: "/tools/budget-calculator",
+    href: "/tco-calculator",
     cta: "Model TCO",
   },
   {
@@ -79,7 +80,8 @@ function QuickRoiPanel() {
   const annualCurrentCost = currentCost * 12;
   const annualValueSaved = hoursSaved * hourlyRate * 52;
   const annualRoi = annualValueSaved - annualCurrentCost;
-  const roiPercent = annualCurrentCost > 0 ? Math.round((annualRoi / annualCurrentCost) * 100) : 0;
+  const roiPercent =
+    annualCurrentCost > 0 ? Math.round((annualRoi / annualCurrentCost) * 100) : null;
 
   return (
     <Card className="border-primary/20">
@@ -119,8 +121,10 @@ function QuickRoiPanel() {
           </div>
           <div className="flex justify-between text-sm font-semibold border-t pt-2 mt-2">
             <span>Net Annual ROI</span>
-            <span className={annualRoi >= 0 ? "text-green-600" : "text-red-500"}>
-              {annualRoi >= 0 ? "+" : ""}${annualRoi.toLocaleString()} ({roiPercent}%)
+            <span className={annualCurrentCost === 0 ? "text-muted-foreground" : annualRoi >= 0 ? "text-green-600" : "text-red-500"}>
+              {annualCurrentCost === 0
+                ? "Undefined (zero cost denominator)"
+                : `${annualRoi >= 0 ? "+" : ""}$${annualRoi.toLocaleString()} (${roiPercent}%)`}
             </span>
           </div>
         </div>
@@ -135,30 +139,75 @@ function QuickRoiPanel() {
 }
 
 function TcoPanel() {
+  const [seats, setSeats] = useState(10);
+  const [pricePerSeat, setPricePerSeat] = useState(10);
+  const [implementationHours, setImplementationHours] = useState(0);
+  const [exitCost, setExitCost] = useState(0);
+
+  const result = calculateTco36({
+    currency: "USD",
+    seats,
+    pricePerSeatPerPeriod: pricePerSeat,
+    billingCadence: "monthly",
+    implementationHours,
+    loadedHourlyRate: 50,
+    exitCost,
+  });
+
   return (
     <Card className="border-secondary/20">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <TrendingUp className="h-5 w-5 text-secondary" />
-          3-Year TCO Comparison
+          36-Month TCO Preview
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          Enter up to 3 competing products to compare their true 3-year total cost of ownership, including hidden costs.
+          Deterministic ownership estimate from seats × monthly price × 36, plus optional labor and exit cost.
+          Annual subscription quote is shown separately from 36-month TCO.
         </p>
-        <div className="space-y-3">
-          {["Tool A", "Tool B", "Tool C"].map((label, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full ${['bg-indigo-500', 'bg-emerald-500', 'bg-amber-500'][i % 3]}`} />
-              <Input placeholder={`Search ${label}…`} className="flex-1" />
-            </div>
-          ))}
+        <div className="space-y-2">
+          <Label className="text-sm">Seats: <span className="font-semibold">{seats}</span></Label>
+          <Slider value={[seats]} onValueChange={([v]) => setSeats(v)} min={1} max={200} step={1} />
         </div>
-        <div className="rounded-lg bg-muted/50 border border-dashed p-6 text-center text-sm text-muted-foreground">
-          Add 2+ products to see TCO chart
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">$/seat / month</Label>
+            <Input type="number" min={0} value={pricePerSeat} onChange={(e) => setPricePerSeat(Number(e.target.value))} />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Exit cost ($)</Label>
+            <Input type="number" min={0} value={exitCost} onChange={(e) => setExitCost(Number(e.target.value))} />
+          </div>
+          <div className="space-y-1 col-span-2">
+            <Label className="text-xs text-muted-foreground">Implementation hours (@ $50/hr)</Label>
+            <Input type="number" min={0} value={implementationHours} onChange={(e) => setImplementationHours(Number(e.target.value))} />
+          </div>
         </div>
-        <Link to="/tools/budget-calculator">
+        <div className="rounded-lg bg-muted p-4 space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Annual subscription quote</span>
+            <span className="font-medium">${result.annualRecurringSubscriptionQuote.toLocaleString()}/yr</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">36-month TCO</span>
+            <span className="font-semibold">${Number.isFinite(result.tco36) ? result.tco36.toLocaleString() : "—"}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Effective monthly</span>
+            <span className="font-medium">
+              $
+              {Number.isFinite(result.effectiveMonthly)
+                ? result.effectiveMonthly.toLocaleString(undefined, { maximumFractionDigits: 2 })
+                : "—"}
+            </span>
+          </div>
+          {result.rejectedReason && (
+            <p className="text-xs text-destructive">{result.rejectedReason}</p>
+          )}
+        </div>
+        <Link to="/tco-calculator">
           <Button variant="outline" className="w-full gap-2">
             Open Full TCO Modeler <ArrowRight className="h-4 w-4" />
           </Button>
