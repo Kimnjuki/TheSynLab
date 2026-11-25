@@ -339,7 +339,7 @@ const staticMetaByRoute: Record<string, { title: string; description: string }> 
   // title/description so prerendered HTML and hydrated HTML always agree.
   "/blog": {
     title: "TheSynLab Blog: Honest Tool Reviews, Trust Scores & Buying Guides 2026",
-    description: "Independent product reviews you can actually trust. Lab-tested Trust Scores for SaaS, smart home devices, AI tools, and productivity software. Side-by-side comparisons with real data — updated weekly.",
+    description: "Independent product reviews you can actually trust. Lab-tested Trust Scores (0–10) for SaaS, smart home devices, AI tools, and productivity software. Side-by-side comparisons from the published catalog.",
   },
   "/guides": {
     title: "Buying Guides 2026: Smart Home, SaaS & Productivity Tools | TheSynLab",
@@ -383,7 +383,7 @@ const staticMetaByRoute: Record<string, { title: string; description: string }> 
   },
   "/scoring-hub": {
     title: "Trust Score Comparison 2026: Find the Best Software — TheSynLab Scoring Hub",
-    description: "Compare 100+ tools by Trust Score. Which email signature, design tool, or social media scheduler actually delivers? Real scores for Wisestamp, Photopea, SocialPilot, Outscraper and more — updated weekly.",
+    description: "Compare tools by Trust Score (0–10). Which email signature, design tool, or social media scheduler actually delivers? Real scores for Wisestamp, Photopea, SocialPilot, Outscraper and more from the published catalog.",
   },
   "/hubs": {
     title: "Product Hubs – AI Tools, Smart Home, SaaS & More | TheSynLab",
@@ -426,11 +426,11 @@ const staticMetaByRoute: Record<string, { title: string; description: string }> 
     description: "Showcase verified TheSynLab Trust and Integration Scores. Vendor program for SaaS and hardware companies.",
   },
   "/scores/trust-score-index": {
-    title: "Trust Score Index (0-100) | TheSynLab",
+    title: "Trust Score Index (0–10) | TheSynLab",
     description: "Ranked Trust Scores for SaaS, AI, and smart home products based on reliability, data privacy, and vendor transparency.",
   },
   "/scores/integration-score-index": {
-    title: "Integration Score Index (0-100) | TheSynLab",
+    title: "Integration Score Index (0–10) | TheSynLab",
     description: "Ranked Integration Scores assessing ecosystem compatibility, API quality, and workflow fit across product categories.",
   },
   "/ai/stack-architect": {
@@ -1450,9 +1450,9 @@ ${widgetCards}
 <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:.75rem 1rem;flex:1;min-width:140px;text-align:center"><div style="font-size:1.8rem;font-weight:700;color:#2563eb">${avgScore}/10</div><div style="font-size:.8rem;color:#666">Average Trust Score</div></div>
 <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:.75rem 1rem;flex:1;min-width:140px;text-align:center"><div style="font-size:1.8rem;font-weight:700;color:#2563eb">100+</div><div style="font-size:.8rem;color:#666">Total Data Points</div></div>
 </div>
-<p style="line-height:1.7;color:#444;max-width:720px">The 2026 State of SaaS Trust &amp; Integrations report analyses ${STATIC_PRODUCTS.length} products across 6 categories using our proprietary Trust Score methodology. Key findings include a widening gap between top-tier and bottom-tier vendors, the emergence of integration ecosystems as a competitive moat, and concerning trends in privacy policy transparency across consumer-facing SaaS. Independent tools like Obsidian (92/10) and Figma (91/10) lead for transparency, while Microsoft-centric tools like Teams (58/10) score lowest due to opaque data practices.</p>
+<p style="line-height:1.7;color:#444;max-width:720px">The 2026 State of SaaS Trust &amp; Integrations report analyses ${STATIC_PRODUCTS.length} products across 6 categories using our proprietary Trust Score methodology (public scores on a 0–10 scale). Key findings include a widening gap between top-tier and bottom-tier vendors, the emergence of integration ecosystems as a competitive moat, and concerning trends in privacy policy transparency across consumer-facing SaaS. Rankings below are derived from the published catalog snapshot — individual product pages remain the source of truth for criterion-level scores.</p>
 <h2>Average Trust Scores by Category</h2>
-<p style="line-height:1.7;color:#444;max-width:720px">Productivity software leads with the highest average trust scores (84/10), driven by strong encryption practices and transparent privacy policies. AI workflow tools average 79/10, with concerns around data training policies reducing scores. Smart home devices average 74/10, dragged down by inconsistent privacy disclosures across manufacturers. Collaboration tools show the widest variance (58-92), with Slack and Linear leading while Microsoft Teams and Discord underperform on data transparency.</p>
+<p style="line-height:1.7;color:#444;max-width:720px">Category averages are computed from the same static catalog used for product SEO pages. Productivity and collaboration tools often lead on encryption and privacy-policy transparency; AI workflow tools vary with data-training disclosure quality; smart home devices show wider variance where manufacturer privacy disclosures are inconsistent. See the tables below for catalog-backed product ranks rather than paraphrased sample numbers.</p>
 <h2>Top 10 Most-Trusted SaaS Tools</h2>
 <table style="width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0">
 <thead><tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0"><th style="text-align:left;padding:.5rem">#</th><th style="text-align:left;padding:.5rem">Product</th><th style="text-align:left;padding:.5rem">Trust Score</th><th style="text-align:left;padding:.5rem">Integration Score</th></tr></thead>
@@ -1485,10 +1485,10 @@ ${widgetCards}
     return `<main style="${MAIN_STYLE}">
 <nav style="${NAV_STYLE}"><a href="/">TheSynLab</a> › Products</nav>
 <h1>Products Hub — Trust Scored &amp; Integration Rated</h1>
-<p>Browse hundreds of reviewed products with our proprietary Trust Score and Integration Score. Covering smart home devices, SaaS platforms, AI tools, and developer infrastructure.</p>
+<p>Browse our published product catalog (${STATIC_PRODUCTS.length} products in the current static snapshot) with Trust Scores and Integration Scores on a 0–10 scale. Covering smart home devices, SaaS platforms, AI tools, and developer infrastructure.</p>
 <h2>Browse by Hub</h2>
 <ul>
-<li><a href="/hub/ai-tools"><b>AI &amp; SaaS Tools</b></a> — 300+ tools scored for reliability, integrations, and TCO</li>
+<li><a href="/hub/ai-tools"><b>AI &amp; SaaS Tools</b></a> — AI and SaaS tools scored for reliability, integrations, and ownership cost</li>
 <li><a href="/hub/ai-workflow"><b>AI Workflow</b></a> — Automation platforms, LLMs, no-code builders</li>
 <li><a href="/hub/intelligent-home"><b>Intelligent Home</b></a> — Smart home hubs, voice assistants, sensors</li>
 <li><a href="/hub/hybrid-office"><b>Hybrid Office</b></a> — Collaboration, video conferencing, remote-work tools</li>
@@ -1554,7 +1554,7 @@ ${widgetCards}
 <h1>Product Hubs — Scored by Category</h1>
 <p>Every TheSynLab hub includes trust scores, integration grades, 3-year TCO analysis, and vendor risk profiles across its entire product catalog.</p>
 <ul>
-<li><a href="/hub/ai-tools"><b>AI Tools Hub</b></a> — 300+ AI writing, coding, video, and automation tools independently reviewed</li>
+<li><a href="/hub/ai-tools"><b>AI Tools Hub</b></a> — AI writing, coding, video, and automation tools independently reviewed from the published catalog</li>
 <li><a href="/hub/ai-workflow"><b>AI &amp; Workflow</b></a> — Automation platforms, LLMs, no-code builders, and workflow orchestrators</li>
 <li><a href="/hub/intelligent-home"><b>Intelligent Home</b></a> — Smart home hubs, voice assistants, sensors, and IoT platforms</li>
 <li><a href="/hub/hybrid-office"><b>Hybrid Office</b></a> — Collaboration, video conferencing, and remote-work essentials</li>
@@ -1631,9 +1631,9 @@ ${widgetCards}
 <p>Transparent methodology, ecosystem fit analysis, curated stacks, and personalized recommendations powered by TheSynLab Trust &amp; Integration Scores.</p>
 <h2>What We Score</h2>
 <ul>
-<li><b>Trust Score (0–100)</b> — Reliability, privacy practices, transparency, SLA track record, security posture</li>
-<li><b>Integration Score (0–100)</b> — Native integrations, API quality, middleware support, webhook support, ecosystem breadth</li>
-<li><b>TCO Score</b> — 3-year total cost including seat pricing, overages, migration, and lock-in risk</li>
+<li><b>Trust Score (0–10)</b> — Reliability, privacy practices, transparency, SLA track record, security posture</li>
+<li><b>Integration Score (0–10)</b> — Native integrations, API quality, middleware support, webhook support, ecosystem breadth</li>
+<li><b>Ownership cost</b> — Annual seat quotes plus optional 36-month TCO scenarios (seats, labor, exit cost)</li>
 <li><b>Vendor Risk Profile</b> — Lock-in risk, data portability, GDPR readiness, financial stability</li>
 </ul>
 <h2>Decision Tools</h2>
@@ -1683,12 +1683,12 @@ ${widgetCards}
 
   if (route === "/about") return `<main style="${MAIN_STYLE}">
 <h1>About TheSynLab</h1>
-<p>TheSynLab is an independent technology review platform evaluating SaaS tools, smart home devices, and productivity software using our proprietary Trust Score and Integration Score methodology. Founded in 2025, we have reviewed over 300 software tools across 20 categories — every single one tested hands-on by our editorial team for a minimum of 14 days before receiving a score.</p>
-<h2>Our Mission</h2><p>We help professionals, startups, and enterprise teams make confident technology decisions through honest, data-driven reviews. Unlike user-review platforms like G2 or Capterra, every review on TheSynLab is written by an editor who has personally deployed and used the tool in a real-world workflow. No paid placements. No sponsored ratings. No affiliate influence on scores.</p>
-<h2>Our Scoring System</h2><p>Every tool on TheSynLab receives two scores. The <b>Trust Score</b> (0 to 100) measures reliability, data privacy practices, security certifications, vendor transparency, and customer support quality. The <b>Integration Score</b> (0 to 100) evaluates ecosystem compatibility, API quality and documentation, native integrations with popular platforms, import/export capabilities, and third-party marketplace presence. Together these scores give you a complete picture of both the tool and its fit within your existing stack.</p>
-<h2>Total Cost of Ownership Analysis</h2><p>Beyond scores, we calculate a 3-year Total Cost of Ownership for every product. Our TCO model includes subscription fees, per-user pricing at scale, onboarding and migration costs, training time, API usage overages, and estimated annual price increases. We surface hidden costs that vendor comparison pages typically omit.</p>
-<h2>Editorial Independence</h2><p>TheSynLab is funded through affiliate commissions and advertising. This funding model allows us to keep our content free for all readers. Our editorial independence is absolute — scores, rankings, and recommendations are determined by our testing team alone. Commercial relationships never influence a review outcome. See our <a href="/disclosure">Affiliate Disclosure</a> for full details.</p>
-<h2>Who We Serve</h2><p>Our readers include SaaS founders evaluating their tool stack, IT managers making procurement decisions, startup operators looking for budget-friendly alternatives, and technology enthusiasts comparing the latest AI and smart home products. We publish new reviews weekly and update existing reviews quarterly to reflect pricing changes, feature updates, and vendor policy shifts.</p>
+<p>TheSynLab is an independent technology review platform evaluating SaaS tools, smart home devices, and productivity software using our proprietary Trust Score and Integration Score methodology. Founded in 2025, our published static catalog currently covers ${STATIC_PRODUCTS.length} products across major hubs. Qualifying lab-tested reviews follow a documented 14+ day protocol; researched-only entries are labeled separately and do not inherit lab-tested badges.</p>
+<h2>Our Mission</h2><p>We help professionals, startups, and enterprise teams make confident technology decisions through honest, data-driven reviews. No paid placements. No sponsored ratings. Affiliate status never enters ranking features or score calculations.</p>
+<h2>Our Scoring System</h2><p>Every scored product on TheSynLab receives two public scores on a 0–10 scale. The <b>Trust Score</b> measures reliability, data privacy practices, security evidence, vendor transparency, and related governance. The <b>Integration Score</b> evaluates ecosystem compatibility, API quality and documentation, native integrations, import/export capabilities, and automation support where those criteria apply.</p>
+<h2>Total Cost of Ownership Analysis</h2><p>Beyond scores, product pages may show annual seat quotes separately from modeled 36-month TCO scenarios. Full ownership models in Decision Studio can include subscription fees, seats, labor, exit cost, and effective monthly equivalents. Annual seat quotes are never labeled as 36-month TCO.</p>
+<h2>Editorial Independence</h2><p>TheSynLab is funded through affiliate commissions and advertising. This funding model allows us to keep our content free for all readers. Our editorial independence is absolute — scores, rankings, and recommendations are determined by editorial criteria alone. Commercial relationships never influence a review outcome. See our <a href="/disclosure">Affiliate Disclosure</a> for full details.</p>
+<h2>Who We Serve</h2><p>Our readers include SaaS founders evaluating their tool stack, IT managers making procurement decisions, startup operators looking for budget-friendly alternatives, and technology enthusiasts comparing AI and smart home products. Scores are re-verified on a published cadence (typically 6–12 months, sooner after material product, pricing, or security changes).</p>
 </main>`;
 
   // ── Tool review page ──────────────────────────────────────────────────────
@@ -2163,13 +2163,13 @@ ${relatedHtml.slice(0, 6).join("\n")}
     },
     "/scores/trust-score-index": {
       name: "Trust Score Index",
-      summary: "TheSynLab Trust Scores (0-100) rank products on reliability, data privacy, security, and transparent.",
-      body: "The Trust Score measures reliability, data privacy, security practices, and vendor transparency. Every score is derived from structured lab testing rather than user star ratings alone. Browse the full Trust Score Index and read individual reviews for the methodology, scoring dimensions, and time-on-test per product.",
+      summary: "TheSynLab Trust Scores (0–10) rank products on reliability, data privacy, security, and transparency.",
+      body: "The Trust Score (0–10 on product pages) measures reliability, data privacy, security practices, and vendor transparency. Scores are derived from the published methodology rather than user star ratings alone. Browse the Trust Score Index and read individual reviews for scoring dimensions and evidence labels per product.",
     },
     "/scores/integration-score-index": {
       name: "Integration Score Index",
-      summary: "Integration Scores (0-100) assess ecosystem compatibility, API quality, and workflow fit.",
-      body: "The Integration Score assesses ecosystem compatibility, API quality, automation depth, and overall workflow fit. Every product\u2019s integration score is produced through hands-on testing of its API, connectors, and no-code automation capabilities. Compare scores across categories in the Integration Score Index.",
+      summary: "Integration Scores (0–10) assess ecosystem compatibility, API quality, and workflow fit.",
+      body: "The Integration Score (0–10 on product pages) assesses ecosystem compatibility, API quality, automation depth, and overall workflow fit where those criteria apply. Compare scores across categories in the Integration Score Index and open product pages for criterion-level detail.",
     },
     "/ai/stack-architect": {
       name: "AI Stack Architect",

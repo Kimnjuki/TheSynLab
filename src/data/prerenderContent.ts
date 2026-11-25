@@ -1,20 +1,28 @@
 // Prerendered HTML content blocks for Google AdSense "low value content" compliance.
 // These are injected into the SPA shell during Vite build so Googlebot sees
 // substantial content before React hydrates. Must be 400+ words each.
+// Keep claims aligned with Phase 0 integrity freezes (docs/T01_T02_DISCOVERY_REPORT.md).
+
+import { STATIC_PRODUCTS } from "./staticProductData";
+
+const catalogCount = STATIC_PRODUCTS.length;
 
 export const HOMEPAGE_PRERENDER_HTML = `
-<p>TheSynLab is your independent guide to choosing the right software, smart home devices, and productivity tools. Founded in 2025, we evaluate every product using our proprietary Trust Score system — measuring reliability, data privacy, security practices, and vendor transparency — alongside Integration Scores that assess ecosystem compatibility, API quality, and workflow fit.</p>
+<p>TheSynLab is your independent guide to choosing the right software, smart home devices, and productivity tools. Founded in 2025, we evaluate products using a published Trust Score methodology — measuring data privacy practices, security evidence, terms transparency, and vendor governance — alongside Integration Scores that assess API quality, workflow compatibility, automation support, and developer experience where those criteria apply.</p>
 
-<p>Unlike traditional review sites that rely on user star ratings alone, TheSynLab combines hands-on lab testing with structured analysis across five dimensions: Trust Score (0–100), Integration Score (0–100), Total Cost of Ownership (3-year TCO), Vendor Risk Profile (lock-in, data portability), and Ecosystem Fit. Every product on our platform has been tested by our editorial team for at least 14 days before receiving a score.</p>
+<p>Unlike review directories that rely only on star ratings, TheSynLab combines structured editorial analysis with an evidence-first scoring model across five dimensions: Trust Score (0–10 on product pages), Integration Score (0–10), typed ownership-cost quotes with optional 36-month TCO scenarios, Vendor Risk Profile (lock-in and portability), and Ecosystem Fit. We follow a documented 14+ day testing protocol for qualifying lab-tested reviews; researched-only entries are labeled separately and do not inherit lab-tested badges.</p>
 
 <h2>Our Categories</h2>
-<p>We currently cover AI and SaaS Tools — over 300 writing, coding, video, and automation platforms independently reviewed. AI Workflow — no-code builders, LLM platforms, and workflow orchestrators. Intelligent Home — smart home hubs, voice assistants, sensors, and IoT platforms. Hybrid Office — collaboration tools, video conferencing, and remote-work essentials. And our SaaS and Developer Tools directory covering CRMs, databases, infrastructure, and developer tooling.</p>
+<p>We currently publish a catalog of ${catalogCount} products across AI and SaaS tools, AI workflow platforms, intelligent home devices, hybrid office collaboration software, and developer tooling. Coverage grows as qualifying reviews and catalog snapshots are approved — we do not invent social-proof counters. Browse hubs for AI tools, AI workflow, intelligent home, and hybrid office, then open product pages for criterion-level scores and annual seat quotes where available.</p>
+
+<h2>How scores and costs are shown</h2>
+<p>Homepage featured cards pull Trust Scores from the same published catalog snapshot used on product pages, so branded sample numbers never disagree with the review. Annual subscription quotes are labeled as seat quotes, not as 36-month TCO. Full ownership scenarios — seats, labor, exit cost, and effective monthly equivalents — live in Decision Studio and the TCO calculator. Scores are re-verified on a published cadence (typically 6–12 months, sooner after material product, pricing, or security changes).</p>
 
 <h2>Latest on TheSynLab</h2>
-<p>Our editorial team publishes in-depth reviews, comparisons, and workflow guides weekly. Recent highlights include our Best Project Management Tools 2026 comparison (8 platforms, 90 days of testing), CRM for Small Business ranked by TCO, and AI Video Generators head-to-head. Our most popular guides cover startup tool stacks, productivity software, and smart home buying decisions.</p>
+<p>Our editorial team publishes reviews, comparisons, and workflow guides. Use Compare for side-by-side Trust and Integration scores, Stack Builder for compatibility notes, Stack Quiz for a short constrained recommendation flow, and Decision Studio for ROI and 36-month TCO previews. Popular starting points include productivity software, automation platforms, and collaboration tools in the products hub.</p>
 
 <h2>How We Make Money</h2>
-<p>TheSynLab is funded through affiliate commissions and advertising. When you click product links on our site and make a purchase, we may earn a commission at no additional cost to you. This never influences our scores or recommendations — our editorial independence is guaranteed by our Affiliate Disclosure. See our About page for our full editorial policy.</p>
+<p>TheSynLab is funded through affiliate commissions and advertising. When you click product links on our site and make a purchase, we may earn a commission at no additional cost to you. Affiliate status never enters ranking features or score calculations. Our editorial independence policy is documented in the Affiliate Disclosure and About pages. Named testimonials are published only with verified consent and experience attestation on file.</p>
 
-<p><em>TheSynLab uses Trust Scores (0–100) based on reliability, privacy, and transparency. Integration Scores (0–100) evaluate ecosystem compatibility and API quality. TCO includes 3-year pricing with hidden costs. All products lab-tested for minimum 14 days before scoring.</em></p>
+<p><em>Public Trust and Integration Scores use a 0–10 scale on product pages. Ownership cost displays separate annual seat quotes from modeled 36-month TCO. Catalog size reflects ${catalogCount} published products in the current static snapshot. Qualifying lab-tested reviews follow a 14+ day protocol with dated re-verification.</em></p>
 `;
