@@ -128,7 +128,7 @@ export default function Hub() {
             <Link to="/methodology">How we test &amp; score</Link>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <Link to="/tools/compare">Compare tools</Link>
+            <Link to="/compare">Compare tools</Link>
           </Button>
           <Button asChild size="sm" variant="outline">
             <Link to="/tco-calculator">3-year cost calculator</Link>
@@ -159,7 +159,7 @@ export default function Hub() {
           <div className="text-center py-16">
             <p className="text-muted-foreground mb-4">No products in this hub yet.</p>
             <Button asChild variant="outline">
-              <Link to="/tools/compare">Browse all products</Link>
+              <Link to="/compare">Browse all products</Link>
             </Button>
           </div>
         ) : (

@@ -116,7 +116,7 @@ export default function ProductDetailPage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="mb-4 text-sm text-muted-foreground">
-          <Link to="/" className="hover:underline">Home</Link> / <Link to="/tools/compare" className="hover:underline">Products</Link> / <span>{details.productName}</span>
+          <Link to="/" className="hover:underline">Home</Link> / <Link to="/compare" className="hover:underline">Products</Link> / <span>{details.productName}</span>
         </div>
 
         <ProductHero

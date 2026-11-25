@@ -4293,7 +4293,7 @@ The best AI tools for reports depend on context - strategic/business teams prior
 
 For business reports, the best tools tend to emphasize templates and executive summarization since those reports have highly formulaic formats. By contrast, academic reports need tools that facilitate literature reviews and citation management, since factual precision matters most in scholarly writing.
 
-![AI report tool dashboards for business vs academic writing](/ai-report-tools-comparison.png)
+![AI report tool dashboards for business vs academic writing](/ai-report-tools-comparison.webp)
 
 ## How Can You Turn an Outline Into a Full Report Using AI?
 
@@ -4301,7 +4301,7 @@ You can turn an outline into a full report by asking it to draft the sections yo
 
 You first tell it to create a detailed outline with headers and the number of words in each section. Then start to write the report, one section at a time. Check facts as you go and ensure each piece flows logically before moving on. Also make sure to add citations as you go, rather than waiting until the end.
 
-![Turn an outline into a report using AI section-by-section drafting](/ai-report-outline-workflow.png)
+![Turn an outline into a report using AI section-by-section drafting](/ai-report-outline-workflow.webp)
 
 ## How Do You Fact-Check and Edit AI-Generated Long Reports?
 
@@ -4339,7 +4339,7 @@ AI tools for report writing are unlikely to replace critical thinking, but can h
     updatedAt: "2026-08-03",
     readingTime: 14,
     wordCount: 2861,
-    featuredImage: "/ai-report-tools-comparison.png",
+    featuredImage: "/ai-report-tools-comparison.webp",
     tags: ["AI tools", "report writing", "long-form writing", "citation tools", "AI writing"],
     relatedArticles: [7, 12, 15, 34],
     isFeatured: false,
@@ -4506,17 +4506,17 @@ Native integrations, HTTP/webhook connectors, custom code nodes, AI modules, and
 
 are undoubtedly the most crucial ones, but only if your team has already identified the particular app they need Zapier-type connectors for; the overall breadth and readiness of Zapier's catalog are its defining strength in this category.
 
-![Browse Zapier AI app directory for lead routing automation](/zapier-app-directory-lead-routing.png)
+![Browse Zapier AI app directory for lead routing automation](/zapier-app-directory-lead-routing.webp)
 
 ### HTTP and webhook connectors
 
 In cases when a native connector is unavailable or does not provide a specific endpoint, HTTP and webhook connectors become essential. Both Make's visual HTTP modules and n8n's HTTP Request node allow users to connect to custom API or niche tools that are not available.
 
-![Configure webhook automation for a custom API workflow](/http-webhook-config-make-n8n.png)
+![Configure webhook automation for a custom API workflow](/http-webhook-config-make-n8n.webp)
 
 Make's visual HTTP modules plus n8n's HTTP Request node let you connect to any custom API or niche tools if a native connector is unavailable or no particular endpoint is supported.
 
-![n8n code node connected to a self-hosted workflow](/n8n-code-node-self-hosted-workflow.png)
+![n8n code node connected to a self-hosted workflow](/n8n-code-node-self-hosted-workflow.webp)
 
 ## What Should You Do Next?
 
@@ -4540,7 +4540,7 @@ Reviewed by Nicholas Jackson, senior engineer who has operated these systems at 
     updatedAt: "2026-08-06",
     readingTime: 9,
     wordCount: 1900,
-    featuredImage: "/zapier-app-directory-lead-routing.png",
+    featuredImage: "/zapier-app-directory-lead-routing.webp",
     tags: ["n8n", "Zapier AI", "Make.com", "workflow automation", "integration depth", "AI workflow automation"],
     trustScore: 0,
     integrationScore: 0,
@@ -4598,7 +4598,7 @@ Granola is an AI-assisted note-taking tool that provides contextual verbatim-bas
 
 The tool is appropriate for one-on-ones and for product, sales, and internal meetings where a human can type in natural language prompts and receive helpful context assistance after the meeting has concluded. According to their privacy policy, Granola does not save or store meeting audio and uses encryption for all transcripts and notes both in transit and at rest. They do not have private by default – in fact, their model is trained on your data by default, unless you change your settings. Only available to the Enterprise plan, administrators can also turn off model training entirely for their team. Teams that handle sensitive information should make sure that they have turned off model training, rather than leaving it on (the default).
 
-![Screenshot of Granola AI meeting notes editor showing transcript-based note enhancement.](/granola-meeting-notes-editor.png)
+![Screenshot of Granola AI meeting notes editor showing transcript-based note enhancement.](/granola-meeting-notes-editor.webp)
 
 ## Is Granola better for meeting notes?
 
@@ -4614,7 +4614,7 @@ Otter's free tier includes 300 minutes of transcription and 20 AI Chat queries p
 
 Business ($30/user/month ($19.99 / year) has unlimited transcription time, but a 4-hr per-meeting limit, and Enterprise is custom-programmable, including SOC 2, HIPAA, SSO, and SCIM support.
 
-![Screenshot of Otter AI live transcription with speaker labels and summary panel.](/otter-live-transcript-view.png)
+![Screenshot of Otter AI live transcription with speaker labels and summary panel.](/otter-live-transcript-view.webp)
 
 ## Is Otter.ai Better for Searchable Transcripts and Collaboration?
 
@@ -4624,7 +4624,7 @@ Otter.ai is a good option if you need to collaborate in real-time, search throug
 
 Fireflies.ai is an all-in-one conversation intelligence platform that allows you to record meetings, create transcripts, search through them, and collaborate in real time. It also offers to link meetings to CRM and other tools, making it helpful for sales, customer success, recruiting, and revenue teams. For instance, a sales rep can go over objections, mark competitor mentions, and forward specific notes to a CRM without having to type them in manually. Fireflies is SOC 2 Type II and GDPR compliant at all levels, including the Free plan. As for pricing, there is a limited Free plan, and users can upgrade to a higher-tier plan at $0, limited AI credits and storage), Pro ($10 / $18 per user/month, unlimited transcription, 8,000 minutes of storage per seat), Business ($19 / $29 per user/month, adds CRM sync, video recording, and conversation intelligence), Enterprise ($39/user/month (billed annually, offers HIPAA compliance, SSO support, and custom data retention). Note that Ask Fred and Smart Highlights features utilize a separate credit economy with limited complimentary monthly credits on all plans; this is the second most frequent reason for dissatisfaction among independent researchers who have contacted me.
 
-![Screenshot of Fireflies AI transcript search and HubSpot CRM sync workflow.](/fireflies-transcript-search-crm.png)
+![Screenshot of Fireflies AI transcript search and HubSpot CRM sync workflow.](/fireflies-transcript-search-crm.webp)
 
 ## Is Fireflies.ai Better for Sales and CRM Workflows?
 
@@ -4708,7 +4708,7 @@ A serious evaluation should use the same conversations, same success criteria, a
 
 - Permissions: before allowing your CRM or other tools to be written to, verify that you have full control over each integration step.
 
-![Screenshot of TheSynLab worksheet comparing AI meeting assistant accuracy and privacy scores.](/synlab-comparison-worksheet.png)
+![Screenshot of TheSynLab worksheet comparing AI meeting assistant accuracy and privacy scores.](/synlab-comparison-worksheet.webp)
 
 ## Which AI Meeting Assistant Should You Trust?
 
@@ -4728,7 +4728,7 @@ Reviewed by Editorial Review — this article was checked by an editor to make s
     updatedAt: "2026-08-08",
     readingTime: 15,
     wordCount: 3298,
-    featuredImage: "/granola-meeting-notes-editor.png",
+    featuredImage: "/granola-meeting-notes-editor.webp",
     tags: ["Granola", "Otter.ai", "Fireflies.ai", "AI meeting assistant", "meeting transcription", "Trust Score"],
     trustScore: 0,
     integrationScore: 0,

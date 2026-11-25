@@ -154,7 +154,7 @@ export function ProductDecisionCard({
           Open Decision Engine
         </Button>
         <Link
-          to={`/tools/compare?product=${encodeURIComponent(product.productSlug)}`}
+          to={`/compare?product=${encodeURIComponent(product.productSlug)}`}
           onClick={(e) => e.stopPropagation()}
         >
           <Badge variant="secondary" aria-label={`Compare ${product.productName}`}>Compare</Badge>

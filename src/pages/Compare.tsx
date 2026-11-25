@@ -80,7 +80,7 @@ export default function Compare() {
   const breadcrumbs = [
     { name: "Home", url: "/" },
     { name: "Tools", url: "/" },
-    { name: "Product Comparison", url: "/tools/compare" },
+    { name: "Product Comparison", url: "/compare" },
   ];
 
   const embedCode = generateEmbedCode();
@@ -90,7 +90,7 @@ export default function Compare() {
       <MetaTags
         title="Product Comparison Engine"
         description={`Compare up to ${MAX_COMPARE_PRODUCTS} products side-by-side: trust score, integration score, TCO, sustainability, and compatibility.`}
-        canonical="/tools/compare"
+        canonical="/compare"
       />
       <JsonLd type="BreadcrumbList" breadcrumbs={breadcrumbs} />
       <Header />

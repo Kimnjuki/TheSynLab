@@ -88,7 +88,7 @@ export default function Profile() {
                   <CardContent className="py-12 text-center">
                     <Heart className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                     <p className="text-muted-foreground mb-4">No favorite products yet</p>
-                    <Link to="/tools/compare">
+                    <Link to="/compare">
                       <Button>Browse Products</Button>
                     </Link>
                   </CardContent>
@@ -202,7 +202,7 @@ export default function Profile() {
                   <CardContent className="py-12 text-center">
                     <Star className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                     <p className="text-muted-foreground mb-4">No reviews written yet</p>
-                    <Link to="/tools/compare">
+                    <Link to="/compare">
                       <Button>Browse Products to Review</Button>
                     </Link>
                   </CardContent>

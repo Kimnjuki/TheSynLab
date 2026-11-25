@@ -404,7 +404,7 @@ export default function ToolAlternativesPage() {
             <Link to={`/hub/ai-tools/${tool.category}`}>
               <Button variant="outline" size="sm">All {category.name}</Button>
             </Link>
-            <Link to="/tools/compare">
+            <Link to="/compare">
               <Button size="sm">Compare Tools</Button>
             </Link>
           </div>

@@ -2126,17 +2126,17 @@ ${relatedHtml.slice(0, 6).join("\n")}
     "/editorial": {
       name: "Editorial Policy",
       summary: "How TheSynLab maintains editorial independence, testing rigor, and transparent scoring.",
-      body: "TheSynLab evaluates software and smart-home products through a structured Trust Score (reliability, privacy, transparency) and Integration Score (API quality, ecosystem fit). Every product is lab-tested by our editorial team for a minimum of 14 days before it receives a score. Editorial decisions are independent of advertiser or affiliate relationships. Our proprietary scoring methodology is published openly in the Scoring Hub.",
+      body: "TheSynLab evaluates software and smart-home products through a structured Trust Score (reliability, privacy, transparency) and Integration Score (API quality, ecosystem fit). Every product is lab-tested by our editorial team for a minimum of 14 days before it receives a score. Editorial decisions are independent of advertiser or affiliate relationships. Our proprietary scoring methodology is published openly in the Scoring Hub. Every scored review states the plan tested, test window, workflows completed, and last-verified date. Corrections are dated publicly. Vendors may reply before material claims publish. Affiliate status never enters ranking features.",
     },
     "/how-we-make-money": {
       name: "How We Make Money",
       summary: "TheSynLab is funded by affiliate commissions and advertising; this never influences our scores.",
-      body: "TheSynLab is funded through affiliate commissions and advertising. When you click product links and make a purchase, we may earn a commission at no additional cost to you. This never influences our scores or recommendations. Editorial independence is guaranteed by our Affiliate Disclosure and Editorial Policy.",
+      body: "TheSynLab is funded through affiliate commissions and advertising. When you click product links and make a purchase, we may earn a commission at no additional cost to you. This never influences our scores or recommendations. Editorial independence is guaranteed by our Affiliate Disclosure and Editorial Policy. Commission rates are not inputs to Trust Score, Integration Score, or comparison rankings. Sponsored placements are labelled separately from editorial reviews.",
     },
     "/ad-compliance": {
       name: "Advertising & Ad Compliance",
       summary: "TheSynLab advertising policy: sponsored placements are clearly labelled and never affect scores.",
-      body: "TheSynLab distinguishes editorial content from advertising. Sponsored placements, partnerships, and affiliate links are clearly labelled and governed by our Affiliate Disclosure. We use industry-standard ad compliance practices, keep native advertising clearly marked, and never allow advertising to influence Trust or Integration Scores.",
+      body: "TheSynLab distinguishes editorial content from advertising. Sponsored placements, partnerships, and affiliate links are clearly labelled and governed by our Affiliate Disclosure. We use industry-standard ad compliance practices, keep native advertising clearly marked, and never allow advertising to influence Trust or Integration Scores. Ad slots follow disclosure rules on review, hub, and comparison surfaces. Personalised ad targeting is constrained by our published privacy policy.",
     },
     "/vendor-program": {
       name: "Vendor Program",
@@ -2170,11 +2170,18 @@ ${relatedHtml.slice(0, 6).join("\n")}
 </main>`;
   }
 
-  // ── Default fallback (homepage) ────────────────────────────────────────────
-  // AdSense compliance: must return 400+ words of substantive content in prerender
+  // ── Default fallback ───────────────────────────────────────────────────────
+  // Prefer route-specific copy so SPA-shell / unknown routes do not all share one H1.
+  // AdSense compliance: still return 400+ words of substantive content.
+  const routeLabel = route === "/"
+    ? "Independent Tech Reviews"
+    : route.replace(/^\/+/, "").split("/").filter(Boolean).map((s) =>
+        s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+      ).join(" · ") || "Independent Tech Reviews";
   return `<main style="${MAIN_STYLE}">
-<h1>TheSynLab — Independent Tech Reviews</h1>
+<h1>TheSynLab — ${escapeHtml(routeLabel)}</h1>
 ${HOMEPAGE_PRERENDER_HTML}
+<p style="margin-top:1.5rem;line-height:1.7">You are viewing the static overview for <code>${escapeHtml(route)}</code>. Continue to the <a href="/products">product catalog</a>, <a href="/blog">review archive</a>, or <a href="/compare">comparison engine</a> for scored recommendations.</p>
 </main>`;
 };
 

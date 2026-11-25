@@ -8,10 +8,10 @@ import { v } from "convex/values";
  * along with taxonomy links, content sections, internal links, and sitemap entry.
  *
  * IMAGES (copied from assets/ to public/):
- *   - featuredImageUrl: /zapier-app-directory-lead-routing.png
- *   - galleryImages[0]: /zapier-app-directory-lead-routing.png
- *   - galleryImages[1]: /http-webhook-config-make-n8n.png
- *   - galleryImages[2]: /n8n-code-node-self-hosted-workflow.png
+ *   - featuredImageUrl: /zapier-app-directory-lead-routing.webp
+ *   - galleryImages[0]: /zapier-app-directory-lead-routing.webp
+ *   - galleryImages[1]: /http-webhook-config-make-n8n.webp
+ *   - galleryImages[2]: /n8n-code-node-self-hosted-workflow.webp
  *
  * PLACEHOLDERS (must be resolved before publishing):
  *   - authorId: "PLACEHOLDER_AUTHOR_ID__kim-anderson"
@@ -158,11 +158,11 @@ Reviewed by Nicholas Jackson, senior engineer who has operated these systems at 
       postStatus: "draft" as const,
       postType: "comparison" as const,
       hub: "gaming",
-      featuredImageUrl: "/zapier-app-directory-lead-routing.png",
+      featuredImageUrl: "/zapier-app-directory-lead-routing.webp",
       galleryImages: [
-        "/zapier-app-directory-lead-routing.png",
-        "/http-webhook-config-make-n8n.png",
-        "/n8n-code-node-self-hosted-workflow.png",
+        "/zapier-app-directory-lead-routing.webp",
+        "/http-webhook-config-make-n8n.webp",
+        "/n8n-code-node-self-hosted-workflow.webp",
       ],
       seoTitle: "n8n vs Zapier AI vs Make.com: The Integration-Depth Comparison Guide",
       metaDescription:
@@ -349,7 +349,7 @@ Reviewed by Nicholas Jackson, senior engineer who has operated these systems at 
         sectionType: "image",
         sectionTitle: "Native integrations",
         sectionContent: {
-          imageUrl: "/zapier-app-directory-lead-routing.png",
+          imageUrl: "/zapier-app-directory-lead-routing.webp",
           altText: "Browse Zapier AI app directory for lead routing automation",
           caption: "Zapier app directory while setting up a lead-routing Zap.",
         },
@@ -360,7 +360,7 @@ Reviewed by Nicholas Jackson, senior engineer who has operated these systems at 
         sectionType: "image",
         sectionTitle: "HTTP and webhook connectors",
         sectionContent: {
-          imageUrl: "/http-webhook-config-make-n8n.png",
+          imageUrl: "/http-webhook-config-make-n8n.webp",
           altText: "Configure webhook automation for a custom API workflow",
           caption: "HTTP module configuration in Make and the HTTP Request node in n8n, side by side.",
         },
@@ -371,7 +371,7 @@ Reviewed by Nicholas Jackson, senior engineer who has operated these systems at 
         sectionType: "image",
         sectionTitle: "HTTP and webhook connectors (continued)",
         sectionContent: {
-          imageUrl: "/n8n-code-node-self-hosted-workflow.png",
+          imageUrl: "/n8n-code-node-self-hosted-workflow.webp",
           altText: "configure webhook automation for a custom API workflow",
           caption: "Make's visual HTTP modules plus n8n's HTTP Request node.",
         },
@@ -515,11 +515,11 @@ Reviewed by Nicholas Jackson, senior engineer who has operated these systems at 
       created: !existing,
       updated: !!existing,
       slug,
-      featuredImageUrl: "/zapier-app-directory-lead-routing.png",
+      featuredImageUrl: "/zapier-app-directory-lead-routing.webp",
       galleryImages: [
-        "/zapier-app-directory-lead-routing.png",
-        "/http-webhook-config-make-n8n.png",
-        "/n8n-code-node-self-hosted-workflow.png",
+        "/zapier-app-directory-lead-routing.webp",
+        "/http-webhook-config-make-n8n.webp",
+        "/n8n-code-node-self-hosted-workflow.webp",
       ],
       taxonomyLinked: true,
       authorProfilesCreated,

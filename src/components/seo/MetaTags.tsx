@@ -33,8 +33,29 @@ function toAbsoluteSiteUrl(url?: string) {
   }
 }
 
-const trimTitle = (title: string) => (title.length > 60 ? `${title.slice(0, 57)}...` : title);
-const trimMeta = (meta?: string) => (meta && meta.length > 160 ? `${meta.slice(0, 157)}...` : meta);
+const trimMeta = (meta?: string) => {
+  if (!meta) return meta;
+  if (meta.length > 155) return `${meta.slice(0, 152).replace(/\s+\S*$/, "").trimEnd()}…`;
+  if (meta.length < 70) {
+    // Leave short descriptions alone — callers supply USP copy; padding would be keyword stuffing.
+    return meta;
+  }
+  return meta;
+};
+
+/** Final <title> target: ≤60 chars including " | TheSynLab". */
+function buildFullTitle(title: string, siteName: string): string {
+  const suffix = ` | ${siteName}`;
+  const cleaned = title
+    .replace(new RegExp(`\\s*[|–—-]\\s*${siteName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*$`, "i"), "")
+    .trim();
+  const maxCore = Math.max(24, 60 - suffix.length);
+  let core = cleaned;
+  if (core.length > maxCore) {
+    core = `${core.slice(0, maxCore - 1).replace(/\s+\S*$/, "").trimEnd()}…`;
+  }
+  return `${core}${suffix}`;
+}
 
 export function MetaTags({
   title,
@@ -49,7 +70,7 @@ export function MetaTags({
   robots,
 }: MetaTagsProps) {
   const location = useLocation();
-  const fullTitle = title.includes(siteName) ? title : `${trimTitle(title)} | ${siteName}`;
+  const fullTitle = buildFullTitle(title, siteName);
   const safeMeta = trimMeta(description);
   // SEO-1.5: every *indexable* page gets a canonical — self-referencing by
   // default, absolute, apex host. Empty string + noindex means "omit canonical"

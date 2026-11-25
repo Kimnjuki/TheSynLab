@@ -99,7 +99,7 @@ export default function AIToolsHub() {
                 <Code2 className="h-4 w-4" /> Dev &amp; Infra
               </Button>
             </Link>
-            <Link to="/tools/compare">
+            <Link to="/compare">
               <Button size="lg" variant="ghost" className="gap-2">
                 <Search className="h-4 w-4" /> Compare Tools
               </Button>
@@ -236,7 +236,7 @@ export default function AIToolsHub() {
                 <Zap className="h-4 w-4" /> Open Stack Builder
               </Button>
             </Link>
-            <Link to="/tools/compare">
+            <Link to="/compare">
               <Button variant="outline" className="gap-2">
                 <Search className="h-4 w-4" /> Compare Two Tools
               </Button>

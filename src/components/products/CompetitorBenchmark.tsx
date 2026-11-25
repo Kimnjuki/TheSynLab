@@ -78,7 +78,7 @@ export function CompetitorBenchmark({ productId, productSlug }: CompetitorBenchm
             </tbody>
           </table>
         </div>
-        <Link to={`/tools/compare?products=${productSlug}`}>
+        <Link to={`/compare?products=${productSlug}`}>
           <Button variant="outline" size="sm" className="w-full gap-2">
             <BarChart2 className="h-4 w-4" />
             Compare all alternatives

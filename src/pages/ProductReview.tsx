@@ -83,7 +83,7 @@ export default function ProductReview() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-2">Product Not Found</h1>
-            <Link to="/tools/compare" className="text-primary hover:underline">
+            <Link to="/compare" className="text-primary hover:underline">
               Browse all products
             </Link>
           </div>

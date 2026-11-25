@@ -151,7 +151,7 @@ export default function StackBuilder() {
               Save and share your configuration.
             </p>
             <div className="mt-4 flex flex-wrap gap-3">
-              <Link to="/tools/compare">
+              <Link to="/compare">
                 <Button variant="outline" size="sm" className="gap-2">
                   <GitCompare className="h-4 w-4" /> Compare Products
                 </Button>

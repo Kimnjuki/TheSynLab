@@ -37,8 +37,8 @@ export const topicClusters: TopicCluster[] = [
   {
     id: "smart-home",
     pillarTitle: "Best Smart Home Hub",
-    pillarSlug: "hub/smart-home",
-    pillarUrl: "/hub/smart-home",
+    pillarSlug: "hub/intelligent-home",
+    pillarUrl: "/hub/intelligent-home",
     pillarDescription: "Complete guide to building a smart home ecosystem. Compare hubs, devices, and automation platforms.",
     related: [
       { slug: "smart-speakers", title: "Best Smart Speakers", description: "Voice assistant speaker comparison and reviews.", url: "/best-smart-speakers" },

@@ -16,7 +16,7 @@ const footerLinks = {
     { name: "AI & SaaS Tools Hub", href: "/hub/ai-tools" },
   ],
   tools: [
-    { name: "Comparison Engine", href: "/tools/compare" },
+    { name: "Comparison Engine", href: "/compare" },
     { name: "Compatibility Checker", href: "/tools/compatibility" },
     { name: "Budget Calculator", href: "/tools/budget-calculator" },
     { name: "Community Forum", href: "/forum" },

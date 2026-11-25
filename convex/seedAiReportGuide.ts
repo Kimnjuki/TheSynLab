@@ -5,8 +5,8 @@ import { mutation } from "./_generated/server";
  * Inserts the article into novaPosts with real image URLs from /public.
  *
  * Images:
- *   - featuredImageUrl: /ai-report-tools-comparison.png  (was media/image1.png)
- *   - galleryImages[0]: /ai-report-outline-workflow.png  (was media/image2.png)
+ *   - featuredImageUrl: /ai-report-tools-comparison.webp  (was media/image1.png)
+ *   - galleryImages[0]: /ai-report-outline-workflow.webp  (was media/image2.png)
  *
  * NOTE: authorId is a placeholder — resolve to a real novaUsers/authorProfiles
  * record before publishing. hub is set to "gaming" per instruction.
@@ -289,7 +289,7 @@ https://thesynlab.com/hub/ai-workflow\\]). If you need help finding
 report templates to jump-start your writing, check out this list here
 \\[LINK: <https://thesynlab.com/hub/ai-workflow>\\].
 
-![AI report tool dashboards for business vs academic writing](/ai-report-tools-comparison.png)
+![AI report tool dashboards for business vs academic writing](/ai-report-tools-comparison.webp)
 
 *\\[IMAGE: Side-by-side dashboard comparison of a business-report tool
 and an academic-research tool \\| Alt text: \\"Compare AI report tool
@@ -313,7 +313,7 @@ document. For more advice on how to use prompts effectively when working
 with long documents, see our post on prompt engineering \\[LINK:
 https://thesynlab.com/hub/ai-workflow\\].
 
-![Turn an outline into a report using AI section-by-section drafting](/ai-report-outline-workflow.png)
+![Turn an outline into a report using AI section-by-section drafting](/ai-report-outline-workflow.webp)
 
 *\\[IMAGE: Example outline-to-draft workflow with section markers \\| Alt
 text: \\"Turn an outline into a report using AI section-by-section
@@ -405,8 +405,8 @@ marketplace fraud*`;
       postStatus: "draft",
       postType: "guide",
       hub: "gaming",
-      featuredImageUrl: "/ai-report-tools-comparison.png",
-      galleryImages: ["/ai-report-outline-workflow.png"],
+      featuredImageUrl: "/ai-report-tools-comparison.webp",
+      galleryImages: ["/ai-report-outline-workflow.webp"],
       seoTitle: "The Ultimate Guide to AI Tools for Writing Long Reports",
       metaDescription:
         "Learn how to use AI writing tools to write reports that maintain context across sections, cite relevant sources, and avoid errors common to generic chatbots.",
@@ -509,8 +509,8 @@ marketplace fraud*`;
       created: !existing,
       updated: !!existing,
       slug,
-      featuredImageUrl: "/ai-report-tools-comparison.png",
-      galleryImages: ["/ai-report-outline-workflow.png"],
+      featuredImageUrl: "/ai-report-tools-comparison.webp",
+      galleryImages: ["/ai-report-outline-workflow.webp"],
     };
   },
 });

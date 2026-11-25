@@ -11,12 +11,12 @@ export type MetaOverride = { title?: string; description?: string };
 /** Blog slug → CTR-optimized title/description */
 export const BLOG_META_OVERRIDES: Record<string, MetaOverride> = {
   "best-smart-thermostat-2026-energy-savings": {
-    title: "Best Smart Thermostat 2026: Ecobee vs Nest vs Amazon (60-Day Test)",
+    title: "Best Smart Thermostat 2026: Ecobee vs Nest Tested",
     description:
       "We measured real energy savings on Ecobee Premium, Nest 4th Gen, Amazon Smart, and mysa. See which cut bills most — and which needs a subscription.",
   },
   "password-manager-comparison": {
-    title: "Best Password Manager 2026: 1Password vs Bitwarden vs Dashlane",
+    title: "Best Password Manager 2026: 1Password vs Bitwarden",
     description:
       "Best password manager for 2026 ranked on audits, MFA, family pricing, and migration pain. Clear winner for most people — plus when Bitwarden is enough.",
   },
@@ -26,22 +26,22 @@ export const BLOG_META_OVERRIDES: Record<string, MetaOverride> = {
       "300+ hours on carpet, hardwood, and tile. Compare Roborock S8 MaxV Ultra, DreameBot L30, and Eufy X10 for suction, mopping, and pet hair — ranked.",
   },
   "best-mechanical-keyboard-2026-review": {
-    title: "Best Mechanical Keyboard 2026: 12 Tested (Keychron, Wooting & More)",
+    title: "Best Mechanical Keyboard 2026: 12 Lab-Tested",
     description:
       "Best mechanical keyboard 2026 for typing, coding, and gaming. Keychron Q Max, Wooting 80HE, and 10 more compared on feel, wireless latency, and value.",
   },
   "best-air-purifier-2026-review-hepa": {
-    title: "Best Air Purifier 2026: HEPA Models CADR-Tested (Coway, Blueair, Levoit)",
+    title: "Best Air Purifier 2026: HEPA CADR Lab Test",
     description:
       "Is an air purifier worth it in 2026? We measured CADR, noise, and filter cost on Coway Airmega, Blueair, Dyson, and Levoit — clear picks for smoke and allergies.",
   },
   "monitor-buying-guide-productivity": {
-    title: "Best Monitor for Work 2026: Freelancers, Teachers & Small Business",
+    title: "Best Monitor for Work 2026: Real Desk Picks",
     description:
       "Best monitor for freelancers, small business, and remote work — size, resolution, and eye comfort without overpaying for gaming extras you will not use.",
   },
   "home-assistant-beginners-guide": {
-    title: "Home Assistant Beginner's Guide 2026: Hardware, Setup & First Automations",
+    title: "Home Assistant Beginner's Guide 2026",
     description:
       "New to Home Assistant? Hardware picks (Green, Yellow, Pi), first automations, and the setup mistakes that cost beginners the most time.",
   },
@@ -71,7 +71,7 @@ export const BLOG_META_OVERRIDES: Record<string, MetaOverride> = {
       "What Matter means for your smart home, which devices support it, and how to get started without ripping out your current setup.",
   },
   "n8n-vs-zapier-ai-vs-make-com": {
-    title: "n8n vs Zapier vs Make 2026: Which Automation Platform Wins?",
+    title: "n8n vs Zapier vs Make 2026: Clear Winner",
     description:
       "n8n vs Zapier vs Make on pricing, workflow flexibility, self-hosting, and real integration depth — one clear pick per team size.",
   },
@@ -91,7 +91,7 @@ export const BLOG_META_OVERRIDES: Record<string, MetaOverride> = {
       "Starter smart home kit that actually works together — hubs, lights, locks, and sensors ranked for beginners on setup and privacy.",
   },
   "ai-image-generation-tools-comparison": {
-    title: "Midjourney vs DALL-E vs Stable Diffusion (2026 Test)",
+    title: "Midjourney vs DALL-E vs SD (2026 Test)",
     description:
       "We generated 300+ images with Midjourney, DALL-E 3, and Stable Diffusion. Compare quality, privacy, commercial rights, and cost — with a clear winner.",
   },
@@ -101,7 +101,7 @@ export const BLOG_META_OVERRIDES: Record<string, MetaOverride> = {
       "SocialPilot alternatives compared on price, features, and Trust Scores. Find a cheaper scheduler with the integrations your team needs.",
   },
   "granola-otter-fireflies-comparison": {
-    title: "Granola vs Otter vs Fireflies 2026: AI Meeting Notes Compared",
+    title: "Granola vs Otter vs Fireflies 2026 Compared",
     description:
       "Granola vs Otter vs Fireflies for meeting notes — accuracy, privacy, pricing, and which tool fits sales vs engineering teams.",
   },

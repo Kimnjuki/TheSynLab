@@ -290,7 +290,7 @@ export default function AIToolsCategoryPage() {
             ← Back to AI Tools Hub
           </Link>
           <div className="flex gap-3">
-            <Link to="/tools/compare">
+            <Link to="/compare">
               <Button variant="outline" size="sm">Compare Tools</Button>
             </Link>
             <Link to="/tools/stack-builder">

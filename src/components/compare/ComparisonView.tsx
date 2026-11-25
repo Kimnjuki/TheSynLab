@@ -19,7 +19,7 @@ export function ComparisonView({ products, onRemove }: ComparisonViewProps) {
 
   const handleShare = async () => {
     const ids = products.map((p: any) => p.productSlug ?? p.product_slug ?? (p.id ?? p._id)?.toString()).filter(Boolean);
-    const shareUrl = `${window.location.origin}/tools/compare?products=${ids.join(",")}`;
+    const shareUrl = `${window.location.origin}/compare?products=${ids.join(",")}`;
     
     try {
       await navigator.clipboard.writeText(shareUrl);
