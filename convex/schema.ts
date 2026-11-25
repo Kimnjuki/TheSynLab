@@ -14,6 +14,18 @@ import {
   competitorSeoTrackingSchema,
   novaProductsCompetitiveEnhancements
 } from "./schemaCompetitiveTools";
+import {
+  canonicalRubricsFields,
+  canonicalProductPlansFields,
+  canonicalPriceObservationsFields,
+  canonicalTestRunsFields,
+  canonicalTestResultsFields,
+  canonicalEvidenceArtifactsFields,
+  canonicalClaimsFields,
+  canonicalScoreSnapshotsFields,
+  canonicalIntegrationEdgesFields,
+  canonicalCostScenariosFields,
+} from "./schemaCanonical";
 
 export default defineSchema({
   // ============ AD COMPLIANCE ============
@@ -2488,4 +2500,53 @@ export default defineSchema({
     .index("by_post", ["postId"])
     .index("by_hub", ["hubSlug"])
     .index("by_date", ["detectedAt"]),
+
+  // ============ T03: CANONICAL INTEGRITY (additive; see docs/T03_SCHEMA_MAPPING.md) ============
+  // Empty tables until owner approves staging deploy / backfill. Do not rewrite legacy scores.
+  canonicalRubrics: defineTable(canonicalRubricsFields)
+    .index("by_category", ["categoryKey"])
+    .index("by_category_version", ["categoryKey", "version"])
+    .index("by_status", ["status"]),
+
+  canonicalProductPlans: defineTable(canonicalProductPlansFields)
+    .index("by_product", ["productId"])
+    .index("by_status", ["status"]),
+
+  canonicalPriceObservations: defineTable(canonicalPriceObservationsFields)
+    .index("by_plan", ["planId"])
+    .index("by_captured", ["capturedAt"]),
+
+  canonicalTestRuns: defineTable(canonicalTestRunsFields)
+    .index("by_product", ["productId"])
+    .index("by_rubric", ["rubricId"])
+    .index("by_status", ["status"]),
+
+  canonicalTestResults: defineTable(canonicalTestResultsFields)
+    .index("by_run", ["runId"])
+    .index("by_run_criterion", ["runId", "criterionId"]),
+
+  canonicalEvidenceArtifacts: defineTable(canonicalEvidenceArtifactsFields)
+    .index("by_run", ["runId"])
+    .index("by_access", ["accessLevel"]),
+
+  canonicalClaims: defineTable(canonicalClaimsFields)
+    .index("by_subject", ["subjectType", "subjectId"])
+    .index("by_status", ["status"]),
+
+  canonicalScoreSnapshots: defineTable(canonicalScoreSnapshotsFields)
+    .index("by_product", ["productId"])
+    .index("by_product_dimension", ["productId", "dimensionKey"])
+    .index("by_rubric", ["rubricId"])
+    .index("by_status", ["status"])
+    .index("by_published", ["productId", "publishedAt"]),
+
+  canonicalIntegrationEdges: defineTable(canonicalIntegrationEdgesFields)
+    .index("by_source", ["sourceProductId"])
+    .index("by_target", ["targetProductId"])
+    .index("by_state", ["state"]),
+
+  canonicalCostScenarios: defineTable(canonicalCostScenariosFields)
+    .index("by_product", ["productId"])
+    .index("by_plan", ["planId"])
+    .index("by_status", ["status"]),
 });
