@@ -1,10 +1,11 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { STATIC_PRODUCTS } from "@/data/staticProductData";
 import { saasTools } from "@/data/saasTools";
+import { prefersToolCanonical } from "@/data/catalogCanonical";
 
 function altHref(slug: string) {
   return STATIC_PRODUCTS.some((p) => p.productSlug === slug)
@@ -24,6 +25,11 @@ export default function ProductAlternativesPage() {
   const { slug = "" } = useParams<{ slug: string }>();
   const product = STATIC_PRODUCTS.find((p) => p.productSlug === slug);
   const year = new Date().getFullYear();
+
+  // Dual-catalog: prefer /tool/:slug/alternatives when that review is canonical.
+  if (slug && prefersToolCanonical(slug)) {
+    return <Navigate to={"/tool/" + slug + "/alternatives"} replace />;
+  }
 
   if (!product || product.alternativeSlugs.length === 0) {
     return (
