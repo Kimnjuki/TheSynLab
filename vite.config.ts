@@ -591,9 +591,9 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
         "Syllaby's AI actors and scenes tested against Synthesia, Pictory, and InVideo — trust score, watermark-free exports, and real-world use cases.",
     },
     airops: {
-      title: "AIPRM vs Aidoc: Which AI Research Assistant Is Worth It?",
+      title: "AirOps Review 2026: AI Workflow Automation Worth It?",
       description:
-        "AIPRM for Claude vs Aidoc for research — we tested prompt libraries, citation accuracy, and workflow fit for academic and professional work.",
+        "AirOps review 2026: AI workflow automation tested. Compare AirOps vs LangChain vs Zapier vs Make for AI agents, pricing, and which no-code AI platform scales operations.",
     },
     "play-ht": {
       title: "Play.ht Review 2026: Voice AI That Sounds Human?",

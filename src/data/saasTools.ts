@@ -113,7 +113,7 @@ export const BEST_OF_LISTS: Record<string, { title: string; description: string;
   "ai-video-tools": {
     title: "Best AI Video Editing Tools",
     description: "Repurpose long-form video into clips, add subtitles, and create faceless content.",
-    toolSlugs: ["opus-clip", "bigvu", "topview", "videvo", "vozo-ai"],
+    toolSlugs: ["opus-clip", "bigvu", "topview", "videvo"],
   },
 };
 
