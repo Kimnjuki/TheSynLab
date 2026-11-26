@@ -101,7 +101,7 @@ const Header = () => {
         <div className="container flex items-center justify-center gap-2">
           <Sparkles className="h-4 w-4" />
           <span>New: Integration Pro membership now available!</span>
-          <Link to="/pricing" className="underline hover:no-underline font-medium">
+          <Link to="/vendor-program" className="underline hover:no-underline font-medium">
             Learn more →
           </Link>
         </div>

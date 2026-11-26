@@ -29,6 +29,8 @@ const CommunitySetups = lazyWithRetry(() => import("./pages/CommunitySetups"));
 const BudgetCalculator = lazyWithRetry(() => import("./pages/BudgetCalculator"));
 const CompatibilityChecker = lazyWithRetry(() => import("./pages/CompatibilityChecker"));
 const ProductDetailPage = lazyWithRetry(() => import("./pages/products/ProductDetailPage"));
+const ProductAlternativesPage = lazyWithRetry(() => import("./pages/products/ProductAlternativesPage"));
+const VsComparisonPage = lazyWithRetry(() => import("./pages/VsComparisonPage"));
 const ProductsHub = lazyWithRetry(() => import("./pages/ProductsHub"));
 const ProductsWatchlist = lazyWithRetry(() => import("./pages/ProductsWatchlist"));
 const Auth = lazyWithRetry(() => import("./pages/Auth"));
@@ -175,7 +177,10 @@ const App = () => (
                   <Route path="/products" element={<ProductsHub />} />
                   <Route path="/products/watchlist" element={<ProductsWatchlist />} />
                   <Route path="/products/category/:category" element={<ProductCategoryPage />} />
+                  <Route path="/products/:slug/alternatives" element={<ProductAlternativesPage />} />
                   <Route path="/products/:slug" element={<ProductDetailPage />} />
+                  {/* /vs/* comparison landings (prerendered + SPA; must not fall through to NotFound) */}
+                  <Route path="/vs/:slug" element={<VsComparisonPage />} />
 
                   {/* Content Hubs */}
                   <Route path="/hub/:slug" element={<Hub />} />

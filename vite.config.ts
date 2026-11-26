@@ -2185,6 +2185,32 @@ ${HOMEPAGE_PRERENDER_HTML}
 </main>`;
 };
 
+/** Replace the inner HTML of <div id="root">…</div> using tag-depth matching. */
+const replaceRootInnerHtml = (html: string, inner: string): string => {
+  const openRe = /<div\s+id=["']root["'][^>]*>/i;
+  const openMatch = openRe.exec(html);
+  if (!openMatch || openMatch.index === undefined) return html;
+  const afterOpen = openMatch.index + openMatch[0].length;
+  let depth = 1;
+  let i = afterOpen;
+  while (i < html.length && depth > 0) {
+    const nextOpen = html.toLowerCase().indexOf("<div", i);
+    const nextClose = html.toLowerCase().indexOf("</div>", i);
+    if (nextClose === -1) break;
+    if (nextOpen !== -1 && nextOpen < nextClose) {
+      depth += 1;
+      i = nextOpen + 4;
+      continue;
+    }
+    depth -= 1;
+    if (depth === 0) {
+      return `${html.slice(0, afterOpen)}\n${inner}\n    ${html.slice(nextClose)}`;
+    }
+    i = nextClose + 6;
+  }
+  return html;
+};
+
 const generateStaticHtmlPages = async (distDir: string) => {
   const indexPath = path.resolve(distDir, "index.html");
   const indexHtml = await fs.readFile(indexPath, "utf8");
@@ -2297,13 +2323,11 @@ const generateStaticHtmlPages = async (distDir: string) => {
     }
 
     // Inject pre-rendered body so crawlers see real content.
-    // Match through the closing </div> that belongs to #root (not nested children)
-    // by consuming until the script tag that follows in index.html.
+    // Depth-count #root's matching </div> — Vite may move <script type=module>
+    // into <head>, so a lookahead for the next <script> after #root is unreliable
+    // and previously left the thin "Loading full experience…" shell (GSC soft 404).
     const staticBody = buildStaticBodyHtml(page.route);
-    html = html.replace(
-      /<div id="root">[\s\S]*?<\/div>\s*(?=<script)/i,
-      `<div id="root">\n${staticBody}\n    </div>\n    `
-    );
+    html = replaceRootInnerHtml(html, staticBody);
 
     const outputPath =
       page.route === "/"
