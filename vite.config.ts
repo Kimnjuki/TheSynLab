@@ -110,6 +110,22 @@ const CANONICAL_ALIASES: Record<string, string> = {
   "/tools/workflow-blueprint": "/workflow-blueprint",
   "/tools/stack-quiz": "/stack-quiz",
   "/tools/compatibility-checker": "/tools/compatibility",
+  // Orphan short aliases (GSC crawled-not-indexed) → canonical tools
+  "/tools/vendor-risk": "/vendor-risk-checker",
+  "/tools/quiz": "/stack-quiz",
+};
+
+/** Thin /products/:slug/alternatives templates — keep crawlable for noindex, drop from sitemap. */
+const isProductAlternativesRoute = (route: string) =>
+  /^\/products\/[^/]+\/alternatives$/.test(route);
+
+/** Bare directory stubs that 301 in nginx — never sitemap / never prerender as destinations. */
+const STUB_REDIRECTS: Record<string, string> = {
+  "/vs": "/compare",
+  "/tool": "/tools",
+  "/recipes": "/workflows",
+  "/scores": "/scoring-hub",
+  "/report": "/report/state-of-saas-trust-2026",
 };
 
 // SEO-1.3: Legacy underscore URLs → hyphenated canonical counterparts.
@@ -220,13 +236,15 @@ const assertHyphenOnlyRoutes = () => {
 assertHyphenOnlyRoutes();
 
 const buildSitemapXml = () => {
-  // Exclude noindex routes AND every route that is itself a permanent redirect
-  // (legacy alias or legacy underscore variant) from the sitemap.
+  // Exclude noindex routes, product alternatives (thin templates), and every route
+  // that is itself a permanent redirect (alias / underscore / directory stub).
   const sitemapRoutes = prerenderRoutes.filter(
     (r) =>
       !NOINDEX_ROUTES.has(r) &&
+      !isProductAlternativesRoute(r) &&
       !Object.keys(CANONICAL_ALIASES).includes(r) &&
-      !LEGACY_URL_REDIRECTS[r]
+      !LEGACY_URL_REDIRECTS[r] &&
+      !STUB_REDIRECTS[r]
   );
 
   const today = new Date().toISOString().slice(0, 10);
@@ -821,10 +839,13 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
     if (product.alternativeSlugs.length > 0) {
       const altRoute = `/products/${normalizeUrlSlug(product.productSlug)}/alternatives`;
       const altCount = product.alternativeSlugs.length;
+      // Thin templated alts: prerender with noindex (sitemap-excluded) so Google can
+      // still crawl and honor the robots directive. Prefer /tool/:slug/alternatives.
       pages.push({
         route: altRoute,
         title: `Top ${altCount} ${product.productName} Alternatives ${year} — Ranked by Trust Score | TheSynLab`,
         description: `Looking beyond ${product.productName}? Compare ${altCount} vetted alternatives by Trust Score (baseline ${product.trustScore}/10), Integration Score, and real annual TCO — with pros, cons, and best-fit verdicts.`,
+        noindex: true,
         jsonLd: [
           {
             "@context": "https://schema.org",
@@ -2340,20 +2361,41 @@ const generateStaticHtmlPages = async (distDir: string) => {
 
 const sitemapPlugin = () => ({
   name: "thesynlab-sitemap",
-  async closeBundle() {
-    const distDir = path.resolve(__dirname, "dist");
-    await fs.mkdir(distDir, { recursive: true });
+  // Use writeBundle (not closeBundle): closeBundle still runs when the Rollup build
+  // fails, and reading dist/index.html then throws ENOENT that masks the real error
+  // (seen on Coolify). writeBundle only runs after a successful disk write.
+  async writeBundle(outputOptions: { dir?: string }) {
+    const distDir = outputOptions.dir
+      ? path.resolve(outputOptions.dir)
+      : path.resolve(process.cwd(), "dist");
+    const indexPath = path.resolve(distDir, "index.html");
+    try {
+      await fs.access(indexPath);
+    } catch {
+      throw new Error(
+        `[thesynlab-sitemap] Expected ${indexPath} after writeBundle, but it is missing. ` +
+          `Vite did not emit index.html — check transformIndexHtml / build errors above.`
+      );
+    }
     const xml = buildSitemapXml();
     await fs.writeFile(path.resolve(distDir, "sitemap.xml"), xml, "utf8");
     // Keep the committed public/sitemap.xml in sync so static/non-container deploys
     // never serve a stale sitemap and so the repo has a single source of truth.
-    await fs.writeFile(path.resolve(__dirname, "public", "sitemap.xml"), xml, "utf8");
-    await fs.writeFile(path.resolve(distDir, "robots.txt"), await fs.readFile(path.resolve(__dirname, "public", "robots.txt"), "utf8"), "utf8");
+    await fs.writeFile(path.resolve(process.cwd(), "public", "sitemap.xml"), xml, "utf8");
+    await fs.writeFile(
+      path.resolve(distDir, "robots.txt"),
+      await fs.readFile(path.resolve(process.cwd(), "public", "robots.txt"), "utf8"),
+      "utf8"
+    );
     // RSS feed — mirror to dist (served) and public (committed source of truth).
     const feed = buildFeedXml();
     await fs.writeFile(path.resolve(distDir, "feed.xml"), feed, "utf8");
-    await fs.writeFile(path.resolve(__dirname, "public", "feed.xml"), feed, "utf8");
+    await fs.writeFile(path.resolve(process.cwd(), "public", "feed.xml"), feed, "utf8");
     await generateStaticHtmlPages(distDir);
+  },
+  // If the build failed, do nothing — never throw ENOENT over the original error.
+  async closeBundle(error?: Error) {
+    if (error) return;
   },
 });
 

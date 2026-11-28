@@ -1,6 +1,9 @@
 # robots.txt for thesynlab.com
-# Last updated: 2026-11-25
+# Last updated: 2026-11-28
 # Synced with vite.config.ts NOINDEX_ROUTES / CANONICAL_ALIASES + GSC coverage export.
+# Note: /products/*/alternatives stay Allow: so Google can crawl and honor noindex.
+# Directory stubs (/vs, /tool, /recipes, /scores, /report) and orphan /tools/*
+# aliases 301 in nginx — do not Disallow or the redirect target is never discovered.
 
 User-agent: *
 Allow: /

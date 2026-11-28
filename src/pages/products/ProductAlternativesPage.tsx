@@ -59,7 +59,8 @@ export default function ProductAlternativesPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <MetaTags title={title} description={description} canonical={canonical} />
+      {/* Thin product-catalog alts: noindex; /tool/:slug/alternatives stays indexable. */}
+      <MetaTags title={title} description={description} canonical={canonical} noindex />
       <JsonLd
         type="ItemList"
         custom={{

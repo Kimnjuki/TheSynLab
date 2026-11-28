@@ -237,7 +237,10 @@ const App = () => (
                   <Route path="/stack-quiz" element={<StackQuiz />} />
                   <Route path="/tools/quiz" element={<Navigate to="/stack-quiz" replace />} />
                   <Route path="/tools/stack-quiz" element={<Navigate to="/stack-quiz" replace />} />
+                  <Route path="/tools/vendor-risk" element={<Navigate to="/vendor-risk-checker" replace />} />
+                  <Route path="/tools/vendor-risk-checker" element={<Navigate to="/vendor-risk-checker" replace />} />
                   <Route path="/search" element={<Search />} />
+                  <Route path="/scores" element={<Navigate to="/scoring-hub" replace />} />
                   <Route path="/scores/trust-score-index" element={<TrustScoreIndex />} />
                   <Route path="/scores/integration-score-index" element={<IntegrationScoreIndex />} />
                   <Route path="/decision-studio" element={<DecisionStudio />} />
@@ -247,6 +250,11 @@ const App = () => (
                   <Route path="/my-stack" element={<MyStackDashboard />} />
                   <Route path="/widgets" element={<WidgetGallery />} />
                   <Route path="/widget/tool/:slug" element={<ToolEmbedPage />} />
+                  {/* Directory stubs (nginx 301 mirrors) — avoid SPA soft-404 shells */}
+                  <Route path="/vs" element={<Navigate to="/compare" replace />} />
+                  <Route path="/tool" element={<Navigate to="/tools" replace />} />
+                  <Route path="/recipes" element={<Navigate to="/workflows" replace />} />
+                  <Route path="/report" element={<Navigate to="/report/state-of-saas-trust-2026" replace />} />
                   <Route path="/report/state-of-saas-trust-2026" element={<StateOfSaaSTrust2026 />} />
                   <Route path="/recipes/:slug" element={<IntegrationRecipe />} />
 
