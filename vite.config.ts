@@ -2419,18 +2419,34 @@ function resolveGa4MeasurementId(): string {
 
 const injectGa4Plugin = () => ({
   name: "inject-ga4-id",
-  enforce: "pre" as const,
-  transformIndexHtml(html: string) {
-    const id = resolveGa4MeasurementId();
-    const hasPlaceholder = html.includes("%VITE_GA4_MEASUREMENT_ID%");
-    const hasId = new RegExp(id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i").test(html);
-    if (!hasPlaceholder && !hasId) {
-      throw new Error(
-        "[ga4-guard] index.html does not contain %VITE_GA4_MEASUREMENT_ID% or the resolved ID — " +
-          "re-add the placeholder so the measurement ID keeps a single source of truth."
-      );
-    }
-    return html.replace(/%VITE_GA4_MEASUREMENT_ID%/g, id);
+  // Run after Vite's built-in %ENV% HTML substitution. Coolify often injects an
+  // invalid VITE_GA4_MEASUREMENT_ID first; we overwrite that with the resolved ID.
+  transformIndexHtml: {
+    order: "post" as const,
+    handler(html: string) {
+      const id = resolveGa4MeasurementId();
+      const raw = (process.env.VITE_GA4_MEASUREMENT_ID ?? "")
+        .trim()
+        .replace(/^["']+|["']+$/g, "")
+        .trim();
+
+      let out = html.replace(/%VITE_GA4_MEASUREMENT_ID%/g, id);
+      // Vite htmlEnvHook may already have substituted the (invalid) env value.
+      if (raw && raw !== id && out.includes(raw)) {
+        out = out.split(raw).join(id);
+      }
+      if (!out.includes(id)) {
+        console.warn(
+          "[ga4-guard] Neither placeholder nor prior env value found in index.html; " +
+            `forcing gaId assignment to ${id}`
+        );
+        out = out.replace(
+          /var gaId = ['"][^'"]*['"]/,
+          `var gaId = '${id}'`
+        );
+      }
+      return out;
+    },
   },
 });
 

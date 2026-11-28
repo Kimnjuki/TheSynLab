@@ -10,12 +10,11 @@ WORKDIR /app
 # stable @swc/core-linux-x64-gnu binary and builds the full 3500+ module app
 # reliably.
 #
-# We also raise Node heap limit because the build transforms 3500+ modules
-# and prerenders hundreds of HTML pages in closeBundle.
-ENV NODE_OPTIONS=--max-old-space-size=4096
+# Raise Node heap for 3500+ module transform + prerender. Prefer IPv4 via Node
+# (npm 10 rejects `npm config set dns-result-order`).
+ENV NODE_OPTIONS=--dns-result-order=ipv4first --max-old-space-size=4096
 
 # Install dependencies.
-# - dns-result-order=ipv4first prevents npm hanging ~100s on IPv6 DNS blackhole.
 # - --loglevel=http streams every registry request so failures are visible.
 # - fetch-retries=5 + fetch-retry-maxtimeout=180000 + --fetch-timeout=300000
 #   survive transient ECONNRESET / registry timeouts without manual retries.
@@ -25,7 +24,6 @@ RUN npm config set registry https://registry.npmjs.org && \
     npm config set fetch-retries 5 && \
     npm config set fetch-retry-mintimeout 20000 && \
     npm config set fetch-retry-maxtimeout 180000 && \
-    npm config set dns-result-order ipv4first && \
     npm ci --no-audit --no-fund --loglevel=http --fetch-timeout=300000 || \
     (echo "npm ci retry 1" && npm ci --no-audit --no-fund --loglevel=info --fetch-timeout=300000) || \
     (echo "npm ci retry 2" && sleep 30 && npm ci --no-audit --no-fund --loglevel=info --fetch-timeout=300000)
@@ -57,10 +55,10 @@ ARG VITE_AMAZON_ASSOCIATES_TAG
 ARG VITE_AD_UNITS_PER_PAGE=4
 ARG VITE_ADS_DEBUG_PLACEHOLDERS
 # Adsterra (native banner + display banners + popunder).
-# ADSTERRA_BUILD_REV=10 — bump to force Coolify to rebuild (it skips the build step
+# ADSTERRA_BUILD_REV=11 — bump to force Coolify to rebuild (it skips the build step
 # when the image tag for a commit SHA already exists, which can leave a stale
 # bundle with old ad keys / nginx / SEO HTML behind).
-ARG ADSTERRA_BUILD_REV=10
+ARG ADSTERRA_BUILD_REV=11
 ARG VITE_ADSTERRA_ENABLED=1
 ARG VITE_ADSTERRA_POPUNDER=1
 ARG VITE_ADSTERRA_NATIVE_KEY=6c361a6751ca12f38bc29d1189826773
