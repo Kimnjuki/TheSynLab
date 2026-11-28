@@ -150,10 +150,6 @@ const productRoutes = indexableProducts.map((p) => `/products/${normalizeUrlSlug
 const productAltRoutes = indexableProducts
   .filter((p) => p.alternativeSlugs.length > 0)
   .map((p) => `/products/${normalizeUrlSlug(p.productSlug)}/alternatives`);
-const productCompareRoutes = indexableProducts
-  .flatMap((p) =>
-    p.alternativeSlugs.slice(0, 3).map((a) => `/products/${normalizeUrlSlug(p.productSlug)}-vs-${normalizeUrlSlug(a)}`)
-  );
 const hubRoutes = Object.keys(HUB_SLUGS)
   // Skip legacy underscore hub slugs — those routes are canonical at their
   // hyphenated counterpart (deduped via staticRoutes' explicit entries below and
@@ -209,7 +205,8 @@ const dynamicRoutes = [
   ...saasTools.flatMap((tool) => [`/tool/${tool.slug}`, `/tool/${tool.slug}/alternatives`]),
   ...productRoutes,
   ...productAltRoutes,
-  ...productCompareRoutes,
+  // /products/:a-vs-:b duplicates /vs/:a-vs-:b — excluded from prerender/sitemap;
+  // nginx + ProductDetailPage 301 to the canonical /vs/ pair instead.
   ...vsRoutes,
   ...hubRoutes,
   ...Object.keys(BEST_OF_LISTS).map((useCase) => `/best/${useCase}`),
@@ -864,37 +861,7 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
       });
     }
 
-    // Comparison pages — e.g. /products/slack-vs-teams
-    // Generate from first 3 alternatives per product
-    const compareTargets = product.alternativeSlugs.slice(0, 3);
-    for (const altSlug of compareTargets) {
-      const altProduct = STATIC_PRODUCTS.find(p => p.productSlug === altSlug);
-      if (altProduct) {
-        const compareRoute = `/products/${product.productSlug}-vs-${altSlug}`;
-        const compareTitle = `${product.productName} vs ${altProduct.productName} ${year} — Trust Score & TCO Comparison | TheSynLab`;
-        pages.push({
-          route: compareRoute,
-          title: compareTitle,
-          description: `${product.productName} vs ${altProduct.productName}: compare Trust Scores, Integration Scores, features, and TCO to find the right tool for your team.`,
-          jsonLd: [
-            {
-              "@context": "https://schema.org",
-              "@type": "WebPage",
-              name: compareTitle,
-              description: `${product.productName} vs ${altProduct.productName}: side-by-side comparison of Trust Score (${product.trustScore}/10 vs ${altProduct.trustScore}/10), Integration Score (${product.integrationScore}/10 vs ${altProduct.integrationScore}/10), features, and TCO.`,
-              url: `${SITE_URL}${compareRoute}`,
-            },
-            breadcrumbSchema([
-              { name: "TheSynLab", item: `${SITE_URL}/` },
-              { name: "Products", item: `${SITE_URL}/products` },
-              { name: `${product.productName} vs ${altProduct.productName}` },
-            ]),
-          ],
-          ogImage: `${SITE_URL}/best-ai-productivity-hero.jpg`,
-        });
-      }
-
-    }
+    // /products/:a-vs-:b comparison HTML removed — canonical lives at /vs/:a-vs-:b.
   }
   // ── /vs/ comparison landing pages (MF-04) ────────────────────────────
   // Add /vs/{slug-a}-vs-{slug-b} pages with Article + BreadcrumbList schema

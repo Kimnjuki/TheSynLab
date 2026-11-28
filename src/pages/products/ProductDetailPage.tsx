@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { prefersToolCanonical, toolCanonicalPath } from "@/data/catalogCanonical";
+import { resolveProductVsRedirect } from "@/data/vsCanonical";
 import { ProductHero } from "@/components/pdp/ProductHero";
 import { QuickStatsBar } from "@/components/pdp/QuickStatsBar";
 import { VisualStoryGallery } from "@/components/pdp/VisualStoryGallery";
@@ -41,6 +42,12 @@ export default function ProductDetailPage() {
   const addAlert = useMutation(api.productAlerts.insert);
 
   const { totalViews } = useViewTracking('product', slug);
+
+  // Legacy /products/:a-vs-:b duplicates → canonical /vs/ (or nearest product).
+  const vsRedirect = slug ? resolveProductVsRedirect(slug) : null;
+  if (vsRedirect) {
+    return <Navigate to={vsRedirect} replace />;
+  }
 
   // Dual-catalog: prefer /tool/:slug when both catalogs share this slug.
   if (slug && prefersToolCanonical(slug)) {
