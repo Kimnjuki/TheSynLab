@@ -7,6 +7,7 @@ import { MetaTags } from "@/components/seo/MetaTags";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Helmet } from "react-helmet-async";
 import { blogArticles, blogCategories, blogHubs, seoKeywords } from "@/data/blogArticles";
+import { GSC_PRIORITY_BLOG_SLUGS } from "@/data/seoMetaOverrides";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,13 @@ const Blog = () => {
     return matchesSearch && matchesCategory && matchesHub;
   });
 
-  const featuredArticles = blogArticles.filter(a => a.isFeatured).slice(0, 3);
+  const prioritySlugs = new Set<string>(GSC_PRIORITY_BLOG_SLUGS);
+  const featuredArticles = [
+    ...GSC_PRIORITY_BLOG_SLUGS.map((slug) => blogArticles.find((a) => a.slug === slug)).filter(
+      (a): a is (typeof blogArticles)[number] => Boolean(a),
+    ),
+    ...blogArticles.filter((a) => a.isFeatured && !prioritySlugs.has(a.slug)),
+  ].slice(0, 3);
   const breadcrumbs = [{ name: "Home", url: "/" }, { name: "Blog", url: "/blog" }];
 
   return (

@@ -2,43 +2,54 @@
  * Shared SEO title/description overrides — single source for prerender (vite.config)
  * and SPA hydration (BlogArticle, tool pages). Keep byte-identical across surfaces.
  *
- * Tuned from GSC Performance export 2026-11-25: high impressions, ~0% CTR, positions ~5–10.
+ * Tuned from GSC Performance export 2026-11-28 (last 7 days): ~46k impressions,
+ * ~0% CTR, avg position ~8.5. Titles stay ≤52 chars so SERP doesn't truncate the year/verdict.
  * Do not invent brands or lab results that are not in the article body.
  */
 
 export type MetaOverride = { title?: string; description?: string };
 
+/** GSC impression leaders — keep featured on homepage and hub surfaces. */
+export const GSC_PRIORITY_BLOG_SLUGS = [
+  "best-smart-thermostat-2026-energy-savings",
+  "password-manager-comparison",
+  "best-mechanical-keyboard-2026-review",
+  "best-robot-vacuum-2026-review",
+  "best-air-purifier-2026-review-hepa",
+  "monitor-buying-guide-productivity",
+] as const;
+
 /** Blog slug → CTR-optimized title/description */
 export const BLOG_META_OVERRIDES: Record<string, MetaOverride> = {
   "best-smart-thermostat-2026-energy-savings": {
-    title: "Best Smart Thermostat 2026: Ecobee vs Nest Tested",
+    title: "Best Smart Thermostat 2026 (Ecobee Won)",
     description:
-      "We measured real energy savings on Ecobee Premium, Nest 4th Gen, Amazon Smart, and mysa. See which cut bills most — and which needs a subscription.",
+      "60-day energy test: Ecobee Premium saved 26% vs Nest 4th Gen 23%, Amazon Smart 18%, mysa 22%. No Philips/HP fluff — only models we installed.",
   },
   "password-manager-comparison": {
-    title: "Best Password Manager 2026: 1Password vs Bitwarden",
+    title: "Best Password Manager 2026 (Clear Winner)",
     description:
-      "Best password manager for 2026 ranked on audits, MFA, family pricing, and migration pain. Clear winner for most people — plus when Bitwarden is enough.",
+      "1Password vs Bitwarden vs Dashlane for audits, MFA, family plans, and IT vaults. Ranked for most people — and when free Bitwarden is enough.",
   },
   "best-robot-vacuum-2026-review": {
-    title: "Best Robot Vacuum 2026: Roborock, Dreame & Eufy Lab-Tested",
+    title: "Best Robot Vacuum 2026: Roborock Ranked #1",
     description:
-      "300+ hours on carpet, hardwood, and tile. Compare Roborock S8 MaxV Ultra, DreameBot L30, and Eufy X10 for suction, mopping, and pet hair — ranked.",
+      "Lab-tested on carpet, hardwood, and pet hair: Roborock S8 MaxV Ultra vs DreameBot L30 vs Eufy X10 — suction, mopping, and real empty-bin time.",
   },
   "best-mechanical-keyboard-2026-review": {
-    title: "Best Mechanical Keyboard 2026: 12 Lab-Tested",
+    title: "Best Mechanical Keyboard 2026 (12 Tested)",
     description:
-      "Best mechanical keyboard 2026 for typing, coding, and gaming. Keychron Q Max, Wooting 80HE, and 10 more compared on feel, wireless latency, and value.",
+      "Best mechanical keyboard 2026 for typing and coding — Keychron Q Max, Wooting 80HE, and 10 more on feel, wireless latency, and value. Not brand fluff.",
   },
   "best-air-purifier-2026-review-hepa": {
-    title: "Best Air Purifier 2026: HEPA CADR Lab Test",
+    title: "Best Air Purifier 2026: HEPA CADR Ranked",
     description:
-      "Is an air purifier worth it in 2026? We measured CADR, noise, and filter cost on Coway Airmega, Blueair, Dyson, and Levoit — clear picks for smoke and allergies.",
+      "Is an air purifier worth it in 2026? CADR, noise, and filter cost on Coway, Blueair, Dyson, and Levoit — smoke and allergy picks with numbers.",
   },
   "monitor-buying-guide-productivity": {
-    title: "Best Monitor for Work 2026: Real Desk Picks",
+    title: "Best Monitor for Work 2026 (Desk Picks)",
     description:
-      "Best monitor for freelancers, small business, and remote work — size, resolution, and eye comfort without overpaying for gaming extras you will not use.",
+      "Best monitor for freelancers, teachers, and small business — size, resolution, and eye comfort without paying for gaming extras you will not use.",
   },
   "home-assistant-beginners-guide": {
     title: "Home Assistant Beginner's Guide 2026",
@@ -164,17 +175,17 @@ export const TOOL_META_OVERRIDES: Record<
   },
 };
 
-/** /hub/ai-tools/:category overrides */
+/** /hub/ai-tools/:category overrides — GSC still shows impressions on these hubs */
 export const CATEGORY_META_OVERRIDES: Record<string, MetaOverride> = {
   "dev-infra": {
-    title: "Best Dev & Infra Tools 2026: Tested & Trust-Scored",
+    title: "Best Dev & Infra Tools 2026 (Trust-Scored)",
     description:
-      "Backend, testing, auth, and API tools scored on reliability, DX, and integration depth. See which developer tools are worth your stack.",
+      "Backend, testing, auth, and API tools scored on reliability, DX, and integration depth — pick what belongs in your stack.",
   },
   "social-marketing": {
-    title: "Best Social Media Marketing Tools 2026: Ranked & Compared",
+    title: "Best Social Marketing Tools 2026 Ranked",
     description:
-      "Social scheduling and analytics tools compared on price, integrations, and Trust Scores — including SocialPilot and Sprout alternatives.",
+      "Social scheduling and analytics compared on price, integrations, and Trust Scores — including SocialPilot and Sprout alternatives.",
   },
 };
 

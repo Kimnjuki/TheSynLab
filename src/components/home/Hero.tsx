@@ -65,8 +65,8 @@ const Hero = () => {
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="border-tsl-cta-secondary-border text-tsl-text hover:bg-tsl-surface text-base px-8 font-semibold">
-                <Link to="/scoring-hub">
-                  Compare tools
+                <Link to="/blog/best-smart-thermostat-2026-energy-savings">
+                  Top lab guide
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="border-tsl-cta-secondary-border text-tsl-text hover:bg-tsl-surface text-base px-8 font-semibold">

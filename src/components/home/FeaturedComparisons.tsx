@@ -2,12 +2,18 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { blogArticles } from "@/data/blogArticles";
+import { GSC_PRIORITY_BLOG_SLUGS } from "@/data/seoMetaOverrides";
 import { Clock, ArrowRight, Star } from "lucide-react";
 
 const FeaturedComparisons = () => {
-  const featured = blogArticles
-    .filter((a) => a.isFeatured)
-    .slice(0, 6);
+  // Lead with GSC impression winners (positions 5–10, near-zero CTR) so internal
+  // PageRank and homepage relevance reinforce what's already ranking.
+  const prioritySlugs = new Set<string>(GSC_PRIORITY_BLOG_SLUGS);
+  const priority = GSC_PRIORITY_BLOG_SLUGS.map((slug) =>
+    blogArticles.find((a) => a.slug === slug)
+  ).filter((a): a is (typeof blogArticles)[number] => Boolean(a));
+  const rest = blogArticles.filter((a) => a.isFeatured && !prioritySlugs.has(a.slug));
+  const featured = [...priority, ...rest].slice(0, 6);
 
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString("en-US", {

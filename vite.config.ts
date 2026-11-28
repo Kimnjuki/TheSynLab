@@ -661,14 +661,30 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
   // Blog articles — Article schema + BreadcrumbList + FAQPage + HowTo
   for (const article of blogArticles) {
     const route = `/blog/${article.slug}`;
-    const faqs = extractFaqFromMd(article.content, article.title);
+    const extractedFaqs = extractFaqFromMd(article.content, article.title);
+    const authoredFaqs = Array.isArray(article.faqs) ? article.faqs : [];
+    const faqs = [
+      ...authoredFaqs,
+      ...extractedFaqs.filter(
+        (f) => !authoredFaqs.some((a) => a.question.toLowerCase() === f.question.toLowerCase())
+      ),
+    ];
     const howToSteps = extractHowToSteps(article.content);
+    const metaTitle =
+      BLOG_META_OVERRIDES[article.slug]?.title ??
+      article.seoTitle ??
+      article.title;
+    const metaDescription =
+      BLOG_META_OVERRIDES[article.slug]?.description ??
+      article.metaDescription ??
+      article.excerpt ??
+      article.title;
     const articleSchemas: Record<string, unknown>[] = [
       {
         "@context": "https://schema.org",
         "@type": "Article",
-        headline: article.title,
-        description: article.metaDescription || article.excerpt || article.title,
+        headline: metaTitle,
+        description: metaDescription,
         datePublished: article.publishedAt,
         dateModified: article.updatedAt || article.publishedAt,
         author: article.author
@@ -733,13 +749,8 @@ const buildStaticPagesMeta = (): StaticPageMeta[] => {
 
     pages.push({
       route,
-      title:
-        BLOG_META_OVERRIDES[article.slug]?.title ??
-        article.seoTitle ??
-        `${article.title} | TheSynLab`,
-      description:
-        BLOG_META_OVERRIDES[article.slug]?.description ??
-        (article.metaDescription || article.excerpt || article.title),
+      title: metaTitle,
+      description: metaDescription,
       jsonLd: articleSchemas,
       ogImage: article.featuredImage || `${SITE_URL}/best-ai-productivity-hero.jpg`,
     });
@@ -1720,7 +1731,14 @@ ${widgetCards}
     if (article) {
       const bodyHtml = mdToHtml(article.content, 8000);
       const toc = extractTocFromMd(article.content);
-      const faqs = extractFaqFromMd(article.content, article.title);
+      const extractedFaqs = extractFaqFromMd(article.content, article.title);
+      const authoredFaqs = Array.isArray(article.faqs) ? article.faqs : [];
+      const faqs = [
+        ...authoredFaqs,
+        ...extractedFaqs.filter(
+          (f) => !authoredFaqs.some((a) => a.question.toLowerCase() === f.question.toLowerCase())
+        ),
+      ];
       const quickAnswer = extractQuickAnswer(article.content);
       const howToSteps = extractHowToSteps(article.content);
 

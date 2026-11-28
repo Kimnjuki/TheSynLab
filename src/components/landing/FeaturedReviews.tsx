@@ -3,12 +3,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { blogArticles } from "@/data/blogArticles";
+import { GSC_PRIORITY_BLOG_SLUGS } from "@/data/seoMetaOverrides";
 import { Star, Clock, ArrowRight, TrendingUp, Flame } from "lucide-react";
 
 const FeaturedReviews = () => {
-  const featured = blogArticles
-    .filter((a) => a.isFeatured)
-    .slice(0, 3);
+  const prioritySlugs = new Set<string>(GSC_PRIORITY_BLOG_SLUGS);
+  const featured = [
+    ...GSC_PRIORITY_BLOG_SLUGS.map((slug) => blogArticles.find((a) => a.slug === slug)).filter(
+      (a): a is (typeof blogArticles)[number] => Boolean(a),
+    ),
+    ...blogArticles.filter((a) => a.isFeatured && !prioritySlugs.has(a.slug)),
+  ].slice(0, 3);
 
   return (
     <section className="py-20">

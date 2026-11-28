@@ -43,17 +43,22 @@ const trimMeta = (meta?: string) => {
   return meta;
 };
 
-/** Final <title> target: ≤60 chars including " | TheSynLab". */
+/**
+ * Final <title>: keep the year/verdict intact. Google often shows ~60 chars;
+ * we allow ≤58 for the core so CTR hooks ("2026", "Won", "#1") are not ellipsized.
+ * Skip appending the site suffix when the core is already ≥52 chars (prerender parity).
+ */
 function buildFullTitle(title: string, siteName: string): string {
   const suffix = ` | ${siteName}`;
   const cleaned = title
     .replace(new RegExp(`\\s*[|–—-]\\s*${siteName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*$`, "i"), "")
     .trim();
-  const maxCore = Math.max(24, 60 - suffix.length);
+  const maxCore = 58;
   let core = cleaned;
   if (core.length > maxCore) {
     core = `${core.slice(0, maxCore - 1).replace(/\s+\S*$/, "").trimEnd()}…`;
   }
+  if (core.length >= 52) return core;
   return `${core}${suffix}`;
 }
 
