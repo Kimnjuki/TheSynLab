@@ -2400,17 +2400,28 @@ const sitemapPlugin = () => ({
 });
 
 const GA4_FALLBACK_ID = "G-NC8K7M5LRX";
+const GA4_ID_RE = /^G-[A-Z0-9]{6,}$/i;
+
+/** Sanitize Coolify/build-arg values (quotes, whitespace) and fall back if invalid. */
+function resolveGa4MeasurementId(): string {
+  const raw = (process.env.VITE_GA4_MEASUREMENT_ID ?? "")
+    .trim()
+    .replace(/^["']+|["']+$/g, "")
+    .trim();
+  if (GA4_ID_RE.test(raw)) return raw;
+  if (raw) {
+    console.warn(
+      `[ga4-guard] Ignoring invalid VITE_GA4_MEASUREMENT_ID=${JSON.stringify(raw)}; using ${GA4_FALLBACK_ID}`
+    );
+  }
+  return GA4_FALLBACK_ID;
+}
 
 const injectGa4Plugin = () => ({
   name: "inject-ga4-id",
   enforce: "pre" as const,
   transformIndexHtml(html: string) {
-    const id = (process.env.VITE_GA4_MEASUREMENT_ID || GA4_FALLBACK_ID).trim();
-    if (!/^G-[A-Z0-9]{6,}$/i.test(id)) {
-      throw new Error(
-        `[ga4-guard] VITE_GA4_MEASUREMENT_ID is not a valid GA4 measurement ID: "${id}"`
-      );
-    }
+    const id = resolveGa4MeasurementId();
     const hasPlaceholder = html.includes("%VITE_GA4_MEASUREMENT_ID%");
     const hasId = new RegExp(id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i").test(html);
     if (!hasPlaceholder && !hasId) {
